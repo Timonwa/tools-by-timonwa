@@ -1,26 +1,144 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.145 0 0);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.145 0 0);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.145 0 0);
+	/* Hub default brand (indigo). Individual tools override via `.tool-<slug>`. */
+	--primary: oklch(0.58 0.18 265);
+	--primary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.97 0 0);
+	--secondary-foreground: oklch(0.205 0 0);
+	--muted: oklch(0.97 0 0);
+	--muted-foreground: oklch(0.556 0 0);
+	--accent: oklch(0.97 0 0);
+	--accent-foreground: oklch(0.205 0 0);
+	--destructive: oklch(0.577 0.245 27.325);
+	--destructive-foreground: oklch(0.985 0 0);
+	--border: oklch(0.922 0 0);
+	--input: oklch(0.922 0 0);
+	--ring: oklch(0.708 0 0);
+	--radius: 0.625rem;
+}
+
+.dark {
+	--background: oklch(0.145 0 0);
+	--foreground: oklch(0.985 0 0);
+	--card: oklch(0.205 0 0);
+	--card-foreground: oklch(0.985 0 0);
+	--popover: oklch(0.205 0 0);
+	--popover-foreground: oklch(0.985 0 0);
+	--primary: oklch(0.72 0.17 265);
+	--primary-foreground: oklch(0.145 0 0);
+	--secondary: oklch(0.269 0 0);
+	--secondary-foreground: oklch(0.985 0 0);
+	--muted: oklch(0.269 0 0);
+	--muted-foreground: oklch(0.708 0 0);
+	--accent: oklch(0.269 0 0);
+	--accent-foreground: oklch(0.985 0 0);
+	--destructive: oklch(0.704 0.191 22.216);
+	--destructive-foreground: oklch(0.985 0 0);
+	--border: oklch(1 0 0 / 10%);
+	--input: oklch(1 0 0 / 15%);
+	--ring: oklch(0.556 0 0);
+}
+
+/*
+ * Per-tool brand overrides. Each tool's layout wraps its subtree in
+ * `<div class="tool-<slug>">` so shell primitives (`bg-primary`,
+ * `text-primary`, etc.) pick up the tool's accent automatically. Only
+ * `--primary` is scoped here — everything else stays hub-neutral.
+ */
+.tool-article-to-social-posts {
+	--primary: oklch(0.58 0.18 150);
+}
+.dark .tool-article-to-social-posts {
+	--primary: oklch(0.72 0.17 150);
+}
+.tool-article-to-seo-meta {
+	--primary: oklch(0.65 0.16 60);
+}
+.dark .tool-article-to-seo-meta {
+	--primary: oklch(0.76 0.15 60);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-ring: var(--ring);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--font-sans: var(--font-geist-sans);
+	--font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@layer base {
+	body {
+		background: var(--background);
+		color: var(--foreground);
+		font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
+		line-height: 1.5;
+		-webkit-font-smoothing: antialiased;
+	}
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes hero-gradient-shift {
+	to {
+		background-position: 200% 50%;
+	}
+}
+
+.hero-gradient-text {
+	background-image: linear-gradient(
+		90deg,
+		var(--primary),
+		oklch(0.75 0.18 330),
+		var(--primary)
+	);
+	background-size: 200% auto;
+	background-position: 0% 50%;
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	animation: hero-gradient-shift 5s linear infinite;
+}
+
+/**
+ * Shine sweep across the hero badge. Animates only the `left` of the gradient
+ * bar — the parent clips it, so it appears to glint across the pill once per
+ * cycle, then rests off-screen before looping. Respects prefers-reduced-motion.
+ */
+@keyframes hero-badge-sweep {
+	0%,
+	12% {
+		left: -32%;
+	}
+	35%,
+	100% {
+		left: 100%;
+	}
 }

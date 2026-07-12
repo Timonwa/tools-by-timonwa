@@ -1,0 +1,2 @@
+export const HOSTED_DAILY_GENERATION_POOL = 1000;
+export const HOSTED_PER_USER_DAILY = 5;

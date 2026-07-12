@@ -1,0 +1,84 @@
+import { HeartIcon, WrenchIcon } from "lucide-react";
+import Link from "next/link";
+
+import GithubMark from "@/components/_shared/GithubMark";
+import {
+	CREATOR_NAME,
+	CREATOR_URL,
+	LICENSE_URL,
+	REPO_URL,
+	SITE_NAME,
+} from "@/lib/config/site";
+
+const LEGAL_LINKS = [
+	{ href: LICENSE_URL, label: "MIT License" },
+	{ href: "https://tech.timonwa.com/terms", label: "Terms" },
+	{ href: "https://tech.timonwa.com/privacy", label: "Privacy" },
+];
+
+export default function Footer() {
+	return (
+		<footer className="border-t border-border/50 bg-background/50">
+			<div className="container mx-auto px-4 sm:px-10 py-6 max-w-6xl space-y-4">
+				<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+					<div className="flex items-start gap-2.5 text-muted-foreground justify-center sm:justify-start min-w-0">
+						<WrenchIcon
+							aria-hidden
+							className="w-4 h-4 mt-0.5 text-primary shrink-0"
+						/>
+						<span className="min-w-0 text-center sm:text-left leading-snug">
+							<span className="font-semibold text-foreground">{SITE_NAME}</span>{" "}
+							· Open source
+						</span>
+					</div>
+
+					<div className="flex items-center gap-5 text-muted-foreground flex-wrap justify-center sm:justify-end">
+						<span className="inline-flex items-center gap-1.5 flex-wrap">
+							<HeartIcon className="w-3.5 h-3.5 text-primary" />
+							Built by{" "}
+							<Link
+								href={CREATOR_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="font-medium text-foreground hover:text-primary transition-colors"
+							>
+								{CREATOR_NAME}
+							</Link>
+						</span>
+
+						<Link
+							href={REPO_URL}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors"
+						>
+							<GithubMark aria-hidden className="w-3.5 h-3.5" />
+							GitHub
+						</Link>
+					</div>
+				</div>
+
+				<div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1 border-t border-border/40 pt-3 text-[11px] text-muted-foreground">
+					{LEGAL_LINKS.map((link) => (
+						<span key={link.href} className="inline-flex items-center gap-x-3">
+							<Link
+								href={link.href}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="hover:text-foreground hover:underline underline-offset-2 transition-colors"
+							>
+								{link.label}
+							</Link>
+							<span aria-hidden className="opacity-50">
+								·
+							</span>
+						</span>
+					))}
+					<span>
+						© {new Date().getFullYear()} {CREATOR_NAME}
+					</span>
+				</div>
+			</div>
+		</footer>
+	);
+}
