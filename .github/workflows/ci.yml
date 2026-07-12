@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+# Cancel in-progress runs for the same branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Detect docs-only changes to skip CI entirely
+  # ──────────────────────────────────────────────
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      should-skip: ${{ steps.filter.outputs.docs-only == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            docs-only:
+              - '**/*.md'
+              - '**/*.mdx'
+              - 'LICENSE'
+              - '.github/labeler.yml'
+              - '.github/workflows/label.yml'
+              - '.github/workflows/stale.yml'
+              - '.github/workflows/pr-title.yml'
+              - '.github/pull_request_template.md'
+              - '.github/ISSUE_TEMPLATE/**'
+              - '.github/FUNDING.yml'
+
+  # ──────────────────────────────────────────────
+  # Lint, format, and type-check
+  # ──────────────────────────────────────────────
+  lint-and-typecheck:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    needs: [changes]
+    if: needs.changes.outputs.should-skip != 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
+
+      - name: Biome check (lint + format)
+        run: pnpm exec biome ci .
+
+      - name: Type check
+        run: pnpm typecheck
+
+  # ──────────────────────────────────────────────
+  # Build
+  # ──────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [changes, lint-and-typecheck]
+    if: needs.changes.outputs.should-skip != 'true'
+    env:
+      # env.ts validates required vars at module load via Zod.
+      # Missing GOOGLE_API_KEY fails the build with a Zod error.
+      # Optional vars (Upstash, Cloudflare Analytics) are left unset — the
+      # app gracefully skips rate limiting / analytics when absent.
+      GOOGLE_API_KEY: ci-placeholder-key
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
+
+      - name: Build
+        run: pnpm build
+
+  # ──────────────────────────────────────────────
+  # Test (enable when tests are configured)
+  # ──────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: [changes, lint-and-typecheck]
+    if: false # Enable when tests are configured
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
+
+      - name: Test
+        run: pnpm test
