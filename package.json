@@ -7,11 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx,json,css}": "biome format --write --no-errors-on-unmatched"
+    "lint": "eslint"
   },
   "dependencies": {
     "next": "16.2.10",
