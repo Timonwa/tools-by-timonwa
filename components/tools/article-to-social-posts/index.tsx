@@ -1,6 +1,7 @@
 import { Share2Icon } from "lucide-react";
 
 import Navbar from "@/components/layout/Navbar";
+import ToolMain from "@/components/layout/ToolMain";
 import Hero from "@/components/tools/article-to-social-posts/Hero";
 import HostedUsageNotice from "@/components/tools/article-to-social-posts/HostedUsageNotice";
 import SettingsDrawer from "@/components/tools/article-to-social-posts/settings/SettingsDrawer";
@@ -19,10 +20,10 @@ export default function ArticleToSocialPostsPageContent() {
 				centerSlot={<HostedUsageNotice />}
 				actionsSlot={<SettingsDrawer />}
 			/>
-			<main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-20 max-w-6xl">
+			<ToolMain>
 				<Hero />
 				<Writer />
-			</main>
+			</ToolMain>
 		</>
 	);
 }
