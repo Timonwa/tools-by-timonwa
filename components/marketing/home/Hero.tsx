@@ -1,6 +1,6 @@
 import { WrenchIcon } from "lucide-react";
 
-import PageHero from "@/components/_shared/PageHero";
+import PageHero from "@/components/ui/PageHero";
 
 export default function Hero() {
 	return (

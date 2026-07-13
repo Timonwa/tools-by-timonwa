@@ -32,7 +32,7 @@ export default function PageHero({
 						aria-hidden
 						className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
 					>
-						<span className="absolute top-0 bottom-0 w-[32%] max-w-28 bg-linear-to-r from-transparent via-white/35 to-transparent dark:via-white/14 -left-[32%] motion-safe:animate-[hero-badge-sweep_8s_ease-in-out_infinite]" />
+						<span className="absolute top-0 bottom-0 w-[32%] max-w-28 bg-linear-to-r from-transparent via-white/35 to-transparent dark:via-white/14 left-[-32%] motion-safe:animate-[hero-badge-sweep_8s_ease-in-out_infinite]" />
 					</span>
 					{EyebrowIcon && (
 						<EyebrowIcon
