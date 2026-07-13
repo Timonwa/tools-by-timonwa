@@ -1,15 +1,8 @@
 "use client";
 
-import {
-	useActionState,
-	useEffect,
-	useEffectEvent,
-	useId,
-	useState,
-} from "react";
+import { useActionState, useId, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { generateSeoMeta } from "@/lib/tools/article-to-seo-meta/actions";
 import {
 	MAX_ARTICLE_CHARS,
 	type SeoMetaResultType,
@@ -18,6 +11,7 @@ import {
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Textarea from "@/components/ui/Textarea";
+import { generateSeoMeta } from "@/lib/tools/article-to-seo-meta/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 
 export type SeoFormParamsType = {
@@ -26,13 +20,7 @@ export type SeoFormParamsType = {
 	variationCount: 1 | 2 | 3;
 };
 
-type SeoFormState = {
-	ok: boolean;
-	error?: string;
-	result?: SeoMetaResultType;
-	usage?: TokenUsageType;
-	params?: SeoFormParamsType;
-} | null;
+type SeoFormState = { error?: string } | null;
 
 type SeoFormProps = {
 	onResult: (
@@ -41,8 +29,8 @@ type SeoFormProps = {
 		params: SeoFormParamsType,
 	) => void;
 	onLoadingChange?: (loading: boolean) => void;
-	/** When this changes, the form resets to the provided values. Used to
-	 * restore a previous generation from history. */
+	/** Seed values for a restore-from-history. The parent remounts this form
+	 * (via `key`) when restoring, so these are read once on mount. */
 	initial?: SeoFormParamsType;
 };
 
@@ -63,24 +51,23 @@ export default function SeoForm({
 	const [article, setArticle] = useState(initial?.article ?? "");
 	const [keyword, setKeyword] = useState(initial?.primaryKeyword ?? "");
 	const [count, setCount] = useState<1 | 2 | 3>(initial?.variationCount ?? 3);
-	const [error, setError] = useState<string | undefined>();
 	const articleId = useId();
 	const keywordId = useId();
 
 	const articleLen = article.length;
 	const overLimit = articleLen > MAX_ARTICLE_CHARS;
 
-	// The form action: validates client-side, calls the server action, and
-	// returns the outcome as state (React 19 useActionState pattern).
+	// The form action validates client-side, calls the server action, and hands
+	// results straight to the parent — returning only an error string for display
+	// (React 19 useActionState). No effects needed.
 	const [state, formAction, isPending] = useActionState<SeoFormState>(
 		async (): Promise<SeoFormState> => {
-			if (!article.trim())
-				return { ok: false, error: "Paste the article draft first." };
+			if (!article.trim()) return { error: "Paste the article draft first." };
 			if (overLimit)
 				return {
-					ok: false,
 					error: `Article is too long — keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} chars.`,
 				};
+			onLoadingChange?.(true);
 			try {
 				const byokKey = byokStorage.get() ?? undefined;
 				const trimmedKeyword = keyword.trim() || undefined;
@@ -91,53 +78,22 @@ export default function SeoForm({
 					googleApiKey: byokKey,
 					googleModel: byokKey ? byokModelStorage.get() : undefined,
 				});
-				return {
-					ok: true,
-					result,
-					usage,
-					params: {
-						article,
-						primaryKeyword: trimmedKeyword,
-						variationCount: count,
-					},
-				};
+				onResult(result, usage, {
+					article,
+					primaryKeyword: trimmedKeyword,
+					variationCount: count,
+				});
+				return null;
 			} catch (err) {
 				return {
-					ok: false,
 					error: err instanceof Error ? err.message : "Something went wrong.",
 				};
+			} finally {
+				onLoadingChange?.(false);
 			}
 		},
 		null,
 	);
-
-	// Emit results / errors to the parent without re-subscribing on every parent
-	// render (onResult/onLoadingChange aren't memoized).
-	const emitResult = useEffectEvent((s: SeoFormState) => {
-		if (s?.ok && s.result && s.usage && s.params) {
-			setError(undefined);
-			onResult(s.result, s.usage, s.params);
-		} else if (s && !s.ok) {
-			setError(s.error);
-		}
-	});
-	useEffect(() => {
-		emitResult(state);
-	}, [state]);
-
-	const emitLoading = useEffectEvent((p: boolean) => onLoadingChange?.(p));
-	useEffect(() => {
-		emitLoading(isPending);
-	}, [isPending]);
-
-	// Resync form fields when the parent asks for a restore (new `initial`).
-	useEffect(() => {
-		if (!initial) return;
-		setArticle(initial.article);
-		setKeyword(initial.primaryKeyword ?? "");
-		setCount(initial.variationCount);
-		setError(undefined);
-	}, [initial]);
 
 	return (
 		<form action={formAction} className="space-y-5">
@@ -205,9 +161,9 @@ export default function SeoForm({
 				</div>
 			</fieldset>
 
-			{error && (
+			{state?.error && (
 				<p className="text-sm text-destructive" role="alert">
-					{error}
+					{state.error}
 				</p>
 			)}
 

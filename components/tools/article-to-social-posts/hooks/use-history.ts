@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 import type {
 	DraftInputType,
@@ -8,6 +8,7 @@ import type {
 	PreviewResultType,
 	ToneType,
 } from "@/components/tools/article-to-social-posts/types";
+import { createLocalStore } from "@/lib/utils/local-store";
 
 const HISTORY_KEY = "article-to-social-posts:history";
 const MAX_HISTORY = 10;
@@ -40,21 +41,21 @@ const migrate = (raw: unknown): HistoryEntryType | null => {
 	return null;
 };
 
+const EMPTY: HistoryEntryType[] = [];
+
 const load = (): HistoryEntryType[] => {
-	if (typeof window === "undefined") return [];
 	try {
 		const raw = window.localStorage.getItem(HISTORY_KEY);
-		if (!raw) return [];
+		if (!raw) return EMPTY;
 		const parsed = JSON.parse(raw) as unknown[];
-		if (!Array.isArray(parsed)) return [];
+		if (!Array.isArray(parsed)) return EMPTY;
 		return parsed.map(migrate).filter((e): e is HistoryEntryType => e !== null);
 	} catch {
-		return [];
+		return EMPTY;
 	}
 };
 
 const save = (items: HistoryEntryType[]) => {
-	if (typeof window === "undefined") return;
 	try {
 		window.localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
 	} catch {}
@@ -63,50 +64,47 @@ const save = (items: HistoryEntryType[]) => {
 const sameUrl = (entry: HistoryEntryType, url: string) =>
 	entry.input.kind === "url" && entry.input.url === url;
 
+const store = createLocalStore<HistoryEntryType[]>({
+	read: load,
+	write: save,
+	serverValue: EMPTY,
+});
+
 export function useHistory() {
-	const [history, setHistory] = useState<HistoryEntryType[]>([]);
-	const [loaded, setLoaded] = useState(false);
-
-	useEffect(() => {
-		setHistory(load());
-		setLoaded(true);
-	}, []);
-
-	// Guard prevents saving the empty initial state before localStorage is loaded,
-	// which would wipe history on every mount.
-	useEffect(() => {
-		if (!loaded) return;
-		save(history);
-	}, [history, loaded]);
+	const history = useSyncExternalStore(
+		store.subscribe,
+		store.getSnapshot,
+		store.getServerSnapshot,
+	);
 
 	const upsert = useCallback(
 		(entry: Omit<HistoryEntryType, "id"> & { id?: string }) => {
-			setHistory((current) => {
-				// URL entries dedup by URL — re-generating the same article replaces
-				// the previous entry. Draft entries are always fresh — each paste is
-				// its own record, even if the text is identical.
-				if (entry.input.kind === "url") {
-					const url = entry.input.url;
-					const existing = current.find((h) => sameUrl(h, url));
-					const full: HistoryEntryType = {
-						...entry,
-						id: existing?.id ?? crypto.randomUUID(),
-					};
-					const without = current.filter((h) => !sameUrl(h, url));
-					return [full, ...without].slice(0, MAX_HISTORY);
-				}
+			const current = store.get();
+			// URL entries dedup by URL — re-generating the same article replaces
+			// the previous entry. Draft entries are always fresh — each paste is
+			// its own record, even if the text is identical.
+			if (entry.input.kind === "url") {
+				const url = entry.input.url;
+				const existing = current.find((h) => sameUrl(h, url));
 				const full: HistoryEntryType = {
 					...entry,
-					id: entry.id ?? crypto.randomUUID(),
+					id: existing?.id ?? crypto.randomUUID(),
 				};
-				return [full, ...current].slice(0, MAX_HISTORY);
-			});
+				const without = current.filter((h) => !sameUrl(h, url));
+				store.set([full, ...without].slice(0, MAX_HISTORY));
+				return;
+			}
+			const full: HistoryEntryType = {
+				...entry,
+				id: entry.id ?? crypto.randomUUID(),
+			};
+			store.set([full, ...current].slice(0, MAX_HISTORY));
 		},
 		[],
 	);
 
 	const remove = useCallback((id: string) => {
-		setHistory((cur) => cur.filter((h) => h.id !== id));
+		store.set(store.get().filter((h) => h.id !== id));
 	}, []);
 
 	return { history, upsert, remove };

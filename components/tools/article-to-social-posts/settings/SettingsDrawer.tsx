@@ -1,9 +1,8 @@
 "use client";
 
 import { SettingsIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
-import { DEFAULT_PREFERENCES } from "@/components/tools/article-to-social-posts/constants/preferences";
 import type { WritingPreferencesType } from "@/components/tools/article-to-social-posts/types";
 import { prefsStorage } from "@/components/tools/article-to-social-posts/utils/storage";
 import Button from "@/components/ui/Button";
@@ -18,18 +17,14 @@ import WritingPreferencesSection from "./WritingPreferences";
  */
 export default function SettingsDrawer() {
 	const [open, setOpen] = useState(false);
-	const [prefs, setPrefs] =
-		useState<WritingPreferencesType>(DEFAULT_PREFERENCES);
-
-	useEffect(() => {
-		if (!open) return;
-		setPrefs(prefsStorage.get());
-	}, [open]);
+	const prefs = useSyncExternalStore(
+		prefsStorage.subscribe,
+		prefsStorage.getSnapshot,
+		prefsStorage.getServerSnapshot,
+	);
 
 	const updatePrefs = (patch: Partial<WritingPreferencesType>) => {
-		const next = { ...prefs, ...patch };
-		setPrefs(next);
-		prefsStorage.set(next);
+		prefsStorage.set({ ...prefs, ...patch });
 	};
 
 	return (

@@ -4,15 +4,13 @@ import {
 	useCallback,
 	useEffect,
 	useEffectEvent,
+	useMemo,
 	useState,
+	useSyncExternalStore,
 	useTransition,
 } from "react";
 
 import { MAX_TEMPLATES } from "@/components/tools/article-to-social-posts/constants/preferences";
-import {
-	previewPosts,
-	regenerateDraft,
-} from "@/lib/tools/article-to-social-posts/actions";
 import type {
 	DraftInputType,
 	PlatformType,
@@ -28,11 +26,14 @@ import {
 	buildCopyText,
 } from "@/components/tools/article-to-social-posts/utils/draft";
 import {
-	DEFAULT_WORKFLOW,
 	prefsStorage,
 	templatesStorage,
 	workflowStorage,
 } from "@/components/tools/article-to-social-posts/utils/storage";
+import {
+	previewPosts,
+	regenerateDraft,
+} from "@/lib/tools/article-to-social-posts/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { type HistoryEntryType, useHistory } from "./use-history";
 
@@ -75,17 +76,25 @@ export function useWriter() {
 	const [inputKind, setInputKind] = useState<InputKindType>("url");
 	const [url, setUrl] = useState("");
 	const [text, setText] = useState("");
-	const [tone, setTone] = useState<ToneType>(DEFAULT_WORKFLOW.tone);
-	const [platforms, setPlatforms] = useState<PlatformType[]>(
-		DEFAULT_WORKFLOW.platforms,
+
+	// Persisted state lives in localStorage-backed external stores — read as the
+	// source of truth (no setState-in-effect hydration, no persist effect).
+	const workflow = useSyncExternalStore(
+		workflowStorage.subscribe,
+		workflowStorage.getSnapshot,
+		workflowStorage.getServerSnapshot,
 	);
-	const [xThreadLength, setXThreadLength] = useState(
-		DEFAULT_WORKFLOW.xThreadLength,
+	const { tone, platforms, xThreadLength } = workflow;
+	const prefs = useSyncExternalStore(
+		prefsStorage.subscribe,
+		prefsStorage.getSnapshot,
+		prefsStorage.getServerSnapshot,
 	);
-	// Tracks whether workflow state has been restored from localStorage. We
-	// don't persist until after hydration, otherwise the initial defaults
-	// would overwrite the user's saved state before the restore effect runs.
-	const [hydrated, setHydrated] = useState(false);
+	const templates = useSyncExternalStore(
+		templatesStorage.subscribe,
+		templatesStorage.getSnapshot,
+		templatesStorage.getServerSnapshot,
+	);
 
 	// `generate` runs in a transition — `isGenerating` is its pending flag.
 	// `regenerate` uses its own transition but reports per-draft pending via the
@@ -105,46 +114,15 @@ export function useWriter() {
 
 	const [lastUsage, setLastUsage] = useState<TokenUsageType | null>(null);
 
-	const [templates, setTemplates] = useState<PresetTemplateType[]>([]);
-	// `activeTemplateId` is set whenever a template is applied, and cleared on
-	// any user-initiated form tweak (tone / platforms / thread length). That
-	// means the pill highlight reflects "this template is in effect right now"
-	// — once the user diverges, nothing's highlighted.
-	const [activeTemplateId, setActiveTemplateId] = useState<string | null>(null);
-
-	// Restore workflow state + templates on mount, then flip `hydrated`. The
-	// match-detection effect below picks up from there to highlight an active
-	// template if the restored state happens to match one.
-	useEffect(() => {
-		const w = workflowStorage.get();
-		setTone(w.tone);
-		setPlatforms(w.platforms);
-		setXThreadLength(w.xThreadLength);
-		setTemplates(templatesStorage.list());
-		setHydrated(true);
-	}, []);
-
-	// Persist workflow state on every change, but only after hydration so the
-	// initial-defaults render doesn't overwrite the user's saved state.
-	useEffect(() => {
-		if (!hydrated) return;
-		workflowStorage.set({ tone, platforms, xThreadLength });
-	}, [hydrated, tone, platforms, xThreadLength]);
-
-	// After hydration, if the current state matches one of the user's saved
-	// templates, light that template up. Runs once post-hydration — subsequent
-	// activity is driven by applyTemplate / saveTemplate / the clear-on-change
-	// wrappers below, so we intentionally omit tone/platforms/xThreadLength
-	// from deps to avoid re-matching on every form tweak.
-	useEffect(() => {
-		if (!hydrated) return;
-		if (templates.length === 0) return;
-		const prefs = prefsStorage.get();
-		const match = templates.find((t) =>
-			templateMatchesState(t, { tone, platforms, xThreadLength }, prefs),
-		);
-		setActiveTemplateId(match?.id ?? null);
-	}, [hydrated, templates, tone, platforms, xThreadLength]);
+	// The active template is whichever saved template exactly matches the current
+	// workflow + prefs — derived, so it lights up on apply/save and clears the
+	// moment the user diverges, with no effect or manual bookkeeping.
+	const activeTemplateId = useMemo(
+		() =>
+			templates.find((t) => templateMatchesState(t, workflow, prefs))?.id ??
+			null,
+		[templates, workflow, prefs],
+	);
 
 	const { history, upsert, remove: removeHistoryEntry } = useHistory();
 
@@ -171,22 +149,25 @@ export function useWriter() {
 		return () => clearTimeout(id);
 	}, [editableDrafts]);
 
-	const togglePlatform = useCallback((p: PlatformType) => {
-		setPlatforms((cur) =>
-			cur.includes(p) ? cur.filter((x) => x !== p) : [...cur, p],
-		);
-		setActiveTemplateId(null);
-	}, []);
+	const setTone = useCallback(
+		(t: ToneType) => workflowStorage.set({ ...workflow, tone: t }),
+		[workflow],
+	);
 
-	const setToneAndClearActive = useCallback((t: ToneType) => {
-		setTone(t);
-		setActiveTemplateId(null);
-	}, []);
+	const togglePlatform = useCallback(
+		(p: PlatformType) => {
+			const next = platforms.includes(p)
+				? platforms.filter((x) => x !== p)
+				: [...platforms, p];
+			workflowStorage.set({ ...workflow, platforms: next });
+		},
+		[workflow, platforms],
+	);
 
-	const setXThreadLengthAndClearActive = useCallback((n: number) => {
-		setXThreadLength(n);
-		setActiveTemplateId(null);
-	}, []);
+	const setXThreadLength = useCallback(
+		(n: number) => workflowStorage.set({ ...workflow, xThreadLength: n }),
+		[workflow],
+	);
 
 	const resetResults = useCallback(() => {
 		setPreview(null);
@@ -344,37 +325,26 @@ export function useWriter() {
 				xThreadLength,
 				preferences: prefsStorage.get(),
 			};
-			setTemplates((cur) => {
-				// Replace any existing template with the same name (case-insensitive).
-				const without = cur.filter(
-					(t) => t.name.toLowerCase() !== trimmed.toLowerCase(),
-				);
-				const updated = [entry, ...without].slice(0, MAX_TEMPLATES);
-				templatesStorage.save(updated);
-				return updated;
-			});
-			// The just-saved template captures the current state verbatim — mark it
-			// active so the highlight reflects reality.
-			setActiveTemplateId(entry.id);
+			// Replace any existing template with the same name (case-insensitive).
+			const without = templatesStorage
+				.get()
+				.filter((t) => t.name.toLowerCase() !== trimmed.toLowerCase());
+			templatesStorage.set([entry, ...without].slice(0, MAX_TEMPLATES));
 		},
 		[tone, platforms, xThreadLength],
 	);
 
 	const applyTemplate = useCallback((t: PresetTemplateType) => {
-		setTone(t.tone);
-		setPlatforms(t.platforms);
-		setXThreadLength(t.xThreadLength);
+		workflowStorage.set({
+			tone: t.tone,
+			platforms: t.platforms,
+			xThreadLength: t.xThreadLength,
+		});
 		prefsStorage.set(t.preferences);
-		setActiveTemplateId(t.id);
 	}, []);
 
 	const deleteTemplate = useCallback((id: string) => {
-		setTemplates((cur) => {
-			const updated = cur.filter((t) => t.id !== id);
-			templatesStorage.save(updated);
-			return updated;
-		});
-		setActiveTemplateId((cur) => (cur === id ? null : cur));
+		templatesStorage.set(templatesStorage.get().filter((t) => t.id !== id));
 	}, []);
 
 	const loadFromHistory = useCallback((entry: HistoryEntryType) => {
@@ -387,15 +357,16 @@ export function useWriter() {
 			setText(entry.input.text);
 			setUrl("");
 		}
-		setTone(entry.tone);
-		setPlatforms(entry.platforms);
-		setXThreadLength(entry.xThreadLength);
+		workflowStorage.set({
+			tone: entry.tone,
+			platforms: entry.platforms,
+			xThreadLength: entry.xThreadLength,
+		});
 		setPreview(entry.preview);
 		setEditableDrafts(entry.preview.drafts);
 		setLastUsage(entry.preview.usage ?? null);
 		setLastInput(entry.input);
 		setError(null);
-		setActiveTemplateId(null);
 	}, []);
 
 	return {
@@ -406,11 +377,11 @@ export function useWriter() {
 		text,
 		setText,
 		tone,
-		setTone: setToneAndClearActive,
+		setTone,
 		platforms,
 		togglePlatform,
 		xThreadLength,
-		setXThreadLength: setXThreadLengthAndClearActive,
+		setXThreadLength,
 		isGenerating,
 		preview,
 		editableDrafts,

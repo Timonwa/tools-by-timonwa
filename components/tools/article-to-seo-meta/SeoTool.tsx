@@ -32,6 +32,9 @@ export default function SeoTool() {
 	const [usage, setUsage] = useState<TokenUsageType | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [initial, setInitial] = useState<SeoFormParamsType | undefined>();
+	// Bumped on a history restore to remount SeoForm with fresh seed values
+	// (React's "reset all state via key" pattern — no restore effect needed).
+	const [restoreNonce, setRestoreNonce] = useState(0);
 	const { history, upsert, remove } = useHistory();
 
 	function handleResult(
@@ -59,6 +62,7 @@ export default function SeoTool() {
 			primaryKeyword: entry.primaryKeyword,
 			variationCount: entry.variationCount,
 		});
+		setRestoreNonce((n) => n + 1);
 		setResult(entry.result);
 		setEditableVariations(entry.result.variations);
 		setUsage(entry.usage ?? null);
@@ -110,6 +114,7 @@ export default function SeoTool() {
 				</CardHeader>
 				<CardContent>
 					<SeoForm
+						key={restoreNonce}
 						onResult={handleResult}
 						onLoadingChange={setLoading}
 						initial={initial}
