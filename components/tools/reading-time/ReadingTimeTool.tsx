@@ -38,7 +38,7 @@ export default function ReadingTimeTool() {
 		<div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
 			<Card className="min-w-0 self-start">
 				<CardContent className="space-y-3">
-					<div className="space-y-2">
+					<div className="flex flex-col gap-2">
 						<label htmlFor="rt-input" className="text-sm font-medium">
 							Your text
 						</label>

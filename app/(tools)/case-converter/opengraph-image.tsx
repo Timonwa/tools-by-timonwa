@@ -13,7 +13,7 @@ export default function Image() {
 		titleAccent: "Converter",
 		subtitle:
 			"Switch text between UPPERCASE, Title Case, camelCase, snake_case, and more — then copy.",
-		pills: ["12 cases", "Live preview", "One-click copy"],
+		pills: ["17 cases", "Live preview", "One-click copy"],
 		accent: "#fb7185",
 		backgroundTint: "#4c0519",
 	});

@@ -47,17 +47,19 @@ export default function WordCounterTool() {
 		<div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
 			<Card className="min-w-0 self-start">
 				<CardContent className="space-y-3">
-					<label htmlFor="counter-input" className="text-sm font-medium">
-						Your text
-					</label>
-					<Textarea
-						id="counter-input"
-						value={text}
-						onChange={(e) => setText(e.target.value)}
-						placeholder="Paste or type your text…"
-						className="min-h-64 max-h-96 overflow-y-auto"
-						autoFocus
-					/>
+					<div className="flex flex-col gap-2">
+						<label htmlFor="counter-input" className="text-sm font-medium">
+							Your text
+						</label>
+						<Textarea
+							id="counter-input"
+							value={text}
+							onChange={(e) => setText(e.target.value)}
+							placeholder="Paste or type your text…"
+							className="min-h-64 max-h-96 overflow-y-auto"
+							autoFocus
+						/>
+					</div>
 					<DraftReuseControls
 						id={reuseId}
 						reuse={reuse}
