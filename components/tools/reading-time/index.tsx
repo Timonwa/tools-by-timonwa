@@ -1,7 +1,9 @@
 import { ClockIcon } from "lucide-react";
 
+import ToolContent from "@/components/_shared/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
+import { readingTimeContent } from "@/components/tools/reading-time/content";
 import ReadingTimeTool from "@/components/tools/reading-time/ReadingTimeTool";
 import { PageHero } from "@/components/ui";
 
@@ -29,6 +31,7 @@ export default function ReadingTimePageContent() {
 					subtitle="Paste an article to see reading and speaking time at your chosen pace — and grab a copy-ready “X min read” label for the top of your post. Nothing leaves your browser."
 				/>
 				<ReadingTimeTool />
+				<ToolContent content={readingTimeContent} currentSlug="reading-time" />
 			</ToolMain>
 		</>
 	);
