@@ -1,9 +1,10 @@
 import { ImageResponse } from "next/og";
 
-import { SITE_DOMAIN, SITE_NAME } from "@/lib/config/site";
+import { SITE_DOMAIN } from "@/lib/config/site";
 
 export const runtime = "edge";
-export const alt = `${SITE_NAME} — Small, focused, open-source tools`;
+export const alt =
+	"Article to Social Posts — turn an article or draft into platform-optimized posts for X, LinkedIn, Threads, Bluesky, Mastodon, and Substack";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -18,7 +19,7 @@ export default async function Image() {
 				justifyContent: "space-between",
 				padding: "80px",
 				background:
-					"radial-gradient(1000px 600px at 15% 10%, #1e1b4b 0%, #0a0a0a 60%)",
+					"radial-gradient(1000px 600px at 15% 10%, #052e1e 0%, #0a0a0a 60%)",
 				color: "#fafafa",
 				fontFamily: "sans-serif",
 			}}
@@ -37,10 +38,12 @@ export default async function Image() {
 						width: "12px",
 						height: "12px",
 						borderRadius: "9999px",
-						background: "#818cf8",
+						background: "#34d399",
 					}}
 				/>
-				<div style={{ display: "flex" }}>Open source · MIT</div>
+				<div style={{ display: "flex" }}>
+					Social post generator · Open source
+				</div>
 			</div>
 
 			<div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
@@ -58,21 +61,21 @@ export default async function Image() {
 						letterSpacing: "-0.04em",
 					}}
 				>
-					<div style={{ display: "flex" }}>Tools</div>
-					<div style={{ display: "flex" }}>by</div>
-					<div style={{ display: "flex", color: "#818cf8" }}>Timonwa</div>
+					<div style={{ display: "flex" }}>Article</div>
+					<div style={{ display: "flex" }}>to</div>
+					<div style={{ display: "flex", color: "#34d399" }}>Social Posts</div>
 				</div>
 				<div
 					style={{
 						display: "flex",
-						fontSize: "40px",
+						fontSize: "38px",
 						color: "#d4d4d8",
 						lineHeight: 1.3,
 						maxWidth: "1000px",
 					}}
 				>
-					Small, focused, open-source tools. One home for software that does one
-					thing well.
+					Turn an article or draft into platform-ready posts — with tone,
+					hashtag rules, and X threads.
 				</div>
 			</div>
 
@@ -91,7 +94,7 @@ export default async function Image() {
 						flexWrap: "wrap",
 					}}
 				>
-					{["Free", "No sign-up", "Open source"].map((p) => (
+					{["6 platforms", "URL or draft", "X threads"].map((p) => (
 						<div
 							key={p}
 							style={{

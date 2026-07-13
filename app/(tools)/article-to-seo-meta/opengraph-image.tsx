@@ -48,14 +48,19 @@ export default async function Image() {
 				<div
 					style={{
 						display: "flex",
-						flexDirection: "column",
-						fontSize: "116px",
+						flexDirection: "row",
+						gap: "12px",
+						alignItems: "center",
+						justifyContent: "flex-start",
+						flexWrap: "wrap",
+						fontSize: "120px",
 						fontWeight: 700,
 						lineHeight: 1.0,
 						letterSpacing: "-0.04em",
 					}}
 				>
-					<div style={{ display: "flex" }}>Article to</div>
+					<div style={{ display: "flex" }}>Article</div>
+					<div style={{ display: "flex" }}>to</div>
 					<div style={{ display: "flex", color: "#f59e0b" }}>SEO Meta</div>
 				</div>
 				<div
