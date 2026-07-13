@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import {
 	CREATOR_NAME,
+	CREATOR_SAME_AS,
 	CREATOR_TWITTER,
 	CREATOR_URL,
 	REPO_URL,
@@ -85,7 +86,7 @@ const jsonLd = {
 		"@type": "Person",
 		name: CREATOR_NAME,
 		url: CREATOR_URL,
-		sameAs: ["https://twitter.com/timonwa_", "https://timonwa.com"],
+		sameAs: CREATOR_SAME_AS,
 	},
 	sameAs: [REPO_URL],
 };

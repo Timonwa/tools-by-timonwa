@@ -7,7 +7,7 @@ import { buttonClasses } from "@/components/ui/Button";
 import ByokDrawer from "@/components/_shared/byok/ByokDrawer";
 import ToolsMenu from "@/components/layout/ToolsMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
-import { REPO_URL } from "@/lib/config/site";
+import { REPO_URL, SPONSOR_URL } from "@/lib/config/site";
 
 type IconComponentType = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -60,7 +60,7 @@ export default function Navbar({
 				<ByokDrawer />
 				{actionsSlot}
 				<a
-					href="https://buymeacoffee.com/timonwa"
+					href={SPONSOR_URL}
 					target="_blank"
 					rel="noopener noreferrer"
 					aria-label="Support on Buy Me a Coffee"

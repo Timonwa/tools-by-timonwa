@@ -5,14 +5,16 @@ import {
 	CREATOR_NAME,
 	CREATOR_URL,
 	LICENSE_URL,
+	PRIVACY_URL,
 	REPO_URL,
 	SITE_NAME,
+	TERMS_URL,
 } from "@/lib/config/site";
 
 const LEGAL_LINKS = [
 	{ href: LICENSE_URL, label: "MIT License" },
-	{ href: "https://tech.timonwa.com/terms", label: "Terms" },
-	{ href: "https://tech.timonwa.com/privacy", label: "Privacy" },
+	{ href: TERMS_URL, label: "Terms" },
+	{ href: PRIVACY_URL, label: "Privacy" },
 ];
 
 // Resolved at build/module load (not during render) so it stays static under
