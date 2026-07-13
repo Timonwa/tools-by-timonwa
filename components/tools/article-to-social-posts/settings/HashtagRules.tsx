@@ -7,7 +7,7 @@ import {
 	normalizeHashtag,
 } from "@/components/tools/article-to-social-posts/constants/preferences";
 import type { WritingPreferencesType } from "@/components/tools/article-to-social-posts/types";
-import Input from "@/components/ui/Input";
+import { Input } from "@/components/ui";
 import { cn } from "@/lib/utils/cn";
 
 type HashtagRulesProps = {

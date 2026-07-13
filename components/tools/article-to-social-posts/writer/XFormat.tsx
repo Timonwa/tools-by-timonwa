@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 
-import Input from "@/components/ui/Input";
+import { Input } from "@/components/ui";
 
 type XFormatProps = {
 	length: number;

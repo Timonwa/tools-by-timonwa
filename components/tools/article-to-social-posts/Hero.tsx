@@ -1,6 +1,6 @@
 import { Share2Icon } from "lucide-react";
 
-import PageHero from "@/components/ui/PageHero";
+import { PageHero } from "@/components/ui";
 
 export default function Hero() {
 	return (

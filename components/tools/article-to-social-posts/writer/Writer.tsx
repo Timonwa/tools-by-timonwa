@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useWriter } from "@/components/tools/article-to-social-posts/hooks/use-writer";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui";
 import ArticleCard from "./ArticleCard";
 import DraftCard from "./DraftCard";
 import GenerateForm from "./GenerateForm";

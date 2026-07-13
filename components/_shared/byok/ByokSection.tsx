@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import { useId, useState } from "react";
 
-import Input from "@/components/ui/Input";
+import { Input } from "@/components/ui";
 import { BYOK_MODELS, type ByokModelType } from "@/lib/config/byok";
 
 type StatusType =

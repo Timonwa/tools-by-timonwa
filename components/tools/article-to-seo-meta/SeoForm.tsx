@@ -8,9 +8,8 @@ import {
 	type SeoMetaResultType,
 	type TokenUsageType,
 } from "@/components/tools/article-to-seo-meta/types";
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
-import Textarea from "@/components/ui/Textarea";
+import { Button, Input, Textarea } from "@/components/ui";
+
 import { generateSeoMeta } from "@/lib/tools/article-to-seo-meta/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 

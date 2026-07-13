@@ -11,8 +11,8 @@ import {
 	TITLE_MAX,
 	TITLE_MIN,
 } from "@/components/tools/article-to-seo-meta/types";
-import Button from "@/components/ui/Button";
-import Textarea from "@/components/ui/Textarea";
+import { Button, Textarea } from "@/components/ui";
+
 import { cn } from "@/lib/utils/cn";
 
 type RangeStatusType = "in-range" | "close" | "out";

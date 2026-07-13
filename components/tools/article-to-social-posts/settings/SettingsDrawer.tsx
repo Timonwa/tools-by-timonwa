@@ -5,8 +5,8 @@ import { useState, useSyncExternalStore } from "react";
 
 import type { WritingPreferencesType } from "@/components/tools/article-to-social-posts/types";
 import { prefsStorage } from "@/components/tools/article-to-social-posts/utils/storage";
-import Button from "@/components/ui/Button";
-import Drawer from "@/components/ui/Drawer";
+import { Button, Drawer } from "@/components/ui";
+
 import HashtagRulesSection from "./HashtagRules";
 import WritingPreferencesSection from "./WritingPreferences";
 

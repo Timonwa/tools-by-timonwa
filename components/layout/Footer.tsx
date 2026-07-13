@@ -1,6 +1,6 @@
 import { HeartIcon, WrenchIcon } from "lucide-react";
 
-import GithubMark from "@/components/ui/GithubMark";
+import { GithubMark } from "@/components/ui";
 import {
 	CREATOR_NAME,
 	CREATOR_URL,

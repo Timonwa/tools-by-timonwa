@@ -11,8 +11,8 @@ import {
 } from "@/components/tools/article-to-social-posts/constants/preferences";
 import { TONES } from "@/components/tools/article-to-social-posts/constants/tones";
 import type { PresetTemplateType } from "@/components/tools/article-to-social-posts/types";
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+import { Button, Input } from "@/components/ui";
+
 import { cn } from "@/lib/utils/cn";
 
 const toneLabel = (tone: PresetTemplateType["tone"]): string =>

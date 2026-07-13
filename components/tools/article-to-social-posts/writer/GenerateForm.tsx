@@ -16,16 +16,17 @@ import type {
 	PresetTemplateType,
 	ToneType,
 } from "@/components/tools/article-to-social-posts/types";
-import Button from "@/components/ui/Button";
 import {
+	Button,
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/Card";
-import Input from "@/components/ui/Input";
-import Textarea from "@/components/ui/Textarea";
+	Input,
+	Textarea,
+} from "@/components/ui";
+
 import { cn } from "@/lib/utils/cn";
 import PlatformPicker from "./PlatformPicker";
 import TemplatesPicker from "./TemplatesPicker";

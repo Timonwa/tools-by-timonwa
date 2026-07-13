@@ -3,7 +3,7 @@ import { CoffeeIcon } from "lucide-react";
 import Link from "next/link";
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
-import { buttonClasses } from "@/components/ui/Button";
+import { buttonClasses } from "@/components/ui";
 import ByokDrawer from "@/components/_shared/byok/ByokDrawer";
 import ToolsMenu from "@/components/layout/ToolsMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";

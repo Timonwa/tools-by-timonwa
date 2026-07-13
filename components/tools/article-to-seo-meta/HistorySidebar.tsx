@@ -9,7 +9,7 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/Card";
+} from "@/components/ui";
 import { timeAgo } from "@/lib/utils/time";
 
 type HistorySidebarProps = {

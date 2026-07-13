@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui";
 import { TOOLS } from "@/lib/config/tools";
 import { cn } from "@/lib/utils/cn";
 

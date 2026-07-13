@@ -5,8 +5,13 @@ import type {
 	ArticlePreviewType,
 	TokenUsageType,
 } from "@/components/tools/article-to-social-posts/types";
-import Button from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import {
+	Button,
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui";
 
 type Props = {
 	article: ArticlePreviewType;

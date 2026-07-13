@@ -14,9 +14,14 @@ import {
 	PLATFORM_LABELS,
 } from "@/components/tools/article-to-social-posts/constants/platforms";
 import type { PostDraftType } from "@/components/tools/article-to-social-posts/types";
-import Button from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import Textarea from "@/components/ui/Textarea";
+import {
+	Button,
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+	Textarea,
+} from "@/components/ui";
 
 // Per-post char limit inside a thread, by group.
 const THREAD_POST_LIMITS: Record<PostDraftType["group"], number> = {
