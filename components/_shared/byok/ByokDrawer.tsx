@@ -70,11 +70,12 @@ export default function ByokDrawer() {
 				onClick={() => setOpen(true)}
 				aria-label={saved ? "API key — your own key is active" : "API key"}
 				aria-expanded={open}
-				className="relative"
+				className="w-full justify-start xl:w-auto xl:justify-center"
 			>
 				<KeyRoundIcon aria-hidden className="w-4 h-4" />
+				<span className="xl:hidden">Set API key</span>
 				{saved && (
-					<span aria-hidden className="absolute top-1 right-1">
+					<span aria-hidden className="relative ml-auto flex h-2 w-2">
 						<span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-75" />
 						<span className="relative block w-2 h-2 rounded-full bg-primary" />
 					</span>
@@ -87,7 +88,7 @@ export default function ByokDrawer() {
 				title={
 					<span className="flex items-center gap-2">
 						<KeyRoundIcon aria-hidden className="w-4 h-4 text-primary" />
-						API key
+						Set API key
 					</span>
 				}
 				description="Bring your own Google AI Studio key. Used for every AI tool in the hub."
