@@ -1,12 +1,10 @@
 "use client";
 
-import { useCallback, useSyncExternalStore } from "react";
-
 import type {
 	SeoMetaResultType,
 	TokenUsageType,
 } from "@/components/tools/article-to-seo-meta/types";
-import { createLocalStore } from "@/lib/utils/local-store";
+import { createHistoryStore } from "@/lib/utils/create-history-store";
 
 const HISTORY_KEY = "article-to-seo-meta:history";
 const MAX_HISTORY = 10;
@@ -22,14 +20,12 @@ export type HistoryEntryType = {
 	timestamp: number;
 };
 
-const EMPTY: HistoryEntryType[] = [];
-
 const load = (): HistoryEntryType[] => {
 	try {
 		const raw = window.localStorage.getItem(HISTORY_KEY);
-		if (!raw) return EMPTY;
+		if (!raw) return [];
 		const parsed = JSON.parse(raw) as unknown[];
-		if (!Array.isArray(parsed)) return EMPTY;
+		if (!Array.isArray(parsed)) return [];
 		return parsed.filter(
 			(e): e is HistoryEntryType =>
 				!!e &&
@@ -38,7 +34,7 @@ const load = (): HistoryEntryType[] => {
 				typeof (e as HistoryEntryType).article === "string",
 		);
 	} catch {
-		return EMPTY;
+		return [];
 	}
 };
 
@@ -48,40 +44,21 @@ const save = (items: HistoryEntryType[]) => {
 	} catch {}
 };
 
-const store = createLocalStore<HistoryEntryType[]>({
+export const useHistory = createHistoryStore<
+	HistoryEntryType,
+	Omit<HistoryEntryType, "id"> & { id?: string }
+>({
 	read: load,
 	write: save,
-	serverValue: EMPTY,
+	// Dedup by article text — regenerating the same article updates the
+	// existing entry rather than creating a new one.
+	applyUpsert: (current, entry) => {
+		const existing = current.find((h) => h.article === entry.article);
+		const full: HistoryEntryType = {
+			...entry,
+			id: existing?.id ?? entry.id ?? crypto.randomUUID(),
+		};
+		const without = current.filter((h) => h.article !== entry.article);
+		return [full, ...without].slice(0, MAX_HISTORY);
+	},
 });
-
-export function useHistory() {
-	const history = useSyncExternalStore(
-		store.subscribe,
-		store.getSnapshot,
-		store.getServerSnapshot,
-	);
-
-	const upsert = useCallback(
-		(entry: Omit<HistoryEntryType, "id"> & { id?: string }) => {
-			const current = store.get();
-			// Dedup by article text — regenerating the same article updates the
-			// existing entry rather than creating a new one.
-			const existing = current.find((h) => h.article === entry.article);
-			const full: HistoryEntryType = {
-				...entry,
-				id: existing?.id ?? entry.id ?? crypto.randomUUID(),
-			};
-			const without = current.filter((h) => h.article !== entry.article);
-			store.set([full, ...without].slice(0, MAX_HISTORY));
-		},
-		[],
-	);
-
-	const remove = useCallback((id: string) => {
-		store.set(store.get().filter((h) => h.id !== id));
-	}, []);
-
-	const clear = useCallback(() => store.set(EMPTY), []);
-
-	return { history, upsert, remove, clear };
-}

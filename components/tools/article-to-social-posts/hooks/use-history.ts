@@ -1,14 +1,12 @@
 "use client";
 
-import { useCallback, useSyncExternalStore } from "react";
-
 import type {
 	DraftInputType,
 	PlatformType,
 	PreviewResultType,
 	ToneType,
 } from "@/components/tools/article-to-social-posts/types";
-import { createLocalStore } from "@/lib/utils/local-store";
+import { createHistoryStore } from "@/lib/utils/create-history-store";
 
 const HISTORY_KEY = "article-to-social-posts:history";
 const MAX_HISTORY = 10;
@@ -41,17 +39,15 @@ const migrate = (raw: unknown): HistoryEntryType | null => {
 	return null;
 };
 
-const EMPTY: HistoryEntryType[] = [];
-
 const load = (): HistoryEntryType[] => {
 	try {
 		const raw = window.localStorage.getItem(HISTORY_KEY);
-		if (!raw) return EMPTY;
+		if (!raw) return [];
 		const parsed = JSON.parse(raw) as unknown[];
-		if (!Array.isArray(parsed)) return EMPTY;
+		if (!Array.isArray(parsed)) return [];
 		return parsed.map(migrate).filter((e): e is HistoryEntryType => e !== null);
 	} catch {
-		return EMPTY;
+		return [];
 	}
 };
 
@@ -64,48 +60,30 @@ const save = (items: HistoryEntryType[]) => {
 const sameUrl = (entry: HistoryEntryType, url: string) =>
 	entry.input.kind === "url" && entry.input.url === url;
 
-const store = createLocalStore<HistoryEntryType[]>({
+export const useHistory = createHistoryStore<
+	HistoryEntryType,
+	Omit<HistoryEntryType, "id"> & { id?: string }
+>({
 	read: load,
 	write: save,
-	serverValue: EMPTY,
-});
-
-export function useHistory() {
-	const history = useSyncExternalStore(
-		store.subscribe,
-		store.getSnapshot,
-		store.getServerSnapshot,
-	);
-
-	const upsert = useCallback(
-		(entry: Omit<HistoryEntryType, "id"> & { id?: string }) => {
-			const current = store.get();
-			// URL entries dedup by URL — re-generating the same article replaces
-			// the previous entry. Draft entries are always fresh — each paste is
-			// its own record, even if the text is identical.
-			if (entry.input.kind === "url") {
-				const url = entry.input.url;
-				const existing = current.find((h) => sameUrl(h, url));
-				const full: HistoryEntryType = {
-					...entry,
-					id: existing?.id ?? crypto.randomUUID(),
-				};
-				const without = current.filter((h) => !sameUrl(h, url));
-				store.set([full, ...without].slice(0, MAX_HISTORY));
-				return;
-			}
+	// URL entries dedup by URL — re-generating the same article replaces the
+	// previous entry. Draft entries are always fresh — each paste is its own
+	// record, even if the text is identical.
+	applyUpsert: (current, entry) => {
+		if (entry.input.kind === "url") {
+			const url = entry.input.url;
+			const existing = current.find((h) => sameUrl(h, url));
 			const full: HistoryEntryType = {
 				...entry,
-				id: entry.id ?? crypto.randomUUID(),
+				id: existing?.id ?? crypto.randomUUID(),
 			};
-			store.set([full, ...current].slice(0, MAX_HISTORY));
-		},
-		[],
-	);
-
-	const remove = useCallback((id: string) => {
-		store.set(store.get().filter((h) => h.id !== id));
-	}, []);
-
-	return { history, upsert, remove };
-}
+			const without = current.filter((h) => !sameUrl(h, url));
+			return [full, ...without].slice(0, MAX_HISTORY);
+		}
+		const full: HistoryEntryType = {
+			...entry,
+			id: entry.id ?? crypto.randomUUID(),
+		};
+		return [full, ...current].slice(0, MAX_HISTORY);
+	},
+});
