@@ -6,12 +6,7 @@ import type {
 	TokenUsageType,
 } from "@/components/tools/article-to-social-posts/types";
 import Button from "@/components/ui/Button";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 
 type Props = {
 	article: ArticlePreviewType;
@@ -20,7 +15,12 @@ type Props = {
 	onCopyAll: () => void;
 };
 
-export default function ArticleCard({ article, usage, copied, onCopyAll }: Props) {
+export default function ArticleCard({
+	article,
+	usage,
+	copied,
+	onCopyAll,
+}: Props) {
 	return (
 		<Card>
 			<CardHeader>

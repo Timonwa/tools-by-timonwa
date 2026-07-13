@@ -8,13 +8,13 @@
   <i>Built by <a href="https://links.timonwa.com">Timonwa</a> with <a href="https://adk.iqai.com/">ADK-TS</a></i>
   <br/><br/>
 
-  <a href="./LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green?style=flat-square" /></a>
-  <a href="./CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" /></a>
-  <a href="https://tech.timonwa.com/code-of-conduct"><img alt="Contributor Covenant" src="https://img.shields.io/badge/Contributor%20Covenant-v2.1-7c3aed?style=flat-square" /></a>
-  <a href="https://nextjs.org"><img alt="Next.js 15" src="https://img.shields.io/badge/Next.js-15-000?style=flat-square&logo=next.js" /></a>
-  <a href="https://www.typescriptlang.org"><img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript&logoColor=white" /></a>
-  <a href="https://biomejs.dev"><img alt="Biome" src="https://img.shields.io/badge/Biome-2-60a5fa?style=flat-square&logo=biome&logoColor=white" /></a>
-  <a href="https://buymeacoffee.com/timonwa"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-timonwa-FFDD00?style=flat-square&logo=buy-me-a-coffee&logoColor=black" /></a>
+<a href="./LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green?style=flat-square" /></a>
+<a href="./CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" /></a>
+<a href="https://tech.timonwa.com/code-of-conduct"><img alt="Contributor Covenant" src="https://img.shields.io/badge/Contributor%20Covenant-v2.1-7c3aed?style=flat-square" /></a>
+<a href="https://nextjs.org"><img alt="Next.js 15" src="https://img.shields.io/badge/Next.js-15-000?style=flat-square&logo=next.js" /></a>
+<a href="https://www.typescriptlang.org"><img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript&logoColor=white" /></a>
+<a href="https://biomejs.dev"><img alt="Biome" src="https://img.shields.io/badge/Biome-2-60a5fa?style=flat-square&logo=biome&logoColor=white" /></a>
+<a href="https://buymeacoffee.com/timonwa"><img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-timonwa-FFDD00?style=flat-square&logo=buy-me-a-coffee&logoColor=black" /></a>
 </div>
 
 ---
@@ -35,7 +35,7 @@ Paste a published blog URL **or drop in an unpublished draft** (up to ~2,500 wor
 - **Hashtag rules** — always include or never use specific tags. Universal, enforced in-prompt.
 - **Preset templates** — save a named snapshot of tone + platforms + prefs. One click to reapply. The active template is highlighted; hover shows what's inside.
 - **Workflow memory** — tone, platforms, thread length, prefs, templates, and hashtag rules all survive page reloads.
-- **Local history** — up to 10 recent generations (URLs *and* drafts) stored in your browser. Click to restore, click Remove to forget.
+- **Local history** — up to 10 recent generations (URLs _and_ drafts) stored in your browser. Click to restore, click Remove to forget.
 - **URL on copy, not in draft** — the agent keeps article URLs out of the draft text so you can use CTA phrases like "Read more ↓". When you hit Copy, the URL gets appended automatically.
 - **Article preview card** — title and author extracted from the fetched article (URL mode), with the source link. Draft mode marks the card as "Unpublished draft" instead.
 - **Article cache (URL mode)** — fetched articles are cached server-side for 1 hour. Regenerating drafts doesn't re-fetch.
@@ -47,11 +47,11 @@ Paste a published blog URL **or drop in an unpublished draft** (up to ~2,500 wor
 
 The agent uses an explicit map to dedup content across similar platforms:
 
-| Group              | Platforms                   | Char limit | Style                                             |
-| ------------------ | --------------------------- | ---------- | ------------------------------------------------- |
-| short-casual       | X, Bluesky                  | 280        | Punchy hook + CTA. 2-3 hashtags. Casual.          |
-| medium-community   | Threads, Mastodon, Substack | 500        | Community-oriented, conversational. 0-2 hashtags. |
-| long-professional  | LinkedIn                    | 3000       | Professional framing, detailed. 3-5 hashtags.     |
+| Group             | Platforms                   | Char limit | Style                                             |
+| ----------------- | --------------------------- | ---------- | ------------------------------------------------- |
+| short-casual      | X, Bluesky                  | 280        | Punchy hook + CTA. 2-3 hashtags. Casual.          |
+| medium-community  | Threads, Mastodon, Substack | 500        | Community-oriented, conversational. 0-2 hashtags. |
+| long-professional | LinkedIn                    | 3000       | Professional framing, detailed. 3-5 hashtags.     |
 
 Selecting X + Bluesky? → 1 draft generated, shown on both cards.
 Selecting all 6? → 3 drafts generated, distributed to 6 cards.
@@ -128,31 +128,31 @@ Open [http://localhost:3000](http://localhost:3000), paste a blog URL (or your d
 
 **Required:**
 
-| Variable         | Purpose                  |
-| ---------------- | ------------------------ |
-| `GOOGLE_API_KEY` | Powers the Gemini LLM    |
+| Variable         | Purpose               |
+| ---------------- | --------------------- |
+| `GOOGLE_API_KEY` | Powers the Gemini LLM |
 
 **Optional:**
 
-| Variable                                 | Default              | Purpose                                                                |
-| ---------------------------------------- | -------------------- | ---------------------------------------------------------------------- |
-| `LLM_MODEL`                              | `gemini-2.5-flash`   | LLM to use                                                             |
-| `ADK_DEBUG`                              | `false`              | Verbose agent logs                                                     |
-| `UPSTASH_REDIS_REST_URL`                 | *(empty)*            | Hosted rate limiting. When absent, rate limits aren't enforced.        |
-| `UPSTASH_REDIS_REST_TOKEN`               | *(empty)*            | Pair of the above.                                                     |
-| `NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` | *(empty)*            | Cloudflare Web Analytics beacon token. Leave blank to disable.         |
+| Variable                                 | Default            | Purpose                                                         |
+| ---------------------------------------- | ------------------ | --------------------------------------------------------------- |
+| `LLM_MODEL`                              | `gemini-2.5-flash` | LLM to use                                                      |
+| `ADK_DEBUG`                              | `false`            | Verbose agent logs                                              |
+| `UPSTASH_REDIS_REST_URL`                 | _(empty)_          | Hosted rate limiting. When absent, rate limits aren't enforced. |
+| `UPSTASH_REDIS_REST_TOKEN`               | _(empty)_          | Pair of the above.                                              |
+| `NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` | _(empty)_          | Cloudflare Web Analytics beacon token. Leave blank to disable.  |
 
 ## Scripts
 
-| Command          | What it does                              |
-| ---------------- | ----------------------------------------- |
-| `pnpm dev`       | Next.js dev server (Turbopack)            |
-| `pnpm build`     | Production build                          |
-| `pnpm start`     | Start the production server               |
-| `pnpm format`    | Run Biome formatter                       |
-| `pnpm lint`      | Run Biome linter                          |
-| `pnpm check`     | Format + apply safe lint fixes            |
-| `pnpm typecheck` | TypeScript `--noEmit`                     |
+| Command          | What it does                   |
+| ---------------- | ------------------------------ |
+| `pnpm dev`       | Next.js dev server (Turbopack) |
+| `pnpm build`     | Production build               |
+| `pnpm start`     | Start the production server    |
+| `pnpm format`    | Run Biome formatter            |
+| `pnpm lint`      | Run Biome linter               |
+| `pnpm check`     | Format + apply safe lint fixes |
+| `pnpm typecheck` | TypeScript `--noEmit`          |
 
 A `pre-commit` hook runs `biome format --write` on staged files via `husky` + `lint-staged`.
 

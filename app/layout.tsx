@@ -69,7 +69,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
-				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: Tailwind-recommended pre-hydration snippet to avoid theme FOUC */}
+				{/* Tailwind-recommended pre-hydration snippet to avoid theme FOUC */}
 				<script dangerouslySetInnerHTML={{ __html: themeInit }} />
 			</head>
 			<body

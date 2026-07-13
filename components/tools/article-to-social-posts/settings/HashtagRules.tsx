@@ -17,7 +17,10 @@ type HashtagRulesProps = {
 
 type FieldType = "alwaysIncludeHashtags" | "neverUseHashtags";
 
-export default function HashtagRulesSection({ prefs, onChange }: HashtagRulesProps) {
+export default function HashtagRulesSection({
+	prefs,
+	onChange,
+}: HashtagRulesProps) {
 	const headingId = useId();
 
 	const add = (field: FieldType, raw: string) => {

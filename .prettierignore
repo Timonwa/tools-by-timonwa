@@ -1,0 +1,14 @@
+# Build output & deps
+.next/
+out/
+build/
+node_modules/
+
+# Generated / vendored
+next-env.d.ts
+pnpm-lock.yaml
+next-docs/
+public/
+
+# Lockfile-like
+*.min.*

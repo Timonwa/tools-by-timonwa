@@ -48,15 +48,15 @@ Open `http://localhost:3000`.
 
 ## Scripts
 
-| Command          | What it does                                             |
-| ---------------- | -------------------------------------------------------- |
-| `pnpm dev`       | Next.js dev server (Turbopack)                           |
-| `pnpm build`     | Production build                                         |
-| `pnpm start`     | Run the production build                                 |
-| `pnpm check`     | Biome: format + safe lint fixes (run before committing)  |
-| `pnpm lint`      | Biome lint only                                          |
-| `pnpm format`    | Biome format only                                        |
-| `pnpm typecheck` | TypeScript `--noEmit`                                    |
+| Command          | What it does                                            |
+| ---------------- | ------------------------------------------------------- |
+| `pnpm dev`       | Next.js dev server (Turbopack)                          |
+| `pnpm build`     | Production build                                        |
+| `pnpm start`     | Run the production build                                |
+| `pnpm check`     | Biome: format + safe lint fixes (run before committing) |
+| `pnpm lint`      | Biome lint only                                         |
+| `pnpm format`    | Biome format only                                       |
+| `pnpm typecheck` | TypeScript `--noEmit`                                   |
 
 A `pre-commit` hook runs `biome format --write` on staged files via `husky` + `lint-staged`, so most formatting is automatic.
 

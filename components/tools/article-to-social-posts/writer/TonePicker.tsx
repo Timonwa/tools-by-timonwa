@@ -9,7 +9,11 @@ type TonePickerProps = {
 	disabled?: boolean;
 };
 
-export default function TonePicker({ value, onChange, disabled }: TonePickerProps) {
+export default function TonePicker({
+	value,
+	onChange,
+	disabled,
+}: TonePickerProps) {
 	return (
 		<div>
 			<div className="text-sm font-medium mb-2">Tone</div>

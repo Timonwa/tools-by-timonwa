@@ -1,10 +1,5 @@
 export type PlatformType =
-	| "linkedin"
-	| "x"
-	| "bluesky"
-	| "threads"
-	| "mastodon"
-	| "substack";
+	"linkedin" | "x" | "bluesky" | "threads" | "mastodon" | "substack";
 
 export type GroupType = "short" | "medium" | "long";
 
@@ -14,15 +9,10 @@ export type GroupType = "short" | "medium" | "long";
  * - `text` — unpublished draft pasted directly; no fetch, no cache.
  */
 export type DraftInputType =
-	| { kind: "url"; url: string }
-	| { kind: "text"; text: string };
+	{ kind: "url"; url: string } | { kind: "text"; text: string };
 
 export type ToneType =
-	| "auto"
-	| "professional"
-	| "casual"
-	| "educational"
-	| "punchy";
+	"auto" | "professional" | "casual" | "educational" | "punchy";
 
 export type PostDraftType = {
 	group: GroupType;

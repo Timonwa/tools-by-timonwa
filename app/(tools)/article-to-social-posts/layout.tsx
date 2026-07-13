@@ -100,7 +100,7 @@ export default function ArticleToSocialPostsLayout({
 		<div className="tool-article-to-social-posts contents">
 			<script
 				type="application/ld+json"
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data per Next.js docs
+				// JSON-LD structured data per Next.js docs
 				dangerouslySetInnerHTML={{
 					__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
 				}}

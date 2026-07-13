@@ -3,12 +3,7 @@ import type * as React from "react";
 import { cn } from "@/lib/utils/cn";
 
 type VariantType =
-	| "default"
-	| "destructive"
-	| "outline"
-	| "secondary"
-	| "ghost"
-	| "link";
+	"default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 type SizeType = "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg";
 
 type ButtonProps = React.ComponentProps<"button"> & {

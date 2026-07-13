@@ -87,7 +87,7 @@ export default function ArticleToSeoMetaLayout({
 		<div className="tool-article-to-seo-meta contents">
 			<script
 				type="application/ld+json"
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data per Next.js docs
+				// JSON-LD structured data per Next.js docs
 				dangerouslySetInnerHTML={{
 					__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
 				}}

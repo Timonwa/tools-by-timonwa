@@ -33,7 +33,11 @@ type Props = {
 	) => void;
 };
 
-export default function SeoResults({ variations, usage, onVariationChange }: Props) {
+export default function SeoResults({
+	variations,
+	usage,
+	onVariationChange,
+}: Props) {
 	return (
 		<div className="space-y-4">
 			{usage && usage.totalTokens > 0 && (
@@ -46,7 +50,7 @@ export default function SeoResults({ variations, usage, onVariationChange }: Pro
 			)}
 			{variations.map((v, i) => (
 				<VariationCard
-					// biome-ignore lint/suspicious/noArrayIndexKey: stable order
+					// stable order
 					key={i}
 					index={i + 1}
 					variation={v}

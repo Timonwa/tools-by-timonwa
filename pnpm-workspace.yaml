@@ -1,5 +1,5 @@
 allowBuilds:
-  '@google/genai': true
+  "@google/genai": true
   cpu-features: true
   protobufjs: true
   sharp: true

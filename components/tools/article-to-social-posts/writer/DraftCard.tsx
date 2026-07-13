@@ -15,12 +15,7 @@ import {
 } from "@/components/tools/article-to-social-posts/constants/platforms";
 import type { PostDraftType } from "@/components/tools/article-to-social-posts/types";
 import Button from "@/components/ui/Button";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import Textarea from "@/components/ui/Textarea";
 
 // Per-post char limit inside a thread, by group.
@@ -85,7 +80,7 @@ export default function DraftCard({
 							const postOver = post.length > threadPostLimit;
 							return (
 								<div
-									// biome-ignore lint/suspicious/noArrayIndexKey: stable order
+									// stable order
 									key={i}
 									className="rounded-md border border-border bg-muted/30 p-2 space-y-1"
 								>

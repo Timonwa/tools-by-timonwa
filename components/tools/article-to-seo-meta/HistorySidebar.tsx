@@ -68,7 +68,9 @@ export default function HistorySidebar({
 											{h.primaryKeyword && (
 												<>
 													<span>·</span>
-													<span className="truncate">"{h.primaryKeyword}"</span>
+													<span className="truncate">
+														&ldquo;{h.primaryKeyword}&rdquo;
+													</span>
 												</>
 											)}
 										</div>
