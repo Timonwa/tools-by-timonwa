@@ -10,6 +10,7 @@ import {
 	useTransition,
 } from "react";
 
+import { useToolDraft } from "@/components/_shared/shared-draft";
 import { MAX_TEMPLATES } from "@/components/tools/article-to-social-posts/constants/preferences";
 import type {
 	DraftInputType,
@@ -75,7 +76,13 @@ function sameTagList(a: string[], b: string[]): boolean {
 export function useWriter() {
 	const [inputKind, setInputKind] = useState<InputKindType>("url");
 	const [url, setUrl] = useState("");
-	const [text, setText] = useState("");
+	const {
+		text,
+		setText,
+		reuse: draftReuse,
+		toggleReuse: toggleDraftReuse,
+		clear: clearDraft,
+	} = useToolDraft();
 
 	// Persisted state lives in localStorage-backed external stores — read as the
 	// source of truth (no setState-in-effect hydration, no persist effect).
@@ -181,7 +188,7 @@ export function useWriter() {
 		setUrl("");
 		setText("");
 		resetResults();
-	}, [resetResults]);
+	}, [resetResults, setText]);
 
 	const currentInput = useCallback((): DraftInputType | null => {
 		if (inputKind === "url") {
@@ -347,27 +354,30 @@ export function useWriter() {
 		templatesStorage.set(templatesStorage.get().filter((t) => t.id !== id));
 	}, []);
 
-	const loadFromHistory = useCallback((entry: HistoryEntryType) => {
-		if (entry.input.kind === "url") {
-			setInputKind("url");
-			setUrl(entry.input.url);
-			setText("");
-		} else {
-			setInputKind("text");
-			setText(entry.input.text);
-			setUrl("");
-		}
-		workflowStorage.set({
-			tone: entry.tone,
-			platforms: entry.platforms,
-			xThreadLength: entry.xThreadLength,
-		});
-		setPreview(entry.preview);
-		setEditableDrafts(entry.preview.drafts);
-		setLastUsage(entry.preview.usage ?? null);
-		setLastInput(entry.input);
-		setError(null);
-	}, []);
+	const loadFromHistory = useCallback(
+		(entry: HistoryEntryType) => {
+			if (entry.input.kind === "url") {
+				setInputKind("url");
+				setUrl(entry.input.url);
+				setText("");
+			} else {
+				setInputKind("text");
+				setText(entry.input.text);
+				setUrl("");
+			}
+			workflowStorage.set({
+				tone: entry.tone,
+				platforms: entry.platforms,
+				xThreadLength: entry.xThreadLength,
+			});
+			setPreview(entry.preview);
+			setEditableDrafts(entry.preview.drafts);
+			setLastUsage(entry.preview.usage ?? null);
+			setLastInput(entry.input);
+			setError(null);
+		},
+		[setText],
+	);
 
 	return {
 		inputKind,
@@ -376,6 +386,9 @@ export function useWriter() {
 		setUrl,
 		text,
 		setText,
+		draftReuse,
+		toggleDraftReuse,
+		clearDraft,
 		tone,
 		setTone,
 		platforms,
