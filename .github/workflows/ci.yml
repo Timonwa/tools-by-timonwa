@@ -57,8 +57,11 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup
 
-      - name: Biome check (lint + format)
-        run: pnpm exec biome ci .
+      - name: Lint (ESLint)
+        run: pnpm lint
+
+      - name: Format check (Prettier)
+        run: pnpm format:check
 
       - name: Type check
         run: pnpm typecheck
