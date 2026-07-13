@@ -9,6 +9,7 @@ import {
 	Wand2Icon,
 } from "lucide-react";
 import { useId } from "react";
+import DraftReuseControls from "@/components/_shared/DraftReuseControls";
 import { MAX_DRAFT_CHARS } from "@/components/tools/article-to-social-posts/constants/draft-input";
 import type { InputKindType } from "@/components/tools/article-to-social-posts/hooks/use-writer";
 import type {
@@ -40,6 +41,9 @@ type GenerateFormProps = {
 	onUrlChange: (url: string) => void;
 	text: string;
 	onTextChange: (text: string) => void;
+	draftReuse: boolean;
+	onToggleDraftReuse: (next: boolean) => void;
+	onClearDraft: () => void;
 	tone: ToneType;
 	onToneChange: (tone: ToneType) => void;
 	platforms: PlatformType[];
@@ -63,6 +67,9 @@ export default function GenerateForm({
 	onUrlChange,
 	text,
 	onTextChange,
+	draftReuse,
+	onToggleDraftReuse,
+	onClearDraft,
 	tone,
 	onToneChange,
 	platforms,
@@ -81,6 +88,7 @@ export default function GenerateForm({
 	const urlInputId = useId();
 	const textInputId = useId();
 	const counterId = useId();
+	const reuseId = useId();
 
 	const hasInput =
 		inputKind === "url" ? url.trim().length > 0 : text.trim().length > 0;
@@ -140,7 +148,7 @@ export default function GenerateForm({
 						<div>
 							<div className="flex items-baseline justify-between mb-2 gap-2">
 								<label htmlFor={textInputId} className="text-sm font-medium">
-									Draft text
+									Your draft
 								</label>
 								<span
 									id={counterId}
@@ -171,6 +179,15 @@ export default function GenerateForm({
 								Draft text stays in your browser and this request only — never
 								cached on our servers.
 							</p>
+							<DraftReuseControls
+								id={reuseId}
+								reuse={draftReuse}
+								onToggleReuse={onToggleDraftReuse}
+								onClear={onClearDraft}
+								canClear={text.length > 0}
+								disabled={isGenerating}
+								className="mt-2"
+							/>
 						</div>
 					)}
 

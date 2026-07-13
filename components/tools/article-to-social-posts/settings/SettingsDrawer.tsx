@@ -34,9 +34,11 @@ export default function SettingsDrawer() {
 				size="sm"
 				onClick={() => setOpen(true)}
 				aria-label="Writer settings"
+				className="w-full justify-start xl:w-auto xl:justify-center"
 				aria-expanded={open}
 			>
 				<SettingsIcon aria-hidden className="w-4 h-4" />
+				<span className="xl:hidden">Writer Settings</span>
 			</Button>
 
 			<Drawer

@@ -23,8 +23,10 @@ export default function ThemeToggle() {
 			size="sm"
 			onClick={() => setTheme(NEXT[theme])}
 			aria-label={`Theme: ${theme}. Cycle to ${NEXT[theme]}.`}
+			className="w-full justify-start xl:w-auto xl:justify-center"
 		>
 			<Icon aria-hidden className="w-4 h-4" />
+			<span className="capitalize xl:hidden">{theme} mode</span>
 		</Button>
 	);
 }

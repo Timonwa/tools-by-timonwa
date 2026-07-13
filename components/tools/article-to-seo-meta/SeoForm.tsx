@@ -3,6 +3,8 @@
 import { useActionState, useId, useState } from "react";
 import { useFormStatus } from "react-dom";
 
+import DraftReuseControls from "@/components/_shared/DraftReuseControls";
+import { useToolDraft } from "@/components/_shared/shared-draft";
 import {
 	MAX_ARTICLE_CHARS,
 	type SeoMetaResultType,
@@ -47,11 +49,18 @@ export default function SeoForm({
 	onLoadingChange,
 	initial,
 }: SeoFormProps) {
-	const [article, setArticle] = useState(initial?.article ?? "");
+	const {
+		text: article,
+		setText: setArticle,
+		reuse,
+		toggleReuse,
+		clear: clearArticle,
+	} = useToolDraft(initial?.article ?? "");
 	const [keyword, setKeyword] = useState(initial?.primaryKeyword ?? "");
 	const [count, setCount] = useState<1 | 2 | 3>(initial?.variationCount ?? 3);
 	const articleId = useId();
 	const keywordId = useId();
+	const reuseId = useId();
 
 	const articleLen = article.length;
 	const overLimit = articleLen > MAX_ARTICLE_CHARS;
@@ -97,8 +106,8 @@ export default function SeoForm({
 	return (
 		<form action={formAction} className="space-y-5">
 			<div>
-				<label htmlFor={articleId} className="block text-sm font-medium mb-1.5">
-					Article draft
+				<label htmlFor={articleId} className="block text-sm font-medium mb-2">
+					Your draft
 				</label>
 				<Textarea
 					id={articleId}
@@ -116,10 +125,19 @@ export default function SeoForm({
 					{articleLen.toLocaleString()} / {MAX_ARTICLE_CHARS.toLocaleString()}{" "}
 					chars
 				</p>
+				<DraftReuseControls
+					id={reuseId}
+					reuse={reuse}
+					onToggleReuse={toggleReuse}
+					onClear={clearArticle}
+					canClear={article.length > 0}
+					disabled={isPending}
+					className="mt-2"
+				/>
 			</div>
 
 			<div>
-				<label htmlFor={keywordId} className="block text-sm font-medium mb-1.5">
+				<label htmlFor={keywordId} className="block text-sm font-medium mb-2">
 					Primary keyword{" "}
 					<span className="text-muted-foreground font-normal">(optional)</span>
 				</label>
@@ -136,7 +154,7 @@ export default function SeoForm({
 			</div>
 
 			<fieldset>
-				<legend className="block text-sm font-medium mb-1.5">Variations</legend>
+				<legend className="block text-sm font-medium mb-2">Variations</legend>
 				<div className="inline-flex rounded-md border border-border overflow-hidden">
 					{[1, 2, 3].map((n) => {
 						const active = count === n;

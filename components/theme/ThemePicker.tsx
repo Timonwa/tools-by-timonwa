@@ -30,7 +30,7 @@ export default function ThemePicker() {
 					}`}
 				>
 					<Icon aria-hidden className="w-3.5 h-3.5" />
-					{label}
+					{label} Mode
 				</button>
 			))}
 		</fieldset>
