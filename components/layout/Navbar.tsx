@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import { CoffeeIcon } from "lucide-react";
 import Link from "next/link";
 import type { ComponentType, ReactNode, SVGProps } from "react";
@@ -12,7 +13,7 @@ type IconComponentType = ComponentType<SVGProps<SVGSVGElement>>;
 
 type NavbarProps = {
 	brand: {
-		href: string;
+		href: Route;
 		name: string;
 		icon: IconComponentType;
 		ariaLabel?: string;
@@ -58,7 +59,7 @@ export default function Navbar({
 				<ThemeToggle />
 				<ByokDrawer />
 				{actionsSlot}
-				<Link
+				<a
 					href="https://buymeacoffee.com/timonwa"
 					target="_blank"
 					rel="noopener noreferrer"
@@ -67,8 +68,8 @@ export default function Navbar({
 				>
 					<CoffeeIcon aria-hidden className="w-4 h-4" />
 					<span className="hidden sm:inline">Sponsor</span>
-				</Link>
-				<Link
+				</a>
+				<a
 					href={repoUrl}
 					target="_blank"
 					rel="noopener noreferrer"
@@ -77,7 +78,7 @@ export default function Navbar({
 				>
 					<span aria-hidden>⭐</span>
 					<span className="hidden sm:inline">Star on GitHub</span>
-				</Link>
+				</a>
 			</div>
 		</nav>
 	);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useState } from "react";
 import { TagsIcon } from "lucide-react";
 
 import HistorySidebar from "@/components/tools/article-to-seo-meta/HistorySidebar";
@@ -73,20 +73,24 @@ export default function SeoTool() {
 		[],
 	);
 
-	// Persist edits back to history, debounced 600 ms.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: intentionally omits result/usage/initial — those don't change on edit
-	useEffect(() => {
+	// Non-reactive persist logic — always sees the latest result/usage/initial
+	// without them being effect dependencies (React 19.2 useEffectEvent).
+	const persistEdits = useEffectEvent(() => {
 		if (!result || editableVariations.length === 0) return;
-		const id = setTimeout(() => {
-			upsert({
-				article: initial?.article ?? "",
-				primaryKeyword: initial?.primaryKeyword,
-				variationCount: initial?.variationCount ?? 1,
-				result: { ...result, variations: editableVariations },
-				usage: usage ?? undefined,
-				timestamp: Date.now(),
-			});
-		}, 600);
+		upsert({
+			article: initial?.article ?? "",
+			primaryKeyword: initial?.primaryKeyword,
+			variationCount: initial?.variationCount ?? 1,
+			result: { ...result, variations: editableVariations },
+			usage: usage ?? undefined,
+			timestamp: Date.now(),
+		});
+	});
+
+	// Persist edits back to history, debounced 600 ms, on every edit.
+	useEffect(() => {
+		if (editableVariations.length === 0) return;
+		const id = setTimeout(persistEdits, 600);
 		return () => clearTimeout(id);
 	}, [editableVariations]);
 

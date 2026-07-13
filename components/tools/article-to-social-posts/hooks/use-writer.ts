@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useEffectEvent,
+	useState,
+	useTransition,
+} from "react";
 
 import { MAX_TEMPLATES } from "@/components/tools/article-to-social-posts/constants/preferences";
 import {
@@ -81,7 +87,11 @@ export function useWriter() {
 	// would overwrite the user's saved state before the restore effect runs.
 	const [hydrated, setHydrated] = useState(false);
 
-	const [isGenerating, setIsGenerating] = useState(false);
+	// `generate` runs in a transition — `isGenerating` is its pending flag.
+	// `regenerate` uses its own transition but reports per-draft pending via the
+	// `regenerating` map below (a single transition flag can't distinguish cards).
+	const [isGenerating, startGenerate] = useTransition();
+	const [, startRegenerate] = useTransition();
 	const [preview, setPreview] = useState<PreviewResultType | null>(null);
 	const [editableDrafts, setEditableDrafts] = useState<PostDraftType[]>([]);
 	const [error, setError] = useState<string | null>(null);
@@ -138,23 +148,26 @@ export function useWriter() {
 
 	const { history, upsert, remove: removeHistoryEntry } = useHistory();
 
-	// Persist edits back to history so they survive a reload or history load.
-	// Debounced 600 ms to avoid hammering localStorage on every keystroke.
-	// Only runs when there's an active preview + input (i.e. after a generation).
-	// biome-ignore lint/correctness/useExhaustiveDependencies: intentionally excludes tone/platforms/xThreadLength — those changing doesn't mean drafts were edited
-	useEffect(() => {
+	// Non-reactive persist logic — always reads the latest preview/input/tone/etc.
+	// without them being effect dependencies (React 19.2 useEffectEvent).
+	const persistDraftEdits = useEffectEvent(() => {
 		if (!preview || !lastInput || isGenerating || editableDrafts.length === 0)
 			return;
-		const id = setTimeout(() => {
-			upsert({
-				input: lastInput,
-				tone,
-				platforms,
-				xThreadLength,
-				preview: { ...preview, drafts: editableDrafts },
-				timestamp: Date.now(),
-			});
-		}, 600);
+		upsert({
+			input: lastInput,
+			tone,
+			platforms,
+			xThreadLength,
+			preview: { ...preview, drafts: editableDrafts },
+			timestamp: Date.now(),
+		});
+	});
+
+	// Persist edits back to history so they survive a reload or history load.
+	// Debounced 600 ms to avoid hammering localStorage on every keystroke.
+	useEffect(() => {
+		if (editableDrafts.length === 0) return;
+		const id = setTimeout(persistDraftEdits, 600);
 		return () => clearTimeout(id);
 	}, [editableDrafts]);
 
@@ -198,49 +211,48 @@ export function useWriter() {
 	}, [inputKind, url, text]);
 
 	const generate = useCallback(
-		async (e: React.FormEvent) => {
+		(e: React.FormEvent) => {
 			e.preventDefault();
 			const input = currentInput();
 			if (!input || platforms.length === 0) return;
 
 			resetResults();
-			setIsGenerating(true);
 
-			try {
-				const byokKey = byokStorage.get() ?? undefined;
-				const result = await previewPosts({
-					input,
-					tone,
-					platforms,
-					xThreadLength,
-					preferences: prefsStorage.get(),
-					googleApiKey: byokKey,
-					googleModel: byokKey ? byokModelStorage.get() : undefined,
-				});
-				setPreview(result);
-				setEditableDrafts(result.drafts);
-				setLastUsage(result.usage);
-				setLastInput(input);
+			startGenerate(async () => {
+				try {
+					const byokKey = byokStorage.get() ?? undefined;
+					const result = await previewPosts({
+						input,
+						tone,
+						platforms,
+						xThreadLength,
+						preferences: prefsStorage.get(),
+						googleApiKey: byokKey,
+						googleModel: byokKey ? byokModelStorage.get() : undefined,
+					});
+					setPreview(result);
+					setEditableDrafts(result.drafts);
+					setLastUsage(result.usage);
+					setLastInput(input);
 
-				// Persist both URL and draft generations. Drafts are stored only in
-				// the user's localStorage — never on our servers — and each entry has
-				// a Remove button so the user stays in control.
-				upsert({
-					input:
-						input.kind === "url"
-							? { kind: "url", url: result.article.url || input.url }
-							: input,
-					tone,
-					platforms,
-					xThreadLength,
-					preview: result,
-					timestamp: Date.now(),
-				});
-			} catch (err) {
-				setError(err instanceof Error ? err.message : String(err));
-			} finally {
-				setIsGenerating(false);
-			}
+					// Persist both URL and draft generations. Drafts are stored only in
+					// the user's localStorage — never on our servers — and each entry has
+					// a Remove button so the user stays in control.
+					upsert({
+						input:
+							input.kind === "url"
+								? { kind: "url", url: result.article.url || input.url }
+								: input,
+						tone,
+						platforms,
+						xThreadLength,
+						preview: result,
+						timestamp: Date.now(),
+					});
+				} catch (err) {
+					setError(err instanceof Error ? err.message : String(err));
+				}
+			});
 		},
 		[currentInput, tone, platforms, xThreadLength, resetResults, upsert],
 	);
@@ -276,31 +288,35 @@ export function useWriter() {
 	);
 
 	const regenerate = useCallback(
-		async (draft: PostDraftType) => {
+		(draft: PostDraftType) => {
 			if (!lastInput) return;
+			// Immediate per-card feedback (urgent), then the async work runs in a
+			// transition so the regenerated draft render stays non-blocking.
 			setRegenerating((r) => ({ ...r, [draft.group]: true }));
 			setError(null);
-			try {
-				const byokKey = byokStorage.get() ?? undefined;
-				const { draft: fresh, usage } = await regenerateDraft({
-					input: lastInput,
-					group: draft.group,
-					platforms: draft.platforms,
-					tone,
-					xThreadLength,
-					preferences: prefsStorage.get(),
-					googleApiKey: byokKey,
-					googleModel: byokKey ? byokModelStorage.get() : undefined,
-				});
-				setEditableDrafts((cur) =>
-					cur.map((d) => (d.group === draft.group ? fresh : d)),
-				);
-				setLastUsage(usage);
-			} catch (err) {
-				setError(err instanceof Error ? err.message : String(err));
-			} finally {
-				setRegenerating((r) => ({ ...r, [draft.group]: false }));
-			}
+			startRegenerate(async () => {
+				try {
+					const byokKey = byokStorage.get() ?? undefined;
+					const { draft: fresh, usage } = await regenerateDraft({
+						input: lastInput,
+						group: draft.group,
+						platforms: draft.platforms,
+						tone,
+						xThreadLength,
+						preferences: prefsStorage.get(),
+						googleApiKey: byokKey,
+						googleModel: byokKey ? byokModelStorage.get() : undefined,
+					});
+					setEditableDrafts((cur) =>
+						cur.map((d) => (d.group === draft.group ? fresh : d)),
+					);
+					setLastUsage(usage);
+				} catch (err) {
+					setError(err instanceof Error ? err.message : String(err));
+				} finally {
+					setRegenerating((r) => ({ ...r, [draft.group]: false }));
+				}
+			});
 		},
 		[lastInput, tone, xThreadLength],
 	);

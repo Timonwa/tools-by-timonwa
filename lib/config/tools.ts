@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import { SearchIcon, Share2Icon } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
@@ -10,7 +11,7 @@ export type ToolType = {
 	slug: string;
 	name: string;
 	tagline: string;
-	href: string;
+	href: Route;
 	icon: ComponentType<SVGProps<SVGSVGElement>>;
 	status?: "live" | "soon";
 };

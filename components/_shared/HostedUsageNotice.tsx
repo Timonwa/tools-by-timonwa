@@ -10,6 +10,12 @@ type Props = {
 	getUsage: () => Promise<{ configured: boolean }>;
 };
 
+/**
+ * Renders a "free/day" pill once the hosted quota is confirmed configured.
+ * `getUsage` is a Server Function, which Next.js does not allow calling during
+ * render (that would create a fetch waterfall) — so it's invoked from an effect
+ * after mount, not via `use()`.
+ */
 export default function HostedUsageNotice({ perUserDaily, getUsage }: Props) {
 	const [configured, setConfigured] = useState<boolean | null>(null);
 
@@ -30,7 +36,6 @@ export default function HostedUsageNotice({ perUserDaily, getUsage }: Props) {
 	if (!configured) return null;
 
 	const summary = `${perUserDaily} free generations per person per day. Click to add your own Gemini key for unlimited use.`;
-
 	const openByok = () => {
 		window.dispatchEvent(new Event(OPEN_BYOK_EVENT));
 	};

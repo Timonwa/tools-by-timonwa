@@ -1,5 +1,4 @@
 import { HeartIcon, WrenchIcon } from "lucide-react";
-import Link from "next/link";
 
 import GithubMark from "@/components/_shared/GithubMark";
 import {
@@ -15,6 +14,10 @@ const LEGAL_LINKS = [
 	{ href: "https://tech.timonwa.com/terms", label: "Terms" },
 	{ href: "https://tech.timonwa.com/privacy", label: "Privacy" },
 ];
+
+// Resolved at build/module load (not during render) so it stays static under
+// Cache Components — the copyright year doesn't need request-time freshness.
+const YEAR = new Date().getFullYear();
 
 export default function Footer() {
 	return (
@@ -36,17 +39,17 @@ export default function Footer() {
 						<span className="inline-flex items-center gap-1.5 flex-wrap">
 							<HeartIcon className="w-3.5 h-3.5 text-primary" />
 							Built by{" "}
-							<Link
+							<a
 								href={CREATOR_URL}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="font-medium text-foreground hover:text-primary transition-colors"
 							>
 								{CREATOR_NAME}
-							</Link>
+							</a>
 						</span>
 
-						<Link
+						<a
 							href={REPO_URL}
 							target="_blank"
 							rel="noopener noreferrer"
@@ -54,28 +57,28 @@ export default function Footer() {
 						>
 							<GithubMark aria-hidden className="w-3.5 h-3.5" />
 							GitHub
-						</Link>
+						</a>
 					</div>
 				</div>
 
 				<div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1 border-t border-border/40 pt-3 text-[11px] text-muted-foreground">
 					{LEGAL_LINKS.map((link) => (
 						<span key={link.href} className="inline-flex items-center gap-x-3">
-							<Link
+							<a
 								href={link.href}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="hover:text-foreground hover:underline underline-offset-2 transition-colors"
 							>
 								{link.label}
-							</Link>
+							</a>
 							<span aria-hidden className="opacity-50">
 								·
 							</span>
 						</span>
 					))}
 					<span>
-						© {new Date().getFullYear()} {CREATOR_NAME}
+						© {YEAR} {CREATOR_NAME}
 					</span>
 				</div>
 			</div>

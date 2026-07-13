@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 
 export type ThemeType = "light" | "dark" | "system";
 export type ResolvedThemeType = "light" | "dark";
@@ -9,7 +9,6 @@ export type ResolvedThemeType = "light" | "dark";
 const THEME_EVENT = "app:theme-change";
 
 const readStored = (): ThemeType => {
-	if (typeof window === "undefined") return "system";
 	const v = window.localStorage.getItem("theme");
 	return v === "dark" || v === "light" ? v : "system";
 };
@@ -25,36 +24,51 @@ const apply = (resolved: ResolvedThemeType) => {
 	document.documentElement.classList.toggle("dark", resolved === "dark");
 };
 
+/** Subscribe to both explicit theme changes and OS-preference changes. */
+function subscribe(onStoreChange: () => void) {
+	const mql = window.matchMedia("(prefers-color-scheme: dark)");
+	window.addEventListener(THEME_EVENT, onStoreChange);
+	mql.addEventListener("change", onStoreChange);
+	return () => {
+		window.removeEventListener(THEME_EVENT, onStoreChange);
+		mql.removeEventListener("change", onStoreChange);
+	};
+}
+
+// Snapshot encodes both the stored preference and the resolved value, so an OS
+// preference change (which leaves the preference as "system") still yields a
+// new snapshot and re-renders. Returning a string keeps it Object.is-stable.
+const getSnapshot = (): `${ThemeType}:${ResolvedThemeType}` => {
+	const pref = readStored();
+	return `${pref}:${resolve(pref)}`;
+};
+
+const getServerSnapshot = (): `${ThemeType}:${ResolvedThemeType}` =>
+	"system:light";
+
 export function useTheme() {
-	const [theme, setThemeState] = useState<ThemeType>("system");
+	const snapshot = useSyncExternalStore(
+		subscribe,
+		getSnapshot,
+		getServerSnapshot,
+	);
+	const [theme, resolvedTheme] = snapshot.split(":") as [
+		ThemeType,
+		ResolvedThemeType,
+	];
 
+	// Keep <html> in sync whenever the resolved theme changes — user action or
+	// OS preference change.
 	useEffect(() => {
-		setThemeState(readStored());
-		const sync = () => setThemeState(readStored());
-		window.addEventListener(THEME_EVENT, sync);
-
-		const mql = window.matchMedia("(prefers-color-scheme: dark)");
-		const onSystemChange = () => {
-			if (readStored() === "system") apply(resolve("system"));
-		};
-		mql.addEventListener("change", onSystemChange);
-
-		return () => {
-			window.removeEventListener(THEME_EVENT, sync);
-			mql.removeEventListener("change", onSystemChange);
-		};
-	}, []);
+		apply(resolvedTheme);
+	}, [resolvedTheme]);
 
 	const setTheme = useCallback((next: ThemeType) => {
 		if (next === "system") window.localStorage.removeItem("theme");
 		else window.localStorage.setItem("theme", next);
 		apply(resolve(next));
-		setThemeState(next);
 		window.dispatchEvent(new Event(THEME_EVENT));
 	}, []);
-
-	const resolvedTheme: ResolvedThemeType =
-		typeof window === "undefined" ? "light" : resolve(theme);
 
 	return { theme, resolvedTheme, setTheme };
 }

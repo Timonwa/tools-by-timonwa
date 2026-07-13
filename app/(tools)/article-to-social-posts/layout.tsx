@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 
 import {
 	CREATOR_NAME,
@@ -98,14 +97,13 @@ export default function ArticleToSocialPostsLayout({
 }) {
 	return (
 		<div className="tool-article-to-social-posts contents">
-			{/* biome-ignore lint/correctness/useUniqueElementIds: Layout renders once per tool route; Next.js Script needs a stable id for deduplication. */}
-			<Script
-				id="jsonld-article-to-social-posts"
+			<script
 				type="application/ld+json"
-				strategy="beforeInteractive"
-			>
-				{JSON.stringify(jsonLd)}
-			</Script>
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD structured data per Next.js docs
+				dangerouslySetInnerHTML={{
+					__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+				}}
+			/>
 			{children}
 		</div>
 	);
