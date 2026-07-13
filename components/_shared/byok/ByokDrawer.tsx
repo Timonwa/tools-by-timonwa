@@ -1,7 +1,7 @@
 "use client";
 
 import { KeyRoundIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Button from "@/components/ui/Button";
 import ByokSection from "@/components/_shared/byok/ByokSection";
 import Drawer from "@/components/ui/Drawer";
@@ -10,7 +10,11 @@ import {
 	DEFAULT_BYOK_MODEL,
 	OPEN_BYOK_EVENT,
 } from "@/lib/config/byok";
-import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
+import {
+	byokModelStorage,
+	byokStorage,
+	subscribeByok,
+} from "@/lib/utils/byok-storage";
 
 /**
  * Hub-level BYOK drawer. One instance lives in the Navbar; every AI tool
@@ -20,22 +24,21 @@ import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
  */
 export default function ByokDrawer() {
 	const [open, setOpen] = useState(false);
-	const [saved, setSaved] = useState<string | null>(null);
-	const [byokModel, setByokModel] = useState<ByokModelType>(DEFAULT_BYOK_MODEL);
+	// BYOK key + model live in sessionStorage — read them as an external store so
+	// same-tab writes and cross-tab storage events keep every reader in sync
+	// (no setState-in-effect hydration).
+	const saved = useSyncExternalStore(
+		subscribeByok,
+		() => byokStorage.get(),
+		() => null,
+	);
+	const byokModel = useSyncExternalStore(
+		subscribeByok,
+		() => byokModelStorage.get(),
+		() => DEFAULT_BYOK_MODEL,
+	);
 
-	// Hydrate on mount so the dot indicator shows without needing to open the drawer.
-	useEffect(() => {
-		setSaved(byokStorage.get());
-		setByokModel(byokModelStorage.get());
-	}, []);
-
-	// Re-sync when the drawer opens (picks up changes made in another tab).
-	useEffect(() => {
-		if (!open) return;
-		setSaved(byokStorage.get());
-		setByokModel(byokModelStorage.get());
-	}, [open]);
-
+	// Open the drawer when any tool requests it (e.g. a "free/day" pill).
 	useEffect(() => {
 		const handler = () => setOpen(true);
 		window.addEventListener(OPEN_BYOK_EVENT, handler);
@@ -47,19 +50,15 @@ export default function ByokDrawer() {
 			return { type: "error" as const, message: "Please paste your API key." };
 		const trimmed = input.trim();
 		byokStorage.set(trimmed);
-		setSaved(trimmed);
 		return { type: "success" as const, message: "Key saved for this tab." };
 	};
 
 	const handleClear = () => {
 		byokStorage.clear();
 		byokModelStorage.clear();
-		setSaved(null);
-		setByokModel(DEFAULT_BYOK_MODEL);
 	};
 
 	const handleModelChange = (model: ByokModelType) => {
-		setByokModel(model);
 		byokModelStorage.set(model);
 	};
 

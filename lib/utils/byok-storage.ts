@@ -14,8 +14,25 @@ import {
 
 const API_KEY = "byok:google-api-key";
 const BYOK_MODEL_KEY = "byok:google-model";
+/** Dispatched on any BYOK write so `useSyncExternalStore` readers re-sync. */
+const BYOK_CHANGE_EVENT = "app:byok-change";
 
 const canUseStorage = () => typeof window !== "undefined";
+
+const emitByokChange = () => {
+	if (canUseStorage()) window.dispatchEvent(new Event(BYOK_CHANGE_EVENT));
+};
+
+/** Subscribe to BYOK changes — same-tab writes and cross-tab storage events. */
+export function subscribeByok(onChange: () => void) {
+	if (!canUseStorage()) return () => {};
+	window.addEventListener(BYOK_CHANGE_EVENT, onChange);
+	window.addEventListener("storage", onChange);
+	return () => {
+		window.removeEventListener(BYOK_CHANGE_EVENT, onChange);
+		window.removeEventListener("storage", onChange);
+	};
+}
 
 export const byokStorage = {
 	get(): string | null {
@@ -30,12 +47,14 @@ export const byokStorage = {
 		if (!canUseStorage()) return;
 		try {
 			window.sessionStorage.setItem(API_KEY, key);
+			emitByokChange();
 		} catch {}
 	},
 	clear() {
 		if (!canUseStorage()) return;
 		try {
 			window.sessionStorage.removeItem(API_KEY);
+			emitByokChange();
 		} catch {}
 	},
 };
@@ -57,12 +76,14 @@ export const byokModelStorage = {
 		if (!canUseStorage()) return;
 		try {
 			window.sessionStorage.setItem(BYOK_MODEL_KEY, model);
+			emitByokChange();
 		} catch {}
 	},
 	clear() {
 		if (!canUseStorage()) return;
 		try {
 			window.sessionStorage.removeItem(BYOK_MODEL_KEY);
+			emitByokChange();
 		} catch {}
 	},
 };
