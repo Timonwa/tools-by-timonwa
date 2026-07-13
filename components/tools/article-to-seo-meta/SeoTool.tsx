@@ -100,7 +100,7 @@ export default function SeoTool() {
 
 	return (
 		<div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_280px]">
-			<Card className="self-start">
+			<Card className="min-w-0 self-start">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2 text-lg">
 						<TagsIcon className="w-5 h-5 text-primary" aria-hidden />
@@ -122,7 +122,7 @@ export default function SeoTool() {
 				</CardContent>
 			</Card>
 
-			<div>
+			<div className="min-w-0">
 				{loading && !result ? (
 					<LoadingState />
 				) : result ? (
