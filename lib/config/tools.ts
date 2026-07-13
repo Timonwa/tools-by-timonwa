@@ -1,5 +1,12 @@
 import type { Route } from "next";
-import { SearchIcon, Share2Icon } from "lucide-react";
+import {
+	CaseSensitiveIcon,
+	ClockIcon,
+	LinkIcon,
+	SearchIcon,
+	Share2Icon,
+	WholeWordIcon,
+} from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
 /**
@@ -32,6 +39,41 @@ export const TOOLS: ToolType[] = [
 			"Generate SEO-friendly title and description variations with character counts in spec.",
 		href: "/article-to-seo-meta",
 		icon: SearchIcon,
+		status: "live",
+	},
+	{
+		slug: "word-counter",
+		name: "Word & Character Counter",
+		tagline:
+			"Live word, character, sentence, and reading-time counts, with platform character limits.",
+		href: "/word-counter",
+		icon: WholeWordIcon,
+		status: "live",
+	},
+	{
+		slug: "case-converter",
+		name: "Case Converter",
+		tagline:
+			"Switch text between UPPERCASE, Title Case, camelCase, snake_case, and more.",
+		href: "/case-converter",
+		icon: CaseSensitiveIcon,
+		status: "live",
+	},
+	{
+		slug: "slug-generator",
+		name: "Slug Generator",
+		tagline: "Turn any title or headline into a clean, URL-safe slug.",
+		href: "/slug-generator",
+		icon: LinkIcon,
+		status: "live",
+	},
+	{
+		slug: "reading-time",
+		name: "Reading Time Estimator",
+		tagline:
+			"Estimate reading and speaking time, with a copy-ready “X min read” label.",
+		href: "/reading-time",
+		icon: ClockIcon,
 		status: "live",
 	},
 ];
