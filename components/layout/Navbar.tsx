@@ -24,6 +24,8 @@ type NavbarProps = {
 	actionsSlot?: ReactNode;
 	/** GitHub repo URL for the "Star on GitHub" button. Defaults to the hub repo. */
 	repoUrl?: string;
+	/** Show the bring-your-own-key drawer. Off for deterministic tools that make no API calls. */
+	showByok?: boolean;
 };
 
 export default function Navbar({
@@ -31,6 +33,7 @@ export default function Navbar({
 	centerSlot,
 	actionsSlot,
 	repoUrl = REPO_URL,
+	showByok = true,
 }: NavbarProps) {
 	const BrandIcon = brand.icon;
 	return (
@@ -57,7 +60,7 @@ export default function Navbar({
 			<div className="flex items-center gap-1 sm:gap-2">
 				<ToolsMenu />
 				<ThemeToggle />
-				<ByokDrawer />
+				{showByok && <ByokDrawer />}
 				{actionsSlot}
 				<a
 					href={SPONSOR_URL}

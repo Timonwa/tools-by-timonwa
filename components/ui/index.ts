@@ -10,6 +10,7 @@ export {
 	CardHeader,
 	CardTitle,
 } from "./Card";
+export { default as CopyButton } from "./CopyButton";
 export { default as Drawer } from "./Drawer";
 export { default as GithubMark } from "./GithubMark";
 export { default as Input } from "./Input";
