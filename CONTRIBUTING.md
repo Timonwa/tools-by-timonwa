@@ -1,30 +1,37 @@
-# Contributing to Blog to Social Posts
+# Contributing to Tools by Timonwa
 
-Thanks for your interest in contributing. This is a small, focused tool — bug fixes, small UX improvements, platform tweaks, and agent-prompt refinements are all welcome.
+Thanks for your interest. **Tools by Timonwa** is an open-source collection of small, single-purpose tools. New tools are added selectively to keep the collection focused, but the code is open and help is very welcome:
+
+- 🐛 Bug fixes
+- ✨ UX / accessibility polish on existing tools
+- 🤖 Agent-prompt / output-quality improvements
+- 📝 Docs
+- 💡 **New-tool suggestions** — open an issue; if it fits, it may get built
+- 🔧 Code toward a new or existing tool — coordinate via an issue first
+
+By participating, you agree to the [Code of Conduct](https://tech.timonwa.com/code-of-conduct).
 
 ## Before you start
 
-- **Questions or ideas** → open a [GitHub Discussion](https://github.com/Timonwa/tools-by-timonwa/discussions).
+- **Questions or ideas / tool suggestions** → open an [issue](https://github.com/Timonwa/tools-by-timonwa/issues/new/choose).
 - **Bugs** → use the [bug report template](.github/ISSUE_TEMPLATE/bug_report.md).
 - **Feature requests** → use the [feature request template](.github/ISSUE_TEMPLATE/feature_request.md).
-- **Larger changes** → open an issue first so we can sanity-check scope before you invest time.
-
-By participating, you agree to the [Code of Conduct](https://tech.timonwa.com/code-of-conduct).
+- **Larger changes (incl. a new tool)** → open an issue first so we can agree on scope before you invest time.
 
 ## Scope — what fits this project
 
 ✅ In scope
 
 - Bug fixes and UX polish
-- Improving the agent's draft quality (prompt tweaks, tone/voice refinements)
-- Better accessibility
-- Support for additional platforms that fit the current shape — text-first platforms where writers naturally share their articles (like the current six: X, LinkedIn, Threads, Bluesky, Mastodon, Substack Notes)
+- Accessibility improvements
+- Agent draft quality (prompt tweaks, tone/voice refinements)
+- New **text-first, single-purpose AI tools** that fit the "does one thing well" shape (coordinate first)
 - Performance, build, and CI improvements
 - Documentation
 
 ❌ Out of scope (forks welcome)
 
-- OAuth / auto-publishing to platforms — the tool is copy-only by design
+- OAuth / auto-publishing — the tools are copy-only by design
 - Scheduling, calendars, cron-based posting
 - User accounts or stored profiles
 - Anything that requires a database
@@ -33,63 +40,72 @@ If you're not sure, open an issue and ask.
 
 ## Dev setup
 
-Prerequisites: Node.js ≥ 22, pnpm, a Google AI Studio key.
+**Prerequisites:** Node.js 20.9+, [pnpm](https://pnpm.io), and a [Google AI Studio key](https://aistudio.google.com/api-keys).
 
 ```bash
 git clone https://github.com/Timonwa/tools-by-timonwa.git
-cd blog-to-social
+cd tools-by-timonwa
 pnpm install
-cp .env.example .env
-# Edit .env — only GOOGLE_API_KEY is required.
+cp .env.example .env      # add at least GOOGLE_API_KEY
 pnpm dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3000`. See the README for the full [environment variables](./README.md#environment-variables) table.
 
 ## Scripts
 
-| Command          | What it does                                            |
-| ---------------- | ------------------------------------------------------- |
-| `pnpm dev`       | Next.js dev server (Turbopack)                          |
-| `pnpm build`     | Production build                                        |
-| `pnpm start`     | Run the production build                                |
-| `pnpm check`     | Biome: format + safe lint fixes (run before committing) |
-| `pnpm lint`      | Biome lint only                                         |
-| `pnpm format`    | Biome format only                                       |
-| `pnpm typecheck` | TypeScript `--noEmit`                                   |
+| Command             | What it does             |
+| ------------------- | ------------------------ |
+| `pnpm dev`          | Dev server (Turbopack)   |
+| `pnpm build`        | Production build         |
+| `pnpm start`        | Run the production build |
+| `pnpm lint`         | ESLint                   |
+| `pnpm format`       | Prettier — write         |
+| `pnpm format:check` | Prettier — check         |
 
-A `pre-commit` hook runs `biome format --write` on staged files via `husky` + `lint-staged`, so most formatting is automatic.
+Type-check with `pnpm exec tsc --noEmit`. A `pre-commit` hook runs **lint-staged** (ESLint `--fix` + Prettier) on staged files via **husky**, so most formatting is automatic.
 
-## Workflow
+## Codebase layout
 
-1. **Fork** the repo and create a branch from `main`:
+Feature-grouped App Router. Routes stay thin; each tool's UI and server code live in parallel `tools/<slug>/` folders.
 
-   ```bash
-   git checkout -b fix/what-you-are-fixing
-   ```
+```text
+app/
+  layout.tsx  page.tsx  globals.css          # hub shell + landing
+  manifest.ts  robots.ts  sitemap.ts          # SEO / PWA metadata routes
+  icon.png  apple-icon.png  favicon.ico        # icons (Next metadata conventions)
+  opengraph-image.tsx  twitter-image.tsx       # social share images
+  error.tsx  not-found.tsx  global-error.tsx  loading.tsx
+  (tools)/<slug>/                              # thin page.tsx + layout.tsx (metadata + JSON-LD)
+components/
+  ui/          # app-agnostic primitives (barrel: @/components/ui)
+  _shared/     # cross-feature widgets (byok, hosted-usage-notice)
+  layout/  theme/  marketing/home/
+  tools/<slug>/  # sections, index.tsx (composer), hooks/, constants/
+lib/
+  config/      # site, tools, byok, limits, env
+  tools/
+    _shared/   # quota, api-key, agent-runtime, errors  (reused by every tool)
+    <slug>/    # actions.ts + agents/
+  rate-limit/  utils/  types/
+```
 
-2. **Make your change**, keeping the diff tight. Prefer editing existing files over creating new ones.
-3. **Verify locally:**
+## Anatomy of a tool
 
-   ```bash
-   pnpm check
-   pnpm typecheck
-   pnpm build
-   ```
+When building or extending a tool, reuse the shared layer rather than re-implementing plumbing:
 
-4. **Commit.** [Conventional Commits](https://www.conventionalcommits.org/) are preferred but not enforced — pick a type that fits (`feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`) and write a clear subject.
-
-   ```text
-   fix: prevent duplicate URL when agent appends it inline
-   feat: add copy-each-thread-post button for X threads
-   docs: clarify BYOK scope in README
-   ```
-
-5. **Push and open a PR** against `main`. Fill out the PR template — two short sections (what/why, how to test) and one checkbox.
+1. **Route** — `app/(tools)/<slug>/page.tsx` (thin: import + render the content component) and `layout.tsx` (metadata + JSON-LD).
+2. **UI** — `components/tools/<slug>/`: section components + an `index.tsx` composer; co-locate `hooks/`, `constants/`, `types.ts`. Use primitives from `@/components/ui`.
+3. **Server** — `lib/tools/<slug>/actions.ts` (a `"use server"` action) + `agents/`. Reuse:
+   - `createRunnerProvider` + `accumulateAgentRun` — `lib/tools/_shared/agent-runtime`
+   - `enforceQuota` / `readUsage` — `lib/tools/_shared/quota`
+   - `toUserMessage` — `lib/tools/_shared/errors` · `resolveToolKey` — `lib/tools/_shared/api-key`
+   - `createHistoryStore` — `lib/utils/create-history-store` (local history)
+4. **Register** — add an entry to `TOOLS` in `lib/config/tools.ts`. It then appears in the home grid, navbar menu, and sitemap automatically.
 
 ## Code style
 
-- **Formatting / linting:** [Biome](https://biomejs.dev/). `pnpm check` fixes what it can.
+- **Formatting / linting:** Prettier + ESLint (flat config). The pre-commit hook fixes most of it; run `pnpm lint` and `pnpm format` before pushing.
 - **TypeScript:** strict mode is on. Don't `any` your way out — if a type is hard, ask in the PR.
 - **No comments unless non-obvious.** If removing a comment wouldn't confuse a future reader, don't write it.
 - **No scope creep.** Fix the thing in the issue. Refactors, renames, and unrelated cleanups go in separate PRs.
@@ -97,15 +113,30 @@ A `pre-commit` hook runs `biome format --write` on staged files via `husky` + `l
 
 ## Agent prompt changes
 
-The draft-generator agent's instruction lives in [src/agents/draft-generator/agent.ts](src/agents/draft-generator/agent.ts). Prompt tweaks are welcome but please:
+Each tool's agent lives under `lib/tools/<slug>/agents/`. Prompt tweaks are welcome, but please:
 
-- Include a **before/after example** in the PR — paste the same article URL with the old prompt vs. yours, for 2–3 platforms.
-- Note any token-count impact (inputs getting longer = more cost per generation).
-- Test both URL mode and draft (paste) mode — they share the same agent.
+- Include a **before/after example** in the PR — same input, old prompt vs. yours.
+- Note any token-count impact (longer inputs = more cost per run).
+- Test every input mode the tool supports (e.g. URL _and_ pasted text).
+
+## Workflow
+
+1. **Fork** and branch from `main`: `git checkout -b fix/what-you-are-fixing`.
+2. **Make your change**, keeping the diff tight. Prefer editing existing files over creating new ones.
+3. **Verify locally:**
+
+   ```bash
+   pnpm lint
+   pnpm exec tsc --noEmit
+   pnpm build
+   ```
+
+4. **Commit.** [Conventional Commits](https://www.conventionalcommits.org/) preferred — pick a type (`feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`) with a clear subject.
+5. **Push and open a PR** against `main`. Fill out the PR template (what/why, how to test).
 
 ## Reporting security issues
 
-Don't open a public issue for security bugs. Use [GitHub's private security advisories](https://github.com/Timonwa/tools-by-timonwa/security/advisories/new).
+Don't open a public issue for security bugs — use [GitHub's private security advisories](https://github.com/Timonwa/tools-by-timonwa/security/advisories/new). See [SECURITY.md](./SECURITY.md).
 
 ## License
 

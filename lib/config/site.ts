@@ -8,6 +8,9 @@
 export const SITE_URL = "https://tools.timonwa.com";
 export const SITE_DOMAIN = SITE_URL.replace(/^https?:\/\//, "");
 export const SITE_NAME = "Tools by Timonwa";
+export const SITE_TITLE = `${SITE_NAME} — Small, focused, open-source tools`;
+export const SITE_DESCRIPTION =
+	"A growing collection of focused, open-source tools by Timonwa — one home for small software that does one thing well.";
 
 /** Creator / author — referenced from metadata, JSON-LD, and the footer. */
 export const CREATOR_NAME = "Timonwa";
@@ -27,7 +30,7 @@ export const REPO_URL = "https://github.com/Timonwa/tools-by-timonwa";
 export const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;
 
 /** Support / sponsor link (Navbar). */
-export const SPONSOR_URL = "https://buymeacoffee.com/timonwa";
+export const SPONSOR_URL = "https://tech.timonwa.com/sponsor";
 
 /** Legal pages, hosted on the main site (Footer). */
 export const TERMS_URL = "https://tech.timonwa.com/terms";

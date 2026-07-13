@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { SITE_NAME } from "@/lib/config/site";
+import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/config/site";
 
 /**
  * Web app manifest (Next.js metadata route). Served at `/manifest.webmanifest`
@@ -11,8 +11,7 @@ export default function manifest(): MetadataRoute.Manifest {
 	return {
 		name: SITE_NAME,
 		short_name: "Timonwa Tools",
-		description:
-			"A growing collection of focused, open-source tools by Timonwa — one home for small software that does one thing well.",
+		description: SITE_DESCRIPTION,
 		id: "/",
 		start_url: "/",
 		scope: "/",

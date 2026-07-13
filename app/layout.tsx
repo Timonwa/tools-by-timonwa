@@ -6,7 +6,9 @@ import {
 	CREATOR_NAME,
 	CREATOR_TWITTER,
 	CREATOR_URL,
+	SITE_DESCRIPTION,
 	SITE_NAME,
+	SITE_TITLE,
 	SITE_URL,
 } from "@/lib/config/site";
 import "./globals.css";
@@ -21,10 +23,6 @@ const geistMono = Geist_Mono({
 	variable: "--font-geist-mono",
 	subsets: ["latin"],
 });
-
-const SITE_TITLE = `${SITE_NAME} — Small, focused, open-source tools`;
-const SITE_DESCRIPTION =
-	"A growing collection of focused, open-source tools by Timonwa. One home for small software that does one thing well.";
 
 export const metadata: Metadata = {
 	metadataBase: new URL(SITE_URL),

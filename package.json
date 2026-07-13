@@ -1,7 +1,7 @@
 {
-	"name": "new-tools-by-timonwa",
+	"name": "tools-by-timonwa",
 	"version": "0.1.0",
-	"description": "A hub for small, focused, open-source tools by Timonwa.",
+	"description": "A growing collection of small, focused, open-source tools by Timonwa.",
 	"private": true,
 	"scripts": {
 		"dev": "next dev",

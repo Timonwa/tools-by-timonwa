@@ -1,17 +1,17 @@
 # Security Policy
 
-Thanks for helping keep Blog to Social Posts and its users safe.
+Thanks for helping keep Tools by Timonwa and its users safe.
 
 ## Supported versions
 
-Blog to Social Posts is a single-version, actively-developed web app. Security fixes are applied to the **latest commit on `main`** and rolled out to the hosted instance shortly after.
+Tools by Timonwa is a single-version, actively-developed web app. Security fixes are applied to the **latest commit on `main`** and rolled out to the hosted instance shortly after.
 
 | Version         | Supported |
 | --------------- | --------- |
 | Latest (`main`) | ✅        |
 | Older commits   | ❌        |
 
-There are no tagged releases yet. Self-hosters should track `main` and pull regularly.
+There are no tagged releases yet; the hosted instance always runs the latest `main`.
 
 ## Reporting a vulnerability
 
@@ -44,15 +44,15 @@ Please include:
 
 ## In scope
 
-- Unintended data exposure — BYOK keys, pasted drafts, or hashed IPs leaked beyond documented behavior
+- Unintended data exposure — BYOK keys, your tool input, or hashed IPs leaked beyond documented behavior
 - Authentication, authorization, or rate-limit bypass on the hosted instance
 - XSS, CSRF, SSRF, injection, or other OWASP-category vulnerabilities
 - Supply-chain issues with direct dependencies that affect production
 
 ## Out of scope
 
-- Prompt injection of the LLM — the agent's output is schema-validated and prompts are not treated as a secret (see `CONTRIBUTING.md`)
-- Rate-limit evasion via rotating IPs — known limitation of IP-based limits
+- Prompt injection of the LLM — tool agents' output is schema-validated and prompts are not treated as a secret (see `CONTRIBUTING.md`)
+- Rate-limit evasion — a known limitation of the hosted daily quota
 - Vulnerabilities in third-party services (Google AI Studio, Upstash, Vercel, Cloudflare) — please report those directly to the respective vendors
 - Missing best-practice HTTP headers that have no concrete impact
 - Findings from automated scanners without a reproducible exploit
@@ -62,8 +62,8 @@ Please include:
 Before reporting, skim the **Privacy** section of [README.md](./README.md) for the full data-flow picture. TL;DR:
 
 - **Your BYOK key** → browser `sessionStorage` only, cleared on tab close, never sent to or stored on Timonwa's servers
-- **Pasted draft text** → request-scoped on the server, not cached, not logged; lives in your browser's React state otherwise
-- **Fetched article content** (URL mode only) → 1-hour in-memory cache, keyed by URL
+- **Your tool input** (pasted text / URLs) → request-scoped on the server, not cached, not logged; lives in your browser's React state otherwise
+- **Fetched article content** (for URL-based tools) → 1-hour in-memory cache, keyed by URL
 - **Rate-limit counters** → SHA-256 hash of IP + daily counter in Upstash Redis, resets at UTC midnight
 
 Thanks again. ❤️
