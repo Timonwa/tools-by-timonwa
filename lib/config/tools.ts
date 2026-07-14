@@ -9,10 +9,13 @@ import {
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
+import { ROUTES } from "@/lib/config/routes";
+
 /**
  * Tools in the hub. The directory home and the navbar dropdown both read from
  * this list — adding a new tool is a single entry. `slug` must match the
- * route segment under `app/(tools)/<slug>/`.
+ * route segment under `app/(tools)/<slug>/`; `href` is derived from it via
+ * ROUTES.tool so the route pattern lives in one place.
  */
 export type ToolType = {
 	slug: string;
@@ -23,12 +26,11 @@ export type ToolType = {
 	status?: "live" | "soon";
 };
 
-export const TOOLS: ToolType[] = [
+const RAW_TOOLS: Omit<ToolType, "href">[] = [
 	{
 		slug: "article-to-social-posts",
 		name: "Article to Social Posts",
 		tagline: "Turn articles into platform-optimized social media posts.",
-		href: "/article-to-social-posts",
 		icon: Share2Icon,
 		status: "live",
 	},
@@ -37,7 +39,6 @@ export const TOOLS: ToolType[] = [
 		name: "Article to SEO Meta",
 		tagline:
 			"Generate SEO-friendly title and description variations with character counts in spec.",
-		href: "/article-to-seo-meta",
 		icon: SearchIcon,
 		status: "live",
 	},
@@ -46,7 +47,6 @@ export const TOOLS: ToolType[] = [
 		name: "Word & Character Counter",
 		tagline:
 			"Live word, character, sentence, and reading-time counts, with platform character limits.",
-		href: "/word-counter",
 		icon: WholeWordIcon,
 		status: "live",
 	},
@@ -55,7 +55,6 @@ export const TOOLS: ToolType[] = [
 		name: "Case Converter",
 		tagline:
 			"Switch text between UPPERCASE, Title Case, camelCase, snake_case, and more.",
-		href: "/case-converter",
 		icon: CaseSensitiveIcon,
 		status: "live",
 	},
@@ -63,7 +62,6 @@ export const TOOLS: ToolType[] = [
 		slug: "slug-generator",
 		name: "Slug Generator",
 		tagline: "Turn any title or headline into a clean, URL-safe slug.",
-		href: "/slug-generator",
 		icon: LinkIcon,
 		status: "live",
 	},
@@ -72,8 +70,12 @@ export const TOOLS: ToolType[] = [
 		name: "Reading Time Estimator",
 		tagline:
 			"Estimate reading and speaking time, with a copy-ready “X min read” label.",
-		href: "/reading-time",
 		icon: ClockIcon,
 		status: "live",
 	},
 ];
+
+export const TOOLS: ToolType[] = RAW_TOOLS.map((tool) => ({
+	...tool,
+	href: ROUTES.tool(tool.slug),
+}));

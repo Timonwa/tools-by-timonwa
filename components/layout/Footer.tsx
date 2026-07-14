@@ -1,4 +1,4 @@
-import { CoffeeIcon, WrenchIcon } from "lucide-react";
+import { HeartIcon, WrenchIcon } from "lucide-react";
 import Link from "next/link";
 
 import { GithubMark } from "@/components/ui";
@@ -17,13 +17,13 @@ import {
 	TERMS_URL,
 } from "@/lib/config/site";
 import { TOOLS } from "@/lib/config/tools";
-import { guideHref } from "@/lib/guides/guides";
+import { ROUTES } from "@/lib/config/routes";
 import { getAllGuides } from "@/lib/guides/loader";
 
 const PROJECT_LINKS = [
+	{ href: SPONSOR_URL, label: "Support" },
 	{ href: REPO_URL, label: "Star on GitHub" },
 	{ href: `${REPO_URL}/issues`, label: "Report an issue" },
-	{ href: SPONSOR_URL, label: "Sponsor" },
 	{ href: LICENSE_URL, label: "MIT License" },
 ];
 
@@ -76,7 +76,7 @@ export default function Footer() {
 					{/* Brand */}
 					<div className="col-span-2 sm:col-span-4 lg:col-span-4">
 						<Link
-							href="/"
+							href={ROUTES.home}
 							className="inline-flex items-center gap-2 text-base font-semibold"
 						>
 							<span
@@ -92,6 +92,15 @@ export default function Footer() {
 						</p>
 						<div className="mt-4 flex items-center gap-2">
 							<a
+								href={SPONSOR_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								aria-label="Support"
+								className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+							>
+								<HeartIcon aria-hidden className="h-4 w-4" />
+							</a>
+							<a
 								href={REPO_URL}
 								target="_blank"
 								rel="noopener noreferrer"
@@ -99,15 +108,6 @@ export default function Footer() {
 								className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
 							>
 								<GithubMark aria-hidden className="h-4 w-4" />
-							</a>
-							<a
-								href={SPONSOR_URL}
-								target="_blank"
-								rel="noopener noreferrer"
-								aria-label="Sponsor this project"
-								className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-							>
-								<CoffeeIcon aria-hidden className="h-4 w-4" />
 							</a>
 						</div>
 					</div>
@@ -144,13 +144,13 @@ export default function Footer() {
 						</h2>
 						<ul className="mt-3 space-y-2 text-sm">
 							<li>
-								<Link href="/guides" className={linkClass}>
+								<Link href={ROUTES.guides} className={linkClass}>
 									All guides
 								</Link>
 							</li>
 							{guides.map((guide) => (
 								<li key={guide.slug}>
-									<Link href={guideHref(guide.slug)} className={linkClass}>
+									<Link href={ROUTES.guide(guide.slug)} className={linkClass}>
 										{guide.title}
 									</Link>
 								</li>

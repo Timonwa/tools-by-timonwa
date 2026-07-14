@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { ROUTES } from "@/lib/config/routes";
 import { SITE_URL } from "@/lib/config/site";
 import { TOOLS } from "@/lib/config/tools";
 import { getAllGuides } from "@/lib/guides/loader";
@@ -17,9 +18,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			changeFrequency: "monthly" as const,
 			priority: 0.8,
 		})),
-		{ url: `${SITE_URL}/guides`, changeFrequency: "weekly", priority: 0.7 },
+		{
+			url: `${SITE_URL}${ROUTES.guides}`,
+			changeFrequency: "weekly",
+			priority: 0.7,
+		},
 		...getAllGuides().map((g) => ({
-			url: `${SITE_URL}/guides/${g.slug}`,
+			url: `${SITE_URL}${ROUTES.guide(g.slug)}`,
 			lastModified: g.updatedAt ?? g.publishedAt,
 			changeFrequency: "monthly" as const,
 			priority: 0.7,

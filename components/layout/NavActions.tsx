@@ -2,7 +2,7 @@
 
 import {
 	BookOpenTextIcon,
-	CoffeeIcon,
+	HeartIcon,
 	HomeIcon,
 	MenuIcon,
 	XIcon,
@@ -14,6 +14,7 @@ import { buttonClasses } from "@/components/ui";
 import ByokDrawer from "@/components/_shared/byok/ByokDrawer";
 import ToolsMenu from "@/components/layout/ToolsMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import { ROUTES } from "@/lib/config/routes";
 import { REPO_URL, SPONSOR_URL } from "@/lib/config/site";
 import { cn } from "@/lib/utils/cn";
 
@@ -108,7 +109,7 @@ export default function NavActions({
 			>
 				{/* Home is the logo on xl+, so it only needs a row in the panel. */}
 				<Link
-					href="/"
+					href={ROUTES.home}
 					onClick={close}
 					className={cn(
 						buttonClasses({ variant: "ghost", size: "sm" }),
@@ -120,7 +121,7 @@ export default function NavActions({
 				</Link>
 
 				<Link
-					href="/guides"
+					href={ROUTES.guides}
 					onClick={close}
 					className={cn(
 						buttonClasses({ variant: "ghost", size: "sm" }),
@@ -143,8 +144,8 @@ export default function NavActions({
 					rel="noopener noreferrer"
 					className={cta}
 				>
-					<CoffeeIcon aria-hidden className="w-4 h-4" />
-					<span>Sponsor</span>
+					<HeartIcon aria-hidden className="w-4 h-4" />
+					<span>Support</span>
 				</a>
 				<a
 					href={repoUrl}

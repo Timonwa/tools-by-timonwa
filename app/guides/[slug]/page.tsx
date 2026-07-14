@@ -13,6 +13,7 @@ import {
 	SITE_NAME,
 	SITE_URL,
 } from "@/lib/config/site";
+import { ROUTES } from "@/lib/config/routes";
 import { splitGuideTitle } from "@/lib/guides/guides";
 import { getGuide, getGuideSlugs } from "@/lib/guides/loader";
 
@@ -31,7 +32,7 @@ export async function generateMetadata({
 	const guide = getGuide(slug);
 	if (!guide) return {};
 
-	const path = `/guides/${slug}`;
+	const path = ROUTES.guide(slug);
 	const url = `${SITE_URL}${path}`;
 	const title = `${guide.title} — ${SITE_NAME}`;
 
@@ -77,8 +78,8 @@ export default async function GuidePage({ params }: GuidePageProps) {
 		datePublished: guide.publishedAt,
 		dateModified: guide.updatedAt ?? guide.publishedAt,
 		inLanguage: "en",
-		image: `${SITE_URL}/guides/${slug}/opengraph-image`,
-		mainEntityOfPage: `${SITE_URL}/guides/${slug}`,
+		image: `${SITE_URL}${ROUTES.guide(slug)}/opengraph-image`,
+		mainEntityOfPage: `${SITE_URL}${ROUTES.guide(slug)}`,
 		author: { "@type": "Person", name: CREATOR_NAME, url: CREATOR_URL },
 		publisher: { "@type": "Person", name: CREATOR_NAME, url: CREATOR_URL },
 		keywords: guide.keywords.join(", "),
@@ -118,7 +119,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
 
 					<footer className="mt-16 border-t border-border/60 pt-8">
 						<Link
-							href="/guides"
+							href={ROUTES.guides}
 							className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
 						>
 							<BookOpenTextIcon aria-hidden className="h-4 w-4" />

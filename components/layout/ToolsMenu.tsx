@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import { useId, useMemo, useState } from "react";
 
 import { Button, Input } from "@/components/ui";
+import { ROUTES } from "@/lib/config/routes";
 import { TOOLS } from "@/lib/config/tools";
 import { cn } from "@/lib/utils/cn";
 
@@ -159,7 +160,7 @@ export default function ToolsMenu({
 				</div>
 
 				<Link
-					href="/"
+					href={ROUTES.home}
 					onClick={onNavigate}
 					className="flex items-center justify-center gap-1 border-t border-border/60 px-3 py-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
 				>

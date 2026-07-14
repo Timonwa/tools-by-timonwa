@@ -14,7 +14,9 @@ import { useId, useState } from "react";
 
 import { Input } from "@/components/ui";
 import { BYOK_MODELS, type ByokModelType } from "@/lib/config/byok";
-import { guideHref } from "@/lib/guides/guides";
+import { ROUTES } from "@/lib/config/routes";
+import { AI_STUDIO_KEYS_URL } from "@/lib/config/site";
+import { GUIDE_SLUGS } from "@/lib/guides/guides";
 
 type StatusType =
 	| { type: "success"; message: string }
@@ -83,7 +85,7 @@ export default function ByokSection({
 
 			<div className="flex flex-col gap-2">
 				<Link
-					href="https://aistudio.google.com/api-keys"
+					href={AI_STUDIO_KEYS_URL}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
@@ -93,7 +95,7 @@ export default function ByokSection({
 					<span className="sr-only">(opens in a new tab)</span>
 				</Link>
 				<Link
-					href={guideHref("get-a-gemini-api-key")}
+					href={ROUTES.guide(GUIDE_SLUGS.geminiApiKey)}
 					className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
 				>
 					New to API keys? Read the 2-minute guide

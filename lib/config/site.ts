@@ -35,3 +35,7 @@ export const SPONSOR_URL = "https://tech.timonwa.com/sponsor";
 /** Legal pages, hosted on the main site (Footer). */
 export const TERMS_URL = "https://tech.timonwa.com/terms";
 export const PRIVACY_URL = "https://tech.timonwa.com/privacy";
+
+/** Google AI Studio — where users create a free Gemini API key for BYOK. */
+export const AI_STUDIO_URL = "https://aistudio.google.com";
+export const AI_STUDIO_KEYS_URL = `${AI_STUDIO_URL}/api-keys`;

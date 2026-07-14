@@ -10,10 +10,10 @@ import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
 import { LinkCard, PageHero } from "@/components/ui";
 import { SITE_NAME, SITE_URL } from "@/lib/config/site";
-import { guideHref } from "@/lib/guides/guides";
+import { ROUTES } from "@/lib/config/routes";
 import { getAllGuides } from "@/lib/guides/loader";
 
-const PATH = "/guides";
+const PATH = ROUTES.guides;
 const TITLE = `Guides — ${SITE_NAME}`;
 const DESCRIPTION =
 	"Short, practical guides for the tools — setup, tips, and step-by-step walkthroughs, including how to get a free API key.";
@@ -46,7 +46,7 @@ export default function GuidesIndexPage() {
 		itemListElement: guides.map((g, i) => ({
 			"@type": "ListItem",
 			position: i + 1,
-			url: `${SITE_URL}/guides/${g.slug}`,
+			url: `${SITE_URL}${ROUTES.guide(g.slug)}`,
 			name: g.title,
 		})),
 	};
@@ -77,7 +77,7 @@ export default function GuidesIndexPage() {
 				<ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{guides.map((guide) => (
 						<li key={guide.slug}>
-							<LinkCard href={guideHref(guide.slug)}>
+							<LinkCard href={ROUTES.guide(guide.slug)}>
 								<span className="text-xs font-medium uppercase tracking-wide text-primary">
 									{guide.category}
 								</span>
