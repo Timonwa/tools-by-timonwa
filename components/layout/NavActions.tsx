@@ -84,6 +84,7 @@ export default function NavActions({
 				aria-expanded={openMenu === "nav"}
 				aria-controls={menuId}
 				aria-label={openMenu === "nav" ? "Close menu" : "Open menu"}
+				title={openMenu === "nav" ? "Close menu" : "Open menu"}
 				className={cn(
 					buttonClasses({ variant: "ghost", size: "icon-sm" }),
 					"xl:hidden",
@@ -143,6 +144,7 @@ export default function NavActions({
 					target="_blank"
 					rel="noopener noreferrer"
 					className={cta}
+					title="Support"
 				>
 					<HeartIcon aria-hidden className="w-4 h-4" />
 					<span>Support</span>

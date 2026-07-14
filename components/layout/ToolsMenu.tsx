@@ -56,6 +56,7 @@ export default function ToolsMenu({
 				aria-expanded={open}
 				aria-controls={menuId}
 				onClick={onToggle}
+				title="Tools"
 			>
 				<LayoutGridIcon aria-hidden className="w-4 h-4" />
 				<span className="hidden sm:inline">Tools</span>

@@ -69,6 +69,7 @@ export default function ByokDrawer() {
 				size="sm"
 				onClick={() => setOpen(true)}
 				aria-label={saved ? "API key — your own key is active" : "API key"}
+				title={saved ? "API key — your own key is active" : "Set API key"}
 				aria-expanded={open}
 				className="w-full justify-start xl:w-auto xl:justify-center"
 			>
