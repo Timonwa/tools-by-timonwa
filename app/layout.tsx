@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import Footer from "@/components/layout/Footer";
 import {
 	CREATOR_NAME,
@@ -12,7 +13,7 @@ import {
 	SITE_URL,
 } from "@/lib/config/site";
 import "./globals.css";
-import { env } from "@env";
+import { env, isProduction } from "@env";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -63,6 +64,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const cfAnalyticsToken = env.NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN;
+	const gaId = env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
 	return (
 		<html lang="en" suppressHydrationWarning>
@@ -75,13 +77,14 @@ export default function RootLayout({
 			>
 				<div className="flex-1">{children}</div>
 				<Footer />
-				{cfAnalyticsToken && (
+				{isProduction && cfAnalyticsToken && (
 					<Script
 						src="https://static.cloudflareinsights.com/beacon.min.js"
 						strategy="afterInteractive"
 						data-cf-beacon={`{"token": "${cfAnalyticsToken}"}`}
 					/>
 				)}
+				{isProduction && gaId && <GoogleAnalytics gaId={gaId} />}
 			</body>
 		</html>
 	);
