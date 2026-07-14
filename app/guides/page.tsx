@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
+import Newsletter from "@/components/marketing/Newsletter";
 import { LinkCard, PageHero } from "@/components/ui";
 import { SITE_NAME, SITE_URL } from "@/lib/config/site";
 import { ROUTES } from "@/lib/config/routes";
@@ -99,6 +100,8 @@ export default function GuidesIndexPage() {
 						</li>
 					))}
 				</ul>
+
+				<Newsletter className="mt-16" />
 
 				<script
 					type="application/ld+json"

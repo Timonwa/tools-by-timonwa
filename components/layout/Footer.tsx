@@ -72,9 +72,9 @@ export default function Footer() {
 	return (
 		<footer className="border-t border-border/50 bg-background/50">
 			<div className="container mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-				<div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 lg:grid-cols-12">
+				<div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-4 lg:grid-cols-12">
 					{/* Brand */}
-					<div className="col-span-2 sm:col-span-4 lg:col-span-4">
+					<div className="sm:col-span-4 lg:col-span-4">
 						<Link
 							href={ROUTES.home}
 							className="inline-flex items-center gap-2 text-base font-semibold"

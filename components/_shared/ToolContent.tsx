@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import MoreTools from "@/components/_shared/MoreTools";
+import Newsletter from "@/components/marketing/Newsletter";
 
 export type ToolFaqType = { question: string; answer: string };
 
@@ -87,47 +88,51 @@ export default function ToolContent({
 	};
 
 	return (
-		<div className="mt-16 space-y-12 border-t border-border/60 pt-12">
-			<article className="max-w-3xl">
-				<ReactMarkdown
-					remarkPlugins={[remarkGfm]}
-					components={markdownComponents}
-				>
-					{content.article}
-				</ReactMarkdown>
-			</article>
+		<>
+			<Newsletter className="mt-16" />
 
-			<section aria-labelledby="faq-heading" className="max-w-3xl space-y-4">
-				<h2 id="faq-heading" className="text-xl font-semibold tracking-tight">
-					Frequently asked questions
-				</h2>
-				<div className="divide-y divide-border/60 overflow-hidden rounded-xl border border-border">
-					{content.faq.map((item) => (
-						<details key={item.question} className="group">
-							<summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 font-medium [&::-webkit-details-marker]:hidden">
-								{item.question}
-								<PlusIcon
-									aria-hidden
-									className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-45"
-								/>
-							</summary>
-							<p className="px-4 pb-4 text-sm leading-relaxed text-muted-foreground">
-								{item.answer}
-							</p>
-						</details>
-					))}
-				</div>
-			</section>
+			<div className="mt-16 space-y-12 border-t border-border/60 pt-12">
+				<article className="max-w-3xl">
+					<ReactMarkdown
+						remarkPlugins={[remarkGfm]}
+						components={markdownComponents}
+					>
+						{content.article}
+					</ReactMarkdown>
+				</article>
 
-			<MoreTools currentSlug={currentSlug} />
+				<section aria-labelledby="faq-heading" className="max-w-3xl space-y-4">
+					<h2 id="faq-heading" className="text-xl font-semibold tracking-tight">
+						Frequently asked questions
+					</h2>
+					<div className="divide-y divide-border/60 overflow-hidden rounded-xl border border-border">
+						{content.faq.map((item) => (
+							<details key={item.question} className="group">
+								<summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 font-medium [&::-webkit-details-marker]:hidden">
+									{item.question}
+									<PlusIcon
+										aria-hidden
+										className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-45"
+									/>
+								</summary>
+								<p className="px-4 pb-4 text-sm leading-relaxed text-muted-foreground">
+									{item.answer}
+								</p>
+							</details>
+						))}
+					</div>
+				</section>
 
-			<script
-				type="application/ld+json"
-				// FAQPage structured data — eligible for FAQ rich results.
-				dangerouslySetInnerHTML={{
-					__html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c"),
-				}}
-			/>
-		</div>
+				<MoreTools currentSlug={currentSlug} />
+
+				<script
+					type="application/ld+json"
+					// FAQPage structured data — eligible for FAQ rich results.
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c"),
+					}}
+				/>
+			</div>
+		</>
 	);
 }

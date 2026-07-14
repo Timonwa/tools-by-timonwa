@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
+import Newsletter from "@/components/marketing/Newsletter";
 import { PageHero } from "@/components/ui";
 import {
 	CREATOR_NAME,
@@ -116,6 +117,8 @@ export default async function GuidePage({ params }: GuidePageProps) {
 					<article>
 						<GuideBody />
 					</article>
+
+					<Newsletter className="mt-16" />
 
 					<footer className="mt-16 border-t border-border/60 pt-8">
 						<Link
