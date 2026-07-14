@@ -19,23 +19,22 @@ type GuideFigureProps = {
 export default function GuideFigure({ src, alt, caption }: GuideFigureProps) {
 	return (
 		<figure className="mt-6">
-			<div className="relative aspect-16/10 w-full overflow-hidden rounded-xl border border-border bg-muted/40">
-				{src ? (
-					<Image
-						src={src}
-						alt={alt ?? caption}
-						fill
-						sizes="(max-width: 768px) 100vw, 720px"
-						className="object-contain"
-					/>
-				) : (
-					<div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6 text-center text-muted-foreground">
-						<ImageIcon aria-hidden className="h-8 w-8 opacity-60" />
-						<span className="text-sm font-medium">Screenshot</span>
-						<span className="text-xs">{caption}</span>
-					</div>
-				)}
-			</div>
+			{src ? (
+				<Image
+					src={src}
+					alt={alt ?? caption}
+					width={0}
+					height={0}
+					sizes="(max-width: 768px) 100vw, 720px"
+					className="h-auto w-full rounded-xl border border-border"
+				/>
+			) : (
+				<div className="flex aspect-16/10 w-full flex-col items-center justify-center gap-2 rounded-xl border border-border bg-muted/40 px-6 text-center text-muted-foreground">
+					<ImageIcon aria-hidden className="h-8 w-8 opacity-60" />
+					<span className="text-sm font-medium">Screenshot</span>
+					<span className="text-xs">{caption}</span>
+				</div>
+			)}
 			<figcaption className="mt-2 text-center text-sm text-muted-foreground">
 				{caption}
 			</figcaption>
