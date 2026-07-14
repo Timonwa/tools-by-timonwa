@@ -13,7 +13,7 @@ import {
 	REPO_URL,
 	SITE_DESCRIPTION,
 	SITE_NAME,
-	SPONSOR_URL,
+	SUPPORT_URL,
 	TERMS_URL,
 } from "@/lib/config/site";
 import { TOOLS } from "@/lib/config/tools";
@@ -21,7 +21,7 @@ import { ROUTES } from "@/lib/config/routes";
 import { getAllGuides } from "@/lib/guides/loader";
 
 const PROJECT_LINKS = [
-	{ href: SPONSOR_URL, label: "Support" },
+	{ href: SUPPORT_URL, label: "Support" },
 	{ href: REPO_URL, label: "Star on GitHub" },
 	{ href: `${REPO_URL}/issues`, label: "Report an issue" },
 	{ href: LICENSE_URL, label: "MIT License" },
@@ -92,7 +92,7 @@ export default function Footer() {
 						</p>
 						<div className="mt-4 flex items-center gap-2">
 							<a
-								href={SPONSOR_URL}
+								href={SUPPORT_URL}
 								target="_blank"
 								rel="noopener noreferrer"
 								aria-label="Support"

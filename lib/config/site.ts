@@ -29,8 +29,8 @@ export const CREATOR_SAME_AS = [CREATOR_TWITTER_URL, CREATOR_SITE_URL];
 export const REPO_URL = "https://github.com/Timonwa/tools-by-timonwa";
 export const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;
 
-/** Support / sponsor link (Navbar). */
-export const SPONSOR_URL = "https://tech.timonwa.com/sponsor";
+/** Support / support link (Navbar). */
+export const SUPPORT_URL = "https://tech.timonwa.com/support";
 
 /** Legal pages, hosted on the main site (Footer). */
 export const TERMS_URL = "https://tech.timonwa.com/terms";

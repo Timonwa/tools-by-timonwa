@@ -15,7 +15,7 @@ import ByokDrawer from "@/components/_shared/byok/ByokDrawer";
 import ToolsMenu from "@/components/layout/ToolsMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import { ROUTES } from "@/lib/config/routes";
-import { REPO_URL, SPONSOR_URL } from "@/lib/config/site";
+import { REPO_URL, SUPPORT_URL } from "@/lib/config/site";
 import { cn } from "@/lib/utils/cn";
 
 type NavActionsProps = {
@@ -29,7 +29,7 @@ type NavActionsProps = {
 
 /**
  * Right side of the Navbar. The Tools switcher is always a dropdown. The
- * secondary controls (key, settings, theme, sponsor, GitHub) render as an inline
+ * secondary controls (key, settings, theme, support, GitHub) render as an inline
  * row from `xl` up — where there's room for everything — and collapse into a
  * hamburger dropdown below that. It's one set of controls, restyled per
  * breakpoint via CSS, so the drawers stay mounted (their event listeners keep
@@ -139,7 +139,7 @@ export default function NavActions({
 				<div className="my-1 border-t border-border/60 xl:hidden" />
 
 				<a
-					href={SPONSOR_URL}
+					href={SUPPORT_URL}
 					target="_blank"
 					rel="noopener noreferrer"
 					className={cta}
