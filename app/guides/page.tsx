@@ -5,11 +5,10 @@ import {
 	WrenchIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
-import { PageHero } from "@/components/ui";
+import { LinkCard, PageHero } from "@/components/ui";
 import { SITE_NAME, SITE_URL } from "@/lib/config/site";
 import { guideHref } from "@/lib/guides/guides";
 import { getAllGuides } from "@/lib/guides/loader";
@@ -78,10 +77,7 @@ export default function GuidesIndexPage() {
 				<ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 					{guides.map((guide) => (
 						<li key={guide.slug}>
-							<Link
-								href={guideHref(guide.slug)}
-								className="group flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:bg-accent"
-							>
+							<LinkCard href={guideHref(guide.slug)}>
 								<span className="text-xs font-medium uppercase tracking-wide text-primary">
 									{guide.category}
 								</span>
@@ -99,7 +95,7 @@ export default function GuidesIndexPage() {
 										className="ml-auto h-4 w-4 transition-transform group-hover:translate-x-0.5"
 									/>
 								</span>
-							</Link>
+							</LinkCard>
 						</li>
 					))}
 				</ul>

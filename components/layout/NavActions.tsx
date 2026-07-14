@@ -1,6 +1,12 @@
 "use client";
 
-import { CoffeeIcon, HomeIcon, MenuIcon, XIcon } from "lucide-react";
+import {
+	BookOpenTextIcon,
+	CoffeeIcon,
+	HomeIcon,
+	MenuIcon,
+	XIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 
@@ -111,6 +117,18 @@ export default function NavActions({
 				>
 					<HomeIcon aria-hidden className="w-4 h-4" />
 					<span>Home</span>
+				</Link>
+
+				<Link
+					href="/guides"
+					onClick={close}
+					className={cn(
+						buttonClasses({ variant: "ghost", size: "sm" }),
+						"w-full justify-start xl:hidden",
+					)}
+				>
+					<BookOpenTextIcon aria-hidden className="w-4 h-4" />
+					<span>Guides</span>
 				</Link>
 
 				{showByok && <ByokDrawer />}
