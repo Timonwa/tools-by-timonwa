@@ -49,7 +49,6 @@ export default function CaseConverterTool() {
 							onChange={(e) => setText(e.target.value)}
 							placeholder="Type or paste text to convert…"
 							className="min-h-40 max-h-96 overflow-y-auto"
-							autoFocus
 						/>
 					</div>
 				</CardContent>

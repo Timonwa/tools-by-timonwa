@@ -14,17 +14,23 @@ import YouTubeEmbed from "@/components/guides/YouTubeEmbed";
  * guides and tool pages read as one system.
  */
 const elements: MDXComponents = {
-	h2: (props: ComponentPropsWithoutRef<"h2">) => (
+	h2: ({ children, ...props }: ComponentPropsWithoutRef<"h2">) => (
 		<h2
 			className="mt-12 scroll-mt-24 text-2xl font-semibold tracking-tight first:mt-0"
 			{...props}
-		/>
+		>
+			{children}
+		</h2>
 	),
-	h3: (props: ComponentPropsWithoutRef<"h3">) => (
-		<h3 className="mt-8 text-xl font-semibold tracking-tight" {...props} />
+	h3: ({ children, ...props }: ComponentPropsWithoutRef<"h3">) => (
+		<h3 className="mt-8 text-xl font-semibold tracking-tight" {...props}>
+			{children}
+		</h3>
 	),
-	h4: (props: ComponentPropsWithoutRef<"h4">) => (
-		<h4 className="mt-6 text-lg font-semibold" {...props} />
+	h4: ({ children, ...props }: ComponentPropsWithoutRef<"h4">) => (
+		<h4 className="mt-6 text-lg font-semibold" {...props}>
+			{children}
+		</h4>
 	),
 	p: (props: ComponentPropsWithoutRef<"p">) => (
 		<p className="mt-4 leading-relaxed text-muted-foreground" {...props} />
@@ -57,7 +63,7 @@ const elements: MDXComponents = {
 		/>
 	),
 	hr: () => <hr className="my-10 border-border/60" />,
-	a: ({ href = "", ...props }: ComponentPropsWithoutRef<"a">) => {
+	a: ({ href = "", children, ...props }: ComponentPropsWithoutRef<"a">) => {
 		const className =
 			"font-medium text-primary underline underline-offset-2 hover:no-underline";
 		if (/^https?:\/\//.test(href)) {
@@ -68,10 +74,16 @@ const elements: MDXComponents = {
 					rel="noopener noreferrer"
 					className={className}
 					{...props}
-				/>
+				>
+					{children}
+				</a>
 			);
 		}
-		return <Link href={href as Route} className={className} {...props} />;
+		return (
+			<Link href={href as Route} className={className} {...props}>
+				{children}
+			</Link>
+		);
 	},
 	code: ({ className, ...props }: ComponentPropsWithoutRef<"code">) => {
 		// Fenced blocks arrive with a `language-*` class (and live inside <pre>);

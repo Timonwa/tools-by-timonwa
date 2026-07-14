@@ -57,7 +57,6 @@ export default function WordCounterTool() {
 							onChange={(e) => setText(e.target.value)}
 							placeholder="Paste or type your text…"
 							className="min-h-64 max-h-96 overflow-y-auto"
-							autoFocus
 						/>
 					</div>
 					<DraftReuseControls
