@@ -11,9 +11,9 @@ import {
 
 const TOOL_PATH = "/slug-generator";
 const TOOL_URL = `${SITE_URL}${TOOL_PATH}`;
-const TOOL_TITLE = "Slug Generator — turn any title into a clean URL slug";
+const TOOL_TITLE = "Slug Generator — turn any text into a clean URL slug";
 const TOOL_DESCRIPTION =
-	"Turn a title or headline into a clean, URL-safe slug. Strips accents and punctuation, with options for the separator, lowercasing, and dropping stop words. Free, no sign-up, runs in your browser.";
+	"Turn any title, heading, or text into a clean, URL-safe slug. Strips accents and punctuation, with options for the separator, lowercasing, and dropping stop words. Free, no sign-up, runs in your browser.";
 
 export const metadata: Metadata = {
 	title: TOOL_TITLE,
@@ -55,12 +55,13 @@ const jsonLd = {
 		"slug generator",
 		"url slug generator",
 		"title to slug",
+		"text to slug",
 		"seo slug",
 		"permalink generator",
 		"open source slug generator",
 	].join(", "),
 	featureList: [
-		"Turn a title or headline into a clean, URL-safe slug",
+		"Turn any title, heading, or text into a clean, URL-safe slug",
 		"Strips accents and punctuation",
 		"Choose a hyphen or underscore separator",
 		"Optional lowercasing and stop-word removal",

@@ -1,80 +1,100 @@
 import type { ToolContentType } from "@/components/_shared/ToolContent";
 
 export const slugGeneratorContent: ToolContentType = {
-	sections: [
-		{
-			heading: "What is a URL slug?",
-			body: [
-				'A URL slug is the readable part of a web address that identifies a specific page — the "how-to-write-a-slug" in example.com/blog/how-to-write-a-slug. Instead of a database ID or a string of numbers, a slug uses real words so both people and search engines can tell what the page is about before they click. A slug generator turns a title or headline into that clean, URL-safe string for you.',
-				"This tool converts your title into a slug instantly and runs entirely in your browser — nothing is uploaded. You control the separator, whether to lowercase, and whether to drop common stop words.",
-			],
-		},
-		{
-			heading: "Who is the slug generator for?",
-			body: [
-				"The slug generator is for bloggers, content writers, and marketers creating clean permalinks for posts and landing pages, and for developers and site owners who need URL-safe identifiers for routes, files, or database records. SEO specialists use it to turn long headlines into short, keyword-focused URLs that read well in search results. If you publish anything to the web with a custom URL, a good slug is part of the job.",
-			],
-		},
-		{
-			heading: "How to use the slug generator",
-			body: [
-				'Type or paste a title and the slug appears immediately. Accents are stripped (café becomes cafe), punctuation is removed, and spaces become your chosen separator. Toggle lowercasing on or off, switch between a hyphen or underscore separator, and optionally remove stop words like "a," "the," and "of" to keep the slug short. When it looks right, copy it into your CMS.',
-			],
-		},
-		{
-			heading: "What makes a good, SEO-friendly slug?",
-			body: [
-				"Keep it short and descriptive. Google doesn't enforce a slug length, but shorter URLs are easier to read, share, and remember, and they don't get truncated in search results — aiming for under about 60 characters and three to five words is a good rule of thumb. Include your main keyword, use lowercase to avoid duplicate-URL issues on case-sensitive servers, and separate words with hyphens.",
-				'Avoid padding the slug with dates, tracking parameters, or stop words that add length without meaning. A slug like "beginners-guide-open-source" reads better and ranks more cleanly than "a-complete-beginners-guide-to-the-world-of-open-source-in-2026."',
-			],
-		},
-		{
-			heading: "Hyphens vs. underscores, and stop words",
-			body: [
-				'Google treats hyphens as word separators but reads underscores as joiners, so "open-source" is understood as two words while "open_source" can be read as one. That\'s why hyphens are the SEO-preferred choice for public URLs; underscores mostly appear in code or when a system requires them. Removing stop words is optional — it shortens the slug, but leaving them in is fine when they aid readability. This tool never lets stop-word removal produce an empty slug.',
-			],
-		},
-	],
+	article: `## What is a URL slug?
+
+A URL slug is the readable part of a web address that identifies a page — the "how-to-write-a-slug" in example.com/blog/how-to-write-a-slug. It uses real words instead of a database ID or query string, so people and search engines can tell what a page covers before they click. A slug generator turns any title, heading, product name, or phrase into that clean, URL-safe string automatically.
+
+This tool converts your text into a slug instantly and runs entirely in your browser — nothing is uploaded. You choose the separator, whether to lowercase, and whether to drop common stop words.
+
+## Who is the slug generator for?
+
+- **Bloggers and content writers** — slugify post titles and section headings.
+- **E-commerce and marketing teams** — slugify product, category, and campaign names.
+- **Developers and site owners** — generate URL-safe identifiers for routes, files, tags, and database records.
+- **Documentation authors** — turn headings into anchor links.
+
+Anywhere text becomes part of a URL, a clean slug helps people and search engines read it.
+
+## How to use the slug generator
+
+1. Type or paste any text — a title, heading, product name, or tag.
+2. The slug appears instantly — accents stripped (café becomes cafe), punctuation removed, spaces replaced by your separator.
+3. Adjust the options: hyphen or underscore, lowercase on or off, and optional stop-word removal.
+4. Copy the slug into your CMS, your code, or wherever the URL lives.
+
+## What makes a good, SEO-friendly slug
+
+Short, descriptive, and keyword-focused wins. Google's own [URL structure guidelines](https://developers.google.com/search/docs/crawling-indexing/url-structure) recommend simple, human-readable URLs. In practice:
+
+- **Keep it short** — aim for under about 60 characters and three to five words.
+- **Include the main keyword** or the name of the thing the page is about.
+- **Use lowercase** to avoid duplicate URLs on case-sensitive servers.
+- **Separate words with hyphens** (more on that below).
+- **Skip stop words, dates, and IDs** that add length without meaning.
+
+A slug like "wireless-earbuds-pro" or "beginners-guide-open-source" reads and ranks better than a long, padded string.
+
+## Hyphens vs. underscores, and stop words
+
+Google treats a **hyphen as a space** between words but reads an **underscore as a joiner**, so "open-source" is understood as two words while "open_source" can be read as one. That's why hyphens are the SEO-preferred separator for public URLs; underscores mostly belong in code. Removing stop words ("a," "the," "of") is optional — it shortens the slug, but keeping them is fine when they aid readability. This generator never lets stop-word removal leave you with an empty slug.
+
+## Slug mistakes to avoid
+
+- **Changing a live slug without a redirect** — add a 301 so existing links and ranking carry over.
+- **Keyword stuffing** — repeating a term doesn't help and looks spammy.
+- **Dates and version numbers** — they age the URL and undercut evergreen content.
+- **Uppercase letters or spaces** — both cause inconsistent, hard-to-share links.`,
 	faq: [
 		{
 			question: "What is a URL slug?",
 			answer:
-				'A URL slug is the human-readable part of a web address that names a page, such as "how-to-write-a-slug" in example.com/blog/how-to-write-a-slug. It uses words instead of IDs so people and search engines can understand the page.',
+				"A URL slug is the human-readable part of a web address that identifies a page, such as “how-to-write-a-slug” in example.com/blog/how-to-write-a-slug. It uses words instead of an ID so people and search engines can understand the page before opening it.",
 		},
 		{
 			question: "How long should a URL slug be?",
 			answer:
-				"There's no hard limit, but shorter is better — aim for under about 60 characters and three to five words. Short slugs are easier to read and share and won't be truncated in search results.",
+				"There's no hard limit, but shorter is better — aim for under about 60 characters and three to five words. Short slugs are easier to read, share, and remember, and they aren't truncated in search results.",
 		},
 		{
 			question: "Should I use hyphens or underscores in a URL?",
 			answer:
-				"Use hyphens. Google treats hyphens as spaces between words but reads underscores as joining words together, so hyphens are the SEO-friendly choice for public URLs.",
+				"Use hyphens. Google reads a hyphen as a space between words but treats an underscore as joining words together, so hyphens keep each word distinct and are the SEO-friendly choice for public URLs.",
 		},
 		{
 			question: "Do URL slugs affect SEO?",
 			answer:
-				"Yes, modestly. A clean, keyword-relevant slug helps search engines and users understand the page and can improve click-through, though it's a smaller ranking factor than content and links.",
+				"Yes, modestly. A short, keyword-relevant slug helps search engines and users understand a page and can improve click-through, though content and links matter far more to ranking.",
+		},
+		{
+			question: "Should a URL slug be lowercase?",
+			answer:
+				"Yes. Lowercase slugs avoid duplicate-URL problems on case-sensitive servers, where /My-Page and /my-page could be treated as two different pages. Lowercase is the safe, conventional choice.",
 		},
 		{
 			question: "Should I remove stop words from a slug?",
 			answer:
-				'It\'s optional. Removing words like "a," "the," and "of" shortens the slug, which many people prefer, but keeping them is fine when they make the URL clearer. This tool won\'t remove them if doing so would empty the slug.',
+				"It's optional. Removing words like “a,” “the,” and “of” shortens the slug, which many people prefer, but keeping them is fine when they make the URL clearer. Never strip so many that the slug loses its meaning.",
 		},
 		{
 			question: "What characters are allowed in a URL slug?",
 			answer:
-				"Stick to lowercase letters, numbers, and hyphens. Spaces, punctuation, and most symbols aren't URL-safe, and accented letters are best converted to their plain equivalents — which this generator does automatically.",
+				"Use lowercase letters, numbers, and hyphens. Spaces, punctuation, and most symbols aren't URL-safe, and accented letters should be converted to plain equivalents (café to cafe) — which a slug generator does automatically.",
 		},
 		{
 			question: "How do I create an SEO-friendly URL?",
 			answer:
-				"Start from a descriptive title, keep it short, include your main keyword, use lowercase with hyphens between words, and drop unnecessary stop words and dates. Paste your title above and the generator handles the formatting.",
+				"Start from a descriptive title or name, keep it short, include the main keyword, use lowercase with hyphens between words, and drop stop words and dates. A slug generator applies these rules to any text you give it.",
+		},
+		{
+			question: "What is the difference between a slug and a permalink?",
+			answer:
+				"A slug is the word-based identifier of a single page (the “how-to-write-a-slug” part). A permalink is the full, permanent URL that contains the slug, including the domain and path. Every permalink has a slug inside it.",
 		},
 		{
 			question: "Can I change a slug after publishing?",
 			answer:
-				"You can, but if the page already has traffic or backlinks, set up a 301 redirect from the old URL to the new one so you don't lose visitors or search ranking.",
+				"You can, but if the page already has traffic or backlinks, add a 301 redirect from the old URL to the new one so visitors and search ranking transfer instead of hitting a 404.",
 		},
 	],
 };
