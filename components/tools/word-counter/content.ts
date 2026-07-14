@@ -1,63 +1,73 @@
 import type { ToolContentType } from "@/components/_shared/ToolContent";
 
 export const wordCounterContent: ToolContentType = {
-	sections: [
-		{
-			heading: "What is a word and character counter?",
-			body: [
-				"A word and character counter is a free tool that tallies your writing in real time — words, characters with and without spaces, sentences, paragraphs, and lines — the moment you type or paste it in. Alongside the raw counts it estimates reading and speaking time and checks your text against the character limits that matter for SEO titles, meta descriptions, and social media posts. Whether you're a writer working to a word count, a student meeting an essay requirement, a marketer trimming a tweet, or a developer checking a string, it puts every number you need in one place.",
-				"This word counter runs entirely in your browser. Your text is never uploaded, stored, or sent to a server — the counting happens on your own device, so even long or sensitive drafts stay completely private.",
-			],
-		},
-		{
-			heading: "Who is the word counter for?",
-			body: [
-				"The word counter is for anyone who writes to a limit or a target. Students use it to hit essay and assignment word counts; authors and novelists track manuscript and chapter length; journalists and copywriters work to briefs measured in words. Marketers and social media managers trim posts to fit X, LinkedIn, and Bluesky, while SEO specialists size page titles and meta descriptions to Google's display limits. Developers and translators check string lengths, and speakers estimate how long a script will take to read aloud. Because it's free, needs no account, and runs instantly in your browser, it fits into any of these workflows.",
-			],
-		},
-		{
-			heading: "How to use the word counter",
-			body: [
-				"Type directly into the box or paste text from anywhere — a document, an email, your CMS, or a notes app. Every count updates instantly as you write; there's no button to press and no sign-up. Watch the live word and character totals, scan the sentence and paragraph breakdown, and use the reading- and speaking-time estimates to judge length at a glance.",
-				"Below the counts you'll find live character limits for common platforms. As your text grows, each limit shows how many characters you have left — or how far over you are — so you can tighten a headline to fit an SEO title, keep a meta description in Google's sweet spot, or trim a post to fit X or Bluesky before you publish. When it looks right, copy your text and paste it wherever it needs to go.",
-			],
-		},
-		{
-			heading: "Why word and character counts matter",
-			body: [
-				"Length is rarely arbitrary. Google typically truncates page titles at around 60 characters and meta descriptions at roughly 150-160, so writing to those limits keeps your search snippet from being cut off. Social platforms enforce hard caps — 280 characters on X (Twitter), 300 on Bluesky, and 3,000 on a LinkedIn post — and going over means your message is clipped or rejected.",
-				"Word count matters just as much for readers. Academic assignments, journalism briefs, and content guidelines are usually set in words, and reading time — calculated from your word count at an average reading speed — tells you whether a piece is a quick skim or a long read. Keeping an eye on these numbers while you write helps you hit the target the first time instead of editing to length afterward.",
-			],
-		},
-		{
-			heading: "What the word counter measures",
-			body: [
-				"Words are counted as runs of characters separated by spaces, so a hyphenated term counts as one word and numbers count as words. Characters are counted by Unicode code point, which means an emoji or an accented letter counts as a single character — matching what most platforms report. “Characters without spaces” strips all whitespace and counts only the visible characters, which is useful when a limit ignores spaces. Sentences are split on periods, exclamation marks, and question marks, and paragraphs on blank lines, giving you a quick structural read while you draft.",
-			],
-		},
-	],
+	article: `## Why word and character counts decide how your writing performs
+
+Length is never just a number. The same sentence that reads perfectly in a document can get cut off in a Google result, rejected by a social platform, or fail an assignment — purely because of how long it is. A word and character counter turns that guesswork into something you can see while you write, so you hit the target the first time instead of editing to length afterward.
+
+This tool counts **words, characters (with and without spaces), sentences, paragraphs, and lines** in real time, estimates **reading and speaking time**, and shows **live limits** for SEO titles, meta descriptions, and social posts. Everything runs in your browser — your text is never uploaded — so even long or confidential drafts stay on your device.
+
+## Write to the limits that actually matter
+
+Most length rules aren't arbitrary; they map to where your words will appear. These are the ones worth writing to:
+
+- **SEO title tag — aim for 50-60 characters.** Beyond that, Google truncates the clickable blue link in results. Front-load your main keyword so it survives if the title *is* cut. Google explains how titles are generated in its [title link documentation](https://developers.google.com/search/docs/appearance/title-link).
+- **Meta description — aim for 150-160 characters.** It isn't a direct ranking factor, but it's ad copy for your page: a tight, specific description earns clicks. See Google's [snippet guidance](https://developers.google.com/search/docs/appearance/snippet).
+- **X (Twitter) — 280 characters.** Lead with the hook; the first line decides whether anyone reads the rest.
+- **Bluesky — 300 characters**, **Threads — 500**, **LinkedIn — 3,000** (but the first ~140 show before the "see more" fold, so make them count).
+
+Watch the live counter as you type and you'll instinctively learn to say more with less — the single most useful editing skill there is.
+
+## Use reading time to keep people reading
+
+Reading time is your word count divided by a reading speed. A large meta-analysis of reading studies puts the average adult **silent reading speed at about 238 words per minute** for non-fiction, with most readers between 200 and 300 WPM. So:
+
+- A **1-minute read** is roughly **225 words**.
+- A **5-minute read** is roughly **1,100-1,200 words**.
+
+Showing a "6 min read" label sets expectations and, for anything over a few minutes, nudges people to commit rather than bounce. Speaking time uses a slower **~130 WPM** — useful for scripts, voiceovers, and talks, which always run longer than they read.
+
+## Who the word counter is for
+
+- **Students** hitting an essay or assignment word count.
+- **Writers and authors** tracking manuscript and chapter length.
+- **Marketers and social media managers** trimming posts to each platform's cap.
+- **SEO specialists** sizing titles and meta descriptions to Google's display limits.
+- **Developers and translators** checking string lengths and reading level.
+- **Speakers** estimating how long a script takes to read aloud.
+
+Because it's free, needs no account, and updates instantly, it slots into any of these workflows without getting in the way.
+
+## A few tips to tighten your writing
+
+1. **Cut filler openers.** "In order to" → "to"; "the fact that" → "that". You'll drop 10-20% instantly.
+2. **One idea per sentence.** Long sentences inflate both word count and reading time without adding clarity.
+3. **Prefer strong verbs to adverbs.** "Sprinted" beats "ran quickly" — fewer words, more punch.
+4. **Read the character count, not just the word count,** for anything headed to search or social — that's the number those platforms enforce.
+
+Master the handful of limits that matter — and the reading time your words add up to — and you'll spend less time editing to length and more time actually writing.`,
 	faq: [
 		{
 			question: "How do I count the number of words in a text?",
 			answer:
-				"Paste or type your text into the box and the word count updates instantly — no button or sign-up needed. Words are counted as sequences of characters separated by spaces, so hyphenated words and numbers each count as one word.",
+				"To count the words in a text, paste it into a word counter — it tallies them automatically as sequences of characters separated by spaces, so hyphenated words and numbers each count as one. This word counter updates the total live as you type, with no button or sign-up.",
 		},
 		{
 			question:
 				"What is the difference between characters with and without spaces?",
 			answer:
-				"“Characters” counts everything you type, including spaces, tabs, and line breaks. “Characters without spaces” removes all whitespace and counts only the visible characters. Some platforms and assignments measure one way or the other, so both are shown.",
+				"“Characters with spaces” counts every character you type, including spaces, tabs, and line breaks; “characters without spaces” counts only the visible characters, with all whitespace removed. Platforms and assignments differ on which they use, so it helps to see both at once.",
 		},
 		{
 			question: "How many characters can an X (Twitter) post have?",
 			answer:
-				"A standard X post allows 280 characters. Bluesky allows 300 and a LinkedIn post allows 3,000. The counter shows how many characters you have left for each limit as you type.",
+				"A standard X post allows 280 characters. Bluesky allows 300, Threads 500, and a LinkedIn post 3,000. The counter shows how many characters you have left for each limit as you type.",
 		},
 		{
 			question:
 				"What is the ideal length for an SEO title and meta description?",
 			answer:
-				"Aim for about 50-60 characters for a page title and 150-160 for a meta description. Beyond those, Google usually truncates the text in search results. The counter flags both limits live so you can write to them.",
+				"Aim for about 50-60 characters for a title tag and 150-160 for a meta description. Beyond those, Google usually truncates the text in search results, so writing to the limit keeps your snippet intact.",
 		},
 		{
 			question: "How is reading time calculated?",
@@ -68,6 +78,16 @@ export const wordCounterContent: ToolContentType = {
 			question: "How many words is a one-minute or five-minute read?",
 			answer:
 				"At roughly 225 words per minute, a one-minute read is about 225 words and a five-minute read is around 1,100-1,200 words. The exact figure varies with reading speed and how difficult the text is.",
+		},
+		{
+			question: "How many pages is 1,000 words?",
+			answer:
+				"A 1,000-word document is roughly 2 pages single-spaced or 4 pages double-spaced, in a standard 12-point font with 1-inch margins. Font size, line spacing, and margins all change the result, so it's an estimate rather than a fixed number.",
+		},
+		{
+			question: "How do I reduce my word count?",
+			answer:
+				"Cut filler phrases (“in order to” becomes “to”), replace a weak verb-and-adverb pair with one strong verb, remove redundant qualifiers, and keep one idea per sentence. Those edits alone usually trim a draft by 10-20% without losing meaning.",
 		},
 		{
 			question: "Does this word counter store or upload my text?",

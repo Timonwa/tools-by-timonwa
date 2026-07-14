@@ -1,21 +1,73 @@
 import { PlusIcon } from "lucide-react";
+import type { Components } from "react-markdown";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import MoreTools from "@/components/_shared/MoreTools";
 
 export type ToolFaqType = { question: string; answer: string };
 
 export type ToolContentType = {
-	/** Prose sections rendered below the tool — the SEO body copy. */
-	sections: { heading: string; body: string[] }[];
-	/** FAQs — rendered as disclosures and emitted as FAQPage JSON-LD. */
+	/** Article body authored as Markdown (headings, lists, bold, links). */
+	article: string;
+	/** FAQs — plain text, rendered as disclosures and emitted as FAQPage JSON-LD. */
 	faq: ToolFaqType[];
 };
 
 /**
- * The SEO content block below a tool: prose sections, an FAQ (with FAQPage
- * structured data for rich results), and a "more tools" grid. Server-rendered
- * so every word is in the initial HTML and crawlable. Sits under the tool so it
- * never gets in the way of using it.
+ * Markdown → styled elements. Links that point off-site (absolute http URLs)
+ * open in a new tab; in-app relative links stay in the same tab.
+ */
+const markdownComponents: Components = {
+	h2: ({ children }) => (
+		<h2 className="mt-10 text-xl font-semibold tracking-tight first:mt-0">
+			{children}
+		</h2>
+	),
+	h3: ({ children }) => (
+		<h3 className="mt-6 text-lg font-semibold">{children}</h3>
+	),
+	p: ({ children }) => (
+		<p className="mt-3 leading-relaxed text-muted-foreground">{children}</p>
+	),
+	ul: ({ children }) => (
+		<ul className="mt-3 list-disc space-y-1.5 pl-5 text-muted-foreground marker:text-muted-foreground/60">
+			{children}
+		</ul>
+	),
+	ol: ({ children }) => (
+		<ol className="mt-3 list-decimal space-y-1.5 pl-5 text-muted-foreground">
+			{children}
+		</ol>
+	),
+	li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+	strong: ({ children }) => (
+		<strong className="font-semibold text-foreground">{children}</strong>
+	),
+	blockquote: ({ children }) => (
+		<blockquote className="mt-4 border-l-2 border-border pl-4 italic">
+			{children}
+		</blockquote>
+	),
+	a: ({ href, children }) => {
+		const external = /^https?:\/\//.test(href ?? "");
+		return (
+			<a
+				href={href}
+				className="font-medium text-primary underline underline-offset-2 hover:no-underline"
+				{...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+			>
+				{children}
+			</a>
+		);
+	},
+};
+
+/**
+ * The SEO/article content block below a tool: a Markdown article, an FAQ (with
+ * FAQPage structured data for rich results), and a "more tools" grid. Server-
+ * rendered so every word is in the initial HTML and crawlable, and placed under
+ * the tool so it never gets in the way of using it.
  */
 export default function ToolContent({
 	content,
@@ -36,23 +88,14 @@ export default function ToolContent({
 
 	return (
 		<div className="mt-16 space-y-12 border-t border-border/60 pt-12">
-			<div className="max-w-3xl space-y-8">
-				{content.sections.map((section) => (
-					<section key={section.heading} className="space-y-3">
-						<h2 className="text-xl font-semibold tracking-tight">
-							{section.heading}
-						</h2>
-						{section.body.map((paragraph) => (
-							<p
-								key={paragraph.slice(0, 40)}
-								className="leading-relaxed text-muted-foreground"
-							>
-								{paragraph}
-							</p>
-						))}
-					</section>
-				))}
-			</div>
+			<article className="max-w-3xl">
+				<ReactMarkdown
+					remarkPlugins={[remarkGfm]}
+					components={markdownComponents}
+				>
+					{content.article}
+				</ReactMarkdown>
+			</article>
 
 			<section aria-labelledby="faq-heading" className="max-w-3xl space-y-4">
 				<h2 id="faq-heading" className="text-xl font-semibold tracking-tight">
