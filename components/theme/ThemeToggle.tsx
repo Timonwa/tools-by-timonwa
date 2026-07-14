@@ -17,12 +17,15 @@ export default function ThemeToggle() {
 	const Icon =
 		theme === "system" ? Monitor : resolvedTheme === "dark" ? Moon : Sun;
 
+	const label = `Theme: ${theme}. Cycle to ${NEXT[theme]}.`;
+
 	return (
 		<Button
 			variant="ghost"
 			size="sm"
 			onClick={() => setTheme(NEXT[theme])}
-			aria-label={`Theme: ${theme}. Cycle to ${NEXT[theme]}.`}
+			aria-label={label}
+			title={label}
 			className="w-full justify-start xl:w-auto xl:justify-center"
 		>
 			<Icon aria-hidden className="w-4 h-4" />

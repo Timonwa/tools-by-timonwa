@@ -2,6 +2,8 @@ import { createHash } from "node:crypto";
 import { Redis } from "@upstash/redis";
 import { headers } from "next/headers";
 
+import { isProduction } from "@env";
+
 /**
  * Shared hosted-demo rate limiting. Per-tool config (`toolSlug`,
  * `perUserDaily`, `dailyPool`) is passed in by each tool's server action —
@@ -37,6 +39,9 @@ export type UsageSnapshotType = {
 };
 
 function getRedis(): Redis | null {
+	// Production only — never rate-limit locally or on preview, even if the
+	// Upstash env vars happen to be present.
+	if (!isProduction) return null;
 	const url = process.env.UPSTASH_REDIS_REST_URL;
 	const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 	if (!url || !token) return null;
@@ -44,8 +49,12 @@ function getRedis(): Redis | null {
 }
 
 export function isRateLimitConfigured(): boolean {
-	return Boolean(
-		process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN,
+	return (
+		isProduction &&
+		Boolean(
+			process.env.UPSTASH_REDIS_REST_URL &&
+			process.env.UPSTASH_REDIS_REST_TOKEN,
+		)
 	);
 }
 

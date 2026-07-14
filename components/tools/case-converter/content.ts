@@ -1,0 +1,101 @@
+import type { ToolContentType } from "@/components/_shared/ToolContent";
+
+export const caseConverterContent: ToolContentType = {
+	article: `## What is a case converter?
+
+A case converter changes the capitalization of text without retyping it. Paste a heading, a variable name, or a whole paragraph, pick a style — UPPERCASE, lowercase, Title Case, Sentence case, or a programming style like camelCase or snake_case — and copy the result. It does the tedious shift-key work in one click.
+
+This converter offers 17 styles across three groups (writing, programming, and special) and runs entirely in your browser, so your text is never uploaded.
+
+## Who is the case converter for?
+
+Writers, editors, and students use it to format headlines and titles to a style guide, fix text pasted in ALL CAPS, or switch a heading to sentence case. Developers reach for it constantly to rename things — a plain phrase into a **camelCase** variable, a **PascalCase** component, a **snake_case** column, a **kebab-case** filename, or a **CONSTANT_CASE** environment variable — without hand-editing each word. Anyone who moves text between systems that expect different casing saves time here.
+
+## How to use the case converter
+
+1. Type or paste your text.
+2. Pick a style — the converted result appears instantly with a copy button.
+3. Copy it, or switch styles freely, since your original text stays put.
+
+There's no sign-up, no "convert" button to press, and nothing is sent to a server.
+
+## Writing case styles, and when to use each
+
+- **Sentence case** — capitalize only the first word (and proper nouns). The modern default for headings and interface text.
+- **Title Case** — capitalize the significant words. Which words count as "significant" depends on the style guide, so this tool includes three:
+  - **AP** (news and journalism) lowercases prepositions of three letters or fewer.
+  - **Chicago** (books and publishing) lowercases all prepositions, whatever their length.
+  - **APA** (academic writing) capitalizes every word of four letters or more — see the [APA title case rules](https://apastyle.apa.org/style-grammar-guidelines/capitalization/title-case).
+- **Start Case** — capitalize every word, including short ones. Handy for labels and buttons.
+- **UPPERCASE / lowercase** — force all capitals or all lowercase.
+
+On a short title the three Title Case standards look identical; the differences show up on words like "with," "from," and a trailing short word.
+
+## Programming case styles, and where each is used
+
+Most languages and ecosystems settle on one convention (background: [naming conventions in programming](https://en.wikipedia.org/wiki/Naming_convention_(programming))):
+
+- **camelCase** — JavaScript/TypeScript variables and functions
+- **PascalCase** — classes, types, and React components
+- **snake_case** — Python and Ruby names, and database columns
+- **kebab-case** — URLs, CSS classes, and filenames
+- **CONSTANT_CASE** — constants and environment variables
+- **dot.case** — config keys and nested object paths
+- **path/case** — file and folder paths
+- **Train-Case** — HTTP header names like Content-Type
+
+Paste a phrase in any format and convert straight to the one you need — the converter splits words correctly even when the input is already camelCased or hyphenated.`,
+	faq: [
+		{
+			question: "How do I change text from uppercase to lowercase?",
+			answer:
+				"To switch text between uppercase and lowercase, paste it into a case converter and choose the target style; the tool rewrites every letter at once. It's faster and less error-prone than holding shift or retyping, especially for long passages.",
+		},
+		{
+			question: "What is title case?",
+			answer:
+				"Title case capitalizes the significant words in a heading — nouns, verbs, and adjectives — while leaving minor words like short articles, conjunctions, and prepositions lowercase. The exact rules vary by style guide (AP, Chicago, APA), which is why the same headline can be capitalized differently.",
+		},
+		{
+			question:
+				"What is the difference between AP, Chicago, and APA title case?",
+			answer:
+				"AP lowercases prepositions of three letters or fewer and capitalizes longer ones; Chicago lowercases all prepositions regardless of length; APA capitalizes any word of four or more letters. They agree on most words, so short titles often look the same in all three.",
+		},
+		{
+			question: "What is camelCase?",
+			answer:
+				"camelCase writes a compound name with no spaces, lowercasing the first word and capitalizing each word after it, like myVariableName. It's the standard for variables and functions in JavaScript, TypeScript, and Java.",
+		},
+		{
+			question: "What is snake_case?",
+			answer:
+				"snake_case writes a compound name in lowercase with underscores between words, like my_variable_name. It's the common convention for variables and functions in Python and Ruby, and for database column names.",
+		},
+		{
+			question: "What is kebab-case?",
+			answer:
+				"kebab-case writes a compound name in lowercase with hyphens between words, like my-file-name. It's used for URLs, CSS class names, and filenames, where hyphens are safe and readable.",
+		},
+		{
+			question: "How do I capitalize the first letter of every word?",
+			answer:
+				"Use Start Case, which capitalizes the first letter of each word. If you need a headline that follows a publication's rules for lowercasing minor words, use one of the Title Case options instead.",
+		},
+		{
+			question: "What is sentence case?",
+			answer:
+				"Sentence case capitalizes only the first letter of a sentence, plus proper nouns, and leaves everything else lowercase — exactly like ordinary prose. It's the default for body text and, increasingly, for headings and buttons.",
+		},
+		{
+			question: "What is Train-Case, or HTTP header case?",
+			answer:
+				"Train-Case capitalizes each word and joins them with hyphens, like Content-Type or X-Frame-Options. It's the naming convention used for HTTP header fields.",
+		},
+		{
+			question: "Does the case converter change my original text?",
+			answer:
+				"No. A case converter shows the result separately and copies only what you choose, so your original text stays unchanged. This one also runs entirely in your browser, so nothing is uploaded or stored.",
+		},
+	],
+};

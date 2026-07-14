@@ -7,7 +7,7 @@
 <a href="./CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" /></a>
 <a href="https://tech.timonwa.com/code-of-conduct"><img alt="Contributor Covenant" src="https://img.shields.io/badge/Contributor%20Covenant-v2.1-7c3aed?style=flat-square" /></a>
 <a href="https://nextjs.org"><img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000?style=flat-square&logo=next.js" /></a>
-<a href="https://tech.timonwa.com/sponsor"><img alt="Sponsor" src="https://img.shields.io/badge/Sponsor-%E2%9D%A4-ea4aaa?style=flat-square&logo=githubsponsors&logoColor=white" /></a>
+<a href="https://tech.timonwa.com/support"><img alt="Support" src="https://img.shields.io/badge/Support-%E2%9D%A4-ea4aaa?style=flat-square&logo=githubsupports&logoColor=white" /></a>
 </div>
 
 ---
@@ -83,7 +83,7 @@ MIT — see [LICENSE](./LICENSE).
 ## Support
 
 - ⭐️ [Star the repo](https://github.com/Timonwa/tools-by-timonwa)
-- ❤️ [Sponsor](https://tech.timonwa.com/sponsor)
+- ❤️ [Support](https://tech.timonwa.com/support)
 
 ---
 

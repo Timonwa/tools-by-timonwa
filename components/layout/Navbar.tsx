@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
 import NavActions from "@/components/layout/NavActions";
+import { ROUTES } from "@/lib/config/routes";
 
 type IconComponentType = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -37,7 +38,7 @@ export default function Navbar({
 			className="flex items-center justify-between gap-2 border-b border-border/50 bg-background/80 px-4 py-3 backdrop-blur-md sticky top-0 z-40 sm:px-6 sm:py-4 lg:px-10"
 		>
 			<Link
-				href="/"
+				href={ROUTES.home}
 				aria-label={brand.ariaLabel ?? `${brand.name} — all tools home`}
 				className="flex min-w-0 items-center gap-2 pr-1 text-base font-semibold sm:text-lg"
 			>

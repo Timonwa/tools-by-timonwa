@@ -34,6 +34,7 @@ export default function SettingsDrawer() {
 				size="sm"
 				onClick={() => setOpen(true)}
 				aria-label="Writer settings"
+				title="Writer settings"
 				className="w-full justify-start xl:w-auto xl:justify-center"
 				aria-expanded={open}
 			>

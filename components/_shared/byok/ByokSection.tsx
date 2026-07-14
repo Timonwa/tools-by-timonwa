@@ -2,6 +2,7 @@
 
 import {
 	AlertCircleIcon,
+	ArrowRightIcon,
 	CheckCircle2Icon,
 	ExternalLinkIcon,
 	EyeIcon,
@@ -13,6 +14,9 @@ import { useId, useState } from "react";
 
 import { Input } from "@/components/ui";
 import { BYOK_MODELS, type ByokModelType } from "@/lib/config/byok";
+import { ROUTES } from "@/lib/config/routes";
+import { AI_STUDIO_KEYS_URL } from "@/lib/config/site";
+import { GUIDE_SLUGS } from "@/lib/guides/guides";
 
 type StatusType =
 	| { type: "success"; message: string }
@@ -79,16 +83,25 @@ export default function ByokSection({
 				</ul>
 			</div>
 
-			<Link
-				href="https://aistudio.google.com/api-keys"
-				target="_blank"
-				rel="noopener noreferrer"
-				className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
-			>
-				Get a free Google AI Studio key
-				<ExternalLinkIcon aria-hidden className="w-3 h-3" />
-				<span className="sr-only">(opens in a new tab)</span>
-			</Link>
+			<div className="flex flex-col gap-2">
+				<Link
+					href={AI_STUDIO_KEYS_URL}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+				>
+					Get a free Google AI Studio key
+					<ExternalLinkIcon aria-hidden className="w-3 h-3" />
+					<span className="sr-only">(opens in a new tab)</span>
+				</Link>
+				<Link
+					href={ROUTES.guide(GUIDE_SLUGS.geminiApiKey)}
+					className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+				>
+					New to API keys? Read the 2-minute guide
+					<ArrowRightIcon aria-hidden className="w-3 h-3" />
+				</Link>
+			</div>
 
 			<div className="space-y-2">
 				<label htmlFor={keyInputId} className="text-sm font-medium block">

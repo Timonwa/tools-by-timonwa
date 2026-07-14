@@ -20,8 +20,8 @@ export default function PlatformPicker({
 	disabled,
 }: PlatformPickerProps) {
 	return (
-		<div>
-			<div className="text-sm font-medium mb-2">Platforms</div>
+		<fieldset className="min-w-0 border-0 p-0">
+			<legend className="text-sm font-medium mb-2">Platforms</legend>
 			<div className="flex gap-2 flex-wrap">
 				{ALL_PLATFORMS.map((p) => {
 					const Icon = PLATFORM_ICONS[p];
@@ -45,6 +45,6 @@ export default function PlatformPicker({
 					);
 				})}
 			</div>
-		</div>
+		</fieldset>
 	);
 }

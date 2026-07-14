@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { buttonClasses } from "@/components/ui";
+import { ROUTES } from "@/lib/config/routes";
 
 export default function NotFound() {
 	return (
@@ -15,7 +16,7 @@ export default function NotFound() {
 				The page you&apos;re looking for doesn&apos;t exist or has moved.
 			</p>
 			<Link
-				href="/"
+				href={ROUTES.home}
 				className={buttonClasses({ size: "lg", className: "mt-8" })}
 			>
 				Back to home

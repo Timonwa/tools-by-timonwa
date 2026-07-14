@@ -49,7 +49,6 @@ export default function CaseConverterTool() {
 							onChange={(e) => setText(e.target.value)}
 							placeholder="Type or paste text to convert…"
 							className="min-h-40 max-h-96 overflow-y-auto"
-							autoFocus
 						/>
 					</div>
 				</CardContent>
@@ -57,13 +56,9 @@ export default function CaseConverterTool() {
 
 			<div className="space-y-4 [grid-area:selector]">
 				{CASE_GROUPS.map((group) => {
-					const labelId = `case-group-${group.id}`;
 					return (
-						<div key={group.id} role="group" aria-labelledby={labelId}>
-							<p
-								id={labelId}
-								className="mb-2 flex items-center gap-2 text-sm font-medium"
-							>
+						<fieldset key={group.id} className="border-0 p-0 m-0 min-w-0">
+							<legend className="mb-2 flex items-center gap-2 text-sm font-medium">
 								<span aria-hidden className="text-base">
 									{group.icon}
 								</span>
@@ -71,7 +66,7 @@ export default function CaseConverterTool() {
 								<span className="text-muted-foreground">
 									({group.cases.length})
 								</span>
-							</p>
+							</legend>
 							<div className="flex flex-wrap gap-2">
 								{group.cases.map((c) => (
 									<button
@@ -92,7 +87,7 @@ export default function CaseConverterTool() {
 									</button>
 								))}
 							</div>
-						</div>
+						</fieldset>
 					);
 				})}
 			</div>

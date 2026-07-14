@@ -1,7 +1,9 @@
 import { Share2Icon } from "lucide-react";
 
+import ToolContent from "@/components/_shared/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
+import { socialPostsContent } from "@/components/tools/article-to-social-posts/content";
 import Hero from "@/components/tools/article-to-social-posts/Hero";
 import HostedUsageNotice from "@/components/tools/article-to-social-posts/HostedUsageNotice";
 import SettingsDrawer from "@/components/tools/article-to-social-posts/settings/SettingsDrawer";
@@ -23,6 +25,10 @@ export default function ArticleToSocialPostsPageContent() {
 			<ToolMain>
 				<Hero />
 				<Writer />
+				<ToolContent
+					content={socialPostsContent}
+					currentSlug="article-to-social-posts"
+				/>
 			</ToolMain>
 		</>
 	);

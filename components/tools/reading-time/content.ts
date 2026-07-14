@@ -1,0 +1,83 @@
+import type { ToolContentType } from "@/components/_shared/ToolContent";
+
+export const readingTimeContent: ToolContentType = {
+	article: `## What is a reading time estimator?
+
+A reading time estimator calculates how long text takes to read — silently and aloud — from its word count and a typical reading speed. Paste an article, a blog post, or a script and it returns a figure like "6 min read," the label you see at the top of posts on Medium and most blogs. It runs entirely in your browser, so your text is never uploaded.
+
+## Who is the reading time estimator for?
+
+Bloggers and publications use it to add a "min read" label; newsletter writers to check length; editors to plan a content calendar. Speakers, podcasters, and video creators use the speaking-time estimate to fit a script into a slot. Students and professionals use it to gauge how long a report or a stack of readings will take to get through.
+
+## How to use the reading time estimator
+
+1. Type or paste your text.
+2. Pick a reading speed — slow, average, or fast — to match your audience.
+3. Read off the reading time, speaking time, and word count.
+4. Copy the ready-made "X min read" label onto your post.
+
+## How reading time is calculated
+
+Reading time is the word count divided by a reading speed in words per minute (WPM) — **reading time = words ÷ WPM**. A large meta-analysis of reading research ([Brysbaert, 2019](https://doi.org/10.1016/j.jml.2019.104047)) puts the average adult silent reading speed for non-fiction at about **238 WPM**, with most readers between 200 and 300 WPM. This tool offers 150 (slow), 225 (average), and 300 (fast), so a 1,200-word article is roughly a five-minute read at average speed.
+
+## Reading speed vs. speaking speed
+
+Reading silently is much faster than reading aloud. Speaking time here uses about **130 WPM**, close to a clear presentation or narration pace, so the same text always takes longer to say than to read. If you're timing a talk or a voiceover, use the speaking figure rather than the reading one.
+
+## Why show reading time on your content
+
+A reading-time label sets expectations before someone commits, which can lift how many readers start and finish a piece. It also helps you plan: a draft that runs twelve minutes might be better split into a series or trimmed. For talks and videos, the speaking estimate keeps you inside your time slot.`,
+	faq: [
+		{
+			question: "How is reading time calculated?",
+			answer:
+				"Reading time is the number of words divided by a reading speed in words per minute. For example, 1,000 words at 225 words per minute is about a four- to five-minute read. Estimators let you choose the reading speed to match your audience.",
+		},
+		{
+			question: "What is the average reading speed?",
+			answer:
+				"The average adult reads silently at about 238 words per minute for non-fiction, based on a large meta-analysis of reading studies. Most people fall between roughly 200 and 300 words per minute depending on the material.",
+		},
+		{
+			question: "How many words is a 5-minute read?",
+			answer:
+				"At an average speed of about 225 words per minute, a 5-minute read is roughly 1,100 to 1,200 words. Faster readers finish sooner, and denser material takes a little longer.",
+		},
+		{
+			question: "How long does it take to read 1,000 words?",
+			answer:
+				"About four to five minutes at an average reading speed of 200 to 250 words per minute. More technical or complex writing takes a little longer.",
+		},
+		{
+			question: "How long does it take to read 10,000 words?",
+			answer:
+				"Roughly 40 to 50 minutes at an average reading speed of 200 to 250 words per minute — about the length of a long report or a short e-book chapter. Skimming is faster; close reading is slower.",
+		},
+		{
+			question:
+				"What is the difference between reading time and speaking time?",
+			answer:
+				"Reading time assumes silent reading at around 200 to 300 words per minute, while speaking time uses a slower spoken pace of about 130 words per minute. The same text always takes longer to say aloud than to read silently.",
+		},
+		{
+			question: "What is a fast reading speed?",
+			answer:
+				"A fast adult reader manages roughly 300 words per minute or more on ordinary text while still understanding it. Claims of many hundreds or thousands of words per minute usually involve skimming, which trades comprehension for speed.",
+		},
+		{
+			question: "Should I show reading time on my blog?",
+			answer:
+				"Many popular blogs and platforms show it because it sets reader expectations and can improve how many people start and finish a post. A reading time estimator gives you a copy-ready “X min read” label to add to yours.",
+		},
+		{
+			question: 'How do I add a "min read" label to my post?',
+			answer:
+				"Estimate the article's reading time from its word count, then place a short “X min read” label near the title or in the post metadata. Recalculate it whenever you significantly change the article's length.",
+		},
+		{
+			question: "Does reading speed depend on the type of content?",
+			answer:
+				"Yes. Light fiction reads faster than dense, technical, or unfamiliar material, and layout, font, and screen size all have an effect. Any estimate is an average, so treat it as a guide rather than an exact time.",
+		},
+	],
+};

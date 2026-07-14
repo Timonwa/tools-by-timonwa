@@ -36,7 +36,7 @@ export default function SlugGeneratorTool() {
 				<CardContent className="space-y-4">
 					<div className="flex flex-col gap-2">
 						<label htmlFor="slug-input" className="text-sm font-medium">
-							Title or headline
+							Title or text
 						</label>
 						<Input
 							id="slug-input"

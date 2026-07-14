@@ -1,6 +1,12 @@
 "use client";
 
-import { CoffeeIcon, HomeIcon, MenuIcon, XIcon } from "lucide-react";
+import {
+	BookOpenTextIcon,
+	HeartIcon,
+	HomeIcon,
+	MenuIcon,
+	XIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 
@@ -8,7 +14,8 @@ import { buttonClasses } from "@/components/ui";
 import ByokDrawer from "@/components/_shared/byok/ByokDrawer";
 import ToolsMenu from "@/components/layout/ToolsMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
-import { REPO_URL, SPONSOR_URL } from "@/lib/config/site";
+import { ROUTES } from "@/lib/config/routes";
+import { REPO_URL, SUPPORT_URL } from "@/lib/config/site";
 import { cn } from "@/lib/utils/cn";
 
 type NavActionsProps = {
@@ -22,7 +29,7 @@ type NavActionsProps = {
 
 /**
  * Right side of the Navbar. The Tools switcher is always a dropdown. The
- * secondary controls (key, settings, theme, sponsor, GitHub) render as an inline
+ * secondary controls (key, settings, theme, support, GitHub) render as an inline
  * row from `xl` up — where there's room for everything — and collapse into a
  * hamburger dropdown below that. It's one set of controls, restyled per
  * breakpoint via CSS, so the drawers stay mounted (their event listeners keep
@@ -77,6 +84,7 @@ export default function NavActions({
 				aria-expanded={openMenu === "nav"}
 				aria-controls={menuId}
 				aria-label={openMenu === "nav" ? "Close menu" : "Open menu"}
+				title={openMenu === "nav" ? "Close menu" : "Open menu"}
 				className={cn(
 					buttonClasses({ variant: "ghost", size: "icon-sm" }),
 					"xl:hidden",
@@ -102,7 +110,7 @@ export default function NavActions({
 			>
 				{/* Home is the logo on xl+, so it only needs a row in the panel. */}
 				<Link
-					href="/"
+					href={ROUTES.home}
 					onClick={close}
 					className={cn(
 						buttonClasses({ variant: "ghost", size: "sm" }),
@@ -113,6 +121,18 @@ export default function NavActions({
 					<span>Home</span>
 				</Link>
 
+				<Link
+					href={ROUTES.guides}
+					onClick={close}
+					className={cn(
+						buttonClasses({ variant: "ghost", size: "sm" }),
+						"w-full justify-start xl:hidden",
+					)}
+				>
+					<BookOpenTextIcon aria-hidden className="w-4 h-4" />
+					<span>Guides</span>
+				</Link>
+
 				{showByok && <ByokDrawer />}
 				{actionsSlot}
 				<ThemeToggle />
@@ -120,13 +140,14 @@ export default function NavActions({
 				<div className="my-1 border-t border-border/60 xl:hidden" />
 
 				<a
-					href={SPONSOR_URL}
+					href={SUPPORT_URL}
 					target="_blank"
 					rel="noopener noreferrer"
 					className={cta}
+					title="Support"
 				>
-					<CoffeeIcon aria-hidden className="w-4 h-4" />
-					<span>Sponsor</span>
+					<HeartIcon aria-hidden className="w-4 h-4" />
+					<span>Support</span>
 				</a>
 				<a
 					href={repoUrl}

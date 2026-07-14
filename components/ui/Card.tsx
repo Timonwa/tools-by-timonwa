@@ -23,9 +23,15 @@ export function CardHeader({
 	);
 }
 
-export function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
+export function CardTitle({
+	className,
+	children,
+	...props
+}: React.ComponentProps<"h3">) {
 	return (
-		<h3 className={cn("leading-none font-semibold", className)} {...props} />
+		<h3 className={cn("leading-none font-semibold", className)} {...props}>
+			{children}
+		</h3>
 	);
 }
 

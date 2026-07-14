@@ -1,7 +1,9 @@
 import { CaseSensitiveIcon } from "lucide-react";
 
+import ToolContent from "@/components/_shared/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
+import { caseConverterContent } from "@/components/tools/case-converter/content";
 import CaseConverterTool from "@/components/tools/case-converter/CaseConverterTool";
 import { PageHero } from "@/components/ui";
 
@@ -30,6 +32,10 @@ export default function CaseConverterPageContent() {
 					subtitle="Switch text between UPPERCASE, Title Case, Sentence case, camelCase, snake_case, and more — instantly, then copy. Nothing leaves your browser."
 				/>
 				<CaseConverterTool />
+				<ToolContent
+					content={caseConverterContent}
+					currentSlug="case-converter"
+				/>
 			</ToolMain>
 		</>
 	);
