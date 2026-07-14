@@ -13,8 +13,8 @@ type XFormatProps = {
 export default function XFormat({ length, onChange, disabled }: XFormatProps) {
 	const threadLengthId = useId();
 	return (
-		<div>
-			<div className="text-sm font-medium mb-2">X format</div>
+		<fieldset className="min-w-0 border-0 p-0">
+			<legend className="text-sm font-medium mb-2">X format</legend>
 			<div className="flex items-center gap-3 flex-wrap">
 				<div className="flex gap-2">
 					<button
@@ -64,6 +64,6 @@ export default function XFormat({ length, onChange, disabled }: XFormatProps) {
 					</div>
 				)}
 			</div>
-		</div>
+		</fieldset>
 	);
 }

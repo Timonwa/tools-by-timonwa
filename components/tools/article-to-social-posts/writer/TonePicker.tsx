@@ -15,8 +15,8 @@ export default function TonePicker({
 	disabled,
 }: TonePickerProps) {
 	return (
-		<div>
-			<div className="text-sm font-medium mb-2">Tone</div>
+		<fieldset className="min-w-0 border-0 p-0">
+			<legend className="text-sm font-medium mb-2">Tone</legend>
 			<div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
 				{TONES.map((t) => (
 					<button
@@ -38,6 +38,6 @@ export default function TonePicker({
 					</button>
 				))}
 			</div>
-		</div>
+		</fieldset>
 	);
 }

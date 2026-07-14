@@ -79,7 +79,7 @@ export default function WritingPreferencesSection({
 
 			<div className="space-y-2">
 				<div id={voiceLabelId} className="text-xs font-medium text-foreground">
-					VoiceType
+					Voice
 				</div>
 				<fieldset
 					aria-labelledby={voiceLabelId}
@@ -89,7 +89,7 @@ export default function WritingPreferencesSection({
 						<Chip
 							key={v}
 							active={prefs.voice === v}
-							label={`VoiceType: ${VOICE_LABELS[v]}`}
+							label={`Voice: ${VOICE_LABELS[v]}`}
 							onClick={() => onChange({ voice: v })}
 						>
 							{VOICE_LABELS[v]}

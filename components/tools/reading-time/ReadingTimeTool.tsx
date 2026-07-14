@@ -28,7 +28,6 @@ export default function ReadingTimeTool() {
 	const { text, setText, reuse, toggleReuse, clear } = useToolDraft();
 	const [speed, setSpeed] = useState<ReadingSpeedType>("average");
 	const reuseId = useId();
-	const speedLabelId = useId();
 
 	const words = useMemo(() => countWords(text), [text]);
 	const wpm = READING_WPM[speed];
@@ -62,13 +61,10 @@ export default function ReadingTimeTool() {
 			</Card>
 
 			<div className="min-w-0 space-y-6">
-				<div role="group" aria-labelledby={speedLabelId} className="space-y-2">
-					<p
-						id={speedLabelId}
-						className="text-sm font-medium text-muted-foreground"
-					>
+				<fieldset className="min-w-0 space-y-2 border-0 p-0">
+					<legend className="text-sm font-medium text-muted-foreground">
 						Reading speed
-					</p>
+					</legend>
 					<div className="flex flex-wrap gap-2">
 						{SPEEDS.map((s) => (
 							<button
@@ -90,7 +86,7 @@ export default function ReadingTimeTool() {
 							</button>
 						))}
 					</div>
-				</div>
+				</fieldset>
 
 				<dl className="grid gap-3">
 					<EstimateCard
