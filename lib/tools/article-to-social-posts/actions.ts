@@ -43,50 +43,102 @@ type DraftRunnerType = Awaited<ReturnType<typeof getDraftRunner>>;
 
 const ensureDraftRunner = createRunnerProvider(getDraftRunner);
 
+/**
+ * Errors worth retrying automatically: the model was momentarily overloaded
+ * (503 / UNAVAILABLE / high demand), rate-limited, or the network blipped. A
+ * short backoff usually clears them, so we don't bother the user with a
+ * "try again" for a one-off. Mirrors the SEO tool's retry policy.
+ */
+const TRANSIENT_PATTERNS =
+	/\b503\b|UNAVAILABLE|overload|high demand|MODEL_OVERLOADED_NON_JSON|RESOURCE_EXHAUSTED|\b429\b|ECONNRESET|ETIMEDOUT|fetch failed/i;
+
+/**
+ * Server actions RETURN their outcome as data — they never throw a
+ * user-facing message. Next.js redacts thrown Server Action errors in
+ * production (replacing the message with a generic digest), so a thrown
+ * friendly string only survives in dev. Returning it as data means the same
+ * message reaches the user in both environments.
+ */
+export type PreviewActionResultType =
+	{ ok: true; data: PreviewResultType } | { ok: false; error: string };
+
+export type RegenerateActionResultType =
+	| { ok: true; draft: PostDraftType; usage: TokenUsageType }
+	| { ok: false; error: string };
+
 type ErrorContextType = "preview" | "regenerate";
 
-function toToolMessage(error: unknown, context: ErrorContextType): string {
+function toToolMessage(
+	error: unknown,
+	context: ErrorContextType,
+	byok: boolean,
+): string {
 	return toUserMessage(error, {
 		logTag: `article-to-social-posts:${context}`,
 		perUserDaily: HOSTED_PER_USER_DAILY,
 		dailyPool: HOSTED_DAILY_GENERATION_POOL,
+		byok,
 		rules: [
 			[
 				/ENOTFOUND|getaddrinfo|ETIMEDOUT|ECONNREFUSED|ECONNRESET|fetch failed|network/i,
-				"Couldn't reach the article URL. Check the link and try again.",
+				"We couldn't open that link. Check the web address and try again.",
 			],
-			[/\b404\b/, "Article not found at that URL."],
+			[
+				/\b404\b/,
+				"There's no article at that link. Double-check the web address.",
+			],
 			[
 				/paywall|login.?required/i,
-				"The article is behind a login or paywall — we can't read it.",
-			],
-			[
-				/SCHEMA_MISMATCH/,
-				"The AI returned an unexpected response format. Please try again — this is usually a one-off.",
+				"That article is behind a login or paywall, so we can't read it. Try pasting the text in directly instead.",
 			],
 			[
 				/DRAFT_TOO_LONG/,
-				`Your draft is too long. Max ${MAX_DRAFT_CHARS.toLocaleString()} characters (~2,500 words). Trim it down and try again.`,
+				`Your text is too long. Keep it under ${MAX_DRAFT_CHARS.toLocaleString()} characters (about 2,500 words), then try again.`,
 			],
-			[/DRAFT_EMPTY/, "Paste your draft text before generating."],
+			[/DRAFT_EMPTY/, "Paste or type your article text before generating."],
 			[
 				/did not return a draft/i,
-				"The AI didn't produce a draft for that platform. Please try again.",
+				"The AI didn't create a post for one of your platforms. Just try again.",
 			],
 		],
 		fallback:
 			context === "regenerate"
-				? "Couldn't regenerate that draft. Please try again."
-				: "Couldn't generate drafts. Please try again.",
+				? "Something went wrong rewriting that post. Please try again."
+				: "Something went wrong creating your posts. Please try again.",
 	});
 }
 
 /**
- * Run the draft generator and capture both the parsed output and the aggregate
- * token usage. Bypasses `runner.ask()` (which discards usageMetadata) via the
- * shared accumulator, then applies this tool's schema + error classification.
+ * Retry the draft run on transient failures (overload / rate-limit / network)
+ * with exponential backoff, then give up and rethrow for the caller's error
+ * mapper. Non-transient errors (schema mismatch, bad input) rethrow immediately.
  */
 async function askDraftRunnerWithUsage(
+	runner: DraftRunnerType,
+	prompt: string,
+	maxRetries = 2,
+): Promise<{ output: PostDraftsOutputType; usage: TokenUsageType }> {
+	let lastError: unknown;
+	for (let attempt = 0; attempt <= maxRetries; attempt++) {
+		try {
+			return await runDraftOnce(runner, prompt);
+		} catch (err) {
+			lastError = err;
+			const msg = err instanceof Error ? err.message : String(err);
+			if (!TRANSIENT_PATTERNS.test(msg) || attempt === maxRetries) throw err;
+			await new Promise((r) => setTimeout(r, 500 * 2 ** attempt));
+		}
+	}
+	throw lastError;
+}
+
+/**
+ * Run the draft generator once and capture both the parsed output and the
+ * aggregate token usage. Bypasses `runner.ask()` (which discards usageMetadata)
+ * via the shared accumulator, then applies this tool's schema + error
+ * classification.
+ */
+async function runDraftOnce(
 	runner: DraftRunnerType,
 	prompt: string,
 ): Promise<{ output: PostDraftsOutputType; usage: TokenUsageType }> {
@@ -193,7 +245,7 @@ export async function previewPosts(params: {
 	preferences?: WritingPreferencesType;
 	googleApiKey?: string;
 	googleModel?: string;
-}): Promise<PreviewResultType> {
+}): Promise<PreviewActionResultType> {
 	const {
 		input,
 		tone,
@@ -226,9 +278,15 @@ ${preferences ? `Writing preferences: ${JSON.stringify(preferences)}` : ""}`;
 			buildDraft(d.group, d.platforms, d.content, d.hashtags, d.thread),
 		);
 
-		return { article: output.article as ArticlePreviewType, drafts, usage };
+		return {
+			ok: true,
+			data: { article: output.article as ArticlePreviewType, drafts, usage },
+		};
 	} catch (error) {
-		throw new Error(toToolMessage(error, "preview"));
+		return {
+			ok: false,
+			error: toToolMessage(error, "preview", Boolean(googleApiKey)),
+		};
 	}
 }
 
@@ -246,7 +304,7 @@ export async function regenerateDraft(params: {
 	preferences?: WritingPreferencesType;
 	googleApiKey?: string;
 	googleModel?: string;
-}): Promise<{ draft: PostDraftType; usage: TokenUsageType }> {
+}): Promise<RegenerateActionResultType> {
 	const {
 		input,
 		group,
@@ -286,6 +344,7 @@ Return JSON with the article block AND exactly one draft for the requested group
 		}
 
 		return {
+			ok: true,
 			draft: buildDraft(
 				match.group,
 				match.platforms,
@@ -296,7 +355,10 @@ Return JSON with the article block AND exactly one draft for the requested group
 			usage,
 		};
 	} catch (error) {
-		throw new Error(toToolMessage(error, "regenerate"));
+		return {
+			ok: false,
+			error: toToolMessage(error, "regenerate", Boolean(googleApiKey)),
+		};
 	}
 }
 

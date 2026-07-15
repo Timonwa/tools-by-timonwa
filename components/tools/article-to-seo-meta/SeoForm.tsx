@@ -4,6 +4,7 @@ import { useActionState, useId, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import DraftReuseControls from "@/components/_shared/DraftReuseControls";
+import ErrorNotice from "@/components/_shared/ErrorNotice";
 import { useToolDraft } from "@/components/_shared/shared-draft";
 import {
 	MAX_ARTICLE_CHARS,
@@ -33,13 +34,27 @@ type SeoFormProps = {
 	/** Seed values for a restore-from-history. The parent remounts this form
 	 * (via `key`) when restoring, so these are read once on mount. */
 	initial?: SeoFormParamsType;
+	hasResult?: boolean;
 };
 
-function SubmitButton({ disabled }: { disabled?: boolean }) {
+function SubmitButton({
+	disabled,
+	hasResult,
+}: {
+	disabled?: boolean;
+	hasResult?: boolean;
+}) {
 	const { pending } = useFormStatus();
+	const label = pending
+		? hasResult
+			? "Regenerating…"
+			: "Generating…"
+		: hasResult
+			? "Regenerate variations"
+			: "Generate variations";
 	return (
 		<Button type="submit" size="lg" disabled={pending || disabled}>
-			{pending ? "Generating…" : "Generate variations"}
+			{label}
 		</Button>
 	);
 }
@@ -48,6 +63,7 @@ export default function SeoForm({
 	onResult,
 	onLoadingChange,
 	initial,
+	hasResult,
 }: SeoFormProps) {
 	const {
 		text: article,
@@ -70,31 +86,34 @@ export default function SeoForm({
 	// (React 19 useActionState). No effects needed.
 	const [state, formAction, isPending] = useActionState<SeoFormState>(
 		async (): Promise<SeoFormState> => {
-			if (!article.trim()) return { error: "Paste the article draft first." };
+			if (!article.trim())
+				return { error: "Paste your article before generating." };
 			if (overLimit)
 				return {
-					error: `Article is too long — keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} chars.`,
+					error: `Your article is too long. Keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} characters, then try again.`,
 				};
 			onLoadingChange?.(true);
 			try {
 				const byokKey = byokStorage.get() ?? undefined;
 				const trimmedKeyword = keyword.trim() || undefined;
-				const { result, usage } = await generateSeoMeta({
+				const res = await generateSeoMeta({
 					article,
 					primaryKeyword: trimmedKeyword,
 					variationCount: count,
 					googleApiKey: byokKey,
 					googleModel: byokKey ? byokModelStorage.get() : undefined,
 				});
-				onResult(result, usage, {
+				if (!res.ok) return { error: res.error };
+				onResult(res.result, res.usage, {
 					article,
 					primaryKeyword: trimmedKeyword,
 					variationCount: count,
 				});
 				return null;
-			} catch (err) {
+			} catch {
 				return {
-					error: err instanceof Error ? err.message : "Something went wrong.",
+					error:
+						"We couldn't reach the server. Check your internet connection and try again.",
 				};
 			} finally {
 				onLoadingChange?.(false);
@@ -178,13 +197,12 @@ export default function SeoForm({
 				</div>
 			</fieldset>
 
-			{state?.error && (
-				<p className="text-sm text-destructive" role="alert">
-					{state.error}
-				</p>
-			)}
+			{state?.error && <ErrorNotice message={state.error} />}
 
-			<SubmitButton disabled={!article.trim() || overLimit} />
+			<SubmitButton
+				disabled={!article.trim() || overLimit}
+				hasResult={hasResult}
+			/>
 		</form>
 	);
 }

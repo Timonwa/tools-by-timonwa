@@ -46,9 +46,23 @@ export default function ByokDrawer() {
 	}, []);
 
 	const handleSave = (input: string) => {
-		if (!input.trim())
-			return { type: "error" as const, message: "Please paste your API key." };
 		const trimmed = input.trim();
+		// Catch the common copy-paste slips before the key fails mid-generation
+		// with a confusing error. Kept permissive so a valid key is never rejected.
+		if (!trimmed)
+			return { type: "error" as const, message: "Paste your API key first." };
+		if (/\s/.test(trimmed))
+			return {
+				type: "error" as const,
+				message:
+					"That key has a space in it. Copy the whole key again, with no spaces before or after.",
+			};
+		if (trimmed.length < 20)
+			return {
+				type: "error" as const,
+				message:
+					"That doesn't look like a full API key. Copy the entire key from Google AI Studio and paste it again.",
+			};
 		byokStorage.set(trimmed);
 		return { type: "success" as const, message: "Key saved for this tab." };
 	};

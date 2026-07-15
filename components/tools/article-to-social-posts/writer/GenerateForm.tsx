@@ -1,7 +1,6 @@
 "use client";
 
 import {
-	AlertCircleIcon,
 	FileTextIcon,
 	LinkIcon,
 	Loader2Icon,
@@ -10,6 +9,7 @@ import {
 } from "lucide-react";
 import { useId } from "react";
 import DraftReuseControls from "@/components/_shared/DraftReuseControls";
+import ErrorNotice from "@/components/_shared/ErrorNotice";
 import { MAX_DRAFT_CHARS } from "@/components/tools/article-to-social-posts/constants/draft-input";
 import type { InputKindType } from "@/components/tools/article-to-social-posts/hooks/use-writer";
 import type {
@@ -51,6 +51,7 @@ type GenerateFormProps = {
 	xThreadLength: number;
 	onXThreadLengthChange: (n: number) => void;
 	isGenerating: boolean;
+	hasResult: boolean;
 	error: string | null;
 	onSubmit: (e: React.FormEvent) => void;
 	templates: PresetTemplateType[];
@@ -77,6 +78,7 @@ export default function GenerateForm({
 	xThreadLength,
 	onXThreadLengthChange,
 	isGenerating,
+	hasResult,
 	error,
 	onSubmit,
 	templates,
@@ -221,29 +223,18 @@ export default function GenerateForm({
 							<>
 								<Loader2Icon className="w-4 h-4 animate-spin" />
 								{inputKind === "url"
-									? "Reading article & generating drafts..."
-									: "Generating drafts..."}
+									? `Reading article & ${hasResult ? "regenerating" : "generating"} drafts...`
+									: `${hasResult ? "Regenerating" : "Generating"} drafts...`}
 							</>
 						) : (
 							<>
 								<SparklesIcon className="w-4 h-4" />
-								Generate drafts
+								{hasResult ? "Regenerate drafts" : "Generate drafts"}
 							</>
 						)}
 					</Button>
 
-					{error && (
-						<div
-							role="alert"
-							className="flex items-start gap-2 text-sm text-destructive p-3 rounded-md border border-destructive/30 bg-destructive/5"
-						>
-							<AlertCircleIcon
-								aria-hidden
-								className="w-4 h-4 mt-0.5 shrink-0"
-							/>
-							<span>{error}</span>
-						</div>
-					)}
+					{error && <ErrorNotice message={error} />}
 				</form>
 			</CardContent>
 		</Card>
