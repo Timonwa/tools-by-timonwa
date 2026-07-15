@@ -8,7 +8,9 @@ import { env } from "@env";
 import type { TokenUsageType } from "@/lib/types/token-usage";
 
 /**
- * Build the Gemini model for a tool call, using the AI SDK's Google provider.
+ * Build the Gemini provider + model for a tool call, using the AI SDK's Google
+ * provider. Returns the provider too so callers can reach provider-executed
+ * tools like `provider.tools.urlContext()`.
  *
  * A caller-supplied (BYOK) key overrides the tool's server key; a model override
  * is only honored alongside a BYOK key — server requests always use `LLM_MODEL`.
@@ -16,7 +18,7 @@ import type { TokenUsageType } from "@/lib/types/token-usage";
  * mapper can surface a clear "add your own key" message instead of an opaque
  * auth failure from Google.
  */
-export function getGeminiModel(opts: {
+export function getGemini(opts: {
 	serverKey: string | undefined;
 	googleApiKey?: string;
 	googleModel?: string;
@@ -30,7 +32,8 @@ export function getGeminiModel(opts: {
 	const modelId = opts.googleApiKey
 		? opts.googleModel || env.LLM_MODEL
 		: env.LLM_MODEL;
-	return createGoogleGenerativeAI({ apiKey: key })(modelId);
+	const provider = createGoogleGenerativeAI({ apiKey: key });
+	return { provider, model: provider(modelId) };
 }
 
 /**

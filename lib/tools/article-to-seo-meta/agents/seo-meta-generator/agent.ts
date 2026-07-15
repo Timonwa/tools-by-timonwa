@@ -2,7 +2,7 @@ import { generateObject } from "ai";
 import z from "zod";
 
 import { TOOL_GEMINI_KEY } from "@/components/tools/article-to-seo-meta/constants/api-key";
-import { getGeminiModel, toTokenUsage } from "@/lib/tools/_shared/ai-provider";
+import { getGemini, toTokenUsage } from "@/lib/tools/_shared/ai-provider";
 import type { TokenUsageType } from "@/lib/types/token-usage";
 
 export const seoMetaSchema = z.object({
@@ -93,7 +93,7 @@ export async function generateSeoVariations(opts: {
 	googleApiKey?: string;
 	googleModel?: string;
 }): Promise<{ object: SeoMetaOutputType; usage: TokenUsageType }> {
-	const model = getGeminiModel({
+	const { model } = getGemini({
 		serverKey: TOOL_GEMINI_KEY,
 		googleApiKey: opts.googleApiKey,
 		googleModel: opts.googleModel,

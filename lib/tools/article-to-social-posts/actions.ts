@@ -18,7 +18,6 @@ import type {
 	WritingPreferencesType,
 } from "@/components/tools/article-to-social-posts/types";
 import { generateDrafts } from "@/lib/tools/article-to-social-posts/agents/draft-generator/agent";
-import { fetchArticleText } from "@/lib/tools/_shared/fetch-article";
 import { toUserMessage } from "@/lib/tools/_shared/errors";
 import {
 	enforceQuota,
@@ -60,20 +59,8 @@ function toToolMessage(
 		byok,
 		rules: [
 			[
-				/ENOTFOUND|getaddrinfo|ETIMEDOUT|ECONNREFUSED|ECONNRESET|fetch failed|network/i,
-				"We couldn't open that link. Check the web address and try again.",
-			],
-			[
-				/\b404\b/,
-				"There's no article at that link. Double-check the web address.",
-			],
-			[
-				/paywall|login.?required/i,
-				"That article is behind a login or paywall, so we can't read it. Try pasting the text in directly instead.",
-			],
-			[
-				/empty article/i,
-				"We opened that link but couldn't find article text on it. Try pasting the text in directly instead.",
+				/URL_UNREADABLE/,
+				"We couldn't read that link. Double-check the web address, or paste the article text in directly instead.",
 			],
 			[
 				/DRAFT_TOO_LONG/,
@@ -113,26 +100,6 @@ function validateInput(input: DraftInputType): void {
 	}
 }
 
-/**
- * Resolve the source material to plain text. URL input is fetched + extracted
- * server-side (cached 1h); text input is used as-is. Returns the canonical URL
- * (empty for text mode) and any title we scraped, so the action can fill those
- * into the result without relying on the model.
- */
-async function resolveArticle(
-	input: DraftInputType,
-): Promise<{ text: string; url: string; fetchedTitle: string }> {
-	if (input.kind === "url") {
-		const { title, text } = await fetchArticleText(input.url);
-		return { text, url: input.url, fetchedTitle: title };
-	}
-	return { text: input.text, url: "", fetchedTitle: "" };
-}
-
-function articleBlock(text: string): string {
-	return `ARTICLE TEXT:\n"""\n${text}\n"""`;
-}
-
 function threadLine(platforms: PlatformType[], xThreadLength: number): string {
 	const threadable = platforms.some((p) =>
 		["x", "bluesky", "threads", "mastodon"].includes(p),
@@ -142,9 +109,29 @@ function threadLine(platforms: PlatformType[], xThreadLength: number): string {
 		: "Thread mode: single posts only (no threading)";
 }
 
+/** The tone / platforms / thread / preferences block shared by both actions. */
+function buildDirectives(
+	tone: ToneType,
+	platforms: PlatformType[],
+	xThreadLength: number,
+	preferences?: WritingPreferencesType,
+): string {
+	const substackGroup = preferences?.substackLength ?? "medium";
+	return [
+		`ToneType: ${tone}`,
+		`Platforms: ${platforms.join(", ")}`,
+		platforms.includes("substack") ? `Substack group: ${substackGroup}` : "",
+		threadLine(platforms, xThreadLength),
+		preferences ? `Writing preferences: ${JSON.stringify(preferences)}` : "",
+	]
+		.filter(Boolean)
+		.join("\n");
+}
+
 /**
- * Generate drafts for all requested platforms. URL input is fetched + extracted
- * server-side, then the article text is sent to the model in a single call.
+ * Generate drafts for all requested platforms. URL input is read by the model
+ * via Gemini's url_context tool; text input is sent inline. Both are a single
+ * model call.
  */
 export async function previewPosts(params: {
 	input: DraftInputType;
@@ -168,20 +155,17 @@ export async function previewPosts(params: {
 		validateInput(input);
 		await enforceQuota(QUOTA_CONFIG, googleApiKey);
 
-		const { text, url, fetchedTitle } = await resolveArticle(input);
-		const substackGroup = preferences?.substackLength ?? "medium";
-		const prompt = `Generate social media post drafts for this article.
-
-${articleBlock(text)}
-
-ToneType: ${tone}
-Platforms: ${platforms.join(", ")}
-${platforms.includes("substack") ? `Substack group: ${substackGroup}` : ""}
-${threadLine(platforms, xThreadLength)}
-${preferences ? `Writing preferences: ${JSON.stringify(preferences)}` : ""}`;
+		const directives = `Generate social media post drafts for this article.\n\n${buildDirectives(
+			tone,
+			platforms,
+			xThreadLength,
+			preferences,
+		)}`;
 
 		const { object, usage } = await generateDrafts({
-			prompt,
+			directives,
+			url: input.kind === "url" ? input.url : undefined,
+			text: input.kind === "text" ? input.text : undefined,
 			googleApiKey,
 			googleModel,
 		});
@@ -189,11 +173,10 @@ ${preferences ? `Writing preferences: ${JSON.stringify(preferences)}` : ""}`;
 		const drafts: PostDraftType[] = object.drafts.map((d) =>
 			buildDraft(d.group, d.platforms, d.content, d.hashtags, d.thread),
 		);
-		// The model doesn't know the URL (it only saw text); fill in what we know.
+		// The model leaves article.url empty; fill in the URL we actually have.
 		const article: ArticlePreviewType = {
 			...object.article,
-			url,
-			title: object.article.title || fetchedTitle,
+			url: input.kind === "url" ? input.url : "",
 		};
 
 		return { ok: true, data: { article, drafts, usage } };
@@ -206,8 +189,8 @@ ${preferences ? `Writing preferences: ${JSON.stringify(preferences)}` : ""}`;
 }
 
 /**
- * Regenerate a single platform's draft. URL input hits the 1h fetch cache, so
- * no re-fetch; text input is re-sent by the client.
+ * Regenerate a single platform's draft. URL input hits Gemini's url_context
+ * cache; text input is re-sent by the client.
  */
 export async function regenerateDraft(params: {
 	input: DraftInputType;
@@ -234,23 +217,17 @@ export async function regenerateDraft(params: {
 		validateInput(input);
 		await enforceQuota(QUOTA_CONFIG, googleApiKey);
 
-		const { text } = await resolveArticle(input);
-		const substackGroup = preferences?.substackLength ?? "medium";
-		const prompt = `Regenerate a single draft for this article.
-
-${articleBlock(text)}
-
-ToneType: ${tone}
-Group: ${group}
-Platforms: ${platforms.join(", ")}
-${platforms.includes("substack") ? `Substack group: ${substackGroup}` : ""}
-${threadLine(platforms, xThreadLength)}
-${preferences ? `Writing preferences: ${JSON.stringify(preferences)}` : ""}
-
-Return the article block AND exactly one draft for the requested group. Make this draft noticeably different from a typical first attempt — try a fresh angle or hook.`;
+		const directives = `Regenerate a single draft for this article.\n\n${buildDirectives(
+			tone,
+			platforms,
+			xThreadLength,
+			preferences,
+		)}\nGroup: ${group}\n\nReturn the article block AND exactly one draft for the requested group. Make this draft noticeably different from a typical first attempt — try a fresh angle or hook.`;
 
 		const { object, usage } = await generateDrafts({
-			prompt,
+			directives,
+			url: input.kind === "url" ? input.url : undefined,
+			text: input.kind === "text" ? input.text : undefined,
 			googleApiKey,
 			googleModel,
 			// Push for divergence so the rewrite reads differently from the first.
