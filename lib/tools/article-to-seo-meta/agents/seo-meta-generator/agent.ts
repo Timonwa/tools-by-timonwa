@@ -1,8 +1,9 @@
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { env } from "@env";
-import { AgentBuilder } from "@iqai/adk";
+import { generateObject } from "ai";
 import z from "zod";
+
 import { TOOL_GEMINI_KEY } from "@/components/tools/article-to-seo-meta/constants/api-key";
+import { getGeminiModel, toTokenUsage } from "@/lib/tools/_shared/ai-provider";
+import type { TokenUsageType } from "@/lib/types/token-usage";
 
 export const seoMetaSchema = z.object({
 	variations: z
@@ -18,32 +19,7 @@ export const seoMetaSchema = z.object({
 
 export type SeoMetaOutputType = z.infer<typeof seoMetaSchema>;
 
-/**
- * Creates the SEO meta generator.
- *
- * Produces 1-3 variations of { title, description } for an article draft.
- * Character ranges are enforced in the instruction (title 50-60, description
- * 150-160). The action layer clamps anything over the ±5 tolerance after parsing.
- *
- * BYOK: pass a Google API key to use the caller's Gemini quota. Optional
- * model override is only honored alongside a BYOK key.
- */
-export const getSeoMetaGenerator = async (opts?: {
-	googleApiKey?: string;
-	googleModel?: string;
-}) => {
-	const model = opts?.googleApiKey
-		? createGoogleGenerativeAI({ apiKey: opts.googleApiKey })(
-				opts.googleModel ?? env.LLM_MODEL,
-			)
-		: createGoogleGenerativeAI({ apiKey: TOOL_GEMINI_KEY })(env.LLM_MODEL);
-
-	const { runner } = await AgentBuilder.create("seo_meta_generator")
-		.withDescription(
-			"Turns an article draft into SEO-friendly title + description variations sized to Google's display limits.",
-		)
-		.withInstruction(
-			`You are an SEO specialist writing meta tags for articles.
+const SYSTEM = `You are an SEO specialist writing meta tags for articles.
 
 # TASK
 
@@ -93,17 +69,30 @@ Match the article's language and register. Professional article → professional
 - No trailing "..." or "!".
 - No hashtags.
 - No brand/site suffixes (e.g., " | MyBlog") — the platform appends those.
-- Titles are complete phrases, not fragments.
+- Titles are complete phrases, not fragments.`;
 
-# OUTPUT
-
-Return ONLY valid JSON matching this schema exactly:
-{"variations":[{"title":"...","description":"..."}]}
-No markdown fences, no prose, no character counts.`,
-		)
-		.withModel(model)
-		.withOutputSchema(seoMetaSchema)
-		.build();
-
-	return runner;
-};
+/**
+ * Generate 1-3 SEO { title, description } variations for an article draft.
+ * Structured output is enforced by the schema via the AI SDK, so the caller
+ * gets a validated object — no manual JSON parsing. Transient failures (503 /
+ * rate limit) are retried automatically.
+ */
+export async function generateSeoVariations(opts: {
+	prompt: string;
+	googleApiKey?: string;
+	googleModel?: string;
+}): Promise<{ object: SeoMetaOutputType; usage: TokenUsageType }> {
+	const model = getGeminiModel({
+		serverKey: TOOL_GEMINI_KEY,
+		googleApiKey: opts.googleApiKey,
+		googleModel: opts.googleModel,
+	});
+	const { object, usage } = await generateObject({
+		model,
+		schema: seoMetaSchema,
+		system: SYSTEM,
+		prompt: opts.prompt,
+		maxRetries: 2,
+	});
+	return { object, usage: toTokenUsage(usage) };
+}

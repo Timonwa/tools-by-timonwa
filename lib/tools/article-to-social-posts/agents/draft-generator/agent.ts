@@ -1,31 +1,9 @@
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { env } from "@env";
-import {
-	AgentBuilder,
-	ReflectAndRetryToolPlugin,
-	WebFetchTool,
-} from "@iqai/adk";
+import { generateObject } from "ai";
 import z from "zod";
+
 import { TOOL_GEMINI_KEY } from "@/components/tools/article-to-social-posts/constants/api-key";
-import { WebFetchCachePlugin } from "./web-fetch-cache-plugin";
-
-/**
- * Singleton plugin so the URL cache survives across requests.
- * TTL: 1 hour. Keeps regenerate cheap — the second fetch for the same URL is a cache hit.
- */
-const webFetchCachePlugin = new WebFetchCachePlugin(60 * 60 * 1000);
-
-/**
- * Retry flaky blog fetches (timeouts, transient network errors).
- * Defaults to INVOCATION scope — each generation gets its own retry budget.
- * maxRetries=2 caps worst-case latency at ~3 fetch attempts; past that we
- * surface the error to the user rather than silently looping.
- */
-const reflectRetryPlugin = new ReflectAndRetryToolPlugin({
-	name: "web_fetch_retry",
-	maxRetries: 2,
-	throwExceptionIfRetryExceeded: true,
-});
+import { getGeminiModel, toTokenUsage } from "@/lib/tools/_shared/ai-provider";
+import type { TokenUsageType } from "@/lib/types/token-usage";
 
 /**
  * Schema the draft generator must return.
@@ -52,54 +30,15 @@ export const postDraftsSchema = z.object({
 
 export type PostDraftsOutputType = z.infer<typeof postDraftsSchema>;
 
-/**
- * Creates the draft generator.
- *
- * Uses ADK-TS's built-in `WebFetchTool` to read the blog post. Returns
- * structured drafts per platform. Does not publish.
- *
- * TOKEN OPTIMIZATION: the instruction tells the agent to group selected
- * platforms by shared constraints and only do the creative work ONCE per
- * group. Output still has one entry per selected platform, but platforms in
- * the same group share identical content.
- *
- * BYOK: pass a Google API key to use the caller's Gemini quota instead of
- * the server's. Used for "bring your own key" mode when the free daily quota
- * is exhausted. Optionally pass a model override — only honored when a BYOK
- * key is also provided. Non-BYOK requests always use the server's `LLM_MODEL`.
- */
-export const getDraftGenerator = async (opts?: {
-	googleApiKey?: string;
-	googleModel?: string;
-}) => {
-	// Build a per-instance Google provider explicitly so we control which key
-	// gets used. BYOK overrides the tool's server key. Model override is only
-	// honored alongside a BYOK key — otherwise `LLM_MODEL` is authoritative.
-	const model = opts?.googleApiKey
-		? createGoogleGenerativeAI({ apiKey: opts.googleApiKey })(
-				opts.googleModel ?? env.LLM_MODEL,
-			)
-		: createGoogleGenerativeAI({ apiKey: TOOL_GEMINI_KEY })(env.LLM_MODEL);
-
-	const { runner } = await AgentBuilder.create("draft_generator")
-		.withDescription(
-			"For writers: turns an article into platform-optimized social media drafts grouped by format. Returns structured JSON.",
-		)
-		.withInstruction(
-			`You are a social media content specialist for writers sharing their articles. You generate drafts — you do NOT publish.
+const SYSTEM = `You are a social media content specialist for writers sharing their articles. You generate drafts — you do NOT publish.
 
 # HOW TO READ THE ARTICLE
 
-The user gives you ONE of two inputs — the prompt will make it clear which:
+You are given the article's text under "ARTICLE TEXT:" — it has already been fetched for you, and there is no tool to call. Work from that text directly.
 
-1. **URL mode** (prompt says "URL to fetch: ...") — Use the \`web_fetch\` tool with the provided URL. It returns:
-   - \`title\` — the page title
-   - \`content\` — cleaned plain text of the article
-   Set \`article.url\` to the fetched URL.
-
-2. **Draft mode** (prompt says "ARTICLE TEXT:" followed by the full text) — Use the text directly. **Do NOT call \`web_fetch\`.** Infer the title from the first heading or first sentence. Set \`article.url\` to an empty string.
-
-In both modes, extract the author name if clearly visible (e.g., "By Jane Doe", byline at top). If unclear, leave \`author\` as empty string — do not guess.
+- Infer the title from the first heading or first sentence.
+- Extract the author name if clearly visible (e.g., "By Jane Doe", byline at top). If unclear, leave \`author\` as empty string — do not guess.
+- Set \`article.url\` to an empty string — the app fills in the real URL.
 
 # OUTPUT STRUCTURE
 
@@ -148,7 +87,7 @@ CTA phrases are encouraged where natural:
 - ❌ "I just wrote a deep dive. https://example.com/post"
 - ❌ "Full breakdown: example.com/post"
 
-The URL belongs ONLY in \`article.url\` (URL mode) or empty string (draft mode).
+The URL belongs ONLY in \`article.url\`, which you must leave as an empty string.
 
 # FORMATTING RULES
 
@@ -237,26 +176,32 @@ If no preferences are provided: voice="i", emojiLevel=2, hashtagLevel=1 (no hash
 
 # OUTPUT
 
-Return ONLY a single JSON object. No markdown fences, no prose, no extra text before or after.
+Return one object with exactly two keys:
+- \`article\`: { url, title, author } — \`url\` is always an empty string.
+- \`drafts\`: one object per group containing selected platforms, max 3 objects. Omit \`thread\` unless threading. \`hashtags\` is always an array (empty when not adding hashtags).`;
 
-The root value MUST be an object with exactly these two keys — never return just the drafts array:
-
-{
-  "article": { "url": "...", "title": "...", "author": "..." },
-  "drafts": [ { "group": "short"|"medium"|"long", "platforms": [...], "content": "...", "thread": [...] or omit, "hashtags": [...] } ]
+/**
+ * Turn an article into platform-optimized social media drafts grouped by
+ * format. Structured output is enforced by the schema via the AI SDK, so the
+ * caller gets a validated object — no manual JSON parsing, no tools. Transient
+ * failures (503 / rate limit) are retried automatically.
+ */
+export async function generateDrafts(opts: {
+	prompt: string;
+	googleApiKey?: string;
+	googleModel?: string;
+}): Promise<{ object: PostDraftsOutputType; usage: TokenUsageType }> {
+	const model = getGeminiModel({
+		serverKey: TOOL_GEMINI_KEY,
+		googleApiKey: opts.googleApiKey,
+		googleModel: opts.googleModel,
+	});
+	const { object, usage } = await generateObject({
+		model,
+		schema: postDraftsSchema,
+		system: SYSTEM,
+		prompt: opts.prompt,
+		maxRetries: 2,
+	});
+	return { object, usage: toTokenUsage(usage) };
 }
-
-Rules:
-- \`article.author\` = empty string if not found — do not guess.
-- \`drafts\` = one object per group containing selected platforms, max 3 objects.
-- \`hashtags\` = always an array (empty [] if not adding hashtags).
-- \`thread\` = omit the key entirely when not threading.`,
-		)
-		.withModel(model)
-		.withTools(new WebFetchTool())
-		.withPlugins(webFetchCachePlugin, reflectRetryPlugin)
-		.withOutputSchema(postDraftsSchema)
-		.build();
-
-	return runner;
-};
