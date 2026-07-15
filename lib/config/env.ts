@@ -17,8 +17,10 @@ const schema = z.object({
 	GOOGLE_API_KEY: z.string().optional(),
 	GOOGLE_API_KEY_ARTICLE_TO_SEO_META: z.string().optional(),
 	GOOGLE_API_KEY_ARTICLE_TO_SOCIAL_POST: z.string().optional(),
-	// Server model used for non-BYOK requests.
-	LLM_MODEL: z.string().default("gemini-2.5-flash"),
+	// Server model for non-BYOK requests. Use a "-latest" alias, not a pinned
+	// version — Google blocks pinned older models (e.g. gemini-flash-latest) for
+	// newly-created keys, so a fresh clone's key would 404.
+	LLM_MODEL: z.string().default("gemini-flash-lite-latest"),
 	// Upstash Redis for daily usage quotas — production only, fails open when absent.
 	UPSTASH_REDIS_REST_URL: z.string().optional(),
 	UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
