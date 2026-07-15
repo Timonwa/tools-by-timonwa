@@ -5,8 +5,12 @@ import { useFormStatus } from "react-dom";
 
 import DraftReuseControls from "@/components/_shared/DraftReuseControls";
 import ErrorNotice from "@/components/_shared/ErrorNotice";
+import InputKindTabs, {
+	type InputKindType,
+} from "@/components/_shared/InputKindTabs";
 import { useToolDraft } from "@/components/_shared/shared-draft";
 import {
+	type DraftInputType,
 	MAX_ARTICLE_CHARS,
 	type SeoMetaResultType,
 	type TokenUsageType,
@@ -17,7 +21,7 @@ import { generateSeoMeta } from "@/lib/tools/article-to-seo-meta/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 
 export type SeoFormParamsType = {
-	article: string;
+	source: DraftInputType;
 	primaryKeyword?: string;
 	variationCount: 1 | 2 | 3;
 };
@@ -65,39 +69,59 @@ export default function SeoForm({
 	initial,
 	hasResult,
 }: SeoFormProps) {
+	const initialSource = initial?.source;
+	const [inputKind, setInputKind] = useState<InputKindType>(
+		initialSource?.kind ?? "text",
+	);
+	const [url, setUrl] = useState(
+		initialSource?.kind === "url" ? initialSource.url : "",
+	);
 	const {
 		text: article,
 		setText: setArticle,
 		reuse,
 		toggleReuse,
 		clear: clearArticle,
-	} = useToolDraft(initial?.article ?? "");
+	} = useToolDraft(initialSource?.kind === "text" ? initialSource.text : "");
 	const [keyword, setKeyword] = useState(initial?.primaryKeyword ?? "");
 	const [count, setCount] = useState<1 | 2 | 3>(initial?.variationCount ?? 3);
+	const urlId = useId();
 	const articleId = useId();
 	const keywordId = useId();
 	const reuseId = useId();
 
 	const articleLen = article.length;
 	const overLimit = articleLen > MAX_ARTICLE_CHARS;
+	const hasInput =
+		inputKind === "url" ? url.trim().length > 0 : article.trim().length > 0;
 
 	// The form action validates client-side, calls the server action, and hands
 	// results straight to the parent — returning only an error string for display
 	// (React 19 useActionState). No effects needed.
 	const [state, formAction, isPending] = useActionState<SeoFormState>(
 		async (): Promise<SeoFormState> => {
-			if (!article.trim())
-				return { error: "Paste your article before generating." };
-			if (overLimit)
-				return {
-					error: `Your article is too long. Keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} characters, then try again.`,
-				};
+			const source: DraftInputType =
+				inputKind === "url"
+					? { kind: "url", url: url.trim() }
+					: { kind: "text", text: article };
+
+			if (source.kind === "url") {
+				if (!source.url) return { error: "Paste a link before generating." };
+			} else {
+				if (!source.text.trim())
+					return { error: "Paste your article before generating." };
+				if (overLimit)
+					return {
+						error: `Your article is too long. Keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} characters, then try again.`,
+					};
+			}
+
 			onLoadingChange?.(true);
 			try {
 				const byokKey = byokStorage.get() ?? undefined;
 				const trimmedKeyword = keyword.trim() || undefined;
 				const res = await generateSeoMeta({
-					article,
+					source,
 					primaryKeyword: trimmedKeyword,
 					variationCount: count,
 					googleApiKey: byokKey,
@@ -105,7 +129,7 @@ export default function SeoForm({
 				});
 				if (!res.ok) return { error: res.error };
 				onResult(res.result, res.usage, {
-					article,
+					source,
 					primaryKeyword: trimmedKeyword,
 					variationCount: count,
 				});
@@ -125,34 +149,65 @@ export default function SeoForm({
 	return (
 		<form action={formAction} className="space-y-5">
 			<div>
-				<label htmlFor={articleId} className="block text-sm font-medium mb-2">
-					Your draft
-				</label>
-				<Textarea
-					id={articleId}
-					value={article}
-					onChange={(e) => setArticle(e.target.value)}
-					placeholder="Paste the full article, or a solid draft…"
+				<InputKindTabs
+					value={inputKind}
+					onChange={setInputKind}
 					disabled={isPending}
-					className="h-48 max-h-96 resize-y [field-sizing:normal]"
+					textLabel="Paste article"
 				/>
-				<p
-					className={`mt-1 text-xs tabular-nums ${
-						overLimit ? "text-destructive" : "text-muted-foreground"
-					}`}
-				>
-					{articleLen.toLocaleString()} / {MAX_ARTICLE_CHARS.toLocaleString()}{" "}
-					chars
-				</p>
-				<DraftReuseControls
-					id={reuseId}
-					reuse={reuse}
-					onToggleReuse={toggleReuse}
-					onClear={clearArticle}
-					canClear={article.length > 0}
-					disabled={isPending}
-					className="mt-2"
-				/>
+
+				{inputKind === "url" ? (
+					<div className="mt-3">
+						<label htmlFor={urlId} className="block text-sm font-medium mb-2">
+							Article URL
+						</label>
+						<Input
+							id={urlId}
+							type="url"
+							value={url}
+							onChange={(e) => setUrl(e.target.value)}
+							placeholder="https://your-blog.com/post-slug"
+							disabled={isPending}
+						/>
+						<p className="mt-1 text-xs text-muted-foreground">
+							Point at a published post to write meta tags for a live article.
+						</p>
+					</div>
+				) : (
+					<div className="mt-3">
+						<label
+							htmlFor={articleId}
+							className="block text-sm font-medium mb-2"
+						>
+							Your draft
+						</label>
+						<Textarea
+							id={articleId}
+							value={article}
+							onChange={(e) => setArticle(e.target.value)}
+							placeholder="Paste the full article, or a solid draft…"
+							disabled={isPending}
+							className="h-48 max-h-96 resize-y [field-sizing:normal]"
+						/>
+						<p
+							className={`mt-1 text-xs tabular-nums ${
+								overLimit ? "text-destructive" : "text-muted-foreground"
+							}`}
+						>
+							{articleLen.toLocaleString()} /{" "}
+							{MAX_ARTICLE_CHARS.toLocaleString()} chars
+						</p>
+						<DraftReuseControls
+							id={reuseId}
+							reuse={reuse}
+							onToggleReuse={toggleReuse}
+							onClear={clearArticle}
+							canClear={article.length > 0}
+							disabled={isPending}
+							className="mt-2"
+						/>
+					</div>
+				)}
 			</div>
 
 			<div>
@@ -200,7 +255,7 @@ export default function SeoForm({
 			{state?.error && <ErrorNotice message={state.error} />}
 
 			<SubmitButton
-				disabled={!article.trim() || overLimit}
+				disabled={!hasInput || (inputKind === "text" && overLimit)}
 				hasResult={hasResult}
 			/>
 		</form>

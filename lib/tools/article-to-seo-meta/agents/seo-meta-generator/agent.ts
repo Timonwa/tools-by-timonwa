@@ -1,8 +1,7 @@
-import { generateObject } from "ai";
 import z from "zod";
 
 import { TOOL_GEMINI_KEY } from "@/components/tools/article-to-seo-meta/constants/api-key";
-import { getGemini, toTokenUsage } from "@/lib/tools/_shared/ai-provider";
+import { generateStructuredFromDraft } from "@/lib/tools/_shared/draft-source";
 import type { TokenUsageType } from "@/lib/types/token-usage";
 
 export const seoMetaSchema = z.object({
@@ -32,9 +31,13 @@ export type SeoMetaOutputType = z.infer<typeof seoMetaSchema>;
 
 const SYSTEM = `You are an SEO specialist writing meta tags for articles.
 
+# HOW TO READ THE ARTICLE
+
+You are given the article as EITHER pasted text (under "ARTICLE TEXT:") OR a URL. When a URL is given, read it with the \`url_context\` tool and work only from the article's real content — never invent details or write about a topic you couldn't read.
+
 # TASK
 
-The user pastes an article (full text or a solid draft). Generate N variations of SEO meta tags, where N matches the requested \`variationCount\` (1-3). Each variation is a { title, description } pair.
+Generate N variations of SEO meta tags, where N matches the requested \`variationCount\` (1-3). Each variation is a { title, description } pair.
 
 # CHARACTER LIMITS (HARD REQUIREMENT)
 
@@ -80,38 +83,42 @@ Match the article's language and register. Professional article → professional
 - No trailing "..." or "!".
 - No hashtags.
 - No brand/site suffixes (e.g., " | MyBlog") — the platform appends those.
+- No citation markers like [1] or [1.2] — when reading from a URL, strip any bracketed source numbers.
 - Titles are complete phrases, not fragments.`;
 
 /**
  * Generate 1-3 SEO { title, description } variations for an article draft.
  * Structured output is enforced by the schema via the AI SDK, so the caller
- * gets a validated object — no manual JSON parsing. Transient failures (503 /
- * rate limit) are retried automatically.
+ * gets a validated object — no manual JSON parsing. In URL mode the model reads
+ * the page itself with Gemini's provider-executed `url_context` tool; in text
+ * mode the pasted article is sent inline. Transient failures (503 / rate limit)
+ * are retried automatically.
  */
-export async function generateSeoVariations(opts: {
-	prompt: string;
+export function generateSeoVariations(opts: {
+	/** Task-specific instructions (variationCount / primaryKeyword). */
+	directives: string;
+	/** URL mode: the article URL for the model to read via url_context. */
+	url?: string;
+	/** Text mode: the pasted article text. */
+	text?: string;
 	googleApiKey?: string;
 	googleModel?: string;
 }): Promise<{ object: SeoMetaOutputType; usage: TokenUsageType }> {
-	const { model } = getGemini({
-		serverKey: TOOL_GEMINI_KEY,
-		googleApiKey: opts.googleApiKey,
-		googleModel: opts.googleModel,
-	});
-	const { object, usage } = await generateObject({
-		model,
+	return generateStructuredFromDraft<SeoMetaOutputType>({
 		schema: seoMetaSchema,
 		schemaName: "SeoMetaVariations",
 		schemaDescription:
 			"Search-optimized title + description variations sized to Google's display limits.",
 		system: SYSTEM,
-		prompt: opts.prompt,
+		directives: opts.directives,
+		url: opts.url,
+		text: opts.text,
+		serverKey: TOOL_GEMINI_KEY,
+		googleApiKey: opts.googleApiKey,
+		googleModel: opts.googleModel,
 		// Low-ish temperature: the character-count limits are a hard requirement,
 		// so we favour consistency over surprise. Variety comes from the prompt.
 		temperature: 0.5,
 		maxOutputTokens: 2048,
-		maxRetries: 2,
-		abortSignal: AbortSignal.timeout(60_000),
 	});
-	return { object, usage: toTokenUsage(usage) };
 }

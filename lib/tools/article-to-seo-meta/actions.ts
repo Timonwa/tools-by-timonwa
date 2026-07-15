@@ -10,6 +10,7 @@ import {
 	type TokenUsageType,
 } from "@/components/tools/article-to-seo-meta/types";
 import { generateSeoVariations } from "@/lib/tools/article-to-seo-meta/agents/seo-meta-generator/agent";
+import type { DraftInputType } from "@/lib/tools/_shared/draft-input";
 import { toUserMessage } from "@/lib/tools/_shared/errors";
 import {
 	enforceQuota,
@@ -23,17 +24,9 @@ const QUOTA_CONFIG: QuotaConfig = {
 	dailyPool: HOSTED_DAILY_GENERATION_POOL,
 };
 
-function buildPrompt(
-	article: string,
-	keyword: string | undefined,
-	count: number,
-): string {
-	const lines: string[] = [];
-	lines.push(`variationCount: ${count}`);
+function buildDirectives(keyword: string | undefined, count: number): string {
+	const lines: string[] = [`variationCount: ${count}`];
 	if (keyword) lines.push(`primaryKeyword: ${keyword}`);
-	lines.push("");
-	lines.push("ARTICLE:");
-	lines.push(article);
 	return lines.join("\n");
 }
 
@@ -44,6 +37,11 @@ function toToolMessage(error: unknown, byok: boolean): string {
 		dailyPool: HOSTED_DAILY_GENERATION_POOL,
 		byok,
 		rules: [
+			[
+				/URL_UNREADABLE/,
+				"We couldn't read that link. Double-check the web address, or paste the article text in directly instead.",
+			],
+			[/URL_EMPTY/, "Paste a link before generating."],
 			[/ARTICLE_EMPTY/, "Paste your article before generating."],
 			[
 				/ARTICLE_TOO_LONG/,
@@ -67,16 +65,24 @@ export type SeoActionResultType =
 	| { ok: false; error: string };
 
 export async function generateSeoMeta(input: {
-	article: string;
+	source: DraftInputType;
 	primaryKeyword?: string;
 	variationCount?: number;
 	googleApiKey?: string;
 	googleModel?: string;
 }): Promise<SeoActionResultType> {
 	try {
-		const article = input.article?.trim();
-		if (!article) throw new Error("ARTICLE_EMPTY");
-		if (article.length > MAX_ARTICLE_CHARS) throw new Error("ARTICLE_TOO_LONG");
+		const { source } = input;
+		let url: string | undefined;
+		let text: string | undefined;
+		if (source.kind === "url") {
+			url = source.url?.trim();
+			if (!url) throw new Error("URL_EMPTY");
+		} else {
+			text = source.text?.trim();
+			if (!text) throw new Error("ARTICLE_EMPTY");
+			if (text.length > MAX_ARTICLE_CHARS) throw new Error("ARTICLE_TOO_LONG");
+		}
 
 		await enforceQuota(QUOTA_CONFIG, input.googleApiKey);
 
@@ -84,7 +90,9 @@ export async function generateSeoMeta(input: {
 		const keyword = input.primaryKeyword?.trim() || undefined;
 
 		const { object, usage } = await generateSeoVariations({
-			prompt: buildPrompt(article, keyword, count),
+			directives: buildDirectives(keyword, count),
+			url,
+			text,
 			googleApiKey: input.googleApiKey,
 			googleModel: input.googleModel,
 		});

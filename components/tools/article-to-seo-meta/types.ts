@@ -8,9 +8,12 @@ export type SeoMetaResultType = {
 };
 
 export type { TokenUsageType } from "@/lib/types/token-usage";
+export type { DraftInputType } from "@/lib/tools/_shared/draft-input";
+
+import type { DraftInputType } from "@/lib/tools/_shared/draft-input";
 
 export type SeoMetaInputType = {
-	article: string;
+	source: DraftInputType;
 	primaryKeyword?: string;
 	variationCount?: 1 | 2 | 3;
 };

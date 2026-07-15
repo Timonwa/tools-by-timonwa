@@ -1,17 +1,13 @@
 "use client";
 
-import {
-	FileTextIcon,
-	LinkIcon,
-	Loader2Icon,
-	SparklesIcon,
-	Wand2Icon,
-} from "lucide-react";
+import { Loader2Icon, SparklesIcon, Wand2Icon } from "lucide-react";
 import { useId } from "react";
 import DraftReuseControls from "@/components/_shared/DraftReuseControls";
 import ErrorNotice from "@/components/_shared/ErrorNotice";
+import InputKindTabs, {
+	type InputKindType,
+} from "@/components/_shared/InputKindTabs";
 import { MAX_DRAFT_CHARS } from "@/components/tools/article-to-social-posts/constants/draft-input";
-import type { InputKindType } from "@/components/tools/article-to-social-posts/hooks/use-writer";
 import type {
 	PlatformType,
 	PresetTemplateType,
@@ -238,52 +234,5 @@ export default function GenerateForm({
 				</form>
 			</CardContent>
 		</Card>
-	);
-}
-
-function InputKindTabs({
-	value,
-	onChange,
-	disabled,
-}: {
-	value: InputKindType;
-	onChange: (kind: InputKindType) => void;
-	disabled: boolean;
-}) {
-	const tabs: { id: InputKindType; label: string; icon: typeof LinkIcon }[] = [
-		{ id: "url", label: "URL", icon: LinkIcon },
-		{ id: "text", label: "Paste draft", icon: FileTextIcon },
-	];
-	return (
-		<div
-			role="tablist"
-			aria-label="Source input type"
-			className="inline-flex rounded-md border border-border bg-muted/40 p-1 text-sm"
-		>
-			{tabs.map((t) => {
-				const active = value === t.id;
-				const Icon = t.icon;
-				return (
-					<button
-						key={t.id}
-						type="button"
-						role="tab"
-						aria-selected={active}
-						onClick={() => onChange(t.id)}
-						disabled={disabled}
-						className={cn(
-							"inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors",
-							active
-								? "bg-background text-foreground shadow-sm"
-								: "text-muted-foreground hover:text-foreground",
-							disabled && "opacity-50 cursor-not-allowed",
-						)}
-					>
-						<Icon aria-hidden className="w-3.5 h-3.5" />
-						{t.label}
-					</button>
-				);
-			})}
-		</div>
 	);
 }

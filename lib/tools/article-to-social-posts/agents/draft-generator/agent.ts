@@ -1,8 +1,7 @@
-import { generateText, isStepCount, Output, type ToolSet } from "ai";
 import z from "zod";
 
 import { TOOL_GEMINI_KEY } from "@/components/tools/article-to-social-posts/constants/api-key";
-import { getGemini, toTokenUsage } from "@/lib/tools/_shared/ai-provider";
+import { generateStructuredFromDraft } from "@/lib/tools/_shared/draft-source";
 import type { TokenUsageType } from "@/lib/types/token-usage";
 
 /**
@@ -125,6 +124,9 @@ CTA phrases are encouraged where natural:
 
 The URL belongs ONLY in \`article.url\`, which you must leave as an empty string.
 
+## NO CITATION MARKERS
+When you read the article from a URL, NEVER copy grounding citation markers into any post. Strip anything like \`[1]\`, \`[1.2]\`, \`[3.4]\`, or bracketed source numbers — they are retrieval artifacts, not part of the post. \`content\` and every \`thread\` item must read as clean, publishable prose with no bracketed reference numbers.
+
 # FORMATTING RULES
 
 ## PLAIN TEXT ONLY — applies to every group, every platform
@@ -217,42 +219,13 @@ Return one object with exactly two keys:
 - \`drafts\`: one object per group containing selected platforms, max 3 objects. Omit \`thread\` unless threading. \`hashtags\` is always an array (empty when not adding hashtags).`;
 
 /**
- * Turn an article into platform-optimized social media drafts grouped by
- * format. Structured output is enforced by the schema via the AI SDK, so the
- * caller gets a validated object — no manual JSON parsing, no tools. Transient
- * failures (503 / rate limit) are retried automatically.
- */
-type UrlMeta = { retrievedUrl?: string; urlRetrievalStatus?: string };
-
-/**
- * `urlContext` reports a per-URL retrieval status in each step's provider
- * metadata. Find the status Gemini recorded for our URL (across steps).
- */
-function urlRetrievalStatus(
-	steps: readonly { providerMetadata?: unknown }[],
-	url: string,
-): string | undefined {
-	const norm = (u?: string) => (u ?? "").replace(/\/+$/, "");
-	for (const step of steps) {
-		const items = (
-			step.providerMetadata as {
-				google?: { urlContextMetadata?: { urlMetadata?: UrlMeta[] } };
-			}
-		)?.google?.urlContextMetadata?.urlMetadata;
-		const entry = items?.find((i) => norm(i.retrievedUrl) === norm(url));
-		if (entry) return entry.urlRetrievalStatus;
-	}
-	return undefined;
-}
-
-/**
  * Turn an article into platform-optimized social media drafts, grouped by
  * format. Structured output is enforced by the schema. In URL mode the model
  * reads the page itself with Gemini's provider-executed `url_context` tool (one
  * call, no client round-trip); in text mode the pasted article is sent inline.
  * Transient failures (503 / rate limit) are retried automatically.
  */
-export async function generateDrafts(opts: {
+export function generateDrafts(opts: {
 	/** The tone / platforms / preferences block for this request. */
 	directives: string;
 	/** URL mode: the article URL for the model to read via url_context. */
@@ -265,49 +238,19 @@ export async function generateDrafts(opts: {
 	 * noticeably different from the first attempt). Defaults to 0.7. */
 	temperature?: number;
 }): Promise<{ object: PostDraftsOutputType; usage: TokenUsageType }> {
-	const { provider, model } = getGemini({
+	return generateStructuredFromDraft<PostDraftsOutputType>({
+		schema: postDraftsSchema,
+		schemaName: "SocialPostDrafts",
+		schemaDescription:
+			"Platform-optimized social media drafts for an article, grouped by format.",
+		system: SYSTEM,
+		directives: opts.directives,
+		url: opts.url,
+		text: opts.text,
 		serverKey: TOOL_GEMINI_KEY,
 		googleApiKey: opts.googleApiKey,
 		googleModel: opts.googleModel,
-	});
-
-	const usingUrl = Boolean(opts.url);
-	const prompt = usingUrl
-		? `${opts.directives}\n\nRead the article at this URL with the url_context tool and base every post strictly on its real content:\n${opts.url}`
-		: `${opts.directives}\n\nARTICLE TEXT:\n"""\n${opts.text ?? ""}\n"""`;
-
-	// The Google provider's tool type lags the core `ToolSet` type in this
-	// version, so cast the provider-executed url_context tool.
-	const tools = usingUrl
-		? ({ url_context: provider.tools.urlContext({}) } as ToolSet)
-		: undefined;
-
-	const result = await generateText({
-		model,
-		system: SYSTEM,
-		prompt,
-		output: Output.object({
-			schema: postDraftsSchema,
-			name: "SocialPostDrafts",
-			description:
-				"Platform-optimized social media drafts for an article, grouped by format.",
-		}),
-		tools,
-		stopWhen: usingUrl ? isStepCount(3) : undefined,
 		temperature: opts.temperature ?? 0.7,
 		maxOutputTokens: 8192,
-		maxRetries: 2,
-		abortSignal: AbortSignal.timeout(90_000),
 	});
-
-	if (usingUrl && opts.url) {
-		// Only hard-fail when Gemini explicitly reports our URL couldn't be read;
-		// missing metadata is left to trust the output.
-		const status = urlRetrievalStatus(result.steps, opts.url);
-		if (status && status !== "URL_RETRIEVAL_STATUS_SUCCESS") {
-			throw new Error("URL_UNREADABLE: Gemini could not read the article URL");
-		}
-	}
-	if (!result.output) throw new Error("EMPTY_OUTPUT: the AI returned nothing");
-	return { object: result.output, usage: toTokenUsage(result.usage) };
 }
