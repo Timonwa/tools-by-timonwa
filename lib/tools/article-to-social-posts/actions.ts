@@ -253,6 +253,8 @@ Return the article block AND exactly one draft for the requested group. Make thi
 			prompt,
 			googleApiKey,
 			googleModel,
+			// Push for divergence so the rewrite reads differently from the first.
+			temperature: 0.9,
 		});
 
 		const match = object.drafts.find((d) => d.group === group);

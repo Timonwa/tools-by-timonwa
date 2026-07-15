@@ -11,21 +11,57 @@ import type { TokenUsageType } from "@/lib/types/token-usage";
  */
 export const postDraftsSchema = z.object({
 	article: z.object({
-		url: z.string(),
-		title: z.string(),
-		author: z.string(),
-	}),
-	drafts: z.array(
-		z.object({
-			group: z.enum(["short", "medium", "long"]),
-			platforms: z.array(
-				z.enum(["linkedin", "x", "bluesky", "threads", "mastodon", "substack"]),
+		url: z
+			.string()
+			.describe("Always an empty string — the app fills in the URL."),
+		title: z.string().describe("The article's title, inferred from the text."),
+		author: z
+			.string()
+			.describe(
+				"The author's name if clearly stated, otherwise an empty string.",
 			),
-			content: z.string(),
-			thread: z.array(z.string()).optional(),
-			hashtags: z.array(z.string()),
-		}),
-	),
+	}),
+	drafts: z
+		.array(
+			z.object({
+				group: z
+					.enum(["short", "medium", "long"])
+					.describe(
+						"Format group: short (x/bluesky, ≤300 chars), medium (threads/mastodon/substack, ≤500), long (linkedin/substack, ≤3000).",
+					),
+				platforms: z
+					.array(
+						z.enum([
+							"linkedin",
+							"x",
+							"bluesky",
+							"threads",
+							"mastodon",
+							"substack",
+						]),
+					)
+					.describe("The selected platforms that belong to this group."),
+				content: z
+					.string()
+					.describe(
+						"The full post text for this group — plain text only, within the group's character limit.",
+					),
+				thread: z
+					.array(z.string())
+					.optional()
+					.describe(
+						"Ordered thread posts, only when threading is requested for a thread-capable group; omit otherwise.",
+					),
+				hashtags: z
+					.array(z.string())
+					.describe(
+						"Tags without the # symbol; empty unless hashtags were requested.",
+					),
+			}),
+		)
+		.describe(
+			"One draft per format group that has at least one selected platform; at most 3.",
+		),
 });
 
 export type PostDraftsOutputType = z.infer<typeof postDraftsSchema>;
@@ -190,6 +226,9 @@ export async function generateDrafts(opts: {
 	prompt: string;
 	googleApiKey?: string;
 	googleModel?: string;
+	/** Sampling temperature. Higher = more divergent (used to make a regenerate
+	 * noticeably different from the first attempt). Defaults to 0.7. */
+	temperature?: number;
 }): Promise<{ object: PostDraftsOutputType; usage: TokenUsageType }> {
 	const model = getGeminiModel({
 		serverKey: TOOL_GEMINI_KEY,
@@ -199,9 +238,15 @@ export async function generateDrafts(opts: {
 	const { object, usage } = await generateObject({
 		model,
 		schema: postDraftsSchema,
+		schemaName: "SocialPostDrafts",
+		schemaDescription:
+			"Platform-optimized social media drafts for an article, grouped by format.",
 		system: SYSTEM,
 		prompt: opts.prompt,
+		temperature: opts.temperature ?? 0.7,
+		maxOutputTokens: 8192,
 		maxRetries: 2,
+		abortSignal: AbortSignal.timeout(90_000),
 	});
 	return { object, usage: toTokenUsage(usage) };
 }

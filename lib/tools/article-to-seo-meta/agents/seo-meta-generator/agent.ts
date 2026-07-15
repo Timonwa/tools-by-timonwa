@@ -9,12 +9,23 @@ export const seoMetaSchema = z.object({
 	variations: z
 		.array(
 			z.object({
-				title: z.string(),
-				description: z.string(),
+				title: z
+					.string()
+					.describe(
+						"SEO meta title, 50-60 characters. No surrounding quotes, no brand/site suffix, no trailing punctuation.",
+					),
+				description: z
+					.string()
+					.describe(
+						"SEO meta description, 150-160 characters. Includes the primary keyword when one is given.",
+					),
 			}),
 		)
 		.min(1)
-		.max(3),
+		.max(3)
+		.describe(
+			"One entry per requested variation, each approaching the article from a distinct angle (benefit / problem / curiosity).",
+		),
 });
 
 export type SeoMetaOutputType = z.infer<typeof seoMetaSchema>;
@@ -27,8 +38,8 @@ The user pastes an article (full text or a solid draft). Generate N variations o
 
 # CHARACTER LIMITS (HARD REQUIREMENT)
 
-- **title**: 50–60 characters. Aim for 55.
-- **description**: 150–160 characters. Aim for 155.
+- **title**: 50-60 characters. Aim for 55.
+- **description**: 150-160 characters. Aim for 155.
 
 ## MANDATORY SELF-CHECK — do this for every variation before outputting:
 
@@ -38,7 +49,7 @@ The user pastes an article (full text or a solid draft). Generate N variations o
 4. If it is below 150: expand with a specific benefit, audience, or outcome. If it is above 160: cut non-essential clauses or qualifying phrases.
 5. Re-count after every edit. Do not output until both values are inside the target range.
 
-A title or description even 1 character outside 50–60 / 150–160 must be rewritten before output. Do not guess the length — count character by character.
+A title or description even 1 character outside 50-60 / 150-160 must be rewritten before output. Do not guess the length — count character by character.
 
 # PRIMARY KEYWORD
 
@@ -90,9 +101,17 @@ export async function generateSeoVariations(opts: {
 	const { object, usage } = await generateObject({
 		model,
 		schema: seoMetaSchema,
+		schemaName: "SeoMetaVariations",
+		schemaDescription:
+			"Search-optimized title + description variations sized to Google's display limits.",
 		system: SYSTEM,
 		prompt: opts.prompt,
+		// Low-ish temperature: the character-count limits are a hard requirement,
+		// so we favour consistency over surprise. Variety comes from the prompt.
+		temperature: 0.5,
+		maxOutputTokens: 2048,
 		maxRetries: 2,
+		abortSignal: AbortSignal.timeout(60_000),
 	});
 	return { object, usage: toTokenUsage(usage) };
 }

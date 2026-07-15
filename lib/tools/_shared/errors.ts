@@ -1,3 +1,5 @@
+import { APICallError, NoObjectGeneratedError } from "ai";
+
 export type ToolErrorOptions = {
 	/** Log tag, e.g. "article-to-seo-meta" or "article-to-social-posts:preview". */
 	logTag: string;
@@ -17,28 +19,56 @@ export type ToolErrorOptions = {
 };
 
 /**
- * Turn a raw agent/fetch error into a message a non-developer can act on in one
- * read — and log the original for debugging. Every message says, in everyday
- * words, what happened and what to do next: no "model", "parse", "rate limit",
- * "schema", "endpoint", or "BYOK" jargon. Advice adapts to whether the request
- * used the user's own key (`byok`). Tools pass `rules` for their own cases,
- * which are checked before these shared ones.
+ * Turn an error into a message a non-developer can act on in one read — and log
+ * the original for debugging. It reads the AI SDK's typed errors directly
+ * (`APICallError.statusCode`, `NoObjectGeneratedError.finishReason`) so the
+ * classification is accurate, then falls back to message matching. Every message
+ * says, in everyday words, what happened and what to do next — no "model",
+ * "parse", "rate limit", "schema", or "BYOK" jargon. Advice adapts to whether
+ * the request used the user's own key (`byok`). Tools pass `rules` for their own
+ * cases, which are checked first.
  */
 export function toUserMessage(error: unknown, opts: ToolErrorOptions): string {
 	console.error(`[${opts.logTag}]`, error);
-	const raw = error instanceof Error ? error.message : String(error);
 	const byok = opts.byok ?? false;
+	const message = error instanceof Error ? error.message : String(error);
 
-	for (const [pattern, message] of opts.rules ?? []) {
-		if (pattern.test(raw)) return message;
+	// Tool-specific coded errors first (matched on the original message).
+	for (const [pattern, msg] of opts.rules ?? []) {
+		if (pattern.test(message)) return msg;
 	}
 
-	// Google's AI is momentarily overloaded — transient, and on their side.
+	// No Gemini key configured on the server at all — only the hosted path hits
+	// this (BYOK always sends a key). Not transient, so no "try again".
+	if (/NO_SERVER_KEY/.test(message))
+		return "This tool isn't set up to run for free right now. Add your own free Google key to use it — it only takes a couple of minutes.";
+
+	// The AI SDK couldn't produce a valid object; finishReason says why.
+	if (NoObjectGeneratedError.isInstance(error)) {
+		if (error.finishReason === "content-filter")
+			return "Google blocked this text for safety reasons. Change the wording and try again.";
+		if (error.finishReason === "length")
+			return "The reply got cut off before it finished. Try again, or shorten your input a little.";
+		return "The AI's reply didn't come through properly. Please try again — this almost always works the second time.";
+	}
+
+	// The request was cancelled for taking too long.
 	if (
-		/\b503\b|UNAVAILABLE|overload|high demand|MODEL_OVERLOADED_NON_JSON/i.test(
-			raw,
-		)
+		(error instanceof Error &&
+			(error.name === "AbortError" || error.name === "TimeoutError")) ||
+		/\baborted\b|timed?.?out/i.test(message)
 	)
+		return "That took too long, so we stopped it. Please try again.";
+
+	// Fold an API call's HTTP status into the text so the checks below are
+	// reliable even when the message doesn't spell the status out.
+	const raw =
+		APICallError.isInstance(error) && error.statusCode
+			? `${error.statusCode} ${message}`
+			: message;
+
+	// Google's AI is momentarily overloaded — transient, and on their side.
+	if (/\b503\b|UNAVAILABLE|overload|high demand/i.test(raw))
 		return "Google's AI is busy right now. Wait a few seconds and try again.";
 
 	// Too many requests, too fast, for whichever key is in use.
@@ -47,9 +77,9 @@ export function toUserMessage(error: unknown, opts: ToolErrorOptions): string {
 			? "Your Google key has been used too many times for now. Wait a minute and try again, or check how much it has left in Google AI Studio."
 			: "Lots of people are using the free version right now. Wait a minute and try again — or add your own free Google key to skip the wait.";
 
-	// Google rejected the key.
+	// Google rejected the key (or the request had no valid identity).
 	if (
-		/\b401\b|\b403\b|unauthoriz|forbidden|invalid.*api.?key|API_KEY_INVALID/i.test(
+		/\b401\b|\b403\b|unauthoriz|forbidden|invalid.*api.?key|API_KEY_INVALID|PERMISSION_DENIED|unregistered callers/i.test(
 			raw,
 		)
 	)
@@ -69,20 +99,12 @@ export function toUserMessage(error: unknown, opts: ToolErrorOptions): string {
 	if (/SAFETY|safety.?filter|blocked.*safety/i.test(raw))
 		return "Google blocked this text for safety reasons. Change the wording and try again.";
 
-	// The AI produced nothing.
-	if (/EMPTY_AGENT_OUTPUT/.test(raw))
-		return byok
-			? "The AI didn't send anything back. Try again, or switch to a stronger model under “Set API key”."
-			: "The AI didn't send anything back. Try again — if it keeps happening, add your own free Google key and pick a stronger model.";
-
-	// Output came back malformed / the wrong shape / unreadable.
+	// Malformed / unreadable output that wasn't a typed NoObjectGeneratedError.
 	if (
 		/SCHEMA_MISMATCH/.test(raw) ||
 		(error instanceof Error &&
 			(error.name === "ZodError" ||
-				/non-JSON output|invalid_type|ZodError|Expected .* received/i.test(
-					raw,
-				)))
+				/invalid_type|Expected .* received/i.test(raw)))
 	)
 		return "The AI's reply didn't come through properly. Please try again — this almost always works the second time.";
 
