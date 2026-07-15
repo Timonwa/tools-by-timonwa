@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import Footer from "@/components/layout/Footer";
 import {
 	CREATOR_NAME,
 	CREATOR_TWITTER,
 	CREATOR_URL,
 	SITE_DESCRIPTION,
+	SITE_DOMAIN,
 	SITE_NAME,
 	SITE_TITLE,
 	SITE_URL,
 } from "@/lib/config/site";
 import "./globals.css";
-import { env, isProduction } from "@env";
+import { isProduction } from "@env";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -63,9 +63,6 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const cfAnalyticsToken = env.NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN;
-	const gaId = env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
-
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
@@ -77,14 +74,14 @@ export default function RootLayout({
 			>
 				<div className="flex-1">{children}</div>
 				<Footer />
-				{isProduction && cfAnalyticsToken && (
+				{isProduction && (
 					<Script
-						src="https://static.cloudflareinsights.com/beacon.min.js"
+						defer
+						data-domain={SITE_DOMAIN}
+						src="https://plausible.io/js/script.js"
 						strategy="afterInteractive"
-						data-cf-beacon={`{"token": "${cfAnalyticsToken}"}`}
 					/>
 				)}
-				{isProduction && gaId && <GoogleAnalytics gaId={gaId} />}
 			</body>
 		</html>
 	);
