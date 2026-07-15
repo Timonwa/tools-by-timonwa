@@ -52,7 +52,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `GOOGLE_API_KEY`                         | ✅       | Gemini key powering the tools                          |
 | `GOOGLE_API_KEY_ARTICLE_TO_SEO_META`     | —        | Optional per-tool key (falls back to `GOOGLE_API_KEY`) |
 | `GOOGLE_API_KEY_ARTICLE_TO_SOCIAL_POST`  | —        | Optional per-tool key                                  |
-| `LLM_MODEL`                              | —        | Server model (default `gemini-2.5-flash-lite`)         |
+| `LLM_MODEL`                              | —        | Server model (default `gemini-flash-latest`)           |
 | `UPSTASH_REDIS_REST_URL` / `..._TOKEN`   | —        | Enables hosted daily rate limiting                     |
 | `NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` | —        | Cloudflare Web Analytics beacon. Omit → disabled       |
 

@@ -107,21 +107,34 @@ function buildPrompt(
 	return lines.join("\n");
 }
 
-function toToolMessage(error: unknown): string {
+function toToolMessage(error: unknown, byok: boolean): string {
 	return toUserMessage(error, {
 		logTag: "article-to-seo-meta",
 		perUserDaily: HOSTED_PER_USER_DAILY,
 		dailyPool: HOSTED_DAILY_GENERATION_POOL,
+		byok,
 		rules: [
-			[/ARTICLE_EMPTY/, "Paste the article draft first."],
+			[/ARTICLE_EMPTY/, "Paste your article before generating."],
 			[
 				/ARTICLE_TOO_LONG/,
-				`Article is too long — keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} characters.`,
+				`Your article is too long. Keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} characters, then try again.`,
 			],
 		],
-		fallback: "Something went wrong generating variations. Please try again.",
+		fallback:
+			"Something went wrong creating your SEO details. Please try again.",
 	});
 }
+
+/**
+ * Server actions RETURN their outcome as data — they never throw a
+ * user-facing message. Next.js redacts thrown Server Action errors in
+ * production (replacing the message with a generic digest), so a thrown
+ * friendly string only survives in dev. Returning it as data means the same
+ * message reaches the user in both environments.
+ */
+export type SeoActionResultType =
+	| { ok: true; result: SeoMetaResultType; usage: TokenUsageType }
+	| { ok: false; error: string };
 
 export async function generateSeoMeta(input: {
 	article: string;
@@ -129,7 +142,7 @@ export async function generateSeoMeta(input: {
 	variationCount?: number;
 	googleApiKey?: string;
 	googleModel?: string;
-}): Promise<{ result: SeoMetaResultType; usage: TokenUsageType }> {
+}): Promise<SeoActionResultType> {
 	try {
 		const article = input.article?.trim();
 		if (!article) throw new Error("ARTICLE_EMPTY");
@@ -141,9 +154,16 @@ export async function generateSeoMeta(input: {
 		const keyword = input.primaryKeyword?.trim() || undefined;
 
 		const runner = await ensureRunner(input.googleApiKey, input.googleModel);
-		return await askWithUsage(runner, buildPrompt(article, keyword, count));
+		const { result, usage } = await askWithUsage(
+			runner,
+			buildPrompt(article, keyword, count),
+		);
+		return { ok: true, result, usage };
 	} catch (error) {
-		throw new Error(toToolMessage(error));
+		return {
+			ok: false,
+			error: toToolMessage(error, Boolean(input.googleApiKey)),
+		};
 	}
 }
 

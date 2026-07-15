@@ -41,6 +41,7 @@ export default function Writer() {
 					xThreadLength={w.xThreadLength}
 					onXThreadLengthChange={w.setXThreadLength}
 					isGenerating={w.isGenerating}
+					hasResult={Boolean(w.preview)}
 					error={w.error}
 					onSubmit={w.generate}
 					templates={w.templates}

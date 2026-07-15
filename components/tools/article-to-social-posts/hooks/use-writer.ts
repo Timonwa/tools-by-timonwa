@@ -218,9 +218,14 @@ export function useWriter() {
 						googleApiKey: byokKey,
 						googleModel: byokKey ? byokModelStorage.get() : undefined,
 					});
-					setPreview(result);
-					setEditableDrafts(result.drafts);
-					setLastUsage(result.usage);
+					if (!result.ok) {
+						setError(result.error);
+						return;
+					}
+					const preview = result.data;
+					setPreview(preview);
+					setEditableDrafts(preview.drafts);
+					setLastUsage(preview.usage);
 					setLastInput(input);
 
 					// Persist both URL and draft generations. Drafts are stored only in
@@ -229,16 +234,18 @@ export function useWriter() {
 					upsert({
 						input:
 							input.kind === "url"
-								? { kind: "url", url: result.article.url || input.url }
+								? { kind: "url", url: preview.article.url || input.url }
 								: input,
 						tone,
 						platforms,
 						xThreadLength,
-						preview: result,
+						preview,
 						timestamp: Date.now(),
 					});
-				} catch (err) {
-					setError(err instanceof Error ? err.message : String(err));
+				} catch {
+					setError(
+						"We couldn't reach the server. Check your internet connection and try again.",
+					);
 				}
 			});
 		},
@@ -285,7 +292,7 @@ export function useWriter() {
 			startRegenerate(async () => {
 				try {
 					const byokKey = byokStorage.get() ?? undefined;
-					const { draft: fresh, usage } = await regenerateDraft({
+					const result = await regenerateDraft({
 						input: lastInput,
 						group: draft.group,
 						platforms: draft.platforms,
@@ -295,12 +302,18 @@ export function useWriter() {
 						googleApiKey: byokKey,
 						googleModel: byokKey ? byokModelStorage.get() : undefined,
 					});
+					if (!result.ok) {
+						setError(result.error);
+						return;
+					}
 					setEditableDrafts((cur) =>
-						cur.map((d) => (d.group === draft.group ? fresh : d)),
+						cur.map((d) => (d.group === draft.group ? result.draft : d)),
 					);
-					setLastUsage(usage);
-				} catch (err) {
-					setError(err instanceof Error ? err.message : String(err));
+					setLastUsage(result.usage);
+				} catch {
+					setError(
+						"We couldn't reach the server. Check your internet connection and try again.",
+					);
 				} finally {
 					setRegenerating((r) => ({ ...r, [draft.group]: false }));
 				}
@@ -315,7 +328,9 @@ export function useWriter() {
 			setCopiedKey(key);
 			setTimeout(() => setCopiedKey((k) => (k === key ? null : k)), 1500);
 		} catch {
-			setError("Clipboard access denied by browser");
+			setError(
+				"Your browser blocked copying. Select the text and copy it manually instead.",
+			);
 		}
 	}, []);
 

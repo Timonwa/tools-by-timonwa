@@ -118,6 +118,7 @@ export default function SeoTool() {
 						onResult={handleResult}
 						onLoadingChange={setLoading}
 						initial={initial}
+						hasResult={Boolean(result)}
 					/>
 				</CardContent>
 			</Card>

@@ -7,10 +7,14 @@
  * different provider, split this per-provider rather than widening the enum.
  */
 
+// Use Google's "-latest" aliases, not pinned versions like `gemini-flash-latest`.
+// Google blocks pinned older models for newly-created keys ("no longer available
+// to new users"), which would break BYOK for anyone who just made a key — exactly
+// our audience. The aliases always resolve to a currently-available model.
 export type ByokModelType =
-	"gemini-2.5-flash-lite" | "gemini-2.5-flash" | "gemini-2.5-pro";
+	"gemini-flash-lite-latest" | "gemini-flash-latest" | "gemini-pro-latest";
 
-export const DEFAULT_BYOK_MODEL: ByokModelType = "gemini-2.5-flash-lite";
+export const DEFAULT_BYOK_MODEL: ByokModelType = "gemini-flash-lite-latest";
 
 export const BYOK_MODELS: {
 	value: ByokModelType;
@@ -18,17 +22,17 @@ export const BYOK_MODELS: {
 	description: string;
 }[] = [
 	{
-		value: "gemini-2.5-flash-lite",
+		value: "gemini-flash-lite-latest",
 		label: "Flash Lite",
 		description: "Fastest, cheapest. Highest free tier.",
 	},
 	{
-		value: "gemini-2.5-flash",
+		value: "gemini-flash-latest",
 		label: "Flash",
 		description: "Better quality. Lower free tier.",
 	},
 	{
-		value: "gemini-2.5-pro",
+		value: "gemini-pro-latest",
 		label: "Pro",
 		description: "Highest quality. Lowest free tier.",
 	},
