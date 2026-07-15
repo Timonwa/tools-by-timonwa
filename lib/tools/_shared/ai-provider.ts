@@ -1,3 +1,7 @@
+// v7 renamed this to `createGoogle`, but @ai-sdk/google@4.0.15 only ships the
+// new name at runtime — its type declarations still export the (deprecated but
+// functional) `createGoogleGenerativeAI` alias, so that's what we use until the
+// types catch up.
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { env } from "@env";
 
