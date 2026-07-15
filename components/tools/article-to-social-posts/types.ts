@@ -3,13 +3,7 @@ export type PlatformType =
 
 export type GroupType = "short" | "medium" | "long";
 
-/**
- * Source material for a generation request.
- * - `url`  — published article; the agent fetches + caches it for 1 hour.
- * - `text` — unpublished draft pasted directly; no fetch, no cache.
- */
-export type DraftInputType =
-	{ kind: "url"; url: string } | { kind: "text"; text: string };
+export type { DraftInputType } from "@/lib/tools/_shared/draft-input";
 
 export type ToneType =
 	"auto" | "professional" | "casual" | "educational" | "punchy";

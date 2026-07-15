@@ -10,6 +10,7 @@ import {
 	useTransition,
 } from "react";
 
+import type { InputKindType } from "@/components/_shared/InputKindTabs";
 import { useToolDraft } from "@/components/_shared/shared-draft";
 import { MAX_TEMPLATES } from "@/components/tools/article-to-social-posts/constants/preferences";
 import type {
@@ -38,7 +39,7 @@ import {
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { type HistoryEntryType, useHistory } from "./use-history";
 
-export type InputKindType = "url" | "text";
+export type { InputKindType };
 
 /**
  * Deep match: tone, xThreadLength, platforms (order-insensitive), and every

@@ -57,14 +57,20 @@ export default function HistorySidebar({
 											{h.variationCount} variation
 											{h.variationCount > 1 ? "s" : ""}
 										</div>
-										<div className="text-xs font-medium line-clamp-2 mb-1">
-											{h.article.trim().slice(0, 120) || "Article draft"}
+										<div className="text-xs font-medium line-clamp-2 mb-1 wrap-break-word">
+											{h.source.kind === "url"
+												? h.source.url
+												: h.source.text.trim().slice(0, 120) || "Article draft"}
 										</div>
 										<div className="flex items-center gap-2 text-[10px] text-muted-foreground flex-wrap">
 											<ClockIcon className="w-3 h-3" />
 											{timeAgo(h.timestamp)}
 											<span>·</span>
-											<span>{h.article.length.toLocaleString()} chars</span>
+											<span>
+												{h.source.kind === "url"
+													? "Link"
+													: `${h.source.text.length.toLocaleString()} chars`}
+											</span>
 											{h.primaryKeyword && (
 												<>
 													<span>·</span>

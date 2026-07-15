@@ -1,58 +1,48 @@
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { env } from "@env";
-import { AgentBuilder } from "@iqai/adk";
 import z from "zod";
+
 import { TOOL_GEMINI_KEY } from "@/components/tools/article-to-seo-meta/constants/api-key";
+import { generateStructuredFromDraft } from "@/lib/tools/_shared/draft-source";
+import type { TokenUsageType } from "@/lib/types/token-usage";
 
 export const seoMetaSchema = z.object({
 	variations: z
 		.array(
 			z.object({
-				title: z.string(),
-				description: z.string(),
+				title: z
+					.string()
+					.describe(
+						"SEO meta title, 50-60 characters. No surrounding quotes, no brand/site suffix, no trailing punctuation.",
+					),
+				description: z
+					.string()
+					.describe(
+						"SEO meta description, 150-160 characters. Includes the primary keyword when one is given.",
+					),
 			}),
 		)
 		.min(1)
-		.max(3),
+		.max(3)
+		.describe(
+			"One entry per requested variation, each approaching the article from a distinct angle (benefit / problem / curiosity).",
+		),
 });
 
 export type SeoMetaOutputType = z.infer<typeof seoMetaSchema>;
 
-/**
- * Creates the SEO meta generator.
- *
- * Produces 1-3 variations of { title, description } for an article draft.
- * Character ranges are enforced in the instruction (title 50-60, description
- * 150-160). The action layer clamps anything over the ±5 tolerance after parsing.
- *
- * BYOK: pass a Google API key to use the caller's Gemini quota. Optional
- * model override is only honored alongside a BYOK key.
- */
-export const getSeoMetaGenerator = async (opts?: {
-	googleApiKey?: string;
-	googleModel?: string;
-}) => {
-	const model = opts?.googleApiKey
-		? createGoogleGenerativeAI({ apiKey: opts.googleApiKey })(
-				opts.googleModel ?? env.LLM_MODEL,
-			)
-		: createGoogleGenerativeAI({ apiKey: TOOL_GEMINI_KEY })(env.LLM_MODEL);
+const SYSTEM = `You are an SEO specialist writing meta tags for articles.
 
-	const { runner } = await AgentBuilder.create("seo_meta_generator")
-		.withDescription(
-			"Turns an article draft into SEO-friendly title + description variations sized to Google's display limits.",
-		)
-		.withInstruction(
-			`You are an SEO specialist writing meta tags for articles.
+# HOW TO READ THE ARTICLE
+
+You are given the article as EITHER pasted text (under "ARTICLE TEXT:") OR a URL. When a URL is given, read it with the \`url_context\` tool and work only from the article's real content — never invent details or write about a topic you couldn't read.
 
 # TASK
 
-The user pastes an article (full text or a solid draft). Generate N variations of SEO meta tags, where N matches the requested \`variationCount\` (1-3). Each variation is a { title, description } pair.
+Generate N variations of SEO meta tags, where N matches the requested \`variationCount\` (1-3). Each variation is a { title, description } pair.
 
 # CHARACTER LIMITS (HARD REQUIREMENT)
 
-- **title**: 50–60 characters. Aim for 55.
-- **description**: 150–160 characters. Aim for 155.
+- **title**: 50-60 characters. Aim for 55.
+- **description**: 150-160 characters. Aim for 155.
 
 ## MANDATORY SELF-CHECK — do this for every variation before outputting:
 
@@ -62,7 +52,7 @@ The user pastes an article (full text or a solid draft). Generate N variations o
 4. If it is below 150: expand with a specific benefit, audience, or outcome. If it is above 160: cut non-essential clauses or qualifying phrases.
 5. Re-count after every edit. Do not output until both values are inside the target range.
 
-A title or description even 1 character outside 50–60 / 150–160 must be rewritten before output. Do not guess the length — count character by character.
+A title or description even 1 character outside 50-60 / 150-160 must be rewritten before output. Do not guess the length — count character by character.
 
 # PRIMARY KEYWORD
 
@@ -93,17 +83,42 @@ Match the article's language and register. Professional article → professional
 - No trailing "..." or "!".
 - No hashtags.
 - No brand/site suffixes (e.g., " | MyBlog") — the platform appends those.
-- Titles are complete phrases, not fragments.
+- No citation markers like [1] or [1.2] — when reading from a URL, strip any bracketed source numbers.
+- Titles are complete phrases, not fragments.`;
 
-# OUTPUT
-
-Return ONLY valid JSON matching this schema exactly:
-{"variations":[{"title":"...","description":"..."}]}
-No markdown fences, no prose, no character counts.`,
-		)
-		.withModel(model)
-		.withOutputSchema(seoMetaSchema)
-		.build();
-
-	return runner;
-};
+/**
+ * Generate 1-3 SEO { title, description } variations for an article draft.
+ * Structured output is enforced by the schema via the AI SDK, so the caller
+ * gets a validated object — no manual JSON parsing. In URL mode the model reads
+ * the page itself with Gemini's provider-executed `url_context` tool; in text
+ * mode the pasted article is sent inline. Transient failures (503 / rate limit)
+ * are retried automatically.
+ */
+export function generateSeoVariations(opts: {
+	/** Task-specific instructions (variationCount / primaryKeyword). */
+	directives: string;
+	/** URL mode: the article URL for the model to read via url_context. */
+	url?: string;
+	/** Text mode: the pasted article text. */
+	text?: string;
+	googleApiKey?: string;
+	googleModel?: string;
+}): Promise<{ object: SeoMetaOutputType; usage: TokenUsageType }> {
+	return generateStructuredFromDraft<SeoMetaOutputType>({
+		schema: seoMetaSchema,
+		schemaName: "SeoMetaVariations",
+		schemaDescription:
+			"Search-optimized title + description variations sized to Google's display limits.",
+		system: SYSTEM,
+		directives: opts.directives,
+		url: opts.url,
+		text: opts.text,
+		serverKey: TOOL_GEMINI_KEY,
+		googleApiKey: opts.googleApiKey,
+		googleModel: opts.googleModel,
+		// Low-ish temperature: the character-count limits are a hard requirement,
+		// so we favour consistency over surprise. Variety comes from the prompt.
+		temperature: 0.5,
+		maxOutputTokens: 2048,
+	});
+}

@@ -47,7 +47,7 @@ export default function SeoTool() {
 		setEditableVariations(res.variations);
 		setUsage(u);
 		upsert({
-			article: params.article,
+			source: params.source,
 			primaryKeyword: params.primaryKeyword,
 			variationCount: params.variationCount,
 			result: res,
@@ -58,7 +58,7 @@ export default function SeoTool() {
 
 	function handleLoadHistory(entry: HistoryEntryType) {
 		setInitial({
-			article: entry.article,
+			source: entry.source,
 			primaryKeyword: entry.primaryKeyword,
 			variationCount: entry.variationCount,
 		});
@@ -80,11 +80,11 @@ export default function SeoTool() {
 	// Non-reactive persist logic — always sees the latest result/usage/initial
 	// without them being effect dependencies (React 19.2 useEffectEvent).
 	const persistEdits = useEffectEvent(() => {
-		if (!result || editableVariations.length === 0) return;
+		if (!result || !initial || editableVariations.length === 0) return;
 		upsert({
-			article: initial?.article ?? "",
-			primaryKeyword: initial?.primaryKeyword,
-			variationCount: initial?.variationCount ?? 1,
+			source: initial.source,
+			primaryKeyword: initial.primaryKeyword,
+			variationCount: initial.variationCount,
 			result: { ...result, variations: editableVariations },
 			usage: usage ?? undefined,
 			timestamp: Date.now(),

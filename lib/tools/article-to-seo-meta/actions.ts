@@ -9,15 +9,8 @@ import {
 	type SeoMetaResultType,
 	type TokenUsageType,
 } from "@/components/tools/article-to-seo-meta/types";
-import {
-	getSeoMetaGenerator,
-	seoMetaSchema,
-} from "@/lib/tools/article-to-seo-meta/agents/seo-meta-generator/agent";
-import {
-	accumulateAgentRun,
-	createRunnerProvider,
-	stripCodeFences,
-} from "@/lib/tools/_shared/agent-runtime";
+import { generateSeoVariations } from "@/lib/tools/article-to-seo-meta/agents/seo-meta-generator/agent";
+import type { DraftInputType } from "@/lib/tools/_shared/draft-input";
 import { toUserMessage } from "@/lib/tools/_shared/errors";
 import {
 	enforceQuota,
@@ -31,79 +24,9 @@ const QUOTA_CONFIG: QuotaConfig = {
 	dailyPool: HOSTED_DAILY_GENERATION_POOL,
 };
 
-type RunnerType = Awaited<ReturnType<typeof getSeoMetaGenerator>>;
-
-const ensureRunner = createRunnerProvider(getSeoMetaGenerator);
-
-const TRANSIENT_PATTERNS =
-	/\b503\b|UNAVAILABLE|overload|high demand|RESOURCE_EXHAUSTED|\b429\b|ECONNRESET|ETIMEDOUT|fetch failed/i;
-
-async function askWithUsage(
-	runner: RunnerType,
-	prompt: string,
-	maxRetries = 2,
-): Promise<{ result: SeoMetaResultType; usage: TokenUsageType }> {
-	let lastError: unknown;
-
-	for (let attempt = 0; attempt <= maxRetries; attempt++) {
-		try {
-			return await runOnce(runner, prompt);
-		} catch (err) {
-			lastError = err;
-			const msg = err instanceof Error ? err.message : String(err);
-			if (!TRANSIENT_PATTERNS.test(msg) || attempt === maxRetries) throw err;
-			await new Promise((r) => setTimeout(r, 500 * 2 ** attempt));
-		}
-	}
-
-	throw lastError;
-}
-
-async function runOnce(
-	runner: RunnerType,
-	prompt: string,
-): Promise<{ result: SeoMetaResultType; usage: TokenUsageType }> {
-	const session = runner.getSession();
-	const { text, usage } = await accumulateAgentRun(
-		runner.runAsync({
-			userId: session.userId,
-			sessionId: session.id,
-			newMessage: { parts: [{ text: prompt }] },
-		}),
-	);
-
-	let parsed: unknown;
-	try {
-		parsed = JSON.parse(stripCodeFences(text));
-	} catch {
-		throw new Error(`Agent returned non-JSON output: ${text.slice(0, 200)}`);
-	}
-
-	// Detect error JSON emitted by the ADK when the model returns a non-2xx (e.g. 503)
-	const maybeError = parsed as Record<string, unknown>;
-	if (maybeError?.error && typeof maybeError.error === "object") {
-		const apiError = maybeError.error as Record<string, unknown>;
-		const status = apiError.code ?? apiError.status ?? "";
-		const message = String(apiError.message ?? "");
-		throw new Error(
-			`API error ${status}: ${message || "model returned an error response"}`,
-		);
-	}
-
-	return { result: seoMetaSchema.parse(parsed), usage };
-}
-
-function buildPrompt(
-	article: string,
-	keyword: string | undefined,
-	count: number,
-): string {
-	const lines: string[] = [];
-	lines.push(`variationCount: ${count}`);
+function buildDirectives(keyword: string | undefined, count: number): string {
+	const lines: string[] = [`variationCount: ${count}`];
 	if (keyword) lines.push(`primaryKeyword: ${keyword}`);
-	lines.push("");
-	lines.push("ARTICLE:");
-	lines.push(article);
 	return lines.join("\n");
 }
 
@@ -114,6 +37,11 @@ function toToolMessage(error: unknown, byok: boolean): string {
 		dailyPool: HOSTED_DAILY_GENERATION_POOL,
 		byok,
 		rules: [
+			[
+				/URL_UNREADABLE/,
+				"We couldn't read that link. Double-check the web address, or paste the article text in directly instead.",
+			],
+			[/URL_EMPTY/, "Paste a link before generating."],
 			[/ARTICLE_EMPTY/, "Paste your article before generating."],
 			[
 				/ARTICLE_TOO_LONG/,
@@ -137,28 +65,38 @@ export type SeoActionResultType =
 	| { ok: false; error: string };
 
 export async function generateSeoMeta(input: {
-	article: string;
+	source: DraftInputType;
 	primaryKeyword?: string;
 	variationCount?: number;
 	googleApiKey?: string;
 	googleModel?: string;
 }): Promise<SeoActionResultType> {
 	try {
-		const article = input.article?.trim();
-		if (!article) throw new Error("ARTICLE_EMPTY");
-		if (article.length > MAX_ARTICLE_CHARS) throw new Error("ARTICLE_TOO_LONG");
+		const { source } = input;
+		let url: string | undefined;
+		let text: string | undefined;
+		if (source.kind === "url") {
+			url = source.url?.trim();
+			if (!url) throw new Error("URL_EMPTY");
+		} else {
+			text = source.text?.trim();
+			if (!text) throw new Error("ARTICLE_EMPTY");
+			if (text.length > MAX_ARTICLE_CHARS) throw new Error("ARTICLE_TOO_LONG");
+		}
 
 		await enforceQuota(QUOTA_CONFIG, input.googleApiKey);
 
 		const count = Math.min(3, Math.max(1, input.variationCount ?? 3));
 		const keyword = input.primaryKeyword?.trim() || undefined;
 
-		const runner = await ensureRunner(input.googleApiKey, input.googleModel);
-		const { result, usage } = await askWithUsage(
-			runner,
-			buildPrompt(article, keyword, count),
-		);
-		return { ok: true, result, usage };
+		const { object, usage } = await generateSeoVariations({
+			directives: buildDirectives(keyword, count),
+			url,
+			text,
+			googleApiKey: input.googleApiKey,
+			googleModel: input.googleModel,
+		});
+		return { ok: true, result: object, usage };
 	} catch (error) {
 		return {
 			ok: false,
