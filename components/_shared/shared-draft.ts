@@ -8,21 +8,25 @@ import {
 	useSyncExternalStore,
 } from "react";
 
+import type { InputKindType } from "@/components/_shared/InputKindTabs";
 import { createLocalStore } from "@/lib/utils/local-store";
 
 /**
  * A single "working draft" shared across the article/post tools. Opt-in: when
- * the user ticks "reuse across tools", their draft text is saved to
- * localStorage and every participating tool reads and writes the same value —
- * so a draft pasted in one tool is already there in the next. Off by default;
- * nothing is stored until the user asks for it.
+ * the user ticks "reuse across tools", their draft — the pasted text, an
+ * article URL, and which input tab is active — is saved to localStorage and
+ * every participating tool reads and writes the same values. So a draft (text
+ * OR URL) entered in one tool is already there, on the right tab, in the next.
+ * Off by default; nothing is stored until the user asks for it.
  *
- * Two external stores (the text and the enabled flag) back it, read through
- * `useSyncExternalStore` so every tool stays in sync (and across tabs) with no
- * setState-in-effect. Title-style inputs (e.g. Slug Generator) deliberately
- * opt out — a full article body is meaningless there.
+ * Four external stores (text, url, active tab, enabled flag) back it, read
+ * through `useSyncExternalStore` so every tool stays in sync (and across tabs)
+ * with no setState-in-effect. Text-only tools (Word Counter, Reading Time) just
+ * ignore the url/tab fields.
  */
 const TEXT_KEY = "tools:shared-draft";
+const URL_KEY = "tools:shared-draft-url";
+const KIND_KEY = "tools:shared-draft-kind";
 const ENABLED_KEY = "tools:shared-draft-enabled";
 
 const textStore = createLocalStore<string>({
@@ -37,6 +41,41 @@ const textStore = createLocalStore<string>({
 		try {
 			if (value) window.localStorage.setItem(TEXT_KEY, value);
 			else window.localStorage.removeItem(TEXT_KEY);
+		} catch {}
+	},
+	serverValue: "",
+});
+
+const urlStore = createLocalStore<string>({
+	read: () => {
+		try {
+			return window.localStorage.getItem(URL_KEY) ?? "";
+		} catch {
+			return "";
+		}
+	},
+	write: (value) => {
+		try {
+			if (value) window.localStorage.setItem(URL_KEY, value);
+			else window.localStorage.removeItem(URL_KEY);
+		} catch {}
+	},
+	serverValue: "",
+});
+
+const kindStore = createLocalStore<InputKindType | "">({
+	read: () => {
+		try {
+			const v = window.localStorage.getItem(KIND_KEY);
+			return v === "url" || v === "text" ? v : "";
+		} catch {
+			return "";
+		}
+	},
+	write: (value) => {
+		try {
+			if (value) window.localStorage.setItem(KIND_KEY, value);
+			else window.localStorage.removeItem(KIND_KEY);
 		} catch {}
 	},
 	serverValue: "",
@@ -59,74 +98,139 @@ const enabledStore = createLocalStore<boolean>({
 	serverValue: false,
 });
 
+/** Seed for a history restore: a bare text string, or a full source. */
+export type ToolDraftSeedType =
+	string | { text?: string; url?: string; kind?: InputKindType };
+
 export type ToolDraftType = {
 	/** Current draft text — the shared value when reuse is on, else tool-local. */
 	text: string;
 	setText: (value: string) => void;
+	/** Current article URL — shared when reuse is on, else tool-local. */
+	url: string;
+	setUrl: (value: string) => void;
+	/** Which input the tool is showing (url / text) — shared when reuse is on. */
+	inputKind: InputKindType;
+	setInputKind: (kind: InputKindType) => void;
 	/** Whether the draft is shared across tools (the persisted global flag). */
 	reuse: boolean;
 	toggleReuse: (next: boolean) => void;
-	/** Empty the draft (shared or local, matching the current mode). */
+	/** Empty the text draft (shared or local, matching the current mode). */
 	clear: () => void;
 };
 
 /**
- * Draft state for one tool's primary body/draft field.
+ * Draft state for one tool's source field(s).
  *
- * @param seed initial text, e.g. a history restore that remounts the form. When
- *   reuse is on and the seed is non-empty, it becomes the shared draft; the
- *   reuse-off case is covered by seeding local state directly.
+ * @param seed initial values, e.g. a history restore that remounts the form.
+ *   A bare string seeds the text (back-compat); an object can also seed the URL
+ *   and active tab. When reuse is on and a seed value is non-empty, it is
+ *   adopted into the shared draft; the reuse-off case seeds local state.
  */
-export function useToolDraft(seed = ""): ToolDraftType {
+export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
+	const seedObj = typeof seed === "string" ? { text: seed } : seed;
+	const seedText = seedObj.text ?? "";
+	const seedUrl = seedObj.url ?? "";
+	const seedKind: InputKindType = seedObj.kind ?? "url";
+
 	const reuse = useSyncExternalStore(
 		enabledStore.subscribe,
 		enabledStore.getSnapshot,
 		enabledStore.getServerSnapshot,
 	);
-	const shared = useSyncExternalStore(
+	const sharedText = useSyncExternalStore(
 		textStore.subscribe,
 		textStore.getSnapshot,
 		textStore.getServerSnapshot,
 	);
-	const [local, setLocal] = useState(seed);
+	const sharedUrl = useSyncExternalStore(
+		urlStore.subscribe,
+		urlStore.getSnapshot,
+		urlStore.getServerSnapshot,
+	);
+	const sharedKind = useSyncExternalStore(
+		kindStore.subscribe,
+		kindStore.getSnapshot,
+		kindStore.getServerSnapshot,
+	);
+
+	const [localText, setLocalText] = useState(seedText);
+	const [localUrl, setLocalUrl] = useState(seedUrl);
+	const [localKind, setLocalKind] = useState<InputKindType>(seedKind);
 
 	// A non-empty seed on mount (history restore) adopts into the shared draft
-	// when reuse is on. Writes the external store only — never React state — so
+	// when reuse is on. Writes the external stores only — never React state — so
 	// this stays clear of the set-state-in-effect rule.
 	const seeded = useRef(false);
 	useEffect(() => {
-		if (seeded.current || !seed) return;
+		if (seeded.current) return;
 		seeded.current = true;
-		if (enabledStore.get()) textStore.set(seed);
-	}, [seed]);
+		if (!enabledStore.get()) return;
+		if (seedText) textStore.set(seedText);
+		if (seedUrl) urlStore.set(seedUrl);
+		if (seedObj.kind && (seedText || seedUrl)) kindStore.set(seedObj.kind);
+	}, [seedText, seedUrl, seedObj.kind]);
 
-	const text = reuse ? shared : local;
+	const text = reuse ? sharedText : localText;
+	const url = reuse ? sharedUrl : localUrl;
+	// The user's explicit tab choice (sharedKind) wins; before any choice, infer
+	// the tab from whichever shared field has content so a shared URL is visible.
+	const inputKind: InputKindType = reuse
+		? sharedKind ||
+			(sharedUrl.trim() ? "url" : sharedText.trim() ? "text" : localKind)
+		: localKind;
 
 	const setText = useCallback((value: string) => {
 		if (enabledStore.get()) textStore.set(value);
-		else setLocal(value);
+		else setLocalText(value);
+	}, []);
+
+	const setUrl = useCallback((value: string) => {
+		if (enabledStore.get()) urlStore.set(value);
+		else setLocalUrl(value);
+	}, []);
+
+	const setInputKind = useCallback((kind: InputKindType) => {
+		if (enabledStore.get()) kindStore.set(kind);
+		else setLocalKind(kind);
 	}, []);
 
 	const toggleReuse = useCallback(
 		(next: boolean) => {
 			if (next) {
 				// Turning on: what's on screen wins, or adopt the shared draft if the
-				// box is empty.
-				const current = textStore.get();
-				if (local.trim() || !current) textStore.set(local);
+				// box is empty. Same rule for text and url; the current tab is shared.
+				const curText = textStore.get();
+				if (localText.trim() || !curText) textStore.set(localText);
+				const curUrl = urlStore.get();
+				if (localUrl.trim() || !curUrl) urlStore.set(localUrl);
+				kindStore.set(localKind);
 			} else {
-				// Turning off: keep the visible text so the box doesn't blank out.
-				setLocal(textStore.get());
+				// Turning off: keep the visible values so nothing blanks out.
+				setLocalText(textStore.get());
+				setLocalUrl(urlStore.get());
+				const k = kindStore.get();
+				if (k) setLocalKind(k);
 			}
 			enabledStore.set(next);
 		},
-		[local],
+		[localText, localUrl, localKind],
 	);
 
 	const clear = useCallback(() => {
 		if (enabledStore.get()) textStore.set("");
-		else setLocal("");
+		else setLocalText("");
 	}, []);
 
-	return { text, setText, reuse, toggleReuse, clear };
+	return {
+		text,
+		setText,
+		url,
+		setUrl,
+		inputKind,
+		setInputKind,
+		reuse,
+		toggleReuse,
+		clear,
+	};
 }

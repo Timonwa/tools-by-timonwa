@@ -75,11 +75,13 @@ function sameTagList(a: string[], b: string[]): boolean {
 }
 
 export function useWriter() {
-	const [inputKind, setInputKind] = useState<InputKindType>("url");
-	const [url, setUrl] = useState("");
 	const {
 		text,
 		setText,
+		url,
+		setUrl,
+		inputKind,
+		setInputKind,
 		reuse: draftReuse,
 		toggleReuse: toggleDraftReuse,
 		clear: clearDraft,
@@ -189,7 +191,7 @@ export function useWriter() {
 		setUrl("");
 		setText("");
 		resetResults();
-	}, [resetResults, setText]);
+	}, [resetResults, setText, setUrl]);
 
 	const currentInput = useCallback((): DraftInputType | null => {
 		if (inputKind === "url") {
@@ -392,7 +394,7 @@ export function useWriter() {
 			setLastInput(entry.input);
 			setError(null);
 		},
-		[setText],
+		[setText, setUrl, setInputKind],
 	);
 
 	return {

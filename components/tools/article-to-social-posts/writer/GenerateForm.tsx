@@ -141,6 +141,15 @@ export default function GenerateForm({
 								placeholder="https://your-blog.com/post-slug"
 								disabled={isGenerating}
 							/>
+							<DraftReuseControls
+								id={reuseId}
+								reuse={draftReuse}
+								onToggleReuse={onToggleDraftReuse}
+								onClear={() => onUrlChange("")}
+								canClear={url.trim().length > 0}
+								disabled={isGenerating}
+								className="mt-2"
+							/>
 						</div>
 					) : (
 						<div>
