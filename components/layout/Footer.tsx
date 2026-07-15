@@ -4,7 +4,7 @@ import Link from "next/link";
 import { GithubMark } from "@/components/ui";
 import {
 	CREATOR_NAME,
-	CREATOR_SITE_URL,
+	CREATOR_BLOG_URL,
 	CREATOR_TWITTER,
 	CREATOR_TWITTER_URL,
 	CREATOR_URL,
@@ -28,7 +28,7 @@ const PROJECT_LINKS = [
 ];
 
 const CONNECT_LINKS = [
-	{ href: CREATOR_SITE_URL, label: "Blog" },
+	{ href: CREATOR_BLOG_URL, label: "Blog" },
 	{ href: CREATOR_URL, label: "All my links" },
 	{ href: CREATOR_TWITTER_URL, label: `X (${CREATOR_TWITTER})` },
 ];

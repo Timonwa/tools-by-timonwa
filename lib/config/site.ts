@@ -23,6 +23,8 @@ export const CREATOR_TWITTER = "@timonwa_";
  * handle so there's a single place to change it. */
 export const CREATOR_TWITTER_URL = `https://x.com/${CREATOR_TWITTER.slice(1)}`;
 export const CREATOR_SITE_URL = "https://tech.timonwa.com";
+/** The creator's blog — the footer "Blog" link points here, not the site root. */
+export const CREATOR_BLOG_URL = `${CREATOR_SITE_URL}/blog`;
 export const CREATOR_SAME_AS = [CREATOR_TWITTER_URL, CREATOR_SITE_URL];
 
 /** GitHub repo — Navbar star button, Footer license + repo links, tool JSON-LD. */
