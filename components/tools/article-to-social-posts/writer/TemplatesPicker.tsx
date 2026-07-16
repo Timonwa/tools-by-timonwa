@@ -17,7 +17,7 @@ import {
 } from "@/components/tools/article-to-social-posts/constants/preferences";
 import { TONES } from "@/components/tools/article-to-social-posts/constants/tones";
 import type { PresetTemplateType } from "@/components/tools/article-to-social-posts/types";
-import { Button, Input } from "@/components/ui";
+import { Button, Input, Tooltip } from "@/components/ui";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -69,7 +69,7 @@ export default function TemplatesPicker({
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-1.5 text-xs font-medium">
 					<BookmarkIcon aria-hidden className="w-3.5 h-3.5 text-primary" />
-					Templates
+					Presets
 				</div>
 				{!isSaving && (
 					<button
@@ -78,8 +78,8 @@ export default function TemplatesPicker({
 						disabled={disabled || full}
 						title={
 							full
-								? `Max ${MAX_TEMPLATES} templates — delete one first`
-								: "Save the current tone, platforms, and writing prefs as a reusable template"
+								? `Max ${MAX_TEMPLATES} presets — delete one first`
+								: "Save the current tone, platforms, and writing prefs as a reusable preset"
 						}
 						className="text-[11px] text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
 					>
@@ -89,8 +89,8 @@ export default function TemplatesPicker({
 			</div>
 
 			<p className="text-[11px] text-muted-foreground">
-				A saved combo of tone, platforms, thread length, and writing prefs.
-				Apply one in a click, edit it to your current settings, or rename it.
+				A saved bundle of tone, platforms, thread format, and writing prefs.
+				Apply one in a click, update it to your current settings, or rename it.
 			</p>
 
 			{isSaving && (
@@ -113,24 +113,28 @@ export default function TemplatesPicker({
 						maxLength={40}
 						className="h-8 text-xs"
 					/>
-					<Button
-						size="sm"
-						type="button"
-						onClick={commitSave}
-						disabled={!nameDraft.trim()}
-						aria-label="Save template"
-					>
-						<CheckIcon aria-hidden className="w-3.5 h-3.5" />
-					</Button>
-					<Button
-						size="sm"
-						type="button"
-						variant="ghost"
-						onClick={cancelSave}
-						aria-label="Cancel"
-					>
-						<XIcon aria-hidden className="w-3.5 h-3.5" />
-					</Button>
+					<Tooltip label="Save preset">
+						<Button
+							size="sm"
+							type="button"
+							onClick={commitSave}
+							disabled={!nameDraft.trim()}
+							aria-label="Save preset"
+						>
+							<CheckIcon aria-hidden className="w-3.5 h-3.5" />
+						</Button>
+					</Tooltip>
+					<Tooltip label="Cancel">
+						<Button
+							size="sm"
+							type="button"
+							variant="ghost"
+							onClick={cancelSave}
+							aria-label="Cancel"
+						>
+							<XIcon aria-hidden className="w-3.5 h-3.5" />
+						</Button>
+					</Tooltip>
 				</div>
 			)}
 
@@ -140,7 +144,7 @@ export default function TemplatesPicker({
 					current” to reuse them in one click.
 				</p>
 			) : (
-				<div className="flex flex-wrap gap-1.5">
+				<div className="flex flex-wrap items-center gap-1.5">
 					{templates.map((t) =>
 						editingId === t.id ? (
 							<TemplateEditor
@@ -185,23 +189,18 @@ function TemplateChip({
 	onDelete: () => void;
 }) {
 	return (
-		<div className="group relative inline-flex">
-			<div
-				className={cn(
-					"inline-flex items-stretch rounded-full border text-xs overflow-hidden transition-colors",
-					active
-						? "border-primary/50 bg-primary/10"
-						: "border-border bg-background",
-				)}
-			>
+		<div className="inline-flex items-center gap-0.5">
+			<span className="group/preview relative inline-flex">
 				<button
 					type="button"
 					onClick={onApply}
 					disabled={disabled}
 					aria-pressed={active}
 					className={cn(
-						"pl-2.5 pr-2 py-1 font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
-						active ? "text-primary hover:bg-primary/15" : "hover:bg-accent",
+						"rounded-full border pl-2.5 pr-2.5 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+						active
+							? "border-primary/50 bg-primary/10 text-primary hover:bg-primary/15"
+							: "border-border bg-background hover:bg-accent",
 					)}
 				>
 					{active && (
@@ -212,34 +211,30 @@ function TemplateChip({
 					)}
 					{template.name}
 				</button>
+				<TemplatePreview template={template} />
+			</span>
+			<Tooltip label="Rename or update to current settings">
 				<button
 					type="button"
 					onClick={onEdit}
-					aria-label={`Edit template ${template.name}`}
-					title="Rename or update to current settings"
+					aria-label={`Edit preset ${template.name}`}
 					disabled={disabled}
-					className={cn(
-						"px-1.5 py-1 border-l text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:cursor-not-allowed",
-						active ? "border-primary/30" : "border-border",
-					)}
+					className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:cursor-not-allowed"
 				>
-					<PencilIcon aria-hidden className="w-3 h-3" />
+					<PencilIcon aria-hidden className="w-3.5 h-3.5" />
 				</button>
+			</Tooltip>
+			<Tooltip label="Delete preset">
 				<button
 					type="button"
 					onClick={onDelete}
-					aria-label={`Delete template ${template.name}`}
-					title="Delete template"
+					aria-label={`Delete preset ${template.name}`}
 					disabled={disabled}
-					className={cn(
-						"px-1.5 py-1 border-l text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed",
-						active ? "border-primary/30" : "border-border",
-					)}
+					className="rounded-full p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
 				>
-					<XIcon aria-hidden className="w-3 h-3" />
+					<XIcon aria-hidden className="w-3.5 h-3.5" />
 				</button>
-			</div>
-			<TemplatePreview template={template} />
+			</Tooltip>
 		</div>
 	);
 }
@@ -262,7 +257,7 @@ function TemplateEditor({
 		onRename(name);
 		onDone();
 	};
-	const updateConfig = () => {
+	const updatePreferences = () => {
 		onRename(name);
 		onUpdate();
 		onDone();
@@ -286,7 +281,7 @@ function TemplateEditor({
 					}}
 					maxLength={40}
 					disabled={disabled}
-					aria-label="Template name"
+					aria-label="Preset name"
 					className="h-7 flex-1 text-xs"
 				/>
 				<Button
@@ -294,7 +289,6 @@ function TemplateEditor({
 					type="button"
 					variant="ghost"
 					disabled={disabled || !name.trim()}
-					title="Save the new name only"
 					onClick={rename}
 				>
 					<CheckIcon aria-hidden className="w-3.5 h-3.5" />
@@ -304,29 +298,29 @@ function TemplateEditor({
 					size="sm"
 					type="button"
 					disabled={disabled}
-					title="Overwrite this template's tone, platforms, and prefs with your current settings"
-					onClick={updateConfig}
+					onClick={updatePreferences}
 				>
 					<RefreshCwIcon aria-hidden className="w-3.5 h-3.5" />
-					Update config
+					Update preferences
 				</Button>
-				<Button
-					size="sm"
-					type="button"
-					variant="ghost"
-					aria-label="Cancel"
-					title="Cancel"
-					onClick={onDone}
-				>
-					<XIcon aria-hidden className="w-3.5 h-3.5" />
-				</Button>
+				<Tooltip label="Cancel">
+					<Button
+						size="sm"
+						type="button"
+						variant="ghost"
+						aria-label="Cancel"
+						onClick={onDone}
+					>
+						<XIcon aria-hidden className="w-3.5 h-3.5" />
+					</Button>
+				</Tooltip>
 			</div>
 			<p className="text-[11px] text-muted-foreground">
 				<span className="font-medium text-foreground">Rename</span> changes only
 				the name.{" "}
-				<span className="font-medium text-foreground">Update config</span>{" "}
-				replaces the saved tone, platforms, thread length, and writing prefs
-				with your current settings.
+				<span className="font-medium text-foreground">Update preferences</span>{" "}
+				overwrites this preset&apos;s tone, platforms, thread format, and
+				writing style with your current settings.
 			</p>
 		</div>
 	);
@@ -337,7 +331,7 @@ function TemplatePreview({ template }: { template: PresetTemplateType }) {
 	return (
 		<div
 			role="tooltip"
-			className="pointer-events-none absolute left-0 top-full z-20 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-md border border-border/60 bg-popover/90 backdrop-blur-md px-3 py-2 text-[11px] leading-snug text-popover-foreground shadow-md opacity-0 translate-y-1 transition-all duration-150 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:translate-y-0"
+			className="pointer-events-none absolute left-0 top-full z-20 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-md border border-border/60 bg-popover/90 backdrop-blur-md px-3 py-2 text-[11px] leading-snug text-popover-foreground shadow-md opacity-0 translate-y-1 transition-all duration-150 ease-out group-hover/preview:opacity-100 group-hover/preview:translate-y-0 group-focus-within/preview:opacity-100 group-focus-within/preview:translate-y-0"
 		>
 			<div className="space-y-1">
 				<Row label="Tone" value={toneLabel(tone)} />
@@ -350,7 +344,7 @@ function TemplatePreview({ template }: { template: PresetTemplateType }) {
 					}
 				/>
 				{platforms.includes("x") && xThreadLength > 1 && (
-					<Row label="X thread" value={`${xThreadLength} posts`} />
+					<Row label="Thread" value={`${xThreadLength} posts`} />
 				)}
 				<Row label="Voice" value={VOICE_LABELS[p.voice] ?? p.voice} />
 				<Row label="Emoji" value={EMOJI_LEVEL_LABELS[p.emojiLevel]} />

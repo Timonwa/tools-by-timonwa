@@ -17,3 +17,4 @@ export { default as Input } from "./Input";
 export { default as LinkCard } from "./LinkCard";
 export { default as PageHero } from "./PageHero";
 export { default as Textarea } from "./Textarea";
+export { default as Tooltip } from "./Tooltip";

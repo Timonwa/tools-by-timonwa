@@ -48,8 +48,8 @@ export default function HistorySidebar({
 						History
 					</CardTitle>
 					<CardDescription className="text-xs">
-						Your last 10, saved in this browser. Re-generating an article
-						updates its entry — history isn&apos;t kept per run.
+						Your last 10 generations, saved in this browser. Re-generating an
+						article updates its entry — history isn&apos;t kept per run.
 					</CardDescription>
 				</CardHeader>
 				<CardContent>

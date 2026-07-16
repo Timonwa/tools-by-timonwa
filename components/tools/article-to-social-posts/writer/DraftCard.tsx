@@ -21,6 +21,7 @@ import {
 	CardHeader,
 	CardTitle,
 	Textarea,
+	Tooltip,
 } from "@/components/ui";
 
 // Per-post char limit inside a thread, by group.
@@ -50,6 +51,9 @@ export default function DraftCard({
 	onRegenerate,
 }: Props) {
 	const isThread = draft.thread && draft.thread.length > 1;
+	const regenLabel = isThread
+		? "Regenerate this thread"
+		: "Regenerate this post";
 	const charLimit = GROUP_CHAR_LIMITS[draft.group];
 	const threadPostLimit = THREAD_POST_LIMITS[draft.group];
 	const over = draft.charCount > charLimit;
@@ -173,20 +177,21 @@ export default function DraftCard({
 						)}
 					</Button>
 
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={onRegenerate}
-						disabled={isRegenerating}
-						title="Regenerate this post"
-						aria-label="Regenerate this post"
-					>
-						{isRegenerating ? (
-							<Loader2Icon className="w-4 h-4 animate-spin" />
-						) : (
-							<RefreshCwIcon className="w-4 h-4" />
-						)}
-					</Button>
+					<Tooltip label={regenLabel}>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={onRegenerate}
+							disabled={isRegenerating}
+							aria-label={regenLabel}
+						>
+							{isRegenerating ? (
+								<Loader2Icon className="w-4 h-4 animate-spin" />
+							) : (
+								<RefreshCwIcon className="w-4 h-4" />
+							)}
+						</Button>
+					</Tooltip>
 				</div>
 			</CardContent>
 		</Card>

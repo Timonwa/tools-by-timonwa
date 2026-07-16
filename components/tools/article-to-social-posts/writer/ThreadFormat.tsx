@@ -51,16 +51,16 @@ export default function ThreadFormat({
 				{length > 1 && (
 					<div className="flex items-center gap-2 text-sm">
 						<label htmlFor={threadLengthId} className="text-muted-foreground">
-							Posts:
+							Posts <span className="text-[11px]">(2-20)</span>:
 						</label>
 						<Input
 							id={threadLengthId}
 							type="number"
 							min={2}
-							max={10}
+							max={20}
 							value={length}
 							onChange={(e) =>
-								onChange(Math.min(10, Math.max(2, Number(e.target.value) || 4)))
+								onChange(Math.min(20, Math.max(2, Number(e.target.value) || 4)))
 							}
 							disabled={disabled}
 							className="w-16"

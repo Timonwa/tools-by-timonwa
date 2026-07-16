@@ -45,13 +45,13 @@ export default function HashtagRulesSection({
 				</h3>
 			</div>
 			<p className="text-xs text-muted-foreground">
-				Fixed rules the agent applies to every draft. Tag suggestions from the
+				Fixed rules the agent applies to every post. Tag suggestions from the
 				agent still follow your hashtag-level setting above.
 			</p>
 
 			<TagList
 				label="Always include"
-				helper="Added to every generated draft (counts toward the hashtag budget)."
+				helper="Added to every generated post (counts toward the hashtag budget)."
 				tags={prefs.alwaysIncludeHashtags}
 				onAdd={(raw) => add("alwaysIncludeHashtags", raw)}
 				onRemove={(tag) => remove("alwaysIncludeHashtags", tag)}
@@ -59,7 +59,7 @@ export default function HashtagRulesSection({
 
 			<TagList
 				label="Never use"
-				helper="Filtered out of every draft (case-insensitive)."
+				helper="Filtered out of every post (case-insensitive)."
 				tags={prefs.neverUseHashtags}
 				onAdd={(raw) => add("neverUseHashtags", raw)}
 				onRemove={(tag) => remove("neverUseHashtags", tag)}

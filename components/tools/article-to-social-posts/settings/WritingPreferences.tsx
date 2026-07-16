@@ -74,7 +74,7 @@ export default function WritingPreferencesSection({
 				</h3>
 			</div>
 			<p className="text-xs text-muted-foreground">
-				Applied to every draft. Stored on this device.
+				Applied to every post. Stored on this device.
 			</p>
 
 			<div className="space-y-2">
