@@ -12,16 +12,13 @@ import {
 
 import type { InputKindType } from "@/components/_shared/InputKindTabs";
 import { useToolDraft } from "@/components/_shared/shared-draft";
-import { MAX_TEMPLATES } from "@/components/tools/article-to-social-posts/constants/preferences";
 import type {
 	DraftInputType,
 	PlatformType,
 	PostDraftType,
-	PresetTemplateType,
 	PreviewResultType,
 	TokenUsageType,
 	ToneType,
-	WritingPreferencesType,
 } from "@/components/tools/article-to-social-posts/types";
 import {
 	buildCopyAll,
@@ -29,7 +26,6 @@ import {
 } from "@/components/tools/article-to-social-posts/utils/draft";
 import {
 	prefsStorage,
-	templatesStorage,
 	workflowStorage,
 } from "@/components/tools/article-to-social-posts/utils/storage";
 import {
@@ -38,41 +34,9 @@ import {
 } from "@/lib/tools/article-to-social-posts/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { type HistoryEntryType, useHistory } from "./use-history";
+import { usePresets } from "./use-presets";
 
 export type { InputKindType };
-
-/**
- * Deep match: tone, xThreadLength, platforms (order-insensitive), and every
- * field of WritingPreferencesType including hashtag rule lists.
- */
-function templateMatchesState(
-	t: PresetTemplateType,
-	state: { tone: ToneType; platforms: PlatformType[]; xThreadLength: number },
-	prefs: WritingPreferencesType,
-): boolean {
-	if (t.tone !== state.tone) return false;
-	if (t.xThreadLength !== state.xThreadLength) return false;
-	if (t.platforms.length !== state.platforms.length) return false;
-	const have = new Set(state.platforms);
-	for (const p of t.platforms) if (!have.has(p)) return false;
-
-	const tp = t.preferences;
-	if (tp.voice !== prefs.voice) return false;
-	if (tp.emojiLevel !== prefs.emojiLevel) return false;
-	if (tp.hashtagLevel !== prefs.hashtagLevel) return false;
-	if (tp.substackLength !== prefs.substackLength) return false;
-	if (!sameTagList(tp.alwaysIncludeHashtags, prefs.alwaysIncludeHashtags))
-		return false;
-	if (!sameTagList(tp.neverUseHashtags, prefs.neverUseHashtags)) return false;
-	return true;
-}
-
-function sameTagList(a: string[], b: string[]): boolean {
-	if (a.length !== b.length) return false;
-	const lower = new Set(a.map((s) => s.toLowerCase()));
-	for (const s of b) if (!lower.has(s.toLowerCase())) return false;
-	return true;
-}
 
 export function useWriter() {
 	const {
@@ -102,11 +66,6 @@ export function useWriter() {
 		prefsStorage.getSnapshot,
 		prefsStorage.getServerSnapshot,
 	);
-	const templates = useSyncExternalStore(
-		templatesStorage.subscribe,
-		templatesStorage.getSnapshot,
-		templatesStorage.getServerSnapshot,
-	);
 
 	// `generate` runs in a transition — `isGenerating` is its pending flag.
 	// `regenerate` uses its own transition but reports per-draft pending via the
@@ -126,15 +85,16 @@ export function useWriter() {
 
 	const [lastUsage, setLastUsage] = useState<TokenUsageType | null>(null);
 
-	// The active template is whichever saved template exactly matches the current
-	// workflow + prefs — derived, so it lights up on apply/save and clears the
-	// moment the user diverges, with no effect or manual bookkeeping.
-	const activeTemplateId = useMemo(
-		() =>
-			templates.find((t) => templateMatchesState(t, workflow, prefs))?.id ??
-			null,
-		[templates, workflow, prefs],
-	);
+	// Presets (saved configs) — shared with the Writing preferences drawer.
+	const {
+		templates,
+		activeId: activeTemplateId,
+		save: saveTemplate,
+		apply: applyTemplate,
+		remove: deleteTemplate,
+		update: updateTemplate,
+		rename: renameTemplate,
+	} = usePresets();
 
 	const { history, upsert, remove: removeHistoryEntry } = useHistory();
 
@@ -148,6 +108,8 @@ export function useWriter() {
 			tone,
 			platforms,
 			xThreadLength,
+			preferences: prefs,
+			templateName: templates.find((t) => t.id === activeTemplateId)?.name,
 			preview: { ...preview, drafts: editableDrafts },
 			timestamp: Date.now(),
 		});
@@ -203,13 +165,28 @@ export function useWriter() {
 		return text.trim() ? { kind: "text", text } : null;
 	}, [inputKind, url, text]);
 
-	const generate = useCallback(
-		(e: React.FormEvent) => {
-			e.preventDefault();
-			const input = currentInput();
-			if (!input || platforms.length === 0) return;
+	// True when the form's current input isn't the article on screen — either
+	// there's no result yet, or the user changed the source (e.g. switched tabs
+	// and pasted a new URL). Drives the "Generate" vs "Regenerate" label so a new
+	// source never looks like it will overwrite the posts already shown.
+	const isNewArticle = useMemo(() => {
+		if (!preview || !lastInput) return true;
+		const cur = currentInput();
+		if (!cur) return true;
+		const key = (i: DraftInputType) =>
+			i.kind === "url" ? `url:${i.url.trim()}` : `text:${i.text}`;
+		return key(cur) !== key(lastInput);
+	}, [preview, lastInput, currentInput]);
 
-			resetResults();
+	// Shared generation path for both a fresh generate and "regenerate all".
+	// `reset: true` clears the screen first (a new run from the form); `false`
+	// keeps the current posts visible and swaps them in when the new set lands,
+	// so regenerating from the bottom doesn't blank the results mid-flight.
+	const runPreview = useCallback(
+		(input: DraftInputType, { reset }: { reset: boolean }) => {
+			if (platforms.length === 0) return;
+			if (reset) resetResults();
+			else setError(null);
 
 			startGenerate(async () => {
 				try {
@@ -244,6 +221,9 @@ export function useWriter() {
 						tone,
 						platforms,
 						xThreadLength,
+						preferences: prefsStorage.get(),
+						templateName: templates.find((t) => t.id === activeTemplateId)
+							?.name,
 						preview,
 						timestamp: Date.now(),
 					});
@@ -254,14 +234,39 @@ export function useWriter() {
 				}
 			});
 		},
-		[currentInput, tone, platforms, xThreadLength, resetResults, upsert],
+		[
+			tone,
+			platforms,
+			xThreadLength,
+			resetResults,
+			upsert,
+			templates,
+			activeTemplateId,
+		],
 	);
 
+	const generate = useCallback(
+		(e: React.FormEvent) => {
+			e.preventDefault();
+			const input = currentInput();
+			if (!input) return;
+			runPreview(input, { reset: true });
+		},
+		[currentInput, runPreview],
+	);
+
+	// Regenerate every post for the article currently on screen (not whatever is
+	// typed in the form), using the current tone/platforms/prefs.
+	const regenerateAll = useCallback(() => {
+		if (!lastInput) return;
+		runPreview(lastInput, { reset: false });
+	}, [lastInput, runPreview]);
+
 	const updateDraftContent = useCallback(
-		(group: PostDraftType["group"], content: string) => {
+		(platform: PostDraftType["platform"], content: string) => {
 			setEditableDrafts((cur) =>
 				cur.map((d) =>
-					d.group === group
+					d.platform === platform
 						? { ...d, content, charCount: content.length, thread: undefined }
 						: d,
 				),
@@ -271,10 +276,10 @@ export function useWriter() {
 	);
 
 	const updateThreadPost = useCallback(
-		(group: PostDraftType["group"], index: number, content: string) => {
+		(platform: PostDraftType["platform"], index: number, content: string) => {
 			setEditableDrafts((cur) =>
 				cur.map((d) => {
-					if (d.group !== group || !d.thread) return d;
+					if (d.platform !== platform || !d.thread) return d;
 					const thread = d.thread.map((p, i) => (i === index ? content : p));
 					return {
 						...d,
@@ -292,15 +297,14 @@ export function useWriter() {
 			if (!lastInput) return;
 			// Immediate per-card feedback (urgent), then the async work runs in a
 			// transition so the regenerated draft render stays non-blocking.
-			setRegenerating((r) => ({ ...r, [draft.group]: true }));
+			setRegenerating((r) => ({ ...r, [draft.platform]: true }));
 			setError(null);
 			startRegenerate(async () => {
 				try {
 					const byokKey = byokStorage.get() ?? undefined;
 					const result = await regenerateDraft({
 						input: lastInput,
-						group: draft.group,
-						platforms: draft.platforms,
+						platform: draft.platform,
 						tone,
 						xThreadLength,
 						preferences: prefsStorage.get(),
@@ -312,7 +316,7 @@ export function useWriter() {
 						return;
 					}
 					setEditableDrafts((cur) =>
-						cur.map((d) => (d.group === draft.group ? result.draft : d)),
+						cur.map((d) => (d.platform === draft.platform ? result.draft : d)),
 					);
 					setLastUsage(result.usage);
 				} catch {
@@ -320,7 +324,7 @@ export function useWriter() {
 						"We couldn't reach the server. Check your internet connection and try again.",
 					);
 				} finally {
-					setRegenerating((r) => ({ ...r, [draft.group]: false }));
+					setRegenerating((r) => ({ ...r, [draft.platform]: false }));
 				}
 			});
 		},
@@ -339,41 +343,6 @@ export function useWriter() {
 		}
 	}, []);
 
-	const saveTemplate = useCallback(
-		(name: string) => {
-			const trimmed = name.trim();
-			if (!trimmed) return;
-			const entry: PresetTemplateType = {
-				id: crypto.randomUUID(),
-				name: trimmed,
-				createdAt: Date.now(),
-				tone,
-				platforms,
-				xThreadLength,
-				preferences: prefsStorage.get(),
-			};
-			// Replace any existing template with the same name (case-insensitive).
-			const without = templatesStorage
-				.get()
-				.filter((t) => t.name.toLowerCase() !== trimmed.toLowerCase());
-			templatesStorage.set([entry, ...without].slice(0, MAX_TEMPLATES));
-		},
-		[tone, platforms, xThreadLength],
-	);
-
-	const applyTemplate = useCallback((t: PresetTemplateType) => {
-		workflowStorage.set({
-			tone: t.tone,
-			platforms: t.platforms,
-			xThreadLength: t.xThreadLength,
-		});
-		prefsStorage.set(t.preferences);
-	}, []);
-
-	const deleteTemplate = useCallback((id: string) => {
-		templatesStorage.set(templatesStorage.get().filter((t) => t.id !== id));
-	}, []);
-
 	const loadFromHistory = useCallback(
 		(entry: HistoryEntryType) => {
 			if (entry.input.kind === "url") {
@@ -390,6 +359,7 @@ export function useWriter() {
 				platforms: entry.platforms,
 				xThreadLength: entry.xThreadLength,
 			});
+			prefsStorage.set(entry.preferences);
 			setPreview(entry.preview);
 			setEditableDrafts(entry.preview.drafts);
 			setLastUsage(entry.preview.usage ?? null);
@@ -418,6 +388,7 @@ export function useWriter() {
 		xThreadLength,
 		setXThreadLength,
 		isGenerating,
+		isNewArticle,
 		preview,
 		editableDrafts,
 		error,
@@ -426,6 +397,7 @@ export function useWriter() {
 		lastUsage,
 		history,
 		generate,
+		regenerateAll,
 		updateDraftContent,
 		updateThreadPost,
 		regenerate,
@@ -433,7 +405,10 @@ export function useWriter() {
 		copyAll: () =>
 			copy("all", buildCopyAll(editableDrafts, preview?.article.url)),
 		copyDraft: (draft: PostDraftType) =>
-			copy(`draft-${draft.group}`, buildCopyText(draft, preview?.article.url)),
+			copy(
+				`draft-${draft.platform}`,
+				buildCopyText(draft, preview?.article.url),
+			),
 		clearAll,
 		loadFromHistory,
 		removeHistoryEntry,
@@ -442,5 +417,7 @@ export function useWriter() {
 		saveTemplate,
 		applyTemplate,
 		deleteTemplate,
+		updateTemplate,
+		renameTemplate,
 	};
 }

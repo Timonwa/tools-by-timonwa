@@ -1,6 +1,11 @@
 "use client";
 
-import { Loader2Icon, SparklesIcon, Wand2Icon } from "lucide-react";
+import {
+	FilePlus2Icon,
+	Loader2Icon,
+	SparklesIcon,
+	Wand2Icon,
+} from "lucide-react";
 import { useId } from "react";
 import DraftReuseControls from "@/components/_shared/DraftReuseControls";
 import ErrorNotice from "@/components/_shared/ErrorNotice";
@@ -8,6 +13,7 @@ import InputKindTabs, {
 	type InputKindType,
 } from "@/components/_shared/InputKindTabs";
 import { MAX_DRAFT_CHARS } from "@/components/tools/article-to-social-posts/constants/draft-input";
+import { THREADABLE_PLATFORMS } from "@/components/tools/article-to-social-posts/constants/platforms";
 import type {
 	PlatformType,
 	PresetTemplateType,
@@ -28,7 +34,7 @@ import { cn } from "@/lib/utils/cn";
 import PlatformPicker from "./PlatformPicker";
 import TemplatesPicker from "./TemplatesPicker";
 import TonePicker from "./TonePicker";
-import XFormat from "./XFormat";
+import ThreadFormat from "./ThreadFormat";
 
 type GenerateFormProps = {
 	inputKind: InputKindType;
@@ -50,6 +56,8 @@ type GenerateFormProps = {
 	onXThreadLengthChange: (n: number) => void;
 	isGenerating: boolean;
 	hasResult: boolean;
+	isNewArticle: boolean;
+	onStartOver: () => void;
 	error: string | null;
 	onSubmit: (e: React.FormEvent) => void;
 	templates: PresetTemplateType[];
@@ -57,6 +65,8 @@ type GenerateFormProps = {
 	onApplyTemplate: (t: PresetTemplateType) => void;
 	onSaveTemplate: (name: string) => void;
 	onDeleteTemplate: (id: string) => void;
+	onUpdateTemplate: (id: string) => void;
+	onRenameTemplate: (id: string, name: string) => void;
 };
 
 export default function GenerateForm({
@@ -79,6 +89,8 @@ export default function GenerateForm({
 	onXThreadLengthChange,
 	isGenerating,
 	hasResult,
+	isNewArticle,
+	onStartOver,
 	error,
 	onSubmit,
 	templates,
@@ -86,6 +98,8 @@ export default function GenerateForm({
 	onApplyTemplate,
 	onSaveTemplate,
 	onDeleteTemplate,
+	onUpdateTemplate,
+	onRenameTemplate,
 }: GenerateFormProps) {
 	const urlInputId = useId();
 	const textInputId = useId();
@@ -97,6 +111,9 @@ export default function GenerateForm({
 	const textOver = text.length > MAX_DRAFT_CHARS;
 	const disabled =
 		isGenerating || !hasInput || platforms.length === 0 || textOver;
+	// Only call it "Regenerate" when the current input is the article on screen.
+	// A changed source reads as "Generate" so it never looks like an overwrite.
+	const isRegenerate = hasResult && !isNewArticle;
 
 	return (
 		<Card>
@@ -106,9 +123,10 @@ export default function GenerateForm({
 					Generate social media posts
 				</CardTitle>
 				<CardDescription>
-					Paste a published URL or your unpublished draft (up to ~2,500 words).
-					Drafts are generated for every selected platform — copy them and post
-					to each site manually.
+					Paste an article&apos;s URL or its text (up to{" "}
+					{MAX_DRAFT_CHARS.toLocaleString()} characters). Posts are generated
+					for every selected platform — copy them and post to each site
+					manually.
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -119,6 +137,8 @@ export default function GenerateForm({
 						onApply={onApplyTemplate}
 						onSave={onSaveTemplate}
 						onDelete={onDeleteTemplate}
+						onUpdate={onUpdateTemplate}
+						onRename={onRenameTemplate}
 						disabled={isGenerating}
 					/>
 
@@ -126,6 +146,7 @@ export default function GenerateForm({
 						value={inputKind}
 						onChange={onInputKindChange}
 						disabled={isGenerating}
+						textLabel="Paste text"
 					/>
 
 					{inputKind === "url" ? (
@@ -134,7 +155,7 @@ export default function GenerateForm({
 								htmlFor={urlInputId}
 								className="text-sm font-medium mb-2 block"
 							>
-								Blog post URL
+								Article URL
 							</label>
 							<Input
 								id={urlInputId}
@@ -161,7 +182,7 @@ export default function GenerateForm({
 						<div>
 							<div className="flex items-baseline justify-between mb-2 gap-2">
 								<label htmlFor={textInputId} className="text-sm font-medium">
-									Your draft
+									Your text
 								</label>
 								<span
 									id={counterId}
@@ -182,14 +203,14 @@ export default function GenerateForm({
 								required
 								value={text}
 								onChange={(e) => onTextChange(e.target.value)}
-								placeholder="Paste your unpublished draft here — title, body, everything you'd want the social posts to reflect."
+								placeholder="Paste the article text here — title, body, everything the posts should draw from."
 								disabled={isGenerating}
 								aria-describedby={counterId}
 								aria-invalid={textOver || undefined}
 								className="h-48 max-h-96 resize-y [field-sizing:normal]"
 							/>
 							<p className="mt-1.5 text-[11px] text-muted-foreground">
-								Draft text stays in your browser and this request only — never
+								Your text stays in your browser and this request only — never
 								cached on our servers.
 							</p>
 							<DraftReuseControls
@@ -200,6 +221,7 @@ export default function GenerateForm({
 								canClear={text.length > 0}
 								disabled={isGenerating}
 								className="mt-2"
+								noun="text"
 							/>
 						</div>
 					)}
@@ -216,34 +238,51 @@ export default function GenerateForm({
 						disabled={isGenerating}
 					/>
 
-					{platforms.includes("x") && (
-						<XFormat
+					{platforms.some((p) => THREADABLE_PLATFORMS.includes(p)) && (
+						<ThreadFormat
 							length={xThreadLength}
 							onChange={onXThreadLengthChange}
 							disabled={isGenerating}
 						/>
 					)}
 
-					<Button
-						type="submit"
-						size="lg"
-						className="w-full"
-						disabled={disabled}
-					>
-						{isGenerating ? (
-							<>
-								<Loader2Icon className="w-4 h-4 animate-spin" />
-								{inputKind === "url"
-									? `Reading article & ${hasResult ? "regenerating" : "generating"} drafts...`
-									: `${hasResult ? "Regenerating" : "Generating"} drafts...`}
-							</>
-						) : (
-							<>
-								<SparklesIcon className="w-4 h-4" />
-								{hasResult ? "Regenerate drafts" : "Generate drafts"}
-							</>
+					<div className="flex flex-col gap-2 sm:flex-row">
+						<Button
+							type="submit"
+							size="lg"
+							className="w-full sm:flex-1"
+							disabled={disabled}
+						>
+							{isGenerating ? (
+								<>
+									<Loader2Icon className="w-4 h-4 animate-spin" />
+									{inputKind === "url"
+										? `Reading article & ${isRegenerate ? "regenerating" : "generating"} posts...`
+										: `${isRegenerate ? "Regenerating" : "Generating"} posts...`}
+								</>
+							) : (
+								<>
+									<SparklesIcon className="w-4 h-4" />
+									{isRegenerate ? "Regenerate posts" : "Generate posts"}
+								</>
+							)}
+						</Button>
+
+						{hasResult && (
+							<Button
+								type="button"
+								variant="outline"
+								size="lg"
+								onClick={onStartOver}
+								disabled={isGenerating}
+								className="w-full sm:w-auto"
+								title="Clear the current posts and start a fresh article — your saved posts stay in history"
+							>
+								<FilePlus2Icon className="w-4 h-4" />
+								New article
+							</Button>
 						)}
-					</Button>
+					</div>
 
 					{error && <ErrorNotice message={error} />}
 				</form>

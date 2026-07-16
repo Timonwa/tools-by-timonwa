@@ -2,7 +2,7 @@
 
 import { KeyRoundIcon } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { Button, Drawer } from "@/components/ui";
+import { Button, Drawer, Tooltip } from "@/components/ui";
 import ByokSection from "@/components/_shared/byok/ByokSection";
 
 import {
@@ -78,24 +78,31 @@ export default function ByokDrawer() {
 
 	return (
 		<>
-			<Button
-				variant="ghost"
-				size="sm"
-				onClick={() => setOpen(true)}
-				aria-label={saved ? "API key — your own key is active" : "API key"}
-				title={saved ? "API key — your own key is active" : "Set API key"}
-				aria-expanded={open}
-				className="w-full justify-start xl:w-auto xl:justify-center"
+			<Tooltip
+				label={saved ? "API key — your own key is active" : "Set API key"}
+				side="bottom"
+				align="end"
+				desktopOnly
+				className="w-full xl:w-auto"
 			>
-				<KeyRoundIcon aria-hidden className="w-4 h-4" />
-				<span className="xl:hidden">Set API key</span>
-				{saved && (
-					<span aria-hidden className="relative ml-auto flex h-2 w-2">
-						<span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-75" />
-						<span className="relative block w-2 h-2 rounded-full bg-primary" />
-					</span>
-				)}
-			</Button>
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={() => setOpen(true)}
+					aria-label={saved ? "API key — your own key is active" : "API key"}
+					aria-expanded={open}
+					className="w-full justify-start xl:w-auto xl:justify-center"
+				>
+					<KeyRoundIcon aria-hidden className="w-4 h-4" />
+					<span className="xl:hidden">Set API key</span>
+					{saved && (
+						<span aria-hidden className="relative ml-auto flex h-2 w-2">
+							<span className="absolute inset-0 rounded-full bg-primary animate-ping opacity-75" />
+							<span className="relative block w-2 h-2 rounded-full bg-primary" />
+						</span>
+					)}
+				</Button>
+			</Tooltip>
 
 			<Drawer
 				open={open}

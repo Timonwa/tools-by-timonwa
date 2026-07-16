@@ -3,7 +3,7 @@ import type { ToolContentType } from "@/components/_shared/ToolContent";
 export const socialPostsContent: ToolContentType = {
 	article: `## What is Article to Social Posts?
 
-Article to Social Posts turns a published article — from a URL or a draft you paste in — into ready-to-post copy tailored to each network: X (Twitter), LinkedIn, Threads, Bluesky, Mastodon, and Substack Notes. Each draft respects the platform's length and style, and you can set the tone, control hashtags, and generate a multi-post X thread. It reads the article and pulls out the hook and key points, so you edit a real first draft instead of starting from a blank box.
+Article to Social Posts turns a published article — from a URL or the text you paste in — into ready-to-post copy tailored to each network: X (Twitter), LinkedIn, Threads, Bluesky, Mastodon, and Substack Notes. You get one post per platform, each sized to that network's free-tier character limit and matched to its style, and you can set the tone, control hashtags, and generate multi-post threads on the networks that support them. It reads the article and pulls out the hook and key points, so you edit a real first version instead of starting from a blank box.
 
 ## Who is Article to Social Posts for?
 
@@ -11,10 +11,10 @@ Content marketers, creators, and solo founders who publish long-form and want to
 
 ## How to use it
 
-1. Paste a published URL or your unpublished draft.
+1. Paste an article's URL or its text.
 2. Choose the platforms you're posting to and pick a tone.
-3. If you include X, set a thread length.
-4. Generate, edit any draft, regenerate a single one you don't like, and copy the final text.
+3. If you're posting a thread, set its length.
+4. Generate, edit any post, regenerate a single one you don't like, and copy the final text.
 
 Nothing is posted for you — you stay in control of what goes live.
 
@@ -35,19 +35,19 @@ Good repurposing isn't copy-paste. A few principles the tool applies for you:
 - **Threads and Bluesky** — 500 and 300 characters; keep it conversational.
 - **Substack Notes** — short, link-friendly posts to tease the full piece.
 
-## Built with ADK-TS, free, and copy-only
+## Free, open source, and copy-only
 
-This tool is powered by Google's Gemini through **ADK-TS**, the open-source TypeScript agent framework. If you want to build something similar, our guide covers [building your first AI agent in TypeScript with ADK-TS](https://tech.timonwa.com/blog/build-ai-agent-in-typescript-with-adk-ts/). It's free with a daily limit and no account, with an optional bring-your-own-key for unlimited runs. Your article or draft is used only to generate the posts for that request — never stored on our servers or used for training — and it's copy-only: it drafts, you review and post.`,
+This tool is powered by Google's Gemini through the open-source **Vercel AI SDK**. It's free with a daily limit and no account, with an optional bring-your-own-key for unlimited runs. Your article or text is used only to generate the posts for that request — never stored on our servers or used for training — and it's copy-only: it writes the posts, you review and publish.`,
 	faq: [
 		{
-			question: "How do I turn a blog post into social media posts?",
+			question: "How do I turn an article into social media posts?",
 			answer:
-				"Give an article's URL or draft text to a generator that rewrites it per platform, then edit and copy each draft. This tool tailors length, tone, and format to X, LinkedIn, Threads, Bluesky, Mastodon, and Substack, and nothing is posted automatically.",
+				"Give an article's URL or text to a generator that rewrites it per platform, then edit and copy each post. This tool tailors length, tone, and format to X, LinkedIn, Threads, Bluesky, Mastodon, and Substack, and nothing is posted automatically.",
 		},
 		{
 			question: "Which social platforms does it support?",
 			answer:
-				"X (Twitter), LinkedIn, Threads, Bluesky, Mastodon, and Substack Notes. Each draft is sized and styled for the platform you choose.",
+				"X (Twitter), LinkedIn, Threads, Bluesky, Mastodon, and Substack Notes. Each post is sized and styled for the platform you choose.",
 		},
 		{
 			question: "Can it generate an X (Twitter) thread?",
@@ -57,7 +57,7 @@ This tool is powered by Google's Gemini through **ADK-TS**, the open-source Type
 		{
 			question: "Does it post to my accounts automatically?",
 			answer:
-				"No. This tool is copy-only by design — it drafts the posts and you review, edit, and publish them yourself. There's no login to your social accounts, and nothing is scheduled or sent.",
+				"No. This tool is copy-only by design — it writes the posts and you review, edit, and publish them yourself. There's no login to your social accounts, and nothing is scheduled or sent.",
 		},
 		{
 			question: "Do I need an account or API key?",
@@ -67,27 +67,27 @@ This tool is powered by Google's Gemini through **ADK-TS**, the open-source Type
 		{
 			question: "Can I control the tone and hashtags?",
 			answer:
-				"Yes. You can pick a tone or voice and set hashtag rules — always include certain tags, avoid others, or dial hashtag use up or down — so the drafts match how you post.",
+				"Yes. You can pick a tone or voice and set hashtag rules — always include certain tags, avoid others, or dial hashtag use up or down — so the posts match your style.",
 		},
 		{
 			question: "Does it store my article or use it to train AI?",
 			answer:
-				"No. Your URL or draft is used only to generate the posts for that request; it isn't stored on our servers or used for training. Fetched article content is briefly cached in memory to speed up regeneration, then discarded.",
+				"No. Your URL or text is used only to generate the posts for that request; it isn't stored on our servers or used for training.",
 		},
 		{
 			question: "How long should a LinkedIn or X post be?",
 			answer:
-				"An X post allows up to 280 characters; a LinkedIn post allows up to 3,000, though only about the first 140 show before the “see more” fold. The generator sizes each draft to its platform, and you can trim or expand before posting.",
+				"An X post allows up to 280 characters; a LinkedIn post allows up to 3,000, though only about the first 140 show before the “see more” fold. The generator sizes each post to its platform, and you can trim or expand before posting.",
 		},
 		{
 			question: "Can I use an article URL, or do I have to paste the text?",
 			answer:
-				"Either. Paste a published article's URL and the tool fetches it, or paste your unpublished draft text directly — useful for promoting a post before it goes live.",
+				"Either. Paste a published article's URL and the tool fetches it, or paste the article's text directly — useful for promoting a post before it goes live.",
 		},
 		{
 			question: "How do I repurpose one article across several platforms?",
 			answer:
-				"Write one idea per platform rather than reposting the same text: a hook-led thread on X, a narrative post on LinkedIn, a conversational note on Threads or Bluesky, each linking back to the full article. This tool generates a platform-appropriate draft for each in one step.",
+				"Write one idea per platform rather than reposting the same text: a hook-led thread on X, a narrative post on LinkedIn, a conversational note on Threads or Bluesky, each linking back to the full article. This tool generates a platform-appropriate post for each in one step.",
 		},
 	],
 };

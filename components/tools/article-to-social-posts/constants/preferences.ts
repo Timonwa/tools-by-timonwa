@@ -1,6 +1,6 @@
 import type {
 	LevelType,
-	SubstackLengthType,
+	PostLengthType,
 	VoiceType,
 	WritingPreferencesType,
 } from "@/components/tools/article-to-social-posts/types";
@@ -11,13 +11,15 @@ export const DEFAULT_PREFERENCES: WritingPreferencesType = {
 	hashtagLevel: 1,
 	alwaysIncludeHashtags: [],
 	neverUseHashtags: [],
-	substackLength: "medium",
+	postLength: "medium",
 };
 
 /** Upper bound per list — keeps the prompt small and the UI readable. */
 export const MAX_HASHTAG_RULES_PER_LIST = 10;
 /** Upper bound on saved templates — localStorage stays lean. */
 export const MAX_TEMPLATES = 10;
+/** Max preset name length — keeps chips short and the collapsed label tidy. */
+export const MAX_PRESET_NAME = 30;
 
 /**
  * Normalize a raw user-entered hashtag. Strips leading `#`, trims whitespace,
@@ -53,7 +55,19 @@ export const HASHTAG_LEVEL_LABELS: Record<LevelType, string> = {
 	5: "Lots",
 };
 
-export const SUBSTACK_LENGTH_LABELS: Record<SubstackLengthType, string> = {
-	medium: "Note (≤500)",
-	long: "Long-form (≤3000)",
+/**
+ * Target character length for the long-capable platforms (LinkedIn + Substack).
+ * The microblog platforms (X, Bluesky, Threads, Mastodon) keep their own fixed
+ * limits and ignore this.
+ */
+export const LENGTH_LIMITS: Record<PostLengthType, number> = {
+	short: 600,
+	medium: 1500,
+	long: 3000,
+};
+
+export const POST_LENGTH_LABELS: Record<PostLengthType, string> = {
+	short: "Short (~600)",
+	medium: "Medium (~1,500)",
+	long: "Long (~3,000)",
 };

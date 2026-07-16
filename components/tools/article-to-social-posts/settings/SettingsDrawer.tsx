@@ -1,19 +1,34 @@
 "use client";
 
-import { SettingsIcon } from "lucide-react";
+import { PenLineIcon } from "lucide-react";
 import { useState, useSyncExternalStore } from "react";
 
-import type { WritingPreferencesType } from "@/components/tools/article-to-social-posts/types";
-import { prefsStorage } from "@/components/tools/article-to-social-posts/utils/storage";
-import { Button, Drawer } from "@/components/ui";
+import { THREADABLE_PLATFORMS } from "@/components/tools/article-to-social-posts/constants/platforms";
+import { usePresets } from "@/components/tools/article-to-social-posts/hooks/use-presets";
+import type {
+	PlatformType,
+	ToneType,
+	WritingPreferencesType,
+} from "@/components/tools/article-to-social-posts/types";
+import {
+	prefsStorage,
+	workflowStorage,
+} from "@/components/tools/article-to-social-posts/utils/storage";
+import PlatformPicker from "@/components/tools/article-to-social-posts/writer/PlatformPicker";
+import TemplatesPicker from "@/components/tools/article-to-social-posts/writer/TemplatesPicker";
+import ThreadFormat from "@/components/tools/article-to-social-posts/writer/ThreadFormat";
+import TonePicker from "@/components/tools/article-to-social-posts/writer/TonePicker";
+import { Button, Drawer, Tooltip } from "@/components/ui";
 
 import HashtagRulesSection from "./HashtagRules";
 import WritingPreferencesSection from "./WritingPreferences";
 
 /**
- * Tool-scoped settings for the article-to-social-posts writer (writing preferences +
- * hashtag rules). BYOK lives in the hub-level drawer — it's hub-wide user
- * state, not an article-to-social-posts concern.
+ * Tool-scoped writing preferences for the article-to-social-posts writer: the
+ * full default config (tone, platforms, thread format, voice, emoji/hashtag
+ * density, and hashtag rules). Shares the same stores as the main form, so
+ * changes here are the defaults every generation starts from. BYOK lives in the
+ * hub-level drawer — it's hub-wide user state, not a per-tool concern.
  */
 export default function SettingsDrawer() {
 	const [open, setOpen] = useState(false);
@@ -22,38 +37,89 @@ export default function SettingsDrawer() {
 		prefsStorage.getSnapshot,
 		prefsStorage.getServerSnapshot,
 	);
+	const workflow = useSyncExternalStore(
+		workflowStorage.subscribe,
+		workflowStorage.getSnapshot,
+		workflowStorage.getServerSnapshot,
+	);
+	const { tone, platforms, xThreadLength } = workflow;
+	const presets = usePresets();
 
 	const updatePrefs = (patch: Partial<WritingPreferencesType>) => {
 		prefsStorage.set({ ...prefs, ...patch });
 	};
 
+	const setTone = (t: ToneType) =>
+		workflowStorage.set({ ...workflow, tone: t });
+
+	const togglePlatform = (p: PlatformType) => {
+		const next = platforms.includes(p)
+			? platforms.filter((x) => x !== p)
+			: [...platforms, p];
+		workflowStorage.set({ ...workflow, platforms: next });
+	};
+
+	const setXThreadLength = (n: number) =>
+		workflowStorage.set({ ...workflow, xThreadLength: n });
+
 	return (
 		<>
-			<Button
-				variant="ghost"
-				size="sm"
-				onClick={() => setOpen(true)}
-				aria-label="Writer settings"
-				title="Writer settings"
-				className="w-full justify-start xl:w-auto xl:justify-center"
-				aria-expanded={open}
+			<Tooltip
+				label="Writing preferences"
+				side="bottom"
+				align="end"
+				desktopOnly
+				className="w-full xl:w-auto"
 			>
-				<SettingsIcon aria-hidden className="w-4 h-4" />
-				<span className="xl:hidden">Writer Settings</span>
-			</Button>
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={() => setOpen(true)}
+					aria-label="Writing preferences"
+					className="w-full justify-start xl:w-auto xl:justify-center"
+					aria-expanded={open}
+				>
+					<PenLineIcon aria-hidden className="w-4 h-4" />
+					<span className="xl:hidden">Writing preferences</span>
+				</Button>
+			</Tooltip>
 
 			<Drawer
 				open={open}
 				onOpenChange={setOpen}
+				// The drawer portals to <body>, outside the tool's `--primary`
+				// scope, so re-apply the tool class here to keep the accent on-brand.
+				className="tool-article-to-social-posts"
 				title={
 					<span className="flex items-center gap-2">
-						<SettingsIcon aria-hidden className="w-4 h-4 text-primary" />
-						Writer settings
+						<PenLineIcon aria-hidden className="w-4 h-4 text-primary" />
+						Writing preferences
 					</span>
 				}
-				description="Customize how drafts are written — voice, emoji/hashtag density, and hashtag rules."
+				description="Your defaults for every generation, saved on this device."
 			>
 				<div className="px-4 sm:px-5 py-5 space-y-6">
+					<TemplatesPicker
+						templates={presets.templates}
+						activeTemplateId={presets.activeId}
+						onApply={presets.apply}
+						onSave={presets.save}
+						onDelete={presets.remove}
+						onUpdate={presets.update}
+						onRename={presets.rename}
+						collapsible
+					/>
+
+					<TonePicker value={tone} onChange={setTone} />
+
+					<PlatformPicker value={platforms} onToggle={togglePlatform} />
+
+					{platforms.some((p) => THREADABLE_PLATFORMS.includes(p)) && (
+						<ThreadFormat length={xThreadLength} onChange={setXThreadLength} />
+					)}
+
+					<div className="border-t border-border/50" />
+
 					<WritingPreferencesSection prefs={prefs} onChange={updatePrefs} />
 
 					<div className="border-t border-border/50" />

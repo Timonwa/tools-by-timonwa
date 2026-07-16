@@ -2,7 +2,7 @@ import { OG_CONTENT_TYPE, OG_SIZE, renderOgImage } from "@/lib/og/og-image";
 
 export const runtime = "edge";
 export const alt =
-	"Article to Social Posts — turn an article or draft into platform-optimized posts for X, LinkedIn, Threads, Bluesky, Mastodon, and Substack";
+	"Article to Social Posts — turn an article into a post tailored to each network: X, LinkedIn, Threads, Bluesky, Mastodon, and Substack";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 
@@ -12,8 +12,8 @@ export default function Image() {
 		titleLead: "Article to",
 		titleAccent: "Social Posts",
 		subtitle:
-			"Turn an article or draft into platform-ready posts — with tone, hashtag rules, and X threads.",
-		pills: ["6 platforms", "URL or draft", "X threads"],
+			"Turn an article into a post tailored to each network — with tone, hashtag rules, and threads.",
+		pills: ["6 platforms", "URL or text", "Multi-post threads"],
 		accent: "#34d399",
 		backgroundTint: "#052e1e",
 	});

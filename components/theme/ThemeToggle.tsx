@@ -2,7 +2,7 @@
 
 import { Monitor, Moon, Sun } from "lucide-react";
 
-import { Button } from "@/components/ui";
+import { Button, Tooltip } from "@/components/ui";
 import { type ThemeType, useTheme } from "@/components/theme/use-theme";
 
 const NEXT: Record<ThemeType, ThemeType> = {
@@ -20,16 +20,23 @@ export default function ThemeToggle() {
 	const label = `Theme: ${theme}. Cycle to ${NEXT[theme]}.`;
 
 	return (
-		<Button
-			variant="ghost"
-			size="sm"
-			onClick={() => setTheme(NEXT[theme])}
-			aria-label={label}
-			title={label}
-			className="w-full justify-start xl:w-auto xl:justify-center"
+		<Tooltip
+			label={label}
+			side="bottom"
+			align="end"
+			desktopOnly
+			className="w-full xl:w-auto"
 		>
-			<Icon aria-hidden className="w-4 h-4" />
-			<span className="capitalize xl:hidden">{theme} mode</span>
-		</Button>
+			<Button
+				variant="ghost"
+				size="sm"
+				onClick={() => setTheme(NEXT[theme])}
+				aria-label={label}
+				className="w-full justify-start xl:w-auto xl:justify-center"
+			>
+				<Icon aria-hidden className="w-4 h-4" />
+				<span className="capitalize xl:hidden">{theme} mode</span>
+			</Button>
+		</Tooltip>
 	);
 }

@@ -40,7 +40,7 @@ export default function ArticleCard({
 						) : (
 							<>
 								<ClipboardCopyIcon className="w-4 h-4" />
-								Copy all drafts
+								Copy all posts
 							</>
 						)}
 					</Button>
@@ -62,7 +62,7 @@ export default function ArticleCard({
 							{article.url}
 						</a>
 					) : (
-						<span className="italic">Unpublished draft</span>
+						<span className="italic">Pasted text</span>
 					)}
 					{usage && usage.totalTokens > 0 && (
 						<span

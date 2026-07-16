@@ -1,5 +1,6 @@
 "use client";
 
+import { FilePlus2Icon, Loader2Icon, RefreshCwIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useWriter } from "@/components/tools/article-to-social-posts/hooks/use-writer";
 import { Button } from "@/components/ui";
@@ -44,6 +45,8 @@ export default function Writer() {
 					onXThreadLengthChange={w.setXThreadLength}
 					isGenerating={w.isGenerating}
 					hasResult={Boolean(w.preview)}
+					isNewArticle={w.isNewArticle}
+					onStartOver={w.clearAll}
 					error={w.error}
 					onSubmit={w.generate}
 					templates={w.templates}
@@ -51,6 +54,8 @@ export default function Writer() {
 					onApplyTemplate={w.applyTemplate}
 					onSaveTemplate={w.saveTemplate}
 					onDeleteTemplate={w.deleteTemplate}
+					onUpdateTemplate={w.updateTemplate}
+					onRenameTemplate={w.renameTemplate}
 				/>
 
 				{w.preview && (
@@ -65,15 +70,15 @@ export default function Writer() {
 						<div className="columns-1 md:columns-2 gap-4 space-y-4">
 							{w.editableDrafts.map((draft) => (
 								<DraftCard
-									key={draft.group}
+									key={draft.platform}
 									draft={draft}
-									isRegenerating={!!w.regenerating[draft.group]}
-									copied={w.copiedKey === `draft-${draft.group}`}
+									isRegenerating={!!w.regenerating[draft.platform]}
+									copied={w.copiedKey === `draft-${draft.platform}`}
 									onContentChange={(content) =>
-										w.updateDraftContent(draft.group, content)
+										w.updateDraftContent(draft.platform, content)
 									}
 									onThreadPostChange={(index, content) =>
-										w.updateThreadPost(draft.group, index, content)
+										w.updateThreadPost(draft.platform, index, content)
 									}
 									onCopy={() => w.copyDraft(draft)}
 									onRegenerate={() => w.regenerate(draft)}
@@ -81,14 +86,39 @@ export default function Writer() {
 							))}
 						</div>
 
-						<Button
-							onClick={w.clearAll}
-							variant="ghost"
-							size="sm"
-							className="w-full"
-						>
-							Start over with a new article
-						</Button>
+						<div className="flex flex-col gap-2 sm:flex-row">
+							<Button
+								onClick={w.regenerateAll}
+								variant="outline"
+								size="lg"
+								className="w-full sm:flex-1"
+								disabled={w.isGenerating}
+								title="Regenerate every post for this article with your current tone and settings"
+							>
+								{w.isGenerating ? (
+									<>
+										<Loader2Icon className="w-4 h-4 animate-spin" />
+										Regenerating all...
+									</>
+								) : (
+									<>
+										<RefreshCwIcon className="w-4 h-4" />
+										Regenerate all
+									</>
+								)}
+							</Button>
+							<Button
+								onClick={w.clearAll}
+								variant="outline"
+								size="lg"
+								className="w-full sm:flex-1"
+								disabled={w.isGenerating}
+								title="Clear these posts and start a fresh article — your saved posts stay in history"
+							>
+								<FilePlus2Icon className="w-4 h-4" />
+								New article
+							</Button>
+						</div>
 					</div>
 				)}
 			</div>

@@ -32,30 +32,19 @@ const isSource = (v: unknown): v is DraftInputType =>
 	((v as DraftInputType).kind === "url" ||
 		(v as DraftInputType).kind === "text");
 
-/**
- * Normalise a stored entry, lifting legacy `{ article: string }` records into
- * the current `{ source }` shape so history survives the URL-support upgrade.
- */
-const migrate = (raw: unknown): HistoryEntryType | null => {
-	if (!raw || typeof raw !== "object") return null;
-	const e = raw as Record<string, unknown>;
-	if (typeof e.id !== "string") return null;
-	const source: DraftInputType | null = isSource(e.source)
-		? (e.source as DraftInputType)
-		: typeof e.article === "string"
-			? { kind: "text", text: e.article }
-			: null;
-	if (!source) return null;
-	return { ...(e as unknown as HistoryEntryType), source };
-};
+/** Basic guard against a corrupt/edited localStorage value (not migration). */
+const isEntry = (e: unknown): e is HistoryEntryType =>
+	!!e &&
+	typeof e === "object" &&
+	typeof (e as HistoryEntryType).id === "string" &&
+	isSource((e as HistoryEntryType).source);
 
 const load = (): HistoryEntryType[] => {
 	try {
 		const raw = window.localStorage.getItem(HISTORY_KEY);
 		if (!raw) return [];
 		const parsed = JSON.parse(raw) as unknown[];
-		if (!Array.isArray(parsed)) return [];
-		return parsed.map(migrate).filter((e): e is HistoryEntryType => e !== null);
+		return Array.isArray(parsed) ? parsed.filter(isEntry) : [];
 	} catch {
 		return [];
 	}

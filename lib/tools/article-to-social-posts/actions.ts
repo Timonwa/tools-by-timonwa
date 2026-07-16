@@ -5,13 +5,14 @@ import {
 	HOSTED_DAILY_GENERATION_POOL,
 	HOSTED_PER_USER_DAILY,
 } from "@/components/tools/article-to-social-posts/constants/hosted-usage";
-import { GROUP_CHAR_LIMITS } from "@/components/tools/article-to-social-posts/constants/platforms";
+import { CHAR_LIMITS } from "@/components/tools/article-to-social-posts/constants/platforms";
+import { LENGTH_LIMITS } from "@/components/tools/article-to-social-posts/constants/preferences";
 import type {
 	ArticlePreviewType,
 	DraftInputType,
-	GroupType,
 	PlatformType,
 	PostDraftType,
+	PostLengthType,
 	PreviewResultType,
 	TokenUsageType,
 	ToneType,
@@ -68,7 +69,7 @@ function toToolMessage(
 			],
 			[/DRAFT_EMPTY/, "Paste or type your article text before generating."],
 			[
-				/did not return a draft/i,
+				/did not return a post/i,
 				"The AI didn't create a post for one of your platforms. Just try again.",
 			],
 		],
@@ -79,18 +80,32 @@ function toToolMessage(
 	});
 }
 
-function buildDraft(
-	group: GroupType,
-	platforms: PlatformType[],
+/**
+ * The character limit for a platform. LinkedIn and Substack follow the
+ * post-length preference (short / medium / long); the microblog platforms use
+ * their own fixed limits.
+ */
+function platformLimit(
+	platform: PlatformType,
+	postLength: PostLengthType,
+): number {
+	if (platform === "linkedin" || platform === "substack") {
+		return LENGTH_LIMITS[postLength];
+	}
+	return CHAR_LIMITS[platform];
+}
+
+function buildPost(
+	platform: PlatformType,
 	content: string,
 	hashtags: string[],
+	charLimit: number,
 	thread?: string[],
 ): PostDraftType {
-	const charLimit = GROUP_CHAR_LIMITS[group];
 	const charCount = thread
 		? Math.max(...thread.map((p) => p.length))
 		: content.length;
-	return { group, platforms, content, hashtags, thread, charCount, charLimit };
+	return { platform, content, hashtags, thread, charCount, charLimit };
 }
 
 function validateInput(input: DraftInputType): void {
@@ -100,38 +115,40 @@ function validateInput(input: DraftInputType): void {
 	}
 }
 
+const THREADABLE = ["x", "bluesky", "threads", "mastodon"];
+
 function threadLine(platforms: PlatformType[], xThreadLength: number): string {
-	const threadable = platforms.some((p) =>
-		["x", "bluesky", "threads", "mastodon"].includes(p),
-	);
+	const threadable = platforms.some((p) => THREADABLE.includes(p));
 	return threadable && xThreadLength > 1
-		? `Thread mode: THREAD of ${xThreadLength} posts for thread-capable platforms (x, bluesky, threads, mastodon). Substack and LinkedIn are single posts only.`
+		? `Thread mode: THREAD of ${xThreadLength} posts for thread-capable platforms (x, bluesky, threads, mastodon). LinkedIn and Substack are single posts only.`
 		: "Thread mode: single posts only (no threading)";
 }
 
-/** The tone / platforms / thread / preferences block shared by both actions. */
+/** The tone / platforms / limits / thread / preferences block for the model. */
 function buildDirectives(
 	tone: ToneType,
 	platforms: PlatformType[],
 	xThreadLength: number,
 	preferences?: WritingPreferencesType,
 ): string {
-	const substackGroup = preferences?.substackLength ?? "medium";
-	return [
-		`ToneType: ${tone}`,
+	const postLength = preferences?.postLength ?? "medium";
+	const lines: string[] = [
+		`Tone: ${tone}`,
 		`Platforms: ${platforms.join(", ")}`,
-		platforms.includes("substack") ? `Substack group: ${substackGroup}` : "",
-		threadLine(platforms, xThreadLength),
-		preferences ? `Writing preferences: ${JSON.stringify(preferences)}` : "",
-	]
-		.filter(Boolean)
-		.join("\n");
+	];
+	if (platforms.includes("linkedin"))
+		lines.push(`LinkedIn limit: ${LENGTH_LIMITS[postLength]}`);
+	if (platforms.includes("substack"))
+		lines.push(`Substack limit: ${LENGTH_LIMITS[postLength]}`);
+	lines.push(threadLine(platforms, xThreadLength));
+	if (preferences)
+		lines.push(`Writing preferences: ${JSON.stringify(preferences)}`);
+	return lines.join("\n");
 }
 
 /**
- * Generate drafts for all requested platforms. URL input is read by the model
- * via Gemini's url_context tool; text input is sent inline. Both are a single
- * model call.
+ * Generate one post per selected platform. URL input is read by the model via
+ * Gemini's url_context tool; text input is sent inline. A single model call.
  */
 export async function previewPosts(params: {
 	input: DraftInputType;
@@ -155,7 +172,7 @@ export async function previewPosts(params: {
 		validateInput(input);
 		await enforceQuota(QUOTA_CONFIG, googleApiKey);
 
-		const directives = `Generate social media post drafts for this article.\n\n${buildDirectives(
+		const directives = `Generate social media posts for this article — one per selected platform.\n\n${buildDirectives(
 			tone,
 			platforms,
 			xThreadLength,
@@ -170,8 +187,15 @@ export async function previewPosts(params: {
 			googleModel,
 		});
 
-		const drafts: PostDraftType[] = object.drafts.map((d) =>
-			buildDraft(d.group, d.platforms, d.content, d.hashtags, d.thread),
+		const postLength = preferences?.postLength ?? "medium";
+		const drafts: PostDraftType[] = object.posts.map((p) =>
+			buildPost(
+				p.platform,
+				p.content,
+				p.hashtags,
+				platformLimit(p.platform, postLength),
+				p.thread,
+			),
 		);
 		// The model leaves article.url empty; fill in the URL we actually have.
 		const article: ArticlePreviewType = {
@@ -189,13 +213,12 @@ export async function previewPosts(params: {
 }
 
 /**
- * Regenerate a single platform's draft. URL input hits Gemini's url_context
+ * Regenerate a single platform's post. URL input hits Gemini's url_context
  * cache; text input is re-sent by the client.
  */
 export async function regenerateDraft(params: {
 	input: DraftInputType;
-	group: GroupType;
-	platforms: PlatformType[];
+	platform: PlatformType;
 	tone: ToneType;
 	xThreadLength: number;
 	preferences?: WritingPreferencesType;
@@ -204,8 +227,7 @@ export async function regenerateDraft(params: {
 }): Promise<RegenerateActionResultType> {
 	const {
 		input,
-		group,
-		platforms,
+		platform,
 		tone,
 		xThreadLength,
 		preferences,
@@ -217,12 +239,12 @@ export async function regenerateDraft(params: {
 		validateInput(input);
 		await enforceQuota(QUOTA_CONFIG, googleApiKey);
 
-		const directives = `Regenerate a single draft for this article.\n\n${buildDirectives(
+		const directives = `Regenerate a single post for this article.\n\n${buildDirectives(
 			tone,
-			platforms,
+			[platform],
 			xThreadLength,
 			preferences,
-		)}\nGroup: ${group}\n\nReturn the article block AND exactly one draft for the requested group. Make this draft noticeably different from a typical first attempt — try a fresh angle or hook.`;
+		)}\n\nReturn the article block AND exactly one post for ${platform}. Make this post noticeably different from a typical first attempt — try a fresh angle or hook.`;
 
 		const { object, usage } = await generateDrafts({
 			directives,
@@ -234,18 +256,19 @@ export async function regenerateDraft(params: {
 			temperature: 0.9,
 		});
 
-		const match = object.drafts.find((d) => d.group === group);
+		const postLength = preferences?.postLength ?? "medium";
+		const match = object.posts.find((p) => p.platform === platform);
 		if (!match) {
-			throw new Error(`Agent did not return a draft for group: ${group}`);
+			throw new Error(`Agent did not return a post for platform: ${platform}`);
 		}
 
 		return {
 			ok: true,
-			draft: buildDraft(
-				match.group,
-				match.platforms,
+			draft: buildPost(
+				match.platform,
 				match.content,
 				match.hashtags,
+				platformLimit(platform, postLength),
 				match.thread,
 			),
 			usage,

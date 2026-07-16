@@ -13,7 +13,7 @@ const TOOL_PATH = "/article-to-social-posts";
 const TOOL_URL = `${SITE_URL}${TOOL_PATH}`;
 const TOOL_TITLE = "Article to Social Posts — Turn articles into social posts";
 const TOOL_DESCRIPTION =
-	"Paste an article URL or draft. Article to Social Posts drafts platform-optimized posts for X, LinkedIn, Threads, Bluesky, Mastodon, and Substack. Open source.";
+	"Paste an article URL or its text and get a post tailored to each network — X, LinkedIn, Threads, Bluesky, Mastodon, and Substack — with tone, hashtag, and thread controls. Free and open source.";
 
 export const metadata: Metadata = {
 	title: TOOL_TITLE,
@@ -68,15 +68,17 @@ const jsonLd = {
 		"Gemini API",
 	].join(", "),
 	featureList: [
-		"Paste an article URL or unpublished draft (up to 2,500 words)",
-		"Generate drafts for X, LinkedIn, Threads, Bluesky, Mastodon, and Substack Notes",
+		"Paste an article URL or its text",
+		"One post tailored to each network: X, LinkedIn, Threads, Bluesky, Mastodon, and Substack",
+		"Free-tier character limits per platform (X 280, Bluesky 300, Threads and Mastodon 500)",
+		"Post length control for the longer-form networks (LinkedIn and Substack)",
 		"Tone control: auto, professional, casual, educational, punchy",
-		"Voice, emoji density, hashtag density preferences",
-		"X thread generator with configurable length",
+		"Voice, emoji density, and hashtag density preferences",
+		"Multi-post threads for X, Bluesky, Threads, and Mastodon",
 		"Custom always-include and never-use hashtag rules",
-		"Save named templates for repeat workflows",
-		"Regenerate a single platform's draft without re-fetching",
-		"Edit drafts inline with live character counters",
+		"Save reusable presets of your tone, platforms, and writing style",
+		"Regenerate a single platform's post without re-fetching",
+		"Edit posts inline with live character counters",
 		"Local history across sessions",
 		"Bring Your Own Key (Google AI Studio / Gemini) for unlimited use",
 		"Copy-only by design — no OAuth, no publishing credentials stored",

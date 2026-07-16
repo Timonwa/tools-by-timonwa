@@ -1,7 +1,8 @@
 import { HeartIcon, WrenchIcon } from "lucide-react";
 import Link from "next/link";
 
-import { GithubMark } from "@/components/ui";
+import { GithubMark } from "@/components/icons/brand";
+import { Tooltip } from "@/components/ui";
 import {
 	CREATOR_NAME,
 	CREATOR_BLOG_URL,
@@ -91,26 +92,28 @@ export default function Footer() {
 							{SITE_DESCRIPTION}
 						</p>
 						<div className="mt-4 flex items-center gap-2">
-							<a
-								href={SUPPORT_URL}
-								target="_blank"
-								rel="noopener noreferrer"
-								aria-label="Support"
-								title="Support"
-								className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-							>
-								<HeartIcon aria-hidden className="h-4 w-4" />
-							</a>
-							<a
-								href={REPO_URL}
-								target="_blank"
-								rel="noopener noreferrer"
-								aria-label="Star on GitHub"
-								title="Star on GitHub"
-								className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-							>
-								<GithubMark aria-hidden className="h-4 w-4" />
-							</a>
+							<Tooltip label="Support">
+								<a
+									href={SUPPORT_URL}
+									target="_blank"
+									rel="noopener noreferrer"
+									aria-label="Support"
+									className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+								>
+									<HeartIcon aria-hidden className="h-4 w-4" />
+								</a>
+							</Tooltip>
+							<Tooltip label="Star on GitHub">
+								<a
+									href={REPO_URL}
+									target="_blank"
+									rel="noopener noreferrer"
+									aria-label="Star on GitHub"
+									className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+								>
+									<GithubMark aria-hidden className="h-4 w-4" />
+								</a>
+							</Tooltip>
 						</div>
 					</div>
 

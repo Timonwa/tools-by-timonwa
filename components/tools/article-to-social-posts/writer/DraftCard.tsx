@@ -7,8 +7,6 @@ import {
 	RefreshCwIcon,
 } from "lucide-react";
 import {
-	GROUP_CHAR_LIMITS,
-	GROUP_LABELS,
 	PLATFORM_COLORS,
 	PLATFORM_ICONS,
 	PLATFORM_LABELS,
@@ -21,14 +19,8 @@ import {
 	CardHeader,
 	CardTitle,
 	Textarea,
+	Tooltip,
 } from "@/components/ui";
-
-// Per-post char limit inside a thread, by group.
-const THREAD_POST_LIMITS: Record<PostDraftType["group"], number> = {
-	short: 280,
-	medium: 500,
-	long: 3000,
-};
 
 type Props = {
 	draft: PostDraftType;
@@ -50,30 +42,24 @@ export default function DraftCard({
 	onRegenerate,
 }: Props) {
 	const isThread = draft.thread && draft.thread.length > 1;
-	const charLimit = GROUP_CHAR_LIMITS[draft.group];
-	const threadPostLimit = THREAD_POST_LIMITS[draft.group];
-	const over = draft.charCount > charLimit;
+	const regenLabel = isThread
+		? "Regenerate this thread"
+		: "Regenerate this post";
+	const Icon = PLATFORM_ICONS[draft.platform];
+	const label = PLATFORM_LABELS[draft.platform];
+	const limit = draft.charLimit;
+	const over = draft.charCount > limit;
 
 	return (
 		<Card className="min-w-0 break-inside-avoid">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2 text-base flex-wrap">
-					<span className="flex items-center gap-1 shrink-0">
-						{draft.platforms.map((p) => {
-							const Icon = PLATFORM_ICONS[p];
-							return (
-								<Icon
-									key={p}
-									aria-label={PLATFORM_LABELS[p]}
-									className={`w-4 h-4 shrink-0 ${PLATFORM_COLORS[p]}`}
-								/>
-							);
-						})}
-					</span>
+					<Icon
+						aria-hidden
+						className={`w-4 h-4 shrink-0 ${PLATFORM_COLORS[draft.platform]}`}
+					/>
 					<span className="leading-snug">
-						{GROUP_LABELS[draft.group]}
-						{" · "}
-						{draft.platforms.map((p) => PLATFORM_LABELS[p]).join(", ")}
+						{label}
 						{isThread && ` · Thread (${draft.thread?.length})`}
 					</span>
 				</CardTitle>
@@ -82,7 +68,7 @@ export default function DraftCard({
 				{isThread ? (
 					<div className="space-y-2">
 						{draft.thread?.map((post, i) => {
-							const postOver = post.length > threadPostLimit;
+							const postOver = post.length > limit;
 							return (
 								<div
 									// stable order
@@ -93,7 +79,7 @@ export default function DraftCard({
 										{i + 1} / {draft.thread?.length}
 									</div>
 									<Textarea
-										aria-label={`Thread post ${i + 1} of ${draft.thread?.length}`}
+										aria-label={`${label} thread post ${i + 1} of ${draft.thread?.length}`}
 										value={post}
 										onChange={(e) => onThreadPostChange(i, e.target.value)}
 										className="resize-none text-sm"
@@ -102,12 +88,12 @@ export default function DraftCard({
 										className={`text-[10px] text-right font-mono ${
 											postOver
 												? "text-destructive font-semibold"
-												: post.length > threadPostLimit * 0.9
+												: post.length > limit * 0.9
 													? "text-yellow-500 dark:text-yellow-400"
 													: "text-muted-foreground"
 										}`}
 									>
-										{post.length} / {threadPostLimit}
+										{post.length} / {limit}
 									</div>
 								</div>
 							);
@@ -116,26 +102,26 @@ export default function DraftCard({
 				) : (
 					<>
 						<Textarea
-							aria-label={`${draft.platforms.map((p) => PLATFORM_LABELS[p]).join(", ")} post content`}
+							aria-label={`${label} post content`}
 							value={draft.content}
 							onChange={(e) => onContentChange(e.target.value)}
 							className={
-								draft.group === "long"
+								limit >= 1500
 									? "h-64 resize-y [field-sizing:normal]"
 									: "resize-none"
 							}
 						/>
 						<output
-							aria-label={`${draft.charCount} of ${charLimit} characters used`}
+							aria-label={`${draft.charCount} of ${limit} characters used`}
 							className={`block text-xs font-mono text-right ${
 								over
 									? "text-destructive font-semibold"
-									: draft.charCount > charLimit * 0.9
+									: draft.charCount > limit * 0.9
 										? "text-yellow-500 dark:text-yellow-400"
 										: "text-muted-foreground"
 							}`}
 						>
-							{draft.charCount} / {charLimit}
+							{draft.charCount} / {limit}
 						</output>
 					</>
 				)}
@@ -173,19 +159,21 @@ export default function DraftCard({
 						)}
 					</Button>
 
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={onRegenerate}
-						disabled={isRegenerating}
-						title="Regenerate just this draft"
-					>
-						{isRegenerating ? (
-							<Loader2Icon className="w-4 h-4 animate-spin" />
-						) : (
-							<RefreshCwIcon className="w-4 h-4" />
-						)}
-					</Button>
+					<Tooltip label={regenLabel}>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={onRegenerate}
+							disabled={isRegenerating}
+							aria-label={regenLabel}
+						>
+							{isRegenerating ? (
+								<Loader2Icon className="w-4 h-4 animate-spin" />
+							) : (
+								<RefreshCwIcon className="w-4 h-4" />
+							)}
+						</Button>
+					</Tooltip>
 				</div>
 			</CardContent>
 		</Card>

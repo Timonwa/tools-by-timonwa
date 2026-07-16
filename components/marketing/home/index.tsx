@@ -1,6 +1,4 @@
-import { WrenchIcon } from "lucide-react";
-
-import Navbar from "@/components/layout/Navbar";
+import HubNavbar from "@/components/layout/HubNavbar";
 import Newsletter from "@/components/marketing/Newsletter";
 import Hero from "@/components/marketing/home/Hero";
 import ToolsGrid from "@/components/marketing/home/ToolsGrid";
@@ -8,14 +6,7 @@ import ToolsGrid from "@/components/marketing/home/ToolsGrid";
 export default function HubHomePageContent() {
 	return (
 		<>
-			<Navbar
-				brand={{
-					href: "/",
-					name: "Tools by Timonwa",
-					icon: WrenchIcon,
-					ariaLabel: "Tools by Timonwa — home",
-				}}
-			/>
+			<HubNavbar />
 			<main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-20 max-w-6xl">
 				<Hero />
 				<ToolsGrid />

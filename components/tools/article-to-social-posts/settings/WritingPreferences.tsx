@@ -6,12 +6,12 @@ import { useId } from "react";
 import {
 	EMOJI_LEVEL_LABELS,
 	HASHTAG_LEVEL_LABELS,
-	SUBSTACK_LENGTH_LABELS,
+	POST_LENGTH_LABELS,
 	VOICE_LABELS,
 } from "@/components/tools/article-to-social-posts/constants/preferences";
 import type {
 	LevelType,
-	SubstackLengthType,
+	PostLengthType,
 	VoiceType,
 	WritingPreferencesType,
 } from "@/components/tools/article-to-social-posts/types";
@@ -23,9 +23,7 @@ type WritingPreferencesProps = {
 
 const LEVELS: LevelType[] = [1, 2, 3, 4, 5];
 const VOICES = Object.keys(VOICE_LABELS) as VoiceType[];
-const SUBSTACK_LENGTHS = Object.keys(
-	SUBSTACK_LENGTH_LABELS,
-) as SubstackLengthType[];
+const POST_LENGTHS = Object.keys(POST_LENGTH_LABELS) as PostLengthType[];
 
 function Chip({
 	active,
@@ -63,7 +61,7 @@ export default function WritingPreferencesSection({
 	const voiceLabelId = useId();
 	const emojiLabelId = useId();
 	const hashtagLabelId = useId();
-	const substackLabelId = useId();
+	const lengthLabelId = useId();
 
 	return (
 		<section aria-labelledby={headingId} className="space-y-4">
@@ -74,7 +72,7 @@ export default function WritingPreferencesSection({
 				</h3>
 			</div>
 			<p className="text-xs text-muted-foreground">
-				Applied to every draft. Stored on this device.
+				Applied to every post. Stored on this device.
 			</p>
 
 			<div className="space-y-2">
@@ -157,27 +155,30 @@ export default function WritingPreferencesSection({
 			</div>
 
 			<div className="space-y-2">
-				<div
-					id={substackLabelId}
-					className="text-xs font-medium text-foreground"
-				>
-					Substack post length
+				<div id={lengthLabelId} className="text-xs font-medium text-foreground">
+					Post length{" "}
+					<span className="text-muted-foreground font-normal">
+						(LinkedIn &amp; Substack)
+					</span>
 				</div>
 				<fieldset
-					aria-labelledby={substackLabelId}
-					className="grid grid-cols-2 gap-1.5 border-0 p-0 m-0 min-w-0"
+					aria-labelledby={lengthLabelId}
+					className="grid grid-cols-3 gap-1.5 border-0 p-0 m-0 min-w-0"
 				>
-					{SUBSTACK_LENGTHS.map((v) => (
+					{POST_LENGTHS.map((v) => (
 						<Chip
 							key={v}
-							active={prefs.substackLength === v}
-							label={`Substack length: ${SUBSTACK_LENGTH_LABELS[v]}`}
-							onClick={() => onChange({ substackLength: v })}
+							active={prefs.postLength === v}
+							label={`Post length: ${POST_LENGTH_LABELS[v]} characters`}
+							onClick={() => onChange({ postLength: v })}
 						>
-							{SUBSTACK_LENGTH_LABELS[v]}
+							{POST_LENGTH_LABELS[v]}
 						</Chip>
 					))}
 				</fieldset>
+				<p className="text-[11px] text-muted-foreground mt-1">
+					Approximate characters per post.
+				</p>
 			</div>
 		</section>
 	);

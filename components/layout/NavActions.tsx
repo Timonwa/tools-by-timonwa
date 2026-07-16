@@ -154,6 +154,7 @@ export default function NavActions({
 					target="_blank"
 					rel="noopener noreferrer"
 					className={cta}
+					title="Star on GitHub"
 				>
 					<span aria-hidden>⭐</span>
 					<span>Star on GitHub</span>
