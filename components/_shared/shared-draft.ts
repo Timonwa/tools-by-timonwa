@@ -30,6 +30,7 @@ const TEXT_KEY = "tools:shared-draft";
 const URL_KEY = "tools:shared-draft-url";
 const TEXT_ENABLED_KEY = "tools:shared-draft-enabled";
 const URL_ENABLED_KEY = "tools:shared-draft-url-enabled";
+const KIND_KEY = "tools:shared-draft-kind";
 
 const stringStore = (key: string) =>
 	createLocalStore<string>({
@@ -71,6 +72,9 @@ const textStore = stringStore(TEXT_KEY);
 const urlStore = stringStore(URL_KEY);
 const textEnabledStore = flagStore(TEXT_ENABLED_KEY);
 const urlEnabledStore = flagStore(URL_ENABLED_KEY);
+// The active tab (url / text), shared across the AI tools so you land on the
+// tab you last used. A view pointer, not content — not gated by either reuse.
+const kindStore = stringStore(KIND_KEY);
 
 /** Seed for a history restore: a bare text string, or a full source. */
 export type ToolDraftSeedType =
@@ -130,10 +134,15 @@ export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
 		urlStore.getSnapshot,
 		urlStore.getServerSnapshot,
 	);
+	const sharedKind = useSyncExternalStore(
+		kindStore.subscribe,
+		kindStore.getSnapshot,
+		kindStore.getServerSnapshot,
+	);
 
 	const [localText, setLocalText] = useState(seedText);
 	const [localUrl, setLocalUrl] = useState(seedUrl);
-	const [inputKind, setInputKind] = useState<InputKindType>(seedKind);
+	const [localKind, setLocalKind] = useState<InputKindType>(seedKind);
 
 	// A non-empty seed on mount (history restore) adopts into the matching shared
 	// channel when its reuse is on. Writes the external stores only — never React
@@ -144,10 +153,21 @@ export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
 		seeded.current = true;
 		if (textEnabledStore.get() && seedText) textStore.set(seedText);
 		if (urlEnabledStore.get() && seedUrl) urlStore.set(seedUrl);
-	}, [seedText, seedUrl]);
+		// A history restore also updates the shared "last used tab".
+		if (seedObj.kind && (seedText || seedUrl)) kindStore.set(seedObj.kind);
+	}, [seedText, seedUrl, seedObj.kind]);
 
 	const text = textReuse ? sharedText : localText;
 	const url = urlReuse ? sharedUrl : localUrl;
+	// The active tab is shared across the AI tools, so you land on the tab you
+	// last used; before any choice, each tool falls back to its own default.
+	const inputKind: InputKindType =
+		sharedKind === "url" || sharedKind === "text" ? sharedKind : localKind;
+
+	const setInputKind = useCallback((kind: InputKindType) => {
+		kindStore.set(kind);
+		setLocalKind(kind);
+	}, []);
 
 	const setText = useCallback((value: string) => {
 		if (textEnabledStore.get()) textStore.set(value);
