@@ -13,11 +13,39 @@ import type {
 	WritingPreferencesType,
 } from "@/components/tools/article-to-social-posts/types";
 import {
-	DEFAULT_WORKFLOW,
 	prefsStorage,
 	templatesStorage,
 	workflowStorage,
 } from "@/components/tools/article-to-social-posts/utils/storage";
+
+/**
+ * Distinct starter presets seeded on first run — deliberately different (a
+ * polished single LinkedIn post, a punchy X thread, casual across networks) so
+ * new users see the range of what a preset can do and have somewhere to start.
+ */
+const STARTER_PRESETS: Omit<PresetTemplateType, "id" | "createdAt">[] = [
+	{
+		name: "LinkedIn pro",
+		tone: "professional",
+		platforms: ["linkedin"],
+		xThreadLength: 1,
+		preferences: { ...DEFAULT_PREFERENCES, emojiLevel: 1, hashtagLevel: 2 },
+	},
+	{
+		name: "X thread",
+		tone: "punchy",
+		platforms: ["x"],
+		xThreadLength: 5,
+		preferences: { ...DEFAULT_PREFERENCES, emojiLevel: 3, hashtagLevel: 2 },
+	},
+	{
+		name: "Casual everywhere",
+		tone: "casual",
+		platforms: ["linkedin", "x", "threads", "bluesky"],
+		xThreadLength: 1,
+		preferences: { ...DEFAULT_PREFERENCES, emojiLevel: 4 },
+	},
+];
 
 /**
  * Deep match: tone, xThreadLength, platforms (order-insensitive), and every
@@ -85,21 +113,17 @@ export function usePresets() {
 		[templates, workflow, prefs],
 	);
 
-	// Seed a "Default" preset from the built-in defaults on first run, so the
-	// user's first preset already exists and shows how the feature works.
+	// Seed the distinct starter presets on first run, so new users have varied
+	// examples to apply and see how the feature works.
 	useEffect(() => {
 		if (templatesStorage.get().length > 0) return;
-		templatesStorage.set([
-			{
+		templatesStorage.set(
+			STARTER_PRESETS.map((p) => ({
+				...p,
 				id: crypto.randomUUID(),
-				name: "Default",
 				createdAt: Date.now(),
-				tone: DEFAULT_WORKFLOW.tone,
-				platforms: DEFAULT_WORKFLOW.platforms,
-				xThreadLength: DEFAULT_WORKFLOW.xThreadLength,
-				preferences: DEFAULT_PREFERENCES,
-			},
-		]);
+			})),
+		);
 	}, []);
 
 	const save = useCallback((name: string) => {
