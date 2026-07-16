@@ -1,17 +1,32 @@
 "use client";
 
-import { CheckIcon, CopyIcon } from "lucide-react";
+import {
+	CheckIcon,
+	ClipboardCheckIcon,
+	ClipboardCopyIcon,
+	CopyIcon,
+	Loader2Icon,
+	RefreshCwIcon,
+	TagsIcon,
+} from "lucide-react";
 import { useState } from "react";
 
 import {
 	DESC_MAX,
 	DESC_MIN,
 	type SeoVariationType,
-	type TokenUsageType,
 	TITLE_MAX,
 	TITLE_MIN,
 } from "@/components/tools/article-to-seo-meta/types";
-import { Button, Textarea } from "@/components/ui";
+import {
+	Button,
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+	Textarea,
+	Tooltip,
+} from "@/components/ui";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -25,36 +40,37 @@ function status(len: number, min: number, max: number): RangeStatusType {
 
 type Props = {
 	variations: SeoVariationType[];
-	usage: TokenUsageType | null;
+	/** Index currently regenerating, or null (drives the per-card spinner). */
+	regeneratingIndex: number | null;
+	/** Any run in flight — disables regenerate on every card so requests can't race. */
+	busy: boolean;
 	onVariationChange: (
 		index: number,
 		field: "title" | "description",
 		value: string,
 	) => void;
+	onRegenerate: (index: number) => void;
 };
 
 export default function SeoResults({
 	variations,
-	usage,
+	regeneratingIndex,
+	busy,
 	onVariationChange,
+	onRegenerate,
 }: Props) {
 	return (
-		<div className="space-y-4">
-			{usage && usage.totalTokens > 0 && (
-				<p
-					title={`Prompt: ${usage.promptTokens} · Completion: ${usage.completionTokens}`}
-					className="text-xs text-muted-foreground font-mono text-right"
-				>
-					{usage.totalTokens.toLocaleString()} tokens
-				</p>
-			)}
+		<div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
 			{variations.map((v, i) => (
 				<VariationCard
 					// stable order
 					key={i}
 					index={i + 1}
 					variation={v}
+					isRegenerating={regeneratingIndex === i}
+					canRegenerate={!busy}
 					onChange={(field, value) => onVariationChange(i, field, value)}
+					onRegenerate={() => onRegenerate(i)}
 				/>
 			))}
 		</div>
@@ -64,45 +80,73 @@ export default function SeoResults({
 function VariationCard({
 	index,
 	variation,
+	isRegenerating,
+	canRegenerate,
 	onChange,
+	onRegenerate,
 }: {
 	index: number;
 	variation: SeoVariationType;
+	isRegenerating: boolean;
+	canRegenerate: boolean;
 	onChange: (field: "title" | "description", value: string) => void;
+	onRegenerate: () => void;
 }) {
 	const titleStatus = status(variation.title.length, TITLE_MIN, TITLE_MAX);
 	const descStatus = status(variation.description.length, DESC_MIN, DESC_MAX);
 
 	return (
-		<article className="rounded-xl border border-border bg-card p-5 space-y-4 shadow-sm">
-			<header className="flex items-center justify-between">
-				<span className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium">
+		<Card className="min-w-0">
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2 text-base">
+					<TagsIcon aria-hidden className="w-4 h-4 shrink-0 text-primary" />
 					Variation {index}
-				</span>
-				<CopyButton
-					label="Copy both"
-					value={`${variation.title}\n\n${variation.description}`}
+				</CardTitle>
+			</CardHeader>
+			<CardContent className="space-y-4">
+				<Field
+					label="Title"
+					value={variation.title}
+					min={TITLE_MIN}
+					max={TITLE_MAX}
+					status={titleStatus}
+					onChange={(v) => onChange("title", v)}
 				/>
-			</header>
 
-			<Field
-				label="Title"
-				value={variation.title}
-				min={TITLE_MIN}
-				max={TITLE_MAX}
-				status={titleStatus}
-				onChange={(v) => onChange("title", v)}
-			/>
+				<Field
+					label="Description"
+					value={variation.description}
+					min={DESC_MIN}
+					max={DESC_MAX}
+					status={descStatus}
+					onChange={(v) => onChange("description", v)}
+				/>
 
-			<Field
-				label="Description"
-				value={variation.description}
-				min={DESC_MIN}
-				max={DESC_MAX}
-				status={descStatus}
-				onChange={(v) => onChange("description", v)}
-			/>
-		</article>
+				<div className="flex gap-2">
+					<CopyButton
+						label="Copy both"
+						value={`${variation.title}\n\n${variation.description}`}
+						className="flex-1"
+					/>
+					<Tooltip label="Regenerate this variation">
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							onClick={onRegenerate}
+							disabled={!canRegenerate}
+							aria-label="Regenerate this variation"
+						>
+							{isRegenerating ? (
+								<Loader2Icon aria-hidden className="w-4 h-4 animate-spin" />
+							) : (
+								<RefreshCwIcon aria-hidden className="w-4 h-4" />
+							)}
+						</Button>
+					</Tooltip>
+				</div>
+			</CardContent>
+		</Card>
 	);
 }
 
@@ -145,7 +189,7 @@ function Field({
 						{value.length} / {min}–{max}
 					</span>
 				</div>
-				<CopyButton label="Copy" value={value} />
+				<CopyButton label="Copy" value={value} icon={CopyIcon} />
 			</div>
 			<Textarea
 				aria-label={label}
@@ -160,13 +204,25 @@ function Field({
 	);
 }
 
-function CopyButton({ label, value }: { label: string; value: string }) {
+function CopyButton({
+	label,
+	value,
+	className,
+	icon: Icon = ClipboardCopyIcon,
+}: {
+	label: string;
+	value: string;
+	className?: string;
+	icon?: typeof ClipboardCopyIcon;
+}) {
 	const [copied, setCopied] = useState(false);
+	const CopiedIcon = Icon === CopyIcon ? CheckIcon : ClipboardCheckIcon;
 	return (
 		<Button
 			type="button"
-			variant="ghost"
+			variant={className ? "outline" : "ghost"}
 			size="sm"
+			className={className}
 			onClick={() => {
 				navigator.clipboard.writeText(value);
 				setCopied(true);
@@ -175,12 +231,12 @@ function CopyButton({ label, value }: { label: string; value: string }) {
 		>
 			{copied ? (
 				<>
-					<CheckIcon aria-hidden className="w-3.5 h-3.5" />
+					<CopiedIcon aria-hidden className="w-3.5 h-3.5" />
 					Copied
 				</>
 			) : (
 				<>
-					<CopyIcon aria-hidden className="w-3.5 h-3.5" />
+					<Icon aria-hidden className="w-3.5 h-3.5" />
 					{label}
 				</>
 			)}

@@ -1,11 +1,17 @@
 "use client";
 
-import { useActionState, useId, useState } from "react";
+import { FilePlus2Icon, Loader2Icon, SparklesIcon } from "lucide-react";
+import {
+	type RefObject,
+	useActionState,
+	useEffect,
+	useId,
+	useState,
+} from "react";
 import { useFormStatus } from "react-dom";
 
-import DraftReuseControls from "@/components/_shared/DraftReuseControls";
+import ArticleSourceInput from "@/components/_shared/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/ErrorNotice";
-import InputKindTabs from "@/components/_shared/InputKindTabs";
 import { useToolDraft } from "@/components/_shared/shared-draft";
 import {
 	type DraftInputType,
@@ -13,7 +19,7 @@ import {
 	type SeoMetaResultType,
 	type TokenUsageType,
 } from "@/components/tools/article-to-seo-meta/types";
-import { Button, Input, Textarea } from "@/components/ui";
+import { Button, Input } from "@/components/ui";
 
 import { generateSeoMeta } from "@/lib/tools/article-to-seo-meta/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
@@ -33,6 +39,13 @@ type SeoFormProps = {
 		params: SeoFormParamsType,
 	) => void;
 	onLoadingChange?: (loading: boolean) => void;
+	/** Clear the parent's results when starting a fresh article. */
+	onReset?: () => void;
+	/** Parent-held ref that receives this form's "new article" reset, so a
+	 * button outside the form (e.g. below the results) can clear the inputs. */
+	resetRef?: RefObject<(() => void) | null>;
+	/** Any run in flight (full generate or a single-variation regenerate). */
+	busy?: boolean;
 	/** Seed values for a restore-from-history. The parent remounts this form
 	 * (via `key`) when restoring, so these are read once on mount. */
 	initial?: SeoFormParamsType;
@@ -41,22 +54,30 @@ type SeoFormProps = {
 
 function SubmitButton({
 	disabled,
-	hasResult,
+	isNewArticle,
 }: {
 	disabled?: boolean;
-	hasResult?: boolean;
+	isNewArticle?: boolean;
 }) {
 	const { pending } = useFormStatus();
-	const label = pending
-		? hasResult
-			? "Regenerating…"
-			: "Generating…"
-		: hasResult
-			? "Regenerate variations"
-			: "Generate variations";
 	return (
-		<Button type="submit" size="lg" disabled={pending || disabled}>
-			{label}
+		<Button
+			type="submit"
+			size="lg"
+			className="w-full sm:flex-1"
+			disabled={pending || disabled}
+		>
+			{pending ? (
+				<>
+					<Loader2Icon className="w-4 h-4 animate-spin" />
+					{isNewArticle ? "Generating…" : "Regenerating…"}
+				</>
+			) : (
+				<>
+					<SparklesIcon className="w-4 h-4" />
+					{isNewArticle ? "Generate variations" : "Regenerate variations"}
+				</>
+			)}
 		</Button>
 	);
 }
@@ -64,6 +85,9 @@ function SubmitButton({
 export default function SeoForm({
 	onResult,
 	onLoadingChange,
+	onReset,
+	resetRef,
+	busy,
 	initial,
 	hasResult,
 }: SeoFormProps) {
@@ -87,15 +111,39 @@ export default function SeoForm({
 	});
 	const [keyword, setKeyword] = useState(initial?.primaryKeyword ?? "");
 	const [count, setCount] = useState<1 | 2 | 3>(initial?.variationCount ?? 3);
-	const urlId = useId();
-	const articleId = useId();
 	const keywordId = useId();
-	const reuseId = useId();
 
 	const articleLen = article.length;
 	const overLimit = articleLen > MAX_ARTICLE_CHARS;
 	const hasInput =
 		inputKind === "url" ? url.trim().length > 0 : article.trim().length > 0;
+
+	// "Regenerate" only when the form's input is still the article that produced
+	// the results on screen. A changed source reads as "Generate" so it never
+	// looks like it will overwrite the current variations.
+	const currentSourceKey =
+		inputKind === "url" ? `url:${url.trim()}` : `text:${article}`;
+	const generated = initial?.source;
+	const generatedKey = generated
+		? generated.kind === "url"
+			? `url:${generated.url.trim()}`
+			: `text:${generated.text}`
+		: null;
+	const isNewArticle =
+		!hasResult || !generatedKey || currentSourceKey !== generatedKey;
+
+	const handleNewArticle = () => {
+		setUrl("");
+		setArticle("");
+		setKeyword("");
+		onReset?.();
+	};
+
+	// Expose the reset so a button outside the form can trigger it. Assigned on
+	// every render so it always points at the latest closure.
+	useEffect(() => {
+		if (resetRef) resetRef.current = handleNewArticle;
+	});
 
 	// The form action validates client-side, calls the server action, and hands
 	// results straight to the parent — returning only an error string for display
@@ -150,78 +198,21 @@ export default function SeoForm({
 
 	return (
 		<form action={formAction} className="space-y-5">
-			<div>
-				<InputKindTabs
-					value={inputKind}
-					onChange={setInputKind}
-					disabled={isPending}
-					textLabel="Paste article"
-				/>
-
-				{inputKind === "url" ? (
-					<div className="mt-3">
-						<label htmlFor={urlId} className="block text-sm font-medium mb-2">
-							Article URL
-						</label>
-						<Input
-							id={urlId}
-							type="url"
-							value={url}
-							onChange={(e) => setUrl(e.target.value)}
-							placeholder="https://your-blog.com/post-slug"
-							disabled={isPending}
-						/>
-						<p className="mt-1 text-xs text-muted-foreground">
-							Point at a published post to write meta tags for a live article.
-						</p>
-						<DraftReuseControls
-							id={reuseId}
-							reuse={urlReuse}
-							onToggleReuse={toggleUrlReuse}
-							onClear={() => setUrl("")}
-							canClear={url.trim().length > 0}
-							disabled={isPending}
-							className="mt-2"
-							noun="link"
-							scope="the AI tools"
-						/>
-					</div>
-				) : (
-					<div className="mt-3">
-						<label
-							htmlFor={articleId}
-							className="block text-sm font-medium mb-2"
-						>
-							Your draft
-						</label>
-						<Textarea
-							id={articleId}
-							value={article}
-							onChange={(e) => setArticle(e.target.value)}
-							placeholder="Paste the full article, or a solid draft…"
-							disabled={isPending}
-							className="h-48 max-h-96 resize-y [field-sizing:normal]"
-						/>
-						<p
-							className={`mt-1 text-xs tabular-nums ${
-								overLimit ? "text-destructive" : "text-muted-foreground"
-							}`}
-						>
-							{articleLen.toLocaleString()} /{" "}
-							{MAX_ARTICLE_CHARS.toLocaleString()} chars
-						</p>
-						<DraftReuseControls
-							id={reuseId}
-							reuse={textReuse}
-							onToggleReuse={toggleTextReuse}
-							onClear={clearArticle}
-							canClear={article.length > 0}
-							disabled={isPending}
-							className="mt-2"
-						/>
-					</div>
-				)}
-			</div>
+			<ArticleSourceInput
+				inputKind={inputKind}
+				onInputKindChange={setInputKind}
+				url={url}
+				onUrlChange={setUrl}
+				urlReuse={urlReuse}
+				onToggleUrlReuse={toggleUrlReuse}
+				text={article}
+				onTextChange={setArticle}
+				textReuse={textReuse}
+				onToggleTextReuse={toggleTextReuse}
+				onClearText={clearArticle}
+				disabled={isPending}
+				maxChars={MAX_ARTICLE_CHARS}
+			/>
 
 			<div>
 				<label htmlFor={keywordId} className="block text-sm font-medium mb-2">
@@ -267,10 +258,26 @@ export default function SeoForm({
 
 			{state?.error && <ErrorNotice message={state.error} />}
 
-			<SubmitButton
-				disabled={!hasInput || (inputKind === "text" && overLimit)}
-				hasResult={hasResult}
-			/>
+			<div className="flex flex-col gap-2 sm:flex-row">
+				<SubmitButton
+					disabled={!hasInput || (inputKind === "text" && overLimit) || busy}
+					isNewArticle={isNewArticle}
+				/>
+				{hasResult && (
+					<Button
+						type="button"
+						variant="outline"
+						size="lg"
+						onClick={handleNewArticle}
+						disabled={isPending || busy}
+						className="w-full sm:w-auto"
+						title="Clear the form and results to start a fresh article — saved results stay in history"
+					>
+						<FilePlus2Icon aria-hidden className="w-4 h-4" />
+						New article
+					</Button>
+				)}
+			</div>
 		</form>
 	);
 }

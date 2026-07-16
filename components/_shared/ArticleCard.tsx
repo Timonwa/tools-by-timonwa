@@ -1,10 +1,7 @@
 "use client";
 
 import { ClipboardCheckIcon, ClipboardCopyIcon } from "lucide-react";
-import type {
-	ArticlePreviewType,
-	TokenUsageType,
-} from "@/components/tools/article-to-social-posts/types";
+
 import {
 	Button,
 	Card,
@@ -12,19 +9,28 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui";
+import type { TokenUsageType } from "@/lib/types/token-usage";
 
 type Props = {
-	article: ArticlePreviewType;
+	article: { title?: string; author?: string; url?: string };
 	usage: TokenUsageType | null;
 	copied: boolean;
 	onCopyAll: () => void;
+	/** Copy-button label, e.g. "Copy all posts" or "Copy all variations". */
+	copyLabel: string;
 };
 
+/**
+ * Header card for a generated result: the source article's title, author, and
+ * link (or "Pasted text"), token usage, and a copy-everything button. Shared by
+ * the draft-based AI tools so the results header looks identical across them.
+ */
 export default function ArticleCard({
 	article,
 	usage,
 	copied,
 	onCopyAll,
+	copyLabel,
 }: Props) {
 	return (
 		<Card>
@@ -40,7 +46,7 @@ export default function ArticleCard({
 						) : (
 							<>
 								<ClipboardCopyIcon className="w-4 h-4" />
-								Copy all posts
+								{copyLabel}
 							</>
 						)}
 					</Button>

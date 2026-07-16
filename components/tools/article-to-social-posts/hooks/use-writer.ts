@@ -369,6 +369,11 @@ export function useWriter() {
 		[setText, setUrl, setInputKind],
 	);
 
+	// One "busy" flag for the whole tool: true during a full generate/regenerate
+	// (`isGenerating`) or any single-post regenerate. Every action button gates on
+	// it so one in-flight request can't race another.
+	const isBusy = isGenerating || Object.values(regenerating).some(Boolean);
+
 	return {
 		inputKind,
 		setInputKind,
@@ -388,6 +393,7 @@ export function useWriter() {
 		xThreadLength,
 		setXThreadLength,
 		isGenerating,
+		isBusy,
 		isNewArticle,
 		preview,
 		editableDrafts,

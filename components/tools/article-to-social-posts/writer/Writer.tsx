@@ -2,12 +2,21 @@
 
 import { FilePlus2Icon, Loader2Icon, RefreshCwIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
+import ArticleCard from "@/components/_shared/ArticleCard";
+import HistorySidebar from "@/components/_shared/HistorySidebar";
+import type { HistoryEntryType } from "@/components/tools/article-to-social-posts/hooks/use-history";
 import { useWriter } from "@/components/tools/article-to-social-posts/hooks/use-writer";
 import { Button } from "@/components/ui";
-import ArticleCard from "./ArticleCard";
 import DraftCard from "./DraftCard";
 import GenerateForm from "./GenerateForm";
-import HistorySidebar from "./HistorySidebar";
+
+/** History row headline: the article title, else the URL, else a text snippet. */
+const historyLabel = (h: HistoryEntryType): string => {
+	if (h.preview.article.title) return h.preview.article.title;
+	if (h.input.kind === "url") return h.input.url;
+	const firstLine = h.input.text.trim().split("\n")[0] ?? "";
+	return firstLine.slice(0, 80) || "Untitled";
+};
 
 export default function Writer() {
 	const w = useWriter();
@@ -44,6 +53,7 @@ export default function Writer() {
 					xThreadLength={w.xThreadLength}
 					onXThreadLengthChange={w.setXThreadLength}
 					isGenerating={w.isGenerating}
+					isBusy={w.isBusy}
 					hasResult={Boolean(w.preview)}
 					isNewArticle={w.isNewArticle}
 					onStartOver={w.clearAll}
@@ -65,6 +75,7 @@ export default function Writer() {
 							usage={w.lastUsage}
 							copied={w.copiedKey === "all"}
 							onCopyAll={w.copyAll}
+							copyLabel="Copy all posts"
 						/>
 
 						<div className="columns-1 md:columns-2 gap-4 space-y-4">
@@ -73,6 +84,7 @@ export default function Writer() {
 									key={draft.platform}
 									draft={draft}
 									isRegenerating={!!w.regenerating[draft.platform]}
+									busy={w.isBusy}
 									copied={w.copiedKey === `draft-${draft.platform}`}
 									onContentChange={(content) =>
 										w.updateDraftContent(draft.platform, content)
@@ -92,7 +104,7 @@ export default function Writer() {
 								variant="outline"
 								size="lg"
 								className="w-full sm:flex-1"
-								disabled={w.isGenerating}
+								disabled={w.isBusy}
 								title="Regenerate every post for this article with your current tone and settings"
 							>
 								{w.isGenerating ? (
@@ -112,7 +124,7 @@ export default function Writer() {
 								variant="outline"
 								size="lg"
 								className="w-full sm:flex-1"
-								disabled={w.isGenerating}
+								disabled={w.isBusy}
 								title="Clear these posts and start a fresh article — your saved posts stay in history"
 							>
 								<FilePlus2Icon className="w-4 h-4" />
@@ -124,8 +136,22 @@ export default function Writer() {
 			</div>
 
 			<HistorySidebar
-				entries={w.history}
-				onLoad={w.loadFromHistory}
+				items={w.history.map((h) => ({
+					id: h.id,
+					kind: h.input.kind,
+					title: historyLabel(h),
+					timestamp: h.timestamp,
+					meta: (
+						<>
+							<span>·</span>
+							<span>{h.platforms.length} platforms</span>
+						</>
+					),
+				}))}
+				onLoad={(id) => {
+					const entry = w.history.find((e) => e.id === id);
+					if (entry) w.loadFromHistory(entry);
+				}}
 				onRemove={w.removeHistoryEntry}
 			/>
 		</div>
