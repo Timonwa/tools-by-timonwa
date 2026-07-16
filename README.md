@@ -6,7 +6,6 @@
 <a href="./LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green?style=flat-square" /></a>
 <a href="./CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" /></a>
 <a href="https://tech.timonwa.com/code-of-conduct"><img alt="Contributor Covenant" src="https://img.shields.io/badge/Contributor%20Covenant-v2.1-7c3aed?style=flat-square" /></a>
-<a href="https://nextjs.org"><img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000?style=flat-square&logo=next.js" /></a>
 <a href="https://tech.timonwa.com/support"><img alt="Support" src="https://img.shields.io/badge/Support-%E2%9D%A4-ea4aaa?style=flat-square&logo=githubsupports&logoColor=white" /></a>
 </div>
 
@@ -47,16 +46,15 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Environment variables
 
-| Variable                                 | Required | Purpose                                                |
-| ---------------------------------------- | -------- | ------------------------------------------------------ |
-| `GOOGLE_API_KEY`                         | ✅       | Gemini key powering the tools                          |
-| `GOOGLE_API_KEY_ARTICLE_TO_SEO_META`     | —        | Optional per-tool key (falls back to `GOOGLE_API_KEY`) |
-| `GOOGLE_API_KEY_ARTICLE_TO_SOCIAL_POST`  | —        | Optional per-tool key                                  |
-| `LLM_MODEL`                              | —        | Server model (default `gemini-flash-latest`)           |
-| `UPSTASH_REDIS_REST_URL` / `..._TOKEN`   | —        | Enables hosted daily rate limiting                     |
-| `NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` | —        | Cloudflare Web Analytics beacon. Omit → disabled       |
+| Variable                                | Required | Purpose                                                |
+| --------------------------------------- | -------- | ------------------------------------------------------ |
+| `GOOGLE_API_KEY`                        | ✅       | Gemini key powering the tools                          |
+| `GOOGLE_API_KEY_ARTICLE_TO_SEO_META`    | —        | Optional per-tool key (falls back to `GOOGLE_API_KEY`) |
+| `GOOGLE_API_KEY_ARTICLE_TO_SOCIAL_POST` | —        | Optional per-tool key                                  |
+| `LLM_MODEL`                             | —        | Server model (default `gemini-flash-latest`)           |
+| `UPSTASH_REDIS_REST_URL` / `..._TOKEN`  | —        | Enables hosted daily rate limiting                     |
 
-Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, [ADK-TS](https://adk.iqai.com/) + Gemini, and Upstash Redis.
+Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, the [Vercel AI SDK](https://ai-sdk.dev/) + Gemini, and Upstash Redis.
 
 ## Contributing
 
@@ -68,7 +66,7 @@ Contributions are welcome — bug fixes, UX and accessibility improvements, agen
 - **Your input** is sent to Google Gemini only for that request; not logged or stored (URL-based fetches are cached in memory for up to an hour).
 - **History, preferences, and templates** live only in your browser's `localStorage`.
 - **Rate-limit counters** store a SHA-256 hash of your IP plus a daily count in Upstash Redis (resets at UTC midnight); bring-your-own-key requests skip this.
-- **No accounts, no profiles, no cross-session tracking.** Optional analytics use cookieless [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/).
+- **No accounts, no profiles, no tracking, and no analytics** of any kind.
 
 Full details: [tech.timonwa.com/privacy](https://tech.timonwa.com/privacy).
 

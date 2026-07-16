@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import Footer from "@/components/layout/Footer";
 import {
 	CREATOR_NAME,
 	CREATOR_TWITTER,
 	CREATOR_URL,
 	SITE_DESCRIPTION,
-	SITE_DOMAIN,
 	SITE_NAME,
 	SITE_TITLE,
 	SITE_URL,
 } from "@/lib/config/site";
 import "./globals.css";
-import { isProduction } from "@env";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -74,14 +71,6 @@ export default function RootLayout({
 			>
 				<div className="flex-1">{children}</div>
 				<Footer />
-				{isProduction && (
-					<Script
-						defer
-						data-domain={SITE_DOMAIN}
-						src="https://plausible.io/js/script.js"
-						strategy="afterInteractive"
-					/>
-				)}
 			</body>
 		</html>
 	);

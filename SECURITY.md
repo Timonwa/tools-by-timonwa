@@ -53,7 +53,7 @@ Please include:
 
 - Prompt injection of the LLM — tool agents' output is schema-validated and prompts are not treated as a secret (see `CONTRIBUTING.md`)
 - Rate-limit evasion — a known limitation of the hosted daily quota
-- Vulnerabilities in third-party services (Google AI Studio, Upstash, Vercel, Cloudflare) — please report those directly to the respective vendors
+- Vulnerabilities in third-party services (Google AI Studio, Upstash, Vercel) — please report those directly to the respective vendors
 - Missing best-practice HTTP headers that have no concrete impact
 - Findings from automated scanners without a reproducible exploit
 
