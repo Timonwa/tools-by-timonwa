@@ -15,14 +15,19 @@ type DraftReuseControlsProps = {
 	canClear: boolean;
 	disabled?: boolean;
 	className?: string;
+	/** What's being shared, e.g. "draft" (default) or "link". */
+	noun?: string;
+	/** Who it's shared with, e.g. "your other article tools" (default). */
+	scope?: string;
 };
 
 /**
- * The opt-in "reuse this draft across tools" checkbox plus a Clear button.
- * Pairs with `useToolDraft`. When reuse is on the textarea *is* the shared
- * draft, so Clear relabels to "Clear shared draft" (with a matching tooltip) to
- * make plain it wipes the draft everywhere, not just this box. Unticking keeps
- * the text in this tool — it never blanks the field.
+ * The opt-in "reuse this <noun> across tools" checkbox plus a Clear button.
+ * Pairs with `useToolDraft`. When reuse is on the field *is* the shared value,
+ * so Clear relabels to "Clear shared <noun>" (with a matching tooltip) to make
+ * plain it wipes it everywhere, not just this box. Unticking keeps the value in
+ * this tool — it never blanks the field. `noun`/`scope` let the same control
+ * describe a shared draft (text tools) or a shared link (AI tools).
  */
 export default function DraftReuseControls({
 	id,
@@ -32,6 +37,8 @@ export default function DraftReuseControls({
 	canClear,
 	disabled,
 	className,
+	noun = "draft",
+	scope = "your other article tools",
 }: DraftReuseControlsProps) {
 	return (
 		<div
@@ -52,7 +59,7 @@ export default function DraftReuseControls({
 					disabled={disabled}
 					className="h-4 w-4 rounded border-border accent-primary cursor-pointer"
 				/>
-				<span>Reuse this draft across tools</span>
+				<span>Reuse this {noun} across tools</span>
 			</label>
 			<Button
 				type="button"
@@ -62,17 +69,17 @@ export default function DraftReuseControls({
 				disabled={disabled || !canClear}
 				title={
 					reuse
-						? "Clears the draft here and in every tool that reuses it"
-						: "Clears the text in this box"
+						? `Clears the ${noun} here and in every tool that reuses it`
+						: `Clears the ${noun} in this box`
 				}
 			>
 				<Trash2Icon aria-hidden className="w-4 h-4" />
-				{reuse ? "Clear shared draft" : "Clear"}
+				{reuse ? `Clear shared ${noun}` : "Clear"}
 			</Button>
 			<p className="w-full text-xs text-muted-foreground">
 				{reuse
-					? "Shared with your other article tools and saved in your browser. Untick to keep it only here."
-					: "Stays in this tool only. Tick to reuse it across your other article tools."}
+					? `Shared with ${scope} and saved in your browser. Untick to keep it only here.`
+					: `Stays in this tool only. Tick to reuse it across ${scope}.`}
 			</p>
 		</div>
 	);

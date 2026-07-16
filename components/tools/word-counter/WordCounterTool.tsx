@@ -25,7 +25,7 @@ const PLATFORM_LIMITS: { label: string; limit: number }[] = [
 const numberFmt = new Intl.NumberFormat("en-US");
 
 export default function WordCounterTool() {
-	const { text, setText, reuse, toggleReuse, clear } = useToolDraft();
+	const { text, setText, textReuse, toggleTextReuse, clear } = useToolDraft();
 	const reuseId = useId();
 	const counts = useMemo(() => getTextCounts(text), [text]);
 
@@ -61,8 +61,8 @@ export default function WordCounterTool() {
 					</div>
 					<DraftReuseControls
 						id={reuseId}
-						reuse={reuse}
-						onToggleReuse={toggleReuse}
+						reuse={textReuse}
+						onToggleReuse={toggleTextReuse}
 						onClear={clear}
 						canClear={text.length > 0}
 					/>

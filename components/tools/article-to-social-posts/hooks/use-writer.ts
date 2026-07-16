@@ -75,13 +75,17 @@ function sameTagList(a: string[], b: string[]): boolean {
 }
 
 export function useWriter() {
-	const [inputKind, setInputKind] = useState<InputKindType>("url");
-	const [url, setUrl] = useState("");
 	const {
 		text,
 		setText,
-		reuse: draftReuse,
-		toggleReuse: toggleDraftReuse,
+		url,
+		setUrl,
+		inputKind,
+		setInputKind,
+		textReuse,
+		toggleTextReuse,
+		urlReuse,
+		toggleUrlReuse,
 		clear: clearDraft,
 	} = useToolDraft();
 
@@ -189,7 +193,7 @@ export function useWriter() {
 		setUrl("");
 		setText("");
 		resetResults();
-	}, [resetResults, setText]);
+	}, [resetResults, setText, setUrl]);
 
 	const currentInput = useCallback((): DraftInputType | null => {
 		if (inputKind === "url") {
@@ -392,7 +396,7 @@ export function useWriter() {
 			setLastInput(entry.input);
 			setError(null);
 		},
-		[setText],
+		[setText, setUrl, setInputKind],
 	);
 
 	return {
@@ -402,8 +406,10 @@ export function useWriter() {
 		setUrl,
 		text,
 		setText,
-		draftReuse,
-		toggleDraftReuse,
+		textReuse,
+		toggleTextReuse,
+		urlReuse,
+		toggleUrlReuse,
 		clearDraft,
 		tone,
 		setTone,

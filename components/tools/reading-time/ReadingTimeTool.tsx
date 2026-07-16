@@ -25,7 +25,7 @@ const SPEEDS: { id: ReadingSpeedType; label: string }[] = [
 const numberFmt = new Intl.NumberFormat("en-US");
 
 export default function ReadingTimeTool() {
-	const { text, setText, reuse, toggleReuse, clear } = useToolDraft();
+	const { text, setText, textReuse, toggleTextReuse, clear } = useToolDraft();
 	const [speed, setSpeed] = useState<ReadingSpeedType>("average");
 	const reuseId = useId();
 
@@ -51,8 +51,8 @@ export default function ReadingTimeTool() {
 					</div>
 					<DraftReuseControls
 						id={reuseId}
-						reuse={reuse}
-						onToggleReuse={toggleReuse}
+						reuse={textReuse}
+						onToggleReuse={toggleTextReuse}
 						onClear={clear}
 						canClear={text.length > 0}
 					/>

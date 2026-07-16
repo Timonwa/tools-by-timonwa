@@ -5,9 +5,7 @@ import { useFormStatus } from "react-dom";
 
 import DraftReuseControls from "@/components/_shared/DraftReuseControls";
 import ErrorNotice from "@/components/_shared/ErrorNotice";
-import InputKindTabs, {
-	type InputKindType,
-} from "@/components/_shared/InputKindTabs";
+import InputKindTabs from "@/components/_shared/InputKindTabs";
 import { useToolDraft } from "@/components/_shared/shared-draft";
 import {
 	type DraftInputType,
@@ -70,19 +68,23 @@ export default function SeoForm({
 	hasResult,
 }: SeoFormProps) {
 	const initialSource = initial?.source;
-	const [inputKind, setInputKind] = useState<InputKindType>(
-		initialSource?.kind ?? "text",
-	);
-	const [url, setUrl] = useState(
-		initialSource?.kind === "url" ? initialSource.url : "",
-	);
 	const {
 		text: article,
 		setText: setArticle,
-		reuse,
-		toggleReuse,
+		url,
+		setUrl,
+		inputKind,
+		setInputKind,
+		textReuse,
+		toggleTextReuse,
+		urlReuse,
+		toggleUrlReuse,
 		clear: clearArticle,
-	} = useToolDraft(initialSource?.kind === "text" ? initialSource.text : "");
+	} = useToolDraft({
+		kind: initialSource?.kind ?? "text",
+		url: initialSource?.kind === "url" ? initialSource.url : "",
+		text: initialSource?.kind === "text" ? initialSource.text : "",
+	});
 	const [keyword, setKeyword] = useState(initial?.primaryKeyword ?? "");
 	const [count, setCount] = useState<1 | 2 | 3>(initial?.variationCount ?? 3);
 	const urlId = useId();
@@ -172,6 +174,17 @@ export default function SeoForm({
 						<p className="mt-1 text-xs text-muted-foreground">
 							Point at a published post to write meta tags for a live article.
 						</p>
+						<DraftReuseControls
+							id={reuseId}
+							reuse={urlReuse}
+							onToggleReuse={toggleUrlReuse}
+							onClear={() => setUrl("")}
+							canClear={url.trim().length > 0}
+							disabled={isPending}
+							className="mt-2"
+							noun="link"
+							scope="the AI tools"
+						/>
 					</div>
 				) : (
 					<div className="mt-3">
@@ -199,8 +212,8 @@ export default function SeoForm({
 						</p>
 						<DraftReuseControls
 							id={reuseId}
-							reuse={reuse}
-							onToggleReuse={toggleReuse}
+							reuse={textReuse}
+							onToggleReuse={toggleTextReuse}
 							onClear={clearArticle}
 							canClear={article.length > 0}
 							disabled={isPending}
