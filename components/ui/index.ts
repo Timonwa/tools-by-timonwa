@@ -12,7 +12,6 @@ export {
 } from "./Card";
 export { default as CopyButton } from "./CopyButton";
 export { default as Drawer } from "./Drawer";
-export { default as GithubMark } from "./GithubMark";
 export { default as Input } from "./Input";
 export { default as LinkCard } from "./LinkCard";
 export { default as PageHero } from "./PageHero";
