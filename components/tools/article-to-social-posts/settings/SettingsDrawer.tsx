@@ -4,6 +4,7 @@ import { PenLineIcon } from "lucide-react";
 import { useState, useSyncExternalStore } from "react";
 
 import { THREADABLE_PLATFORMS } from "@/components/tools/article-to-social-posts/constants/platforms";
+import { usePresets } from "@/components/tools/article-to-social-posts/hooks/use-presets";
 import type {
 	PlatformType,
 	ToneType,
@@ -14,6 +15,7 @@ import {
 	workflowStorage,
 } from "@/components/tools/article-to-social-posts/utils/storage";
 import PlatformPicker from "@/components/tools/article-to-social-posts/writer/PlatformPicker";
+import TemplatesPicker from "@/components/tools/article-to-social-posts/writer/TemplatesPicker";
 import ThreadFormat from "@/components/tools/article-to-social-posts/writer/ThreadFormat";
 import TonePicker from "@/components/tools/article-to-social-posts/writer/TonePicker";
 import { Button, Drawer, Tooltip } from "@/components/ui";
@@ -41,6 +43,7 @@ export default function SettingsDrawer() {
 		workflowStorage.getServerSnapshot,
 	);
 	const { tone, platforms, xThreadLength } = workflow;
+	const presets = usePresets();
 
 	const updatePrefs = (patch: Partial<WritingPreferencesType>) => {
 		prefsStorage.set({ ...prefs, ...patch });
@@ -90,9 +93,20 @@ export default function SettingsDrawer() {
 						Writing preferences
 					</span>
 				}
-				description="Your defaults for every generation — tone, platforms, thread format, voice, emoji/hashtag density, and hashtag rules. Saved on this device."
+				description="Your defaults for every generation, saved on this device."
 			>
 				<div className="px-4 sm:px-5 py-5 space-y-6">
+					<TemplatesPicker
+						templates={presets.templates}
+						activeTemplateId={presets.activeId}
+						onApply={presets.apply}
+						onSave={presets.save}
+						onDelete={presets.remove}
+						onUpdate={presets.update}
+						onRename={presets.rename}
+						collapsible
+					/>
+
 					<TonePicker value={tone} onChange={setTone} />
 
 					<PlatformPicker value={platforms} onToggle={togglePlatform} />

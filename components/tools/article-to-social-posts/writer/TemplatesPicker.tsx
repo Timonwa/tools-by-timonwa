@@ -3,8 +3,10 @@
 import {
 	BookmarkIcon,
 	CheckIcon,
+	ChevronDownIcon,
 	PencilIcon,
 	RefreshCwIcon,
+	Trash2Icon,
 	XIcon,
 } from "lucide-react";
 import { useState } from "react";
@@ -33,6 +35,7 @@ type TemplatesPickerProps = {
 	onUpdate: (id: string) => void;
 	onRename: (id: string, name: string) => void;
 	disabled?: boolean;
+	collapsible?: boolean;
 };
 
 export default function TemplatesPicker({
@@ -44,10 +47,12 @@ export default function TemplatesPicker({
 	onUpdate,
 	onRename,
 	disabled,
+	collapsible,
 }: TemplatesPickerProps) {
 	const [nameDraft, setNameDraft] = useState("");
 	const [isSaving, setIsSaving] = useState(false);
 	const [editingId, setEditingId] = useState<string | null>(null);
+	const [expanded, setExpanded] = useState(!collapsible);
 
 	const full = templates.length >= MAX_TEMPLATES;
 
@@ -67,14 +72,37 @@ export default function TemplatesPicker({
 	return (
 		<div className="rounded-md border border-border bg-muted/30 p-2.5 space-y-2">
 			<div className="flex items-center justify-between">
-				<div className="flex items-center gap-1.5 text-xs font-medium">
-					<BookmarkIcon aria-hidden className="w-3.5 h-3.5 text-primary" />
-					Presets
-				</div>
+				{collapsible ? (
+					<button
+						type="button"
+						onClick={() => setExpanded((e) => !e)}
+						aria-expanded={expanded}
+						className="flex items-center gap-1.5 text-xs font-medium"
+					>
+						<BookmarkIcon aria-hidden className="w-3.5 h-3.5 text-primary" />
+						Presets
+						<span className="text-muted-foreground">({templates.length})</span>
+						<ChevronDownIcon
+							aria-hidden
+							className={cn(
+								"w-3.5 h-3.5 text-muted-foreground transition-transform",
+								expanded && "rotate-180",
+							)}
+						/>
+					</button>
+				) : (
+					<div className="flex items-center gap-1.5 text-xs font-medium">
+						<BookmarkIcon aria-hidden className="w-3.5 h-3.5 text-primary" />
+						Presets
+					</div>
+				)}
 				{!isSaving && (
 					<button
 						type="button"
-						onClick={() => setIsSaving(true)}
+						onClick={() => {
+							setIsSaving(true);
+							setExpanded(true);
+						}}
 						disabled={disabled || full}
 						title={
 							full
@@ -88,86 +116,91 @@ export default function TemplatesPicker({
 				)}
 			</div>
 
-			<p className="text-[11px] text-muted-foreground">
-				A saved bundle of tone, platforms, thread format, and writing prefs.
-				Apply one in a click, update it to your current settings, or rename it.
-			</p>
+			{expanded && (
+				<>
+					<p className="text-[11px] text-muted-foreground">
+						A saved bundle of tone, platforms, thread format, and writing prefs.
+						Apply one in a click, update it to your current settings, or rename
+						it.
+					</p>
 
-			{isSaving && (
-				<div className="flex gap-1.5">
-					<Input
-						autoFocus
-						value={nameDraft}
-						onChange={(e) => setNameDraft(e.target.value)}
-						onKeyDown={(e) => {
-							if (e.key === "Enter") {
-								e.preventDefault();
-								commitSave();
-							}
-							if (e.key === "Escape") {
-								e.preventDefault();
-								cancelSave();
-							}
-						}}
-						placeholder="Name it (e.g. my Twitter voice)"
-						maxLength={40}
-						className="h-8 text-xs"
-					/>
-					<Tooltip label="Save preset">
-						<Button
-							size="sm"
-							type="button"
-							onClick={commitSave}
-							disabled={!nameDraft.trim()}
-							aria-label="Save preset"
-						>
-							<CheckIcon aria-hidden className="w-3.5 h-3.5" />
-						</Button>
-					</Tooltip>
-					<Tooltip label="Cancel">
-						<Button
-							size="sm"
-							type="button"
-							variant="ghost"
-							onClick={cancelSave}
-							aria-label="Cancel"
-						>
-							<XIcon aria-hidden className="w-3.5 h-3.5" />
-						</Button>
-					</Tooltip>
-				</div>
-			)}
-
-			{templates.length === 0 ? (
-				<p className="text-[11px] text-muted-foreground italic">
-					Nothing saved yet. Set a tone, platforms, and prefs, then “Save
-					current” to reuse them in one click.
-				</p>
-			) : (
-				<div className="flex flex-wrap items-center gap-1.5">
-					{templates.map((t) =>
-						editingId === t.id ? (
-							<TemplateEditor
-								key={t.id}
-								template={t}
-								disabled={disabled}
-								onRename={(name) => onRename(t.id, name)}
-								onUpdate={() => onUpdate(t.id)}
-								onDone={() => setEditingId(null)}
+					{isSaving && (
+						<div className="flex gap-1.5">
+							<Input
+								autoFocus
+								value={nameDraft}
+								onChange={(e) => setNameDraft(e.target.value)}
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										e.preventDefault();
+										commitSave();
+									}
+									if (e.key === "Escape") {
+										e.preventDefault();
+										cancelSave();
+									}
+								}}
+								placeholder="Name it (e.g. my Twitter voice)"
+								maxLength={40}
+								className="h-8 text-xs"
 							/>
-						) : (
-							<TemplateChip
-								key={t.id}
-								template={t}
-								active={activeTemplateId === t.id}
-								disabled={disabled}
-								onApply={() => onApply(t)}
-								onEdit={() => setEditingId(t.id)}
-								onDelete={() => onDelete(t.id)}
-							/>
-						),
+							<Tooltip label="Save preset">
+								<Button
+									size="sm"
+									type="button"
+									onClick={commitSave}
+									disabled={!nameDraft.trim()}
+									aria-label="Save preset"
+								>
+									<CheckIcon aria-hidden className="w-3.5 h-3.5" />
+								</Button>
+							</Tooltip>
+							<Tooltip label="Cancel">
+								<Button
+									size="sm"
+									type="button"
+									variant="ghost"
+									onClick={cancelSave}
+									aria-label="Cancel"
+								>
+									<XIcon aria-hidden className="w-3.5 h-3.5" />
+								</Button>
+							</Tooltip>
+						</div>
 					)}
-				</div>
+
+					{templates.length === 0 ? (
+						<p className="text-[11px] text-muted-foreground italic">
+							Nothing saved yet. Set a tone, platforms, and prefs, then “Save
+							current” to reuse them in one click.
+						</p>
+					) : (
+						<div className="flex flex-wrap items-center gap-1.5">
+							{templates.map((t) =>
+								editingId === t.id ? (
+									<TemplateEditor
+										key={t.id}
+										template={t}
+										disabled={disabled}
+										onRename={(name) => onRename(t.id, name)}
+										onUpdate={() => onUpdate(t.id)}
+										onDone={() => setEditingId(null)}
+									/>
+								) : (
+									<TemplateChip
+										key={t.id}
+										template={t}
+										active={activeTemplateId === t.id}
+										disabled={disabled}
+										onApply={() => onApply(t)}
+										onEdit={() => setEditingId(t.id)}
+										onDelete={() => onDelete(t.id)}
+									/>
+								),
+							)}
+						</div>
+					)}
+				</>
 			)}
 		</div>
 	);
@@ -188,6 +221,8 @@ function TemplateChip({
 	onEdit: () => void;
 	onDelete: () => void;
 }) {
+	// Two-step delete: the first click arms the confirm, the second removes.
+	const [confirmingDelete, setConfirmingDelete] = useState(false);
 	return (
 		<div className="inline-flex items-center gap-0.5">
 			<span className="group/preview relative inline-flex">
@@ -198,12 +233,14 @@ function TemplateChip({
 					aria-pressed={active}
 					className={cn(
 						"rounded-full border pl-2.5 pr-2.5 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
-						active
-							? "border-primary/50 bg-primary/10 text-primary hover:bg-primary/15"
-							: "border-border bg-background hover:bg-accent",
+						confirmingDelete
+							? "border-destructive/50 bg-destructive/5"
+							: active
+								? "border-primary/50 bg-primary/10 text-primary hover:bg-primary/15"
+								: "border-border bg-background hover:bg-accent",
 					)}
 				>
-					{active && (
+					{active && !confirmingDelete && (
 						<CheckIcon
 							aria-hidden
 							className="inline-block w-3 h-3 mr-1 -mt-px align-middle"
@@ -213,28 +250,59 @@ function TemplateChip({
 				</button>
 				<TemplatePreview template={template} />
 			</span>
-			<Tooltip label="Rename or update to current settings">
-				<button
-					type="button"
-					onClick={onEdit}
-					aria-label={`Edit preset ${template.name}`}
-					disabled={disabled}
-					className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:cursor-not-allowed"
-				>
-					<PencilIcon aria-hidden className="w-3.5 h-3.5" />
-				</button>
-			</Tooltip>
-			<Tooltip label="Delete preset">
-				<button
-					type="button"
-					onClick={onDelete}
-					aria-label={`Delete preset ${template.name}`}
-					disabled={disabled}
-					className="rounded-full p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
-				>
-					<XIcon aria-hidden className="w-3.5 h-3.5" />
-				</button>
-			</Tooltip>
+			{confirmingDelete ? (
+				<>
+					<Tooltip label="Confirm delete">
+						<button
+							type="button"
+							onClick={() => {
+								onDelete();
+								setConfirmingDelete(false);
+							}}
+							aria-label={`Confirm delete preset ${template.name}`}
+							disabled={disabled}
+							className="rounded-full p-1 text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
+						>
+							<Trash2Icon aria-hidden className="w-3.5 h-3.5" />
+						</button>
+					</Tooltip>
+					<Tooltip label="Cancel">
+						<button
+							type="button"
+							onClick={() => setConfirmingDelete(false)}
+							aria-label="Cancel delete"
+							className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+						>
+							<XIcon aria-hidden className="w-3.5 h-3.5" />
+						</button>
+					</Tooltip>
+				</>
+			) : (
+				<>
+					<Tooltip label="Rename or update to current settings">
+						<button
+							type="button"
+							onClick={onEdit}
+							aria-label={`Edit preset ${template.name}`}
+							disabled={disabled}
+							className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:cursor-not-allowed"
+						>
+							<PencilIcon aria-hidden className="w-3.5 h-3.5" />
+						</button>
+					</Tooltip>
+					<Tooltip label="Delete preset">
+						<button
+							type="button"
+							onClick={() => setConfirmingDelete(true)}
+							aria-label={`Delete preset ${template.name}`}
+							disabled={disabled}
+							className="rounded-full p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
+						>
+							<Trash2Icon aria-hidden className="w-3.5 h-3.5" />
+						</button>
+					</Tooltip>
+				</>
+			)}
 		</div>
 	);
 }

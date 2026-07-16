@@ -4,7 +4,6 @@ import {
 	useCallback,
 	useEffect,
 	useEffectEvent,
-	useMemo,
 	useState,
 	useSyncExternalStore,
 	useTransition,
@@ -12,28 +11,20 @@ import {
 
 import type { InputKindType } from "@/components/_shared/InputKindTabs";
 import { useToolDraft } from "@/components/_shared/shared-draft";
-import {
-	DEFAULT_PREFERENCES,
-	MAX_TEMPLATES,
-} from "@/components/tools/article-to-social-posts/constants/preferences";
 import type {
 	DraftInputType,
 	PlatformType,
 	PostDraftType,
-	PresetTemplateType,
 	PreviewResultType,
 	TokenUsageType,
 	ToneType,
-	WritingPreferencesType,
 } from "@/components/tools/article-to-social-posts/types";
 import {
 	buildCopyAll,
 	buildCopyText,
 } from "@/components/tools/article-to-social-posts/utils/draft";
 import {
-	DEFAULT_WORKFLOW,
 	prefsStorage,
-	templatesStorage,
 	workflowStorage,
 } from "@/components/tools/article-to-social-posts/utils/storage";
 import {
@@ -42,41 +33,9 @@ import {
 } from "@/lib/tools/article-to-social-posts/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { type HistoryEntryType, useHistory } from "./use-history";
+import { usePresets } from "./use-presets";
 
 export type { InputKindType };
-
-/**
- * Deep match: tone, xThreadLength, platforms (order-insensitive), and every
- * field of WritingPreferencesType including hashtag rule lists.
- */
-function templateMatchesState(
-	t: PresetTemplateType,
-	state: { tone: ToneType; platforms: PlatformType[]; xThreadLength: number },
-	prefs: WritingPreferencesType,
-): boolean {
-	if (t.tone !== state.tone) return false;
-	if (t.xThreadLength !== state.xThreadLength) return false;
-	if (t.platforms.length !== state.platforms.length) return false;
-	const have = new Set(state.platforms);
-	for (const p of t.platforms) if (!have.has(p)) return false;
-
-	const tp = t.preferences;
-	if (tp.voice !== prefs.voice) return false;
-	if (tp.emojiLevel !== prefs.emojiLevel) return false;
-	if (tp.hashtagLevel !== prefs.hashtagLevel) return false;
-	if (tp.substackLength !== prefs.substackLength) return false;
-	if (!sameTagList(tp.alwaysIncludeHashtags, prefs.alwaysIncludeHashtags))
-		return false;
-	if (!sameTagList(tp.neverUseHashtags, prefs.neverUseHashtags)) return false;
-	return true;
-}
-
-function sameTagList(a: string[], b: string[]): boolean {
-	if (a.length !== b.length) return false;
-	const lower = new Set(a.map((s) => s.toLowerCase()));
-	for (const s of b) if (!lower.has(s.toLowerCase())) return false;
-	return true;
-}
 
 export function useWriter() {
 	const {
@@ -106,11 +65,6 @@ export function useWriter() {
 		prefsStorage.getSnapshot,
 		prefsStorage.getServerSnapshot,
 	);
-	const templates = useSyncExternalStore(
-		templatesStorage.subscribe,
-		templatesStorage.getSnapshot,
-		templatesStorage.getServerSnapshot,
-	);
 
 	// `generate` runs in a transition — `isGenerating` is its pending flag.
 	// `regenerate` uses its own transition but reports per-draft pending via the
@@ -130,35 +84,18 @@ export function useWriter() {
 
 	const [lastUsage, setLastUsage] = useState<TokenUsageType | null>(null);
 
-	// The active template is whichever saved template exactly matches the current
-	// workflow + prefs — derived, so it lights up on apply/save and clears the
-	// moment the user diverges, with no effect or manual bookkeeping.
-	const activeTemplateId = useMemo(
-		() =>
-			templates.find((t) => templateMatchesState(t, workflow, prefs))?.id ??
-			null,
-		[templates, workflow, prefs],
-	);
+	// Presets (saved configs) — shared with the Writing preferences drawer.
+	const {
+		templates,
+		activeId: activeTemplateId,
+		save: saveTemplate,
+		apply: applyTemplate,
+		remove: deleteTemplate,
+		update: updateTemplate,
+		rename: renameTemplate,
+	} = usePresets();
 
 	const { history, upsert, remove: removeHistoryEntry } = useHistory();
-
-	// Seed a "Default" template from the built-in defaults on first run, so the
-	// user's first template already exists — it shows how templates work and
-	// gives a one-click way back to the defaults.
-	useEffect(() => {
-		if (templatesStorage.get().length > 0) return;
-		templatesStorage.set([
-			{
-				id: crypto.randomUUID(),
-				name: "Default",
-				createdAt: Date.now(),
-				tone: DEFAULT_WORKFLOW.tone,
-				platforms: DEFAULT_WORKFLOW.platforms,
-				xThreadLength: DEFAULT_WORKFLOW.xThreadLength,
-				preferences: DEFAULT_PREFERENCES,
-			},
-		]);
-	}, []);
 
 	// Non-reactive persist logic — always reads the latest preview/input/tone/etc.
 	// without them being effect dependencies (React 19.2 useEffectEvent).
@@ -373,72 +310,6 @@ export function useWriter() {
 				"Your browser blocked copying. Select the text and copy it manually instead.",
 			);
 		}
-	}, []);
-
-	const saveTemplate = useCallback(
-		(name: string) => {
-			const trimmed = name.trim();
-			if (!trimmed) return;
-			const entry: PresetTemplateType = {
-				id: crypto.randomUUID(),
-				name: trimmed,
-				createdAt: Date.now(),
-				tone,
-				platforms,
-				xThreadLength,
-				preferences: prefsStorage.get(),
-			};
-			// Replace any existing template with the same name (case-insensitive).
-			const without = templatesStorage
-				.get()
-				.filter((t) => t.name.toLowerCase() !== trimmed.toLowerCase());
-			templatesStorage.set([entry, ...without].slice(0, MAX_TEMPLATES));
-		},
-		[tone, platforms, xThreadLength],
-	);
-
-	const applyTemplate = useCallback((t: PresetTemplateType) => {
-		workflowStorage.set({
-			tone: t.tone,
-			platforms: t.platforms,
-			xThreadLength: t.xThreadLength,
-		});
-		prefsStorage.set(t.preferences);
-	}, []);
-
-	const deleteTemplate = useCallback((id: string) => {
-		templatesStorage.set(templatesStorage.get().filter((t) => t.id !== id));
-	}, []);
-
-	// Overwrite a template's saved config with the current tone / platforms /
-	// thread / writing prefs — edit a template in place, no delete + re-save.
-	const updateTemplate = useCallback(
-		(id: string) => {
-			templatesStorage.set(
-				templatesStorage.get().map((t) =>
-					t.id === id
-						? {
-								...t,
-								tone,
-								platforms,
-								xThreadLength,
-								preferences: prefsStorage.get(),
-							}
-						: t,
-				),
-			);
-		},
-		[tone, platforms, xThreadLength],
-	);
-
-	const renameTemplate = useCallback((id: string, name: string) => {
-		const trimmed = name.trim();
-		if (!trimmed) return;
-		templatesStorage.set(
-			templatesStorage
-				.get()
-				.map((t) => (t.id === id ? { ...t, name: trimmed } : t)),
-		);
 	}, []);
 
 	const loadFromHistory = useCallback(
