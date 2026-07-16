@@ -1,9 +1,9 @@
-import { BookOpenTextIcon, KeyRoundIcon, WrenchIcon } from "lucide-react";
+import { BookOpenTextIcon, KeyRoundIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import Navbar from "@/components/layout/Navbar";
+import HubNavbar from "@/components/layout/HubNavbar";
 import ToolMain from "@/components/layout/ToolMain";
 import Newsletter from "@/components/marketing/Newsletter";
 import { PageHero } from "@/components/ui";
@@ -88,14 +88,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
 
 	return (
 		<>
-			<Navbar
-				brand={{
-					href: "/",
-					name: SITE_NAME,
-					icon: WrenchIcon,
-					ariaLabel: `${SITE_NAME} — home`,
-				}}
-			/>
+			<HubNavbar />
 			<ToolMain>
 				<div className="mx-auto max-w-3xl">
 					<PageHero

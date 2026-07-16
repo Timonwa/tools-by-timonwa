@@ -1,12 +1,7 @@
-import {
-	ArrowRightIcon,
-	BookOpenTextIcon,
-	ClockIcon,
-	WrenchIcon,
-} from "lucide-react";
+import { ArrowRightIcon, BookOpenTextIcon, ClockIcon } from "lucide-react";
 import type { Metadata } from "next";
 
-import Navbar from "@/components/layout/Navbar";
+import HubNavbar from "@/components/layout/HubNavbar";
 import ToolMain from "@/components/layout/ToolMain";
 import Newsletter from "@/components/marketing/Newsletter";
 import { LinkCard, PageHero } from "@/components/ui";
@@ -54,14 +49,7 @@ export default function GuidesIndexPage() {
 
 	return (
 		<>
-			<Navbar
-				brand={{
-					href: "/",
-					name: SITE_NAME,
-					icon: WrenchIcon,
-					ariaLabel: `${SITE_NAME} — home`,
-				}}
-			/>
+			<HubNavbar />
 			<ToolMain>
 				<PageHero
 					className="mb-10"
