@@ -4,6 +4,7 @@ import {
 	useCallback,
 	useEffect,
 	useEffectEvent,
+	useMemo,
 	useState,
 	useSyncExternalStore,
 	useTransition,
@@ -164,13 +165,28 @@ export function useWriter() {
 		return text.trim() ? { kind: "text", text } : null;
 	}, [inputKind, url, text]);
 
-	const generate = useCallback(
-		(e: React.FormEvent) => {
-			e.preventDefault();
-			const input = currentInput();
-			if (!input || platforms.length === 0) return;
+	// True when the form's current input isn't the article on screen — either
+	// there's no result yet, or the user changed the source (e.g. switched tabs
+	// and pasted a new URL). Drives the "Generate" vs "Regenerate" label so a new
+	// source never looks like it will overwrite the posts already shown.
+	const isNewArticle = useMemo(() => {
+		if (!preview || !lastInput) return true;
+		const cur = currentInput();
+		if (!cur) return true;
+		const key = (i: DraftInputType) =>
+			i.kind === "url" ? `url:${i.url.trim()}` : `text:${i.text}`;
+		return key(cur) !== key(lastInput);
+	}, [preview, lastInput, currentInput]);
 
-			resetResults();
+	// Shared generation path for both a fresh generate and "regenerate all".
+	// `reset: true` clears the screen first (a new run from the form); `false`
+	// keeps the current posts visible and swaps them in when the new set lands,
+	// so regenerating from the bottom doesn't blank the results mid-flight.
+	const runPreview = useCallback(
+		(input: DraftInputType, { reset }: { reset: boolean }) => {
+			if (platforms.length === 0) return;
+			if (reset) resetResults();
+			else setError(null);
 
 			startGenerate(async () => {
 				try {
@@ -219,7 +235,6 @@ export function useWriter() {
 			});
 		},
 		[
-			currentInput,
 			tone,
 			platforms,
 			xThreadLength,
@@ -229,6 +244,23 @@ export function useWriter() {
 			activeTemplateId,
 		],
 	);
+
+	const generate = useCallback(
+		(e: React.FormEvent) => {
+			e.preventDefault();
+			const input = currentInput();
+			if (!input) return;
+			runPreview(input, { reset: true });
+		},
+		[currentInput, runPreview],
+	);
+
+	// Regenerate every post for the article currently on screen (not whatever is
+	// typed in the form), using the current tone/platforms/prefs.
+	const regenerateAll = useCallback(() => {
+		if (!lastInput) return;
+		runPreview(lastInput, { reset: false });
+	}, [lastInput, runPreview]);
 
 	const updateDraftContent = useCallback(
 		(platform: PostDraftType["platform"], content: string) => {
@@ -356,6 +388,7 @@ export function useWriter() {
 		xThreadLength,
 		setXThreadLength,
 		isGenerating,
+		isNewArticle,
 		preview,
 		editableDrafts,
 		error,
@@ -364,6 +397,7 @@ export function useWriter() {
 		lastUsage,
 		history,
 		generate,
+		regenerateAll,
 		updateDraftContent,
 		updateThreadPost,
 		regenerate,

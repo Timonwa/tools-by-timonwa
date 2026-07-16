@@ -1,6 +1,11 @@
 "use client";
 
-import { Loader2Icon, SparklesIcon, Wand2Icon } from "lucide-react";
+import {
+	FilePlus2Icon,
+	Loader2Icon,
+	SparklesIcon,
+	Wand2Icon,
+} from "lucide-react";
 import { useId } from "react";
 import DraftReuseControls from "@/components/_shared/DraftReuseControls";
 import ErrorNotice from "@/components/_shared/ErrorNotice";
@@ -51,6 +56,8 @@ type GenerateFormProps = {
 	onXThreadLengthChange: (n: number) => void;
 	isGenerating: boolean;
 	hasResult: boolean;
+	isNewArticle: boolean;
+	onStartOver: () => void;
 	error: string | null;
 	onSubmit: (e: React.FormEvent) => void;
 	templates: PresetTemplateType[];
@@ -82,6 +89,8 @@ export default function GenerateForm({
 	onXThreadLengthChange,
 	isGenerating,
 	hasResult,
+	isNewArticle,
+	onStartOver,
 	error,
 	onSubmit,
 	templates,
@@ -102,6 +111,9 @@ export default function GenerateForm({
 	const textOver = text.length > MAX_DRAFT_CHARS;
 	const disabled =
 		isGenerating || !hasInput || platforms.length === 0 || textOver;
+	// Only call it "Regenerate" when the current input is the article on screen.
+	// A changed source reads as "Generate" so it never looks like an overwrite.
+	const isRegenerate = hasResult && !isNewArticle;
 
 	return (
 		<Card>
@@ -234,26 +246,43 @@ export default function GenerateForm({
 						/>
 					)}
 
-					<Button
-						type="submit"
-						size="lg"
-						className="w-full"
-						disabled={disabled}
-					>
-						{isGenerating ? (
-							<>
-								<Loader2Icon className="w-4 h-4 animate-spin" />
-								{inputKind === "url"
-									? `Reading article & ${hasResult ? "regenerating" : "generating"} posts...`
-									: `${hasResult ? "Regenerating" : "Generating"} posts...`}
-							</>
-						) : (
-							<>
-								<SparklesIcon className="w-4 h-4" />
-								{hasResult ? "Regenerate posts" : "Generate posts"}
-							</>
+					<div className="flex flex-col gap-2 sm:flex-row">
+						<Button
+							type="submit"
+							size="lg"
+							className="w-full sm:flex-1"
+							disabled={disabled}
+						>
+							{isGenerating ? (
+								<>
+									<Loader2Icon className="w-4 h-4 animate-spin" />
+									{inputKind === "url"
+										? `Reading article & ${isRegenerate ? "regenerating" : "generating"} posts...`
+										: `${isRegenerate ? "Regenerating" : "Generating"} posts...`}
+								</>
+							) : (
+								<>
+									<SparklesIcon className="w-4 h-4" />
+									{isRegenerate ? "Regenerate posts" : "Generate posts"}
+								</>
+							)}
+						</Button>
+
+						{hasResult && (
+							<Button
+								type="button"
+								variant="outline"
+								size="lg"
+								onClick={onStartOver}
+								disabled={isGenerating}
+								className="w-full sm:w-auto"
+								title="Clear the current posts and start a fresh article — your saved posts stay in history"
+							>
+								<FilePlus2Icon className="w-4 h-4" />
+								New article
+							</Button>
 						)}
-					</Button>
+					</div>
 
 					{error && <ErrorNotice message={error} />}
 				</form>

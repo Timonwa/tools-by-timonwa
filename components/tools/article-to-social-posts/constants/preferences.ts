@@ -19,7 +19,7 @@ export const MAX_HASHTAG_RULES_PER_LIST = 10;
 /** Upper bound on saved templates — localStorage stays lean. */
 export const MAX_TEMPLATES = 10;
 /** Max preset name length — keeps chips short and the collapsed label tidy. */
-export const MAX_PRESET_NAME = 24;
+export const MAX_PRESET_NAME = 30;
 
 /**
  * Normalize a raw user-entered hashtag. Strips leading `#`, trims whitespace,

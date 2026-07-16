@@ -1,5 +1,6 @@
 "use client";
 
+import { FilePlus2Icon, Loader2Icon, RefreshCwIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useWriter } from "@/components/tools/article-to-social-posts/hooks/use-writer";
 import { Button } from "@/components/ui";
@@ -44,6 +45,8 @@ export default function Writer() {
 					onXThreadLengthChange={w.setXThreadLength}
 					isGenerating={w.isGenerating}
 					hasResult={Boolean(w.preview)}
+					isNewArticle={w.isNewArticle}
+					onStartOver={w.clearAll}
 					error={w.error}
 					onSubmit={w.generate}
 					templates={w.templates}
@@ -83,14 +86,39 @@ export default function Writer() {
 							))}
 						</div>
 
-						<Button
-							onClick={w.clearAll}
-							variant="outline"
-							size="lg"
-							className="w-full"
-						>
-							Start over with a new article
-						</Button>
+						<div className="flex flex-col gap-2 sm:flex-row">
+							<Button
+								onClick={w.regenerateAll}
+								variant="outline"
+								size="lg"
+								className="w-full sm:flex-1"
+								disabled={w.isGenerating}
+								title="Regenerate every post for this article with your current tone and settings"
+							>
+								{w.isGenerating ? (
+									<>
+										<Loader2Icon className="w-4 h-4 animate-spin" />
+										Regenerating all...
+									</>
+								) : (
+									<>
+										<RefreshCwIcon className="w-4 h-4" />
+										Regenerate all
+									</>
+								)}
+							</Button>
+							<Button
+								onClick={w.clearAll}
+								variant="outline"
+								size="lg"
+								className="w-full sm:flex-1"
+								disabled={w.isGenerating}
+								title="Clear these posts and start a fresh article — your saved posts stay in history"
+							>
+								<FilePlus2Icon className="w-4 h-4" />
+								New article
+							</Button>
+						</div>
 					</div>
 				)}
 			</div>
