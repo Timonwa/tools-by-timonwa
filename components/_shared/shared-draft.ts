@@ -117,6 +117,9 @@ export type ToolDraftType = {
 	toggleReuse: (next: boolean) => void;
 	/** Empty the text draft (shared or local, matching the current mode). */
 	clear: () => void;
+	/** True when reuse is on and the shared draft is a URL. Text-only tools have
+	 * nothing to show then; pasting text replaces the URL. */
+	sharedDraftIsUrl: boolean;
 };
 
 /**
@@ -194,14 +197,43 @@ export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
 				? "text"
 				: localKind;
 
+	// True when the shared draft is a URL — text-only tools then have no text to
+	// show and surface a notice; pasting text there replaces the URL.
+	const sharedDraftIsUrl = reuse && sharedUrl.trim().length > 0;
+
+	// One shared draft at a time: entering text replaces any shared URL (and vice
+	// versa). So sharing a draft from a text-only tool overrides an AI tool's URL,
+	// and navigating back lands on the text tab — never a stale URL tab.
 	const setText = useCallback((value: string) => {
-		if (enabledStore.get()) textStore.set(value);
-		else setLocalText(value);
+		if (enabledStore.get()) {
+			textStore.set(value);
+			if (value.trim()) {
+				if (urlStore.get()) urlStore.set("");
+				if (kindStore.get() !== "text") kindStore.set("text");
+			}
+		} else {
+			setLocalText(value);
+			if (value.trim()) {
+				setLocalUrl((u) => (u ? "" : u));
+				setLocalKind("text");
+			}
+		}
 	}, []);
 
 	const setUrl = useCallback((value: string) => {
-		if (enabledStore.get()) urlStore.set(value);
-		else setLocalUrl(value);
+		if (enabledStore.get()) {
+			urlStore.set(value);
+			if (value.trim()) {
+				if (textStore.get()) textStore.set("");
+				if (kindStore.get() !== "url") kindStore.set("url");
+			}
+		} else {
+			setLocalUrl(value);
+			if (value.trim()) {
+				setLocalText((t) => (t ? "" : t));
+				setLocalKind("url");
+			}
+		}
 	}, []);
 
 	// Switching input mode clears the other field — a draft and a URL never
@@ -263,5 +295,6 @@ export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
 		reuse,
 		toggleReuse,
 		clear,
+		sharedDraftIsUrl,
 	};
 }

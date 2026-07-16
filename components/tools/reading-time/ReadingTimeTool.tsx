@@ -3,6 +3,7 @@
 import { useId, useMemo, useState } from "react";
 
 import DraftReuseControls from "@/components/_shared/DraftReuseControls";
+import SharedDraftLinkNotice from "@/components/_shared/SharedDraftLinkNotice";
 import { useToolDraft } from "@/components/_shared/shared-draft";
 import { Card, CardContent, CopyButton, Textarea } from "@/components/ui";
 import { countWords } from "@/lib/text/counts";
@@ -25,7 +26,8 @@ const SPEEDS: { id: ReadingSpeedType; label: string }[] = [
 const numberFmt = new Intl.NumberFormat("en-US");
 
 export default function ReadingTimeTool() {
-	const { text, setText, reuse, toggleReuse, clear } = useToolDraft();
+	const { text, setText, reuse, toggleReuse, clear, sharedDraftIsUrl } =
+		useToolDraft();
 	const [speed, setSpeed] = useState<ReadingSpeedType>("average");
 	const reuseId = useId();
 
@@ -37,6 +39,7 @@ export default function ReadingTimeTool() {
 		<div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
 			<Card className="min-w-0 self-start">
 				<CardContent className="space-y-3">
+					{sharedDraftIsUrl && <SharedDraftLinkNotice />}
 					<div className="flex flex-col gap-2">
 						<label htmlFor="rt-input" className="text-sm font-medium">
 							Your text

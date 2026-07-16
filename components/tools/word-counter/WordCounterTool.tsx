@@ -3,6 +3,7 @@
 import { useId, useMemo } from "react";
 
 import DraftReuseControls from "@/components/_shared/DraftReuseControls";
+import SharedDraftLinkNotice from "@/components/_shared/SharedDraftLinkNotice";
 import { useToolDraft } from "@/components/_shared/shared-draft";
 import { Card, CardContent, Textarea } from "@/components/ui";
 import { getTextCounts } from "@/lib/text/counts";
@@ -25,7 +26,8 @@ const PLATFORM_LIMITS: { label: string; limit: number }[] = [
 const numberFmt = new Intl.NumberFormat("en-US");
 
 export default function WordCounterTool() {
-	const { text, setText, reuse, toggleReuse, clear } = useToolDraft();
+	const { text, setText, reuse, toggleReuse, clear, sharedDraftIsUrl } =
+		useToolDraft();
 	const reuseId = useId();
 	const counts = useMemo(() => getTextCounts(text), [text]);
 
@@ -47,6 +49,7 @@ export default function WordCounterTool() {
 		<div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
 			<Card className="min-w-0 self-start">
 				<CardContent className="space-y-3">
+					{sharedDraftIsUrl && <SharedDraftLinkNotice />}
 					<div className="flex flex-col gap-2">
 						<label htmlFor="counter-input" className="text-sm font-medium">
 							Your text
