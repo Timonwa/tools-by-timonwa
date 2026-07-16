@@ -6,12 +6,9 @@ import {
 	SparklesIcon,
 	Wand2Icon,
 } from "lucide-react";
-import { useId } from "react";
-import DraftReuseControls from "@/components/_shared/DraftReuseControls";
+import ArticleSourceInput from "@/components/_shared/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/ErrorNotice";
-import InputKindTabs, {
-	type InputKindType,
-} from "@/components/_shared/InputKindTabs";
+import type { InputKindType } from "@/components/_shared/InputKindTabs";
 import { MAX_DRAFT_CHARS } from "@/components/tools/article-to-social-posts/constants/draft-input";
 import { THREADABLE_PLATFORMS } from "@/components/tools/article-to-social-posts/constants/platforms";
 import type {
@@ -26,11 +23,8 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-	Input,
-	Textarea,
 } from "@/components/ui";
 
-import { cn } from "@/lib/utils/cn";
 import PlatformPicker from "./PlatformPicker";
 import TemplatesPicker from "./TemplatesPicker";
 import TonePicker from "./TonePicker";
@@ -55,6 +49,7 @@ type GenerateFormProps = {
 	xThreadLength: number;
 	onXThreadLengthChange: (n: number) => void;
 	isGenerating: boolean;
+	isBusy: boolean;
 	hasResult: boolean;
 	isNewArticle: boolean;
 	onStartOver: () => void;
@@ -88,6 +83,7 @@ export default function GenerateForm({
 	xThreadLength,
 	onXThreadLengthChange,
 	isGenerating,
+	isBusy,
 	hasResult,
 	isNewArticle,
 	onStartOver,
@@ -101,16 +97,10 @@ export default function GenerateForm({
 	onUpdateTemplate,
 	onRenameTemplate,
 }: GenerateFormProps) {
-	const urlInputId = useId();
-	const textInputId = useId();
-	const counterId = useId();
-	const reuseId = useId();
-
 	const hasInput =
 		inputKind === "url" ? url.trim().length > 0 : text.trim().length > 0;
 	const textOver = text.length > MAX_DRAFT_CHARS;
-	const disabled =
-		isGenerating || !hasInput || platforms.length === 0 || textOver;
+	const disabled = isBusy || !hasInput || platforms.length === 0 || textOver;
 	// Only call it "Regenerate" when the current input is the article on screen.
 	// A changed source reads as "Generate" so it never looks like an overwrite.
 	const isRegenerate = hasResult && !isNewArticle;
@@ -142,89 +132,21 @@ export default function GenerateForm({
 						disabled={isGenerating}
 					/>
 
-					<InputKindTabs
-						value={inputKind}
-						onChange={onInputKindChange}
+					<ArticleSourceInput
+						inputKind={inputKind}
+						onInputKindChange={onInputKindChange}
+						url={url}
+						onUrlChange={onUrlChange}
+						urlReuse={urlReuse}
+						onToggleUrlReuse={onToggleUrlReuse}
+						text={text}
+						onTextChange={onTextChange}
+						textReuse={textReuse}
+						onToggleTextReuse={onToggleTextReuse}
+						onClearText={onClearDraft}
 						disabled={isGenerating}
-						textLabel="Paste text"
+						maxChars={MAX_DRAFT_CHARS}
 					/>
-
-					{inputKind === "url" ? (
-						<div>
-							<label
-								htmlFor={urlInputId}
-								className="text-sm font-medium mb-2 block"
-							>
-								Article URL
-							</label>
-							<Input
-								id={urlInputId}
-								type="url"
-								required
-								value={url}
-								onChange={(e) => onUrlChange(e.target.value)}
-								placeholder="https://your-blog.com/post-slug"
-								disabled={isGenerating}
-							/>
-							<DraftReuseControls
-								id={reuseId}
-								reuse={urlReuse}
-								onToggleReuse={onToggleUrlReuse}
-								onClear={() => onUrlChange("")}
-								canClear={url.trim().length > 0}
-								disabled={isGenerating}
-								className="mt-2"
-								noun="link"
-								scope="the AI tools"
-							/>
-						</div>
-					) : (
-						<div>
-							<div className="flex items-baseline justify-between mb-2 gap-2">
-								<label htmlFor={textInputId} className="text-sm font-medium">
-									Your text
-								</label>
-								<span
-									id={counterId}
-									aria-live="polite"
-									className={cn(
-										"text-xs tabular-nums",
-										textOver
-											? "text-destructive font-medium"
-											: "text-muted-foreground",
-									)}
-								>
-									{text.length.toLocaleString()} /{" "}
-									{MAX_DRAFT_CHARS.toLocaleString()}
-								</span>
-							</div>
-							<Textarea
-								id={textInputId}
-								required
-								value={text}
-								onChange={(e) => onTextChange(e.target.value)}
-								placeholder="Paste the article text here — title, body, everything the posts should draw from."
-								disabled={isGenerating}
-								aria-describedby={counterId}
-								aria-invalid={textOver || undefined}
-								className="h-48 max-h-96 resize-y [field-sizing:normal]"
-							/>
-							<p className="mt-1.5 text-[11px] text-muted-foreground">
-								Your text stays in your browser and this request only — never
-								cached on our servers.
-							</p>
-							<DraftReuseControls
-								id={reuseId}
-								reuse={textReuse}
-								onToggleReuse={onToggleTextReuse}
-								onClear={onClearDraft}
-								canClear={text.length > 0}
-								disabled={isGenerating}
-								className="mt-2"
-								noun="text"
-							/>
-						</div>
-					)}
 
 					<TonePicker
 						value={tone}
@@ -274,7 +196,7 @@ export default function GenerateForm({
 								variant="outline"
 								size="lg"
 								onClick={onStartOver}
-								disabled={isGenerating}
+								disabled={isBusy}
 								className="w-full sm:w-auto"
 								title="Clear the current posts and start a fresh article — your saved posts stay in history"
 							>

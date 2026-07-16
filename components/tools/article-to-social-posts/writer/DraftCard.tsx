@@ -25,6 +25,7 @@ import {
 type Props = {
 	draft: PostDraftType;
 	isRegenerating: boolean;
+	busy: boolean;
 	copied: boolean;
 	onContentChange: (content: string) => void;
 	onThreadPostChange: (index: number, content: string) => void;
@@ -35,6 +36,7 @@ type Props = {
 export default function DraftCard({
 	draft,
 	isRegenerating,
+	busy,
 	copied,
 	onContentChange,
 	onThreadPostChange,
@@ -164,7 +166,7 @@ export default function DraftCard({
 							variant="outline"
 							size="sm"
 							onClick={onRegenerate}
-							disabled={isRegenerating}
+							disabled={busy}
 							aria-label={regenLabel}
 						>
 							{isRegenerating ? (
