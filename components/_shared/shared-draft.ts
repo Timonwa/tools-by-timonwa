@@ -159,26 +159,40 @@ export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
 	const [localKind, setLocalKind] = useState<InputKindType>(seedKind);
 
 	// A non-empty seed on mount (history restore) adopts into the shared draft
-	// when reuse is on. Writes the external stores only — never React state — so
+	// when reuse is on. Draft and URL are mutually exclusive, so adopting one
+	// clears the other. Writes the external stores only — never React state — so
 	// this stays clear of the set-state-in-effect rule.
 	const seeded = useRef(false);
 	useEffect(() => {
 		if (seeded.current) return;
 		seeded.current = true;
 		if (!enabledStore.get()) return;
-		if (seedText) textStore.set(seedText);
-		if (seedUrl) urlStore.set(seedUrl);
-		if (seedObj.kind && (seedText || seedUrl)) kindStore.set(seedObj.kind);
-	}, [seedText, seedUrl, seedObj.kind]);
+		if (seedUrl) {
+			urlStore.set(seedUrl);
+			textStore.set("");
+			kindStore.set("url");
+		} else if (seedText) {
+			textStore.set(seedText);
+			urlStore.set("");
+			kindStore.set("text");
+		}
+	}, [seedText, seedUrl]);
 
 	const text = reuse ? sharedText : localText;
 	const url = reuse ? sharedUrl : localUrl;
-	// The user's explicit tab choice (sharedKind) wins; before any choice, infer
-	// the tab from whichever shared field has content so a shared URL is visible.
+	// Draft and URL are mutually exclusive, so show whichever field has content;
+	// before anything is entered, fall back to the last chosen tab / tool default.
 	const inputKind: InputKindType = reuse
-		? sharedKind ||
-			(sharedUrl.trim() ? "url" : sharedText.trim() ? "text" : localKind)
-		: localKind;
+		? sharedUrl.trim()
+			? "url"
+			: sharedText.trim()
+				? "text"
+				: sharedKind || localKind
+		: localUrl.trim()
+			? "url"
+			: localText.trim()
+				? "text"
+				: localKind;
 
 	const setText = useCallback((value: string) => {
 		if (enabledStore.get()) textStore.set(value);
@@ -190,21 +204,38 @@ export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
 		else setLocalUrl(value);
 	}, []);
 
+	// Switching input mode clears the other field — a draft and a URL never
+	// coexist, so the source stays unambiguous.
 	const setInputKind = useCallback((kind: InputKindType) => {
-		if (enabledStore.get()) kindStore.set(kind);
-		else setLocalKind(kind);
+		if (enabledStore.get()) {
+			kindStore.set(kind);
+			if (kind === "url") textStore.set("");
+			else urlStore.set("");
+		} else {
+			setLocalKind(kind);
+			if (kind === "url") setLocalText("");
+			else setLocalUrl("");
+		}
 	}, []);
 
 	const toggleReuse = useCallback(
 		(next: boolean) => {
 			if (next) {
-				// Turning on: what's on screen wins, or adopt the shared draft if the
-				// box is empty. Same rule for text and url; the current tab is shared.
-				const curText = textStore.get();
-				if (localText.trim() || !curText) textStore.set(localText);
-				const curUrl = urlStore.get();
-				if (localUrl.trim() || !curUrl) urlStore.set(localUrl);
-				kindStore.set(localKind);
+				// Turning on: adopt this tool's single source into the shared draft
+				// (clearing the other field). If this tool is empty, keep whatever is
+				// already shared.
+				if (localText.trim() || localUrl.trim()) {
+					if (localKind === "url") {
+						urlStore.set(localUrl);
+						textStore.set("");
+					} else {
+						textStore.set(localText);
+						urlStore.set("");
+					}
+					kindStore.set(localKind);
+				} else if (!kindStore.get()) {
+					kindStore.set(localKind);
+				}
 			} else {
 				// Turning off: keep the visible values so nothing blanks out.
 				setLocalText(textStore.get());
