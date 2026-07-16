@@ -1,6 +1,12 @@
 "use client";
 
-import { BookmarkIcon, CheckIcon, XIcon } from "lucide-react";
+import {
+	BookmarkIcon,
+	CheckIcon,
+	PencilIcon,
+	RefreshCwIcon,
+	XIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { PLATFORM_LABELS } from "@/components/tools/article-to-social-posts/constants/platforms";
 import {
@@ -24,6 +30,8 @@ type TemplatesPickerProps = {
 	onApply: (t: PresetTemplateType) => void;
 	onSave: (name: string) => void;
 	onDelete: (id: string) => void;
+	onUpdate: (id: string) => void;
+	onRename: (id: string, name: string) => void;
 	disabled?: boolean;
 };
 
@@ -33,10 +41,13 @@ export default function TemplatesPicker({
 	onApply,
 	onSave,
 	onDelete,
+	onUpdate,
+	onRename,
 	disabled,
 }: TemplatesPickerProps) {
 	const [nameDraft, setNameDraft] = useState("");
 	const [isSaving, setIsSaving] = useState(false);
+	const [editingId, setEditingId] = useState<string | null>(null);
 
 	const full = templates.length >= MAX_TEMPLATES;
 
@@ -76,6 +87,11 @@ export default function TemplatesPicker({
 					</button>
 				)}
 			</div>
+
+			<p className="text-[11px] text-muted-foreground">
+				A saved combo of tone, platforms, thread length, and writing prefs.
+				Apply one in a click, edit it to your current settings, or rename it.
+			</p>
 
 			{isSaving && (
 				<div className="flex gap-1.5">
@@ -120,21 +136,33 @@ export default function TemplatesPicker({
 
 			{templates.length === 0 ? (
 				<p className="text-[11px] text-muted-foreground italic">
-					Save tone + voice + platform combos you use often. One click to
-					reapply.
+					Nothing saved yet. Set a tone, platforms, and prefs, then “Save
+					current” to reuse them in one click.
 				</p>
 			) : (
 				<div className="flex flex-wrap gap-1.5">
-					{templates.map((t) => (
-						<TemplateChip
-							key={t.id}
-							template={t}
-							active={activeTemplateId === t.id}
-							disabled={disabled}
-							onApply={() => onApply(t)}
-							onDelete={() => onDelete(t.id)}
-						/>
-					))}
+					{templates.map((t) =>
+						editingId === t.id ? (
+							<TemplateEditor
+								key={t.id}
+								template={t}
+								disabled={disabled}
+								onRename={(name) => onRename(t.id, name)}
+								onUpdate={() => onUpdate(t.id)}
+								onDone={() => setEditingId(null)}
+							/>
+						) : (
+							<TemplateChip
+								key={t.id}
+								template={t}
+								active={activeTemplateId === t.id}
+								disabled={disabled}
+								onApply={() => onApply(t)}
+								onEdit={() => setEditingId(t.id)}
+								onDelete={() => onDelete(t.id)}
+							/>
+						),
+					)}
 				</div>
 			)}
 		</div>
@@ -146,12 +174,14 @@ function TemplateChip({
 	active,
 	disabled,
 	onApply,
+	onEdit,
 	onDelete,
 }: {
 	template: PresetTemplateType;
 	active: boolean;
 	disabled?: boolean;
 	onApply: () => void;
+	onEdit: () => void;
 	onDelete: () => void;
 }) {
 	return (
@@ -184,8 +214,22 @@ function TemplateChip({
 				</button>
 				<button
 					type="button"
+					onClick={onEdit}
+					aria-label={`Edit template ${template.name}`}
+					title="Rename or update to current settings"
+					disabled={disabled}
+					className={cn(
+						"px-1.5 py-1 border-l text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:cursor-not-allowed",
+						active ? "border-primary/30" : "border-border",
+					)}
+				>
+					<PencilIcon aria-hidden className="w-3 h-3" />
+				</button>
+				<button
+					type="button"
 					onClick={onDelete}
 					aria-label={`Delete template ${template.name}`}
+					title="Delete template"
 					disabled={disabled}
 					className={cn(
 						"px-1.5 py-1 border-l text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed",
@@ -196,6 +240,94 @@ function TemplateChip({
 				</button>
 			</div>
 			<TemplatePreview template={template} />
+		</div>
+	);
+}
+
+function TemplateEditor({
+	template,
+	disabled,
+	onRename,
+	onUpdate,
+	onDone,
+}: {
+	template: PresetTemplateType;
+	disabled?: boolean;
+	onRename: (name: string) => void;
+	onUpdate: () => void;
+	onDone: () => void;
+}) {
+	const [name, setName] = useState(template.name);
+	const rename = () => {
+		onRename(name);
+		onDone();
+	};
+	const updateConfig = () => {
+		onRename(name);
+		onUpdate();
+		onDone();
+	};
+	return (
+		<div className="w-full rounded-md border border-primary/40 bg-primary/5 p-2 space-y-1.5">
+			<div className="flex items-center gap-1.5">
+				<Input
+					autoFocus
+					value={name}
+					onChange={(e) => setName(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							e.preventDefault();
+							rename();
+						}
+						if (e.key === "Escape") {
+							e.preventDefault();
+							onDone();
+						}
+					}}
+					maxLength={40}
+					disabled={disabled}
+					aria-label="Template name"
+					className="h-7 flex-1 text-xs"
+				/>
+				<Button
+					size="sm"
+					type="button"
+					variant="ghost"
+					disabled={disabled || !name.trim()}
+					title="Save the new name only"
+					onClick={rename}
+				>
+					<CheckIcon aria-hidden className="w-3.5 h-3.5" />
+					Rename
+				</Button>
+				<Button
+					size="sm"
+					type="button"
+					disabled={disabled}
+					title="Overwrite this template's tone, platforms, and prefs with your current settings"
+					onClick={updateConfig}
+				>
+					<RefreshCwIcon aria-hidden className="w-3.5 h-3.5" />
+					Update config
+				</Button>
+				<Button
+					size="sm"
+					type="button"
+					variant="ghost"
+					aria-label="Cancel"
+					title="Cancel"
+					onClick={onDone}
+				>
+					<XIcon aria-hidden className="w-3.5 h-3.5" />
+				</Button>
+			</div>
+			<p className="text-[11px] text-muted-foreground">
+				<span className="font-medium text-foreground">Rename</span> changes only
+				the name.{" "}
+				<span className="font-medium text-foreground">Update config</span>{" "}
+				replaces the saved tone, platforms, thread length, and writing prefs
+				with your current settings.
+			</p>
 		</div>
 	);
 }

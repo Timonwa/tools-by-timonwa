@@ -13,7 +13,7 @@ export default function Hero() {
 					<span className="hero-gradient-text">social media posts</span>
 				</>
 			}
-			subtitle="Paste a published URL or drop in your unpublished draft. The agent reads it and drafts posts for X, LinkedIn, Threads, Bluesky, Mastodon, and Substack Notes — edit, copy, and share."
+			subtitle="Paste an article's URL or its text. The agent reads it and writes posts for X, LinkedIn, Threads, Bluesky, Mastodon, and Substack Notes — edit, copy, and share."
 		/>
 	);
 }

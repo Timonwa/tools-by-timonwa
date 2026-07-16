@@ -51,6 +51,8 @@ export default function Writer() {
 					onApplyTemplate={w.applyTemplate}
 					onSaveTemplate={w.saveTemplate}
 					onDeleteTemplate={w.deleteTemplate}
+					onUpdateTemplate={w.updateTemplate}
+					onRenameTemplate={w.renameTemplate}
 				/>
 
 				{w.preview && (
@@ -83,8 +85,8 @@ export default function Writer() {
 
 						<Button
 							onClick={w.clearAll}
-							variant="ghost"
-							size="sm"
+							variant="outline"
+							size="lg"
 							className="w-full"
 						>
 							Start over with a new article

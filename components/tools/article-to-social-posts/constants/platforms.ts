@@ -21,6 +21,14 @@ export const ALL_PLATFORMS: PlatformType[] = [
 	"substack",
 ];
 
+/** Platforms that support multi-post threads (LinkedIn and Substack don't). */
+export const THREADABLE_PLATFORMS: PlatformType[] = [
+	"x",
+	"bluesky",
+	"threads",
+	"mastodon",
+];
+
 export const PLATFORM_LABELS: Record<PlatformType, string> = {
 	linkedin: "LinkedIn",
 	x: "X (Twitter)",

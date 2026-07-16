@@ -1,10 +1,12 @@
 "use client";
 
+import { DEFAULT_PREFERENCES } from "@/components/tools/article-to-social-posts/constants/preferences";
 import type {
 	DraftInputType,
 	PlatformType,
 	PreviewResultType,
 	ToneType,
+	WritingPreferencesType,
 } from "@/components/tools/article-to-social-posts/types";
 import { createHistoryStore } from "@/lib/utils/create-history-store";
 
@@ -17,26 +19,35 @@ export type HistoryEntryType = {
 	tone: ToneType;
 	platforms: PlatformType[];
 	xThreadLength: number;
+	preferences: WritingPreferencesType;
+	templateName?: string;
 	preview: PreviewResultType;
 	timestamp: number;
 };
 
 /**
  * Tolerate entries stored before the URL/draft split (they had `url` at the
- * top level instead of `input`). Synthesize an `input` for those on read;
- * the next upsert will rewrite them in the new shape.
+ * top level instead of `input`) and before `preferences` was saved. Synthesize
+ * the missing fields on read; the next upsert rewrites them in the new shape.
  */
-type LegacyEntryType = Omit<HistoryEntryType, "input"> & { url?: string };
+type LegacyEntryType = Omit<HistoryEntryType, "input" | "preferences"> & {
+	url?: string;
+	preferences?: WritingPreferencesType;
+};
 
 const migrate = (raw: unknown): HistoryEntryType | null => {
 	if (!raw || typeof raw !== "object") return null;
 	const e = raw as HistoryEntryType & LegacyEntryType;
-	if (e.input) return e;
-	if (typeof e.url === "string" && e.url) {
-		const { url, ...rest } = e;
-		return { ...rest, input: { kind: "url", url } };
-	}
-	return null;
+	const withInput: HistoryEntryType | null = e.input
+		? e
+		: typeof e.url === "string" && e.url
+			? { ...e, input: { kind: "url", url: e.url } }
+			: null;
+	if (!withInput) return null;
+	return {
+		...withInput,
+		preferences: withInput.preferences ?? DEFAULT_PREFERENCES,
+	};
 };
 
 const load = (): HistoryEntryType[] => {
@@ -57,8 +68,9 @@ const save = (items: HistoryEntryType[]) => {
 	} catch {}
 };
 
-const sameUrl = (entry: HistoryEntryType, url: string) =>
-	entry.input.kind === "url" && entry.input.url === url;
+/** Identity of an entry's source — same URL or same pasted text = same entry. */
+const inputKey = (input: DraftInputType) =>
+	input.kind === "url" ? `url:${input.url.trim()}` : `text:${input.text}`;
 
 export const useHistory = createHistoryStore<
 	HistoryEntryType,
@@ -66,24 +78,16 @@ export const useHistory = createHistoryStore<
 >({
 	read: load,
 	write: save,
-	// URL entries dedup by URL — re-generating the same article replaces the
-	// previous entry. Draft entries are always fresh — each paste is its own
-	// record, even if the text is identical.
+	// Dedup by source — re-generating the same article (URL or pasted text)
+	// updates its entry rather than piling up a record per run.
 	applyUpsert: (current, entry) => {
-		if (entry.input.kind === "url") {
-			const url = entry.input.url;
-			const existing = current.find((h) => sameUrl(h, url));
-			const full: HistoryEntryType = {
-				...entry,
-				id: existing?.id ?? crypto.randomUUID(),
-			};
-			const without = current.filter((h) => !sameUrl(h, url));
-			return [full, ...without].slice(0, MAX_HISTORY);
-		}
+		const key = inputKey(entry.input);
+		const existing = current.find((h) => inputKey(h.input) === key);
 		const full: HistoryEntryType = {
 			...entry,
-			id: entry.id ?? crypto.randomUUID(),
+			id: existing?.id ?? entry.id ?? crypto.randomUUID(),
 		};
-		return [full, ...current].slice(0, MAX_HISTORY);
+		const without = current.filter((h) => inputKey(h.input) !== key);
+		return [full, ...without].slice(0, MAX_HISTORY);
 	},
 });

@@ -4,17 +4,21 @@ import { useId } from "react";
 
 import { Input } from "@/components/ui";
 
-type XFormatProps = {
+type ThreadFormatProps = {
 	length: number;
 	onChange: (length: number) => void;
 	disabled?: boolean;
 };
 
-export default function XFormat({ length, onChange, disabled }: XFormatProps) {
+export default function ThreadFormat({
+	length,
+	onChange,
+	disabled,
+}: ThreadFormatProps) {
 	const threadLengthId = useId();
 	return (
 		<fieldset className="min-w-0 border-0 p-0">
-			<legend className="text-sm font-medium mb-2">X format</legend>
+			<legend className="text-sm font-medium mb-2">Thread format</legend>
 			<div className="flex items-center gap-3 flex-wrap">
 				<div className="flex gap-2">
 					<button
@@ -64,6 +68,10 @@ export default function XFormat({ length, onChange, disabled }: XFormatProps) {
 					</div>
 				)}
 			</div>
+			<p className="mt-1.5 text-[11px] text-muted-foreground">
+				Applies to thread-capable platforms (X, Bluesky, Threads, Mastodon).
+				LinkedIn and Substack are always single posts.
+			</p>
 		</fieldset>
 	);
 }

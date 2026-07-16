@@ -12,7 +12,10 @@ import {
 
 import type { InputKindType } from "@/components/_shared/InputKindTabs";
 import { useToolDraft } from "@/components/_shared/shared-draft";
-import { MAX_TEMPLATES } from "@/components/tools/article-to-social-posts/constants/preferences";
+import {
+	DEFAULT_PREFERENCES,
+	MAX_TEMPLATES,
+} from "@/components/tools/article-to-social-posts/constants/preferences";
 import type {
 	DraftInputType,
 	PlatformType,
@@ -28,6 +31,7 @@ import {
 	buildCopyText,
 } from "@/components/tools/article-to-social-posts/utils/draft";
 import {
+	DEFAULT_WORKFLOW,
 	prefsStorage,
 	templatesStorage,
 	workflowStorage,
@@ -138,6 +142,24 @@ export function useWriter() {
 
 	const { history, upsert, remove: removeHistoryEntry } = useHistory();
 
+	// Seed a "Default" template from the built-in defaults on first run, so the
+	// user's first template already exists — it shows how templates work and
+	// gives a one-click way back to the defaults.
+	useEffect(() => {
+		if (templatesStorage.get().length > 0) return;
+		templatesStorage.set([
+			{
+				id: crypto.randomUUID(),
+				name: "Default",
+				createdAt: Date.now(),
+				tone: DEFAULT_WORKFLOW.tone,
+				platforms: DEFAULT_WORKFLOW.platforms,
+				xThreadLength: DEFAULT_WORKFLOW.xThreadLength,
+				preferences: DEFAULT_PREFERENCES,
+			},
+		]);
+	}, []);
+
 	// Non-reactive persist logic — always reads the latest preview/input/tone/etc.
 	// without them being effect dependencies (React 19.2 useEffectEvent).
 	const persistDraftEdits = useEffectEvent(() => {
@@ -148,6 +170,8 @@ export function useWriter() {
 			tone,
 			platforms,
 			xThreadLength,
+			preferences: prefs,
+			templateName: templates.find((t) => t.id === activeTemplateId)?.name,
 			preview: { ...preview, drafts: editableDrafts },
 			timestamp: Date.now(),
 		});
@@ -244,6 +268,9 @@ export function useWriter() {
 						tone,
 						platforms,
 						xThreadLength,
+						preferences: prefsStorage.get(),
+						templateName: templates.find((t) => t.id === activeTemplateId)
+							?.name,
 						preview,
 						timestamp: Date.now(),
 					});
@@ -254,7 +281,16 @@ export function useWriter() {
 				}
 			});
 		},
-		[currentInput, tone, platforms, xThreadLength, resetResults, upsert],
+		[
+			currentInput,
+			tone,
+			platforms,
+			xThreadLength,
+			resetResults,
+			upsert,
+			templates,
+			activeTemplateId,
+		],
 	);
 
 	const updateDraftContent = useCallback(
@@ -374,6 +410,37 @@ export function useWriter() {
 		templatesStorage.set(templatesStorage.get().filter((t) => t.id !== id));
 	}, []);
 
+	// Overwrite a template's saved config with the current tone / platforms /
+	// thread / writing prefs — edit a template in place, no delete + re-save.
+	const updateTemplate = useCallback(
+		(id: string) => {
+			templatesStorage.set(
+				templatesStorage.get().map((t) =>
+					t.id === id
+						? {
+								...t,
+								tone,
+								platforms,
+								xThreadLength,
+								preferences: prefsStorage.get(),
+							}
+						: t,
+				),
+			);
+		},
+		[tone, platforms, xThreadLength],
+	);
+
+	const renameTemplate = useCallback((id: string, name: string) => {
+		const trimmed = name.trim();
+		if (!trimmed) return;
+		templatesStorage.set(
+			templatesStorage
+				.get()
+				.map((t) => (t.id === id ? { ...t, name: trimmed } : t)),
+		);
+	}, []);
+
 	const loadFromHistory = useCallback(
 		(entry: HistoryEntryType) => {
 			if (entry.input.kind === "url") {
@@ -390,6 +457,7 @@ export function useWriter() {
 				platforms: entry.platforms,
 				xThreadLength: entry.xThreadLength,
 			});
+			prefsStorage.set(entry.preferences);
 			setPreview(entry.preview);
 			setEditableDrafts(entry.preview.drafts);
 			setLastUsage(entry.preview.usage ?? null);
@@ -442,5 +510,7 @@ export function useWriter() {
 		saveTemplate,
 		applyTemplate,
 		deleteTemplate,
+		updateTemplate,
+		renameTemplate,
 	};
 }

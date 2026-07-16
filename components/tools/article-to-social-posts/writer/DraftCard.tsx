@@ -178,7 +178,8 @@ export default function DraftCard({
 						size="sm"
 						onClick={onRegenerate}
 						disabled={isRegenerating}
-						title="Regenerate just this draft"
+						title="Regenerate this post"
+						aria-label="Regenerate this post"
 					>
 						{isRegenerating ? (
 							<Loader2Icon className="w-4 h-4 animate-spin" />
