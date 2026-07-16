@@ -3,7 +3,7 @@ import type { ToolContentType } from "@/components/_shared/ToolContent";
 export const socialPostsContent: ToolContentType = {
 	article: `## What is Article to Social Posts?
 
-Article to Social Posts turns a published article — from a URL or the text you paste in — into ready-to-post copy tailored to each network: X (Twitter), LinkedIn, Threads, Bluesky, Mastodon, and Substack Notes. Each post respects the platform's length and style, and you can set the tone, control hashtags, and generate a multi-post X thread. It reads the article and pulls out the hook and key points, so you edit a real first version instead of starting from a blank box.
+Article to Social Posts turns a published article — from a URL or the text you paste in — into ready-to-post copy tailored to each network: X (Twitter), LinkedIn, Threads, Bluesky, Mastodon, and Substack Notes. You get one post per platform, each sized to that network's free-tier character limit and matched to its style, and you can set the tone, control hashtags, and generate multi-post threads on the networks that support them. It reads the article and pulls out the hook and key points, so you edit a real first version instead of starting from a blank box.
 
 ## Who is Article to Social Posts for?
 
@@ -40,7 +40,7 @@ Good repurposing isn't copy-paste. A few principles the tool applies for you:
 This tool is powered by Google's Gemini through the open-source **Vercel AI SDK**. It's free with a daily limit and no account, with an optional bring-your-own-key for unlimited runs. Your article or text is used only to generate the posts for that request — never stored on our servers or used for training — and it's copy-only: it writes the posts, you review and publish.`,
 	faq: [
 		{
-			question: "How do I turn a blog post into social media posts?",
+			question: "How do I turn an article into social media posts?",
 			answer:
 				"Give an article's URL or text to a generator that rewrites it per platform, then edit and copy each post. This tool tailors length, tone, and format to X, LinkedIn, Threads, Bluesky, Mastodon, and Substack, and nothing is posted automatically.",
 		},
