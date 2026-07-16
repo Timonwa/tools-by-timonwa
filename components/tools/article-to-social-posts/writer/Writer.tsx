@@ -31,8 +31,10 @@ export default function Writer() {
 					onUrlChange={w.setUrl}
 					text={w.text}
 					onTextChange={w.setText}
-					draftReuse={w.draftReuse}
-					onToggleDraftReuse={w.toggleDraftReuse}
+					textReuse={w.textReuse}
+					onToggleTextReuse={w.toggleTextReuse}
+					urlReuse={w.urlReuse}
+					onToggleUrlReuse={w.toggleUrlReuse}
 					onClearDraft={w.clearDraft}
 					tone={w.tone}
 					onToneChange={w.setTone}

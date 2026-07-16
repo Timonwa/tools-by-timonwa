@@ -75,8 +75,10 @@ export default function SeoForm({
 		setUrl,
 		inputKind,
 		setInputKind,
-		reuse,
-		toggleReuse,
+		textReuse,
+		toggleTextReuse,
+		urlReuse,
+		toggleUrlReuse,
 		clear: clearArticle,
 	} = useToolDraft({
 		kind: initialSource?.kind ?? "text",
@@ -174,12 +176,14 @@ export default function SeoForm({
 						</p>
 						<DraftReuseControls
 							id={reuseId}
-							reuse={reuse}
-							onToggleReuse={toggleReuse}
+							reuse={urlReuse}
+							onToggleReuse={toggleUrlReuse}
 							onClear={() => setUrl("")}
 							canClear={url.trim().length > 0}
 							disabled={isPending}
 							className="mt-2"
+							noun="link"
+							scope="the AI tools"
 						/>
 					</div>
 				) : (
@@ -208,8 +212,8 @@ export default function SeoForm({
 						</p>
 						<DraftReuseControls
 							id={reuseId}
-							reuse={reuse}
-							onToggleReuse={toggleReuse}
+							reuse={textReuse}
+							onToggleReuse={toggleTextReuse}
 							onClear={clearArticle}
 							canClear={article.length > 0}
 							disabled={isPending}

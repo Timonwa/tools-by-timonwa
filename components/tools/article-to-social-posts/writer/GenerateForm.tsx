@@ -37,8 +37,10 @@ type GenerateFormProps = {
 	onUrlChange: (url: string) => void;
 	text: string;
 	onTextChange: (text: string) => void;
-	draftReuse: boolean;
-	onToggleDraftReuse: (next: boolean) => void;
+	textReuse: boolean;
+	onToggleTextReuse: (next: boolean) => void;
+	urlReuse: boolean;
+	onToggleUrlReuse: (next: boolean) => void;
 	onClearDraft: () => void;
 	tone: ToneType;
 	onToneChange: (tone: ToneType) => void;
@@ -64,8 +66,10 @@ export default function GenerateForm({
 	onUrlChange,
 	text,
 	onTextChange,
-	draftReuse,
-	onToggleDraftReuse,
+	textReuse,
+	onToggleTextReuse,
+	urlReuse,
+	onToggleUrlReuse,
 	onClearDraft,
 	tone,
 	onToneChange,
@@ -143,12 +147,14 @@ export default function GenerateForm({
 							/>
 							<DraftReuseControls
 								id={reuseId}
-								reuse={draftReuse}
-								onToggleReuse={onToggleDraftReuse}
+								reuse={urlReuse}
+								onToggleReuse={onToggleUrlReuse}
 								onClear={() => onUrlChange("")}
 								canClear={url.trim().length > 0}
 								disabled={isGenerating}
 								className="mt-2"
+								noun="link"
+								scope="the AI tools"
 							/>
 						</div>
 					) : (
@@ -188,8 +194,8 @@ export default function GenerateForm({
 							</p>
 							<DraftReuseControls
 								id={reuseId}
-								reuse={draftReuse}
-								onToggleReuse={onToggleDraftReuse}
+								reuse={textReuse}
+								onToggleReuse={onToggleTextReuse}
 								onClear={onClearDraft}
 								canClear={text.length > 0}
 								disabled={isGenerating}
