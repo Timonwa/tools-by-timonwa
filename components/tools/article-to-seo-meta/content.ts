@@ -3,7 +3,7 @@ import type { ToolContentType } from "@/components/_shared/ToolContent";
 export const seoMetaContent: ToolContentType = {
 	article: `## What is Article to SEO Meta?
 
-Article to SEO Meta turns a finished article — or a solid draft — into ready-to-use SEO title and meta description variations, each sized to the lengths Google actually displays (roughly 50 to 60 characters for the title, 150 to 160 for the description). Paste your text, optionally name a primary keyword, and get one to three options to drop straight into your CMS. Because it reads the whole piece, the metadata reflects what the article is really about rather than a generic guess.
+Article to SEO Meta turns a finished article — from a URL or the text you paste in — into ready-to-use SEO title and meta description variations, each sized to the lengths Google actually displays (roughly 50 to 60 characters for the title, 150 to 160 for the description). Give it a link or paste your text, optionally name a primary keyword, and get one to three options to drop straight into your CMS. Because it reads the whole piece, the metadata reflects what the article is really about rather than a generic guess.
 
 ## Who is Article to SEO Meta for?
 
@@ -11,10 +11,10 @@ Bloggers, content marketers, and SEO specialists who need title tags and meta de
 
 ## How to use it
 
-1. Paste your article, or a near-final draft.
+1. Paste a published article's URL, or the article text (a near-final draft works too).
 2. Optionally add the primary keyword you want to rank for.
 3. Choose how many variations you'd like (one to three) and generate.
-4. Check the live character counts, then copy the title, the description, or both.
+4. Check the live character counts, edit or regenerate any variation, then copy the title, the description, or both.
 
 ## What makes a good title tag and meta description
 
@@ -26,9 +26,9 @@ Bloggers, content marketers, and SEO specialists who need title tags and meta de
 
 The meta description isn't a direct ranking factor, but it heavily influences click-through rate — and a page that earns more clicks from search tends to perform better over time. The title tag does carry ranking weight and is often the first thing a searcher reads. Tight, compelling metadata is one of the cheapest SEO wins available.
 
-## Built with ADK-TS, free, and private
+## Free, open source, and private
 
-This tool is powered by Google's Gemini through **ADK-TS**, the open-source TypeScript agent framework. If you'd like to build something similar, our guide walks through [building your first AI agent in TypeScript with ADK-TS](https://tech.timonwa.com/blog/build-ai-agent-in-typescript-with-adk-ts/). The tool itself is free with a daily limit and no account; add your own free Google AI Studio key for unlimited runs. Your article is sent to the model only to generate the metadata for that request — it isn't stored on our servers or used to train anything.`,
+This tool is powered by Google's Gemini through the open-source **Vercel AI SDK**. It's free with a daily limit and no account; add your own free Google AI Studio key for unlimited runs. Your article or URL is sent to the model only to generate the metadata for that request — it isn't stored on our servers or used to train anything.`,
 	faq: [
 		{
 			question: "What is an SEO meta description?",
@@ -74,6 +74,11 @@ This tool is powered by Google's Gemini through **ADK-TS**, the open-source Type
 			question: "Do I need an account or API key to use it?",
 			answer:
 				"No account is required and there's a free daily allowance. For unlimited use, add your own free Google AI Studio key in settings — it stays in your browser.",
+		},
+		{
+			question: "Can I use an article URL, or do I have to paste the text?",
+			answer:
+				"Either. Paste a published article's URL and the tool reads the page, or paste the article text directly — handy for writing metadata before a piece goes live.",
 		},
 		{
 			question: "How do I add these meta tags to my website?",

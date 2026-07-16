@@ -1,9 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useEffectEvent, useState } from "react";
-import { TagsIcon } from "lucide-react";
+import {
+	useCallback,
+	useEffect,
+	useEffectEvent,
+	useRef,
+	useState,
+} from "react";
+import {
+	FilePlus2Icon,
+	Loader2Icon,
+	RefreshCwIcon,
+	TagsIcon,
+} from "lucide-react";
 
-import HistorySidebar from "@/components/tools/article-to-seo-meta/HistorySidebar";
+import ArticleCard from "@/components/_shared/ArticleCard";
+import ErrorNotice from "@/components/_shared/ErrorNotice";
+import HistorySidebar from "@/components/_shared/HistorySidebar";
 import SeoForm, {
 	type SeoFormParamsType,
 } from "@/components/tools/article-to-seo-meta/SeoForm";
@@ -17,12 +30,25 @@ import type {
 	TokenUsageType,
 } from "@/components/tools/article-to-seo-meta/types";
 import {
+	Button,
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui";
+import {
+	generateSeoMeta,
+	regenerateSeoMetaVariation,
+} from "@/lib/tools/article-to-seo-meta/actions";
+import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
+
+/** History row headline: the article title, else the URL, else a text snippet. */
+const historyLabel = (h: HistoryEntryType): string => {
+	if (h.result.article?.title) return h.result.article.title;
+	if (h.source.kind === "url") return h.source.url;
+	return h.source.text.trim().slice(0, 120) || "Article";
+};
 
 export default function SeoTool() {
 	const [result, setResult] = useState<SeoMetaResultType | undefined>();
@@ -31,11 +57,32 @@ export default function SeoTool() {
 	>([]);
 	const [usage, setUsage] = useState<TokenUsageType | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(
+		null,
+	);
+	const [regenError, setRegenError] = useState<string | null>(null);
+	const [regeneratingAll, setRegeneratingAll] = useState(false);
+	const [copiedAll, setCopiedAll] = useState(false);
 	const [initial, setInitial] = useState<SeoFormParamsType | undefined>();
+	// The form exposes its "new article" reset here so the bottom button can
+	// clear the form's inputs (which the form owns), not just the results.
+	const formResetRef = useRef<(() => void) | null>(null);
 	// Bumped on a history restore to remount SeoForm with fresh seed values
 	// (React's "reset all state via key" pattern — no restore effect needed).
 	const [restoreNonce, setRestoreNonce] = useState(0);
 	const { history, upsert, remove } = useHistory();
+	const resultsRef = useRef<HTMLDivElement>(null);
+
+	// Results stack below the form (same layout as Article to Social Posts), so
+	// scroll them into view when a new set lands.
+	useEffect(() => {
+		if (result) {
+			resultsRef.current?.scrollIntoView({
+				behavior: "smooth",
+				block: "start",
+			});
+		}
+	}, [result]);
 
 	function handleResult(
 		res: SeoMetaResultType,
@@ -77,6 +124,102 @@ export default function SeoTool() {
 		[],
 	);
 
+	// Regenerate a single variation, passing the current set so the model returns
+	// a fresh angle rather than a near-duplicate. Targets the generated source
+	// (`initial`), not whatever's typed in the form.
+	const regenerateVariation = useCallback(
+		async (index: number) => {
+			if (!initial) return;
+			setRegeneratingIndex(index);
+			setRegenError(null);
+			try {
+				const byokKey = byokStorage.get() ?? undefined;
+				const res = await regenerateSeoMetaVariation({
+					source: initial.source,
+					primaryKeyword: initial.primaryKeyword,
+					existing: editableVariations,
+					googleApiKey: byokKey,
+					googleModel: byokKey ? byokModelStorage.get() : undefined,
+				});
+				if (!res.ok) {
+					setRegenError(res.error);
+					return;
+				}
+				setEditableVariations((cur) =>
+					cur.map((v, i) => (i === index ? res.variation : v)),
+				);
+				setUsage(res.usage);
+			} catch {
+				setRegenError(
+					"We couldn't reach the server. Check your internet connection and try again.",
+				);
+			} finally {
+				setRegeneratingIndex(null);
+			}
+		},
+		[initial, editableVariations],
+	);
+
+	// "New article": clear the results here; the form clears its own inputs.
+	const handleReset = useCallback(() => {
+		setResult(undefined);
+		setEditableVariations([]);
+		setUsage(null);
+		setInitial(undefined);
+		setRegenError(null);
+	}, []);
+
+	const handleCopyAll = useCallback(() => {
+		const text = editableVariations
+			.map(
+				(v, i) =>
+					`Variation ${i + 1}\nTitle: ${v.title}\nDescription: ${v.description}`,
+			)
+			.join("\n\n");
+		navigator.clipboard.writeText(text);
+		setCopiedAll(true);
+		setTimeout(() => setCopiedAll(false), 1200);
+	}, [editableVariations]);
+
+	// Regenerate every variation for the article on screen (`initial`), keeping
+	// the current set visible until the new one lands.
+	const regenerateAll = useCallback(async () => {
+		if (!initial) return;
+		setRegeneratingAll(true);
+		setRegenError(null);
+		try {
+			const byokKey = byokStorage.get() ?? undefined;
+			const res = await generateSeoMeta({
+				source: initial.source,
+				primaryKeyword: initial.primaryKeyword,
+				variationCount: initial.variationCount,
+				googleApiKey: byokKey,
+				googleModel: byokKey ? byokModelStorage.get() : undefined,
+			});
+			if (!res.ok) {
+				setRegenError(res.error);
+				return;
+			}
+			setResult(res.result);
+			setEditableVariations(res.result.variations);
+			setUsage(res.usage);
+			upsert({
+				source: initial.source,
+				primaryKeyword: initial.primaryKeyword,
+				variationCount: initial.variationCount,
+				result: res.result,
+				usage: res.usage,
+				timestamp: Date.now(),
+			});
+		} catch {
+			setRegenError(
+				"We couldn't reach the server. Check your internet connection and try again.",
+			);
+		} finally {
+			setRegeneratingAll(false);
+		}
+	}, [initial, upsert]);
+
 	// Non-reactive persist logic — always sees the latest result/usage/initial
 	// without them being effect dependencies (React 19.2 useEffectEvent).
 	const persistEdits = useEffectEvent(() => {
@@ -98,58 +241,126 @@ export default function SeoTool() {
 		return () => clearTimeout(id);
 	}, [editableVariations]);
 
-	return (
-		<div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_280px]">
-			<Card className="min-w-0 self-start">
-				<CardHeader>
-					<CardTitle className="flex items-center gap-2 text-lg">
-						<TagsIcon className="w-5 h-5 text-primary" aria-hidden />
-						Generate SEO meta tags
-					</CardTitle>
-					<CardDescription>
-						Paste your article and an optional target keyword. The agent writes
-						title and description variations optimised for search — review,
-						copy, and drop them into your CMS.
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<SeoForm
-						key={restoreNonce}
-						onResult={handleResult}
-						onLoadingChange={setLoading}
-						initial={initial}
-						hasResult={Boolean(result)}
-					/>
-				</CardContent>
-			</Card>
+	// Any run in flight — a full generate (`loading`), a bottom "regenerate all",
+	// or a single variation. Every action button gates on it so requests can't race.
+	const busy = loading || regeneratingAll || regeneratingIndex !== null;
 
-			<div className="min-w-0">
+	return (
+		<div className="grid gap-6 lg:grid-cols-[1fr_280px]">
+			<div className="space-y-6 min-w-0">
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2 text-lg">
+							<TagsIcon className="w-5 h-5 text-primary" aria-hidden />
+							Generate SEO meta tags
+						</CardTitle>
+						<CardDescription>
+							Paste an article&apos;s URL or its text, plus an optional target
+							keyword. The agent writes title and description variations
+							optimised for search — review, edit, copy, and drop them into your
+							CMS.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<SeoForm
+							key={restoreNonce}
+							onResult={handleResult}
+							onLoadingChange={setLoading}
+							onReset={handleReset}
+							resetRef={formResetRef}
+							busy={busy}
+							initial={initial}
+							hasResult={Boolean(result)}
+						/>
+					</CardContent>
+				</Card>
+
+				{regenError && <ErrorNotice message={regenError} />}
 				{loading && !result ? (
 					<LoadingState />
 				) : result ? (
-					<SeoResults
-						variations={editableVariations}
-						usage={usage}
-						onVariationChange={updateVariation}
-					/>
-				) : (
-					<EmptyState />
-				)}
+					<div ref={resultsRef} className="space-y-4">
+						<ArticleCard
+							article={result.article ?? {}}
+							usage={usage}
+							copied={copiedAll}
+							onCopyAll={handleCopyAll}
+							copyLabel="Copy all variations"
+						/>
+						<SeoResults
+							variations={editableVariations}
+							regeneratingIndex={regeneratingIndex}
+							busy={busy}
+							onVariationChange={updateVariation}
+							onRegenerate={regenerateVariation}
+						/>
+
+						<div className="flex flex-col gap-2 sm:flex-row">
+							<Button
+								onClick={regenerateAll}
+								variant="outline"
+								size="lg"
+								className="w-full sm:flex-1"
+								disabled={busy}
+								title="Regenerate every variation for this article"
+							>
+								{regeneratingAll ? (
+									<>
+										<Loader2Icon className="w-4 h-4 animate-spin" />
+										Regenerating all...
+									</>
+								) : (
+									<>
+										<RefreshCwIcon className="w-4 h-4" />
+										Regenerate all
+									</>
+								)}
+							</Button>
+							<Button
+								onClick={() => formResetRef.current?.()}
+								variant="outline"
+								size="lg"
+								className="w-full sm:flex-1"
+								disabled={busy}
+								title="Clear these variations and start a fresh article — saved results stay in history"
+							>
+								<FilePlus2Icon className="w-4 h-4" />
+								New article
+							</Button>
+						</div>
+					</div>
+				) : null}
 			</div>
 
 			<HistorySidebar
-				entries={history}
-				onLoad={handleLoadHistory}
+				items={history.map((h) => ({
+					id: h.id,
+					kind: h.source.kind,
+					title: historyLabel(h),
+					timestamp: h.timestamp,
+					meta: (
+						<>
+							<span>·</span>
+							<span>
+								{h.variationCount} variation{h.variationCount > 1 ? "s" : ""}
+							</span>
+							{h.primaryKeyword && (
+								<>
+									<span>·</span>
+									<span className="truncate">
+										&ldquo;{h.primaryKeyword}&rdquo;
+									</span>
+								</>
+							)}
+						</>
+					),
+				}))}
+				onLoad={(id) => {
+					const entry = history.find((e) => e.id === id);
+					if (entry) handleLoadHistory(entry);
+				}}
 				onRemove={remove}
 			/>
-		</div>
-	);
-}
-
-function EmptyState() {
-	return (
-		<div className="rounded-xl border border-dashed border-border/60 bg-card/50 p-8 text-center text-sm text-muted-foreground">
-			Variations will appear here after you generate.
 		</div>
 	);
 }

@@ -5,6 +5,19 @@ import { generateStructuredFromDraft } from "@/lib/tools/_shared/draft-source";
 import type { TokenUsageType } from "@/lib/types/token-usage";
 
 export const seoMetaSchema = z.object({
+	article: z.object({
+		url: z
+			.string()
+			.describe("Always an empty string — the app fills in the URL."),
+		title: z
+			.string()
+			.describe("The article's title, inferred from the content."),
+		author: z
+			.string()
+			.describe(
+				"The author's name if clearly stated, otherwise an empty string.",
+			),
+	}),
 	variations: z
 		.array(
 			z.object({
@@ -34,6 +47,11 @@ const SYSTEM = `You are an SEO specialist writing meta tags for articles.
 # HOW TO READ THE ARTICLE
 
 You are given the article as EITHER pasted text (under "ARTICLE TEXT:") OR a URL. When a URL is given, read it with the \`url_context\` tool and work only from the article's real content — never invent details or write about a topic you couldn't read.
+
+Also fill in the \`article\` object describing the source:
+- Infer \`article.title\` from the content.
+- Set \`article.author\` to the author's name if clearly stated (e.g. "By Jane Doe"), otherwise an empty string.
+- Set \`article.url\` to an empty string — the app fills in the real URL.
 
 # TASK
 

@@ -9,11 +9,11 @@ export default function Hero() {
 			eyebrow={{ icon: SearchIcon, label: "SEO meta generator" }}
 			title={
 				<>
-					Turn drafts into{" "}
+					Turn articles into{" "}
 					<span className="hero-gradient-text">SEO-ready tags</span>
 				</>
 			}
-			subtitle="Paste an article draft and get title + description variations in the exact character ranges Google displays — with an optional keyword you want guaranteed in every version."
+			subtitle="Paste an article's URL or its text and get title + description variations in the exact character ranges Google displays — with an optional keyword you want guaranteed in every version."
 		/>
 	);
 }

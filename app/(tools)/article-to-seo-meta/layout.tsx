@@ -14,7 +14,7 @@ const TOOL_URL = `${SITE_URL}${TOOL_PATH}`;
 const TOOL_TITLE =
 	"Article to SEO Meta — SEO titles and descriptions with counts in spec";
 const TOOL_DESCRIPTION =
-	"Paste an article draft and get 1-3 SEO title + description variations sized to Google's display limits (50-60 / 150-160 chars). Optional primary keyword included in every variation.";
+	"Paste an article URL or its text and get 1-3 SEO title + description variations sized to Google's display limits (50-60 / 150-160 chars). Optional primary keyword included in every variation.";
 
 export const metadata: Metadata = {
 	title: TOOL_TITLE,
@@ -58,15 +58,17 @@ const jsonLd = {
 		"meta description 160 characters",
 		"SEO title 60 characters",
 		"article to SEO",
+		"URL to SEO meta tags",
 		"primary keyword in title",
 		"open source SEO tool",
 	].join(", "),
 	featureList: [
-		"Generate 1-3 SEO title + description variations from any article draft",
+		"Generate 1-3 SEO title + description variations from an article URL or pasted text",
 		"Strict character ranges: titles 50-60, descriptions 150-160",
 		"Optional primary keyword included in every variation",
 		"Per-field character counter with in-range, close, or out-of-range indicators",
-		"Copy title, description, or both in one click",
+		"Regenerate a single variation for a fresh angle",
+		"Edit variations inline and copy title, description, or both in one click",
 		"Open source, MIT licensed",
 	],
 	creator: {
