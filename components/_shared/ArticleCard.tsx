@@ -1,0 +1,85 @@
+"use client";
+
+import { ClipboardCheckIcon, ClipboardCopyIcon } from "lucide-react";
+
+import {
+	Button,
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui";
+import type { TokenUsageType } from "@/lib/types/token-usage";
+
+type Props = {
+	article: { title?: string; author?: string; url?: string };
+	usage: TokenUsageType | null;
+	copied: boolean;
+	onCopyAll: () => void;
+	/** Copy-button label, e.g. "Copy all posts" or "Copy all variations". */
+	copyLabel: string;
+};
+
+/**
+ * Header card for a generated result: the source article's title, author, and
+ * link (or "Pasted text"), token usage, and a copy-everything button. Shared by
+ * the draft-based AI tools so the results header looks identical across them.
+ */
+export default function ArticleCard({
+	article,
+	usage,
+	copied,
+	onCopyAll,
+	copyLabel,
+}: Props) {
+	return (
+		<Card>
+			<CardHeader>
+				<div className="flex items-center justify-between gap-2">
+					<CardTitle className="text-base">Article</CardTitle>
+					<Button variant="ghost" size="sm" onClick={onCopyAll}>
+						{copied ? (
+							<>
+								<ClipboardCheckIcon className="w-4 h-4" />
+								Copied all
+							</>
+						) : (
+							<>
+								<ClipboardCopyIcon className="w-4 h-4" />
+								{copyLabel}
+							</>
+						)}
+					</Button>
+				</div>
+			</CardHeader>
+			<CardContent>
+				<h4 className="font-semibold text-sm leading-snug mb-1">
+					{article.title || "Untitled"}
+				</h4>
+				<div className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
+					{article.author && <span>by {article.author}</span>}
+					{article.url ? (
+						<a
+							href={article.url}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="truncate hover:text-foreground underline underline-offset-2"
+						>
+							{article.url}
+						</a>
+					) : (
+						<span className="italic">Pasted text</span>
+					)}
+					{usage && usage.totalTokens > 0 && (
+						<span
+							title={`Prompt: ${usage.promptTokens} · Completion: ${usage.completionTokens}`}
+							className="font-mono"
+						>
+							· {usage.totalTokens.toLocaleString()} tokens
+						</span>
+					)}
+				</div>
+			</CardContent>
+		</Card>
+	);
+}
