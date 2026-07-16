@@ -351,25 +351,38 @@ function TemplateEditor({
 	return (
 		<div className="w-full rounded-md border border-primary/40 bg-primary/5 p-2 space-y-2">
 			<div className="space-y-1">
-				<Input
-					autoFocus
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-					onKeyDown={(e) => {
-						if (e.key === "Enter") {
-							e.preventDefault();
-							rename();
-						}
-						if (e.key === "Escape") {
-							e.preventDefault();
-							onDone();
-						}
-					}}
-					maxLength={MAX_PRESET_NAME}
-					disabled={disabled}
-					aria-label="Preset name"
-					className="h-8 w-full text-xs"
-				/>
+				<div className="flex items-center gap-1.5">
+					<Input
+						autoFocus
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								e.preventDefault();
+								rename();
+							}
+							if (e.key === "Escape") {
+								e.preventDefault();
+								onDone();
+							}
+						}}
+						maxLength={MAX_PRESET_NAME}
+						disabled={disabled}
+						aria-label="Preset name"
+						className="h-8 min-w-0 flex-1 text-xs"
+					/>
+					<Tooltip label="Cancel">
+						<Button
+							size="sm"
+							type="button"
+							variant="ghost"
+							aria-label="Cancel"
+							onClick={onDone}
+						>
+							<XIcon aria-hidden className="w-3.5 h-3.5" />
+						</Button>
+					</Tooltip>
+				</div>
 				<p className="text-right text-[11px] text-muted-foreground tabular-nums">
 					{name.length}/{MAX_PRESET_NAME}
 				</p>
@@ -394,17 +407,6 @@ function TemplateEditor({
 					<RefreshCwIcon aria-hidden className="w-3.5 h-3.5" />
 					Update preferences
 				</Button>
-				<Tooltip label="Cancel">
-					<Button
-						size="sm"
-						type="button"
-						variant="ghost"
-						aria-label="Cancel"
-						onClick={onDone}
-					>
-						<XIcon aria-hidden className="w-3.5 h-3.5" />
-					</Button>
-				</Tooltip>
 			</div>
 			<p className="text-[11px] text-muted-foreground">
 				<span className="font-medium text-foreground">Rename</span> changes only
