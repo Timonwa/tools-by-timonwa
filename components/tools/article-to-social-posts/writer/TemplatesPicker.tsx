@@ -349,32 +349,32 @@ function TemplateEditor({
 		onDone();
 	};
 	return (
-		<div className="w-full rounded-md border border-primary/40 bg-primary/5 p-2 space-y-1.5">
-			<div className="flex items-start gap-1.5">
-				<div className="min-w-0 flex-1 space-y-1">
-					<Input
-						autoFocus
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-						onKeyDown={(e) => {
-							if (e.key === "Enter") {
-								e.preventDefault();
-								rename();
-							}
-							if (e.key === "Escape") {
-								e.preventDefault();
-								onDone();
-							}
-						}}
-						maxLength={MAX_PRESET_NAME}
-						disabled={disabled}
-						aria-label="Preset name"
-						className="h-7 w-full text-xs"
-					/>
-					<p className="text-right text-[11px] text-muted-foreground tabular-nums">
-						{name.length}/{MAX_PRESET_NAME}
-					</p>
-				</div>
+		<div className="w-full rounded-md border border-primary/40 bg-primary/5 p-2 space-y-2">
+			<div className="space-y-1">
+				<Input
+					autoFocus
+					value={name}
+					onChange={(e) => setName(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							e.preventDefault();
+							rename();
+						}
+						if (e.key === "Escape") {
+							e.preventDefault();
+							onDone();
+						}
+					}}
+					maxLength={MAX_PRESET_NAME}
+					disabled={disabled}
+					aria-label="Preset name"
+					className="h-8 w-full text-xs"
+				/>
+				<p className="text-right text-[11px] text-muted-foreground tabular-nums">
+					{name.length}/{MAX_PRESET_NAME}
+				</p>
+			</div>
+			<div className="flex flex-wrap items-center gap-1.5">
 				<Button
 					size="sm"
 					type="button"
