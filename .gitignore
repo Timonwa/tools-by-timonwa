@@ -41,10 +41,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# private
 todo.md
 LAUNCH.md
 ideas.md
-
 next-docs
 ai-sdk-docs
 my-blog-rss-feed.xml
