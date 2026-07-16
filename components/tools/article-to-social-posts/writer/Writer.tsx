@@ -67,15 +67,15 @@ export default function Writer() {
 						<div className="columns-1 md:columns-2 gap-4 space-y-4">
 							{w.editableDrafts.map((draft) => (
 								<DraftCard
-									key={draft.group}
+									key={draft.platform}
 									draft={draft}
-									isRegenerating={!!w.regenerating[draft.group]}
-									copied={w.copiedKey === `draft-${draft.group}`}
+									isRegenerating={!!w.regenerating[draft.platform]}
+									copied={w.copiedKey === `draft-${draft.platform}`}
 									onContentChange={(content) =>
-										w.updateDraftContent(draft.group, content)
+										w.updateDraftContent(draft.platform, content)
 									}
 									onThreadPostChange={(index, content) =>
-										w.updateThreadPost(draft.group, index, content)
+										w.updateThreadPost(draft.platform, index, content)
 									}
 									onCopy={() => w.copyDraft(draft)}
 									onRegenerate={() => w.regenerate(draft)}

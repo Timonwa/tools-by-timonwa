@@ -66,7 +66,7 @@ function templateMatchesState(
 	if (tp.voice !== prefs.voice) return false;
 	if (tp.emojiLevel !== prefs.emojiLevel) return false;
 	if (tp.hashtagLevel !== prefs.hashtagLevel) return false;
-	if (tp.substackLength !== prefs.substackLength) return false;
+	if (tp.postLength !== prefs.postLength) return false;
 	if (!sameTagList(tp.alwaysIncludeHashtags, prefs.alwaysIncludeHashtags))
 		return false;
 	if (!sameTagList(tp.neverUseHashtags, prefs.neverUseHashtags)) return false;

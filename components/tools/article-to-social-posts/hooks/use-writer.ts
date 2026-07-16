@@ -231,10 +231,10 @@ export function useWriter() {
 	);
 
 	const updateDraftContent = useCallback(
-		(group: PostDraftType["group"], content: string) => {
+		(platform: PostDraftType["platform"], content: string) => {
 			setEditableDrafts((cur) =>
 				cur.map((d) =>
-					d.group === group
+					d.platform === platform
 						? { ...d, content, charCount: content.length, thread: undefined }
 						: d,
 				),
@@ -244,10 +244,10 @@ export function useWriter() {
 	);
 
 	const updateThreadPost = useCallback(
-		(group: PostDraftType["group"], index: number, content: string) => {
+		(platform: PostDraftType["platform"], index: number, content: string) => {
 			setEditableDrafts((cur) =>
 				cur.map((d) => {
-					if (d.group !== group || !d.thread) return d;
+					if (d.platform !== platform || !d.thread) return d;
 					const thread = d.thread.map((p, i) => (i === index ? content : p));
 					return {
 						...d,
@@ -265,15 +265,14 @@ export function useWriter() {
 			if (!lastInput) return;
 			// Immediate per-card feedback (urgent), then the async work runs in a
 			// transition so the regenerated draft render stays non-blocking.
-			setRegenerating((r) => ({ ...r, [draft.group]: true }));
+			setRegenerating((r) => ({ ...r, [draft.platform]: true }));
 			setError(null);
 			startRegenerate(async () => {
 				try {
 					const byokKey = byokStorage.get() ?? undefined;
 					const result = await regenerateDraft({
 						input: lastInput,
-						group: draft.group,
-						platforms: draft.platforms,
+						platform: draft.platform,
 						tone,
 						xThreadLength,
 						preferences: prefsStorage.get(),
@@ -285,7 +284,7 @@ export function useWriter() {
 						return;
 					}
 					setEditableDrafts((cur) =>
-						cur.map((d) => (d.group === draft.group ? result.draft : d)),
+						cur.map((d) => (d.platform === draft.platform ? result.draft : d)),
 					);
 					setLastUsage(result.usage);
 				} catch {
@@ -293,7 +292,7 @@ export function useWriter() {
 						"We couldn't reach the server. Check your internet connection and try again.",
 					);
 				} finally {
-					setRegenerating((r) => ({ ...r, [draft.group]: false }));
+					setRegenerating((r) => ({ ...r, [draft.platform]: false }));
 				}
 			});
 		},
@@ -372,7 +371,10 @@ export function useWriter() {
 		copyAll: () =>
 			copy("all", buildCopyAll(editableDrafts, preview?.article.url)),
 		copyDraft: (draft: PostDraftType) =>
-			copy(`draft-${draft.group}`, buildCopyText(draft, preview?.article.url)),
+			copy(
+				`draft-${draft.platform}`,
+				buildCopyText(draft, preview?.article.url),
+			),
 		clearAll,
 		loadFromHistory,
 		removeHistoryEntry,

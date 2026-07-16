@@ -32,7 +32,7 @@ export const buildCopyAll = (
 	drafts
 		.map(
 			(d) =>
-				`### ${d.platforms.map((p) => PLATFORM_LABELS[p]).join(" · ")}\n\n${buildCopyText(d, articleUrl)}\n`,
+				`### ${PLATFORM_LABELS[d.platform]}\n\n${buildCopyText(d, articleUrl)}\n`,
 		)
 		.join("\n---\n\n");
 

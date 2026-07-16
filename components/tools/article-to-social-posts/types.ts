@@ -1,20 +1,17 @@
 export type PlatformType =
 	"linkedin" | "x" | "bluesky" | "threads" | "mastodon" | "substack";
 
-export type GroupType = "short" | "medium" | "long";
-
 export type { DraftInputType } from "@/lib/tools/_shared/draft-input";
 
 export type ToneType =
 	"auto" | "professional" | "casual" | "educational" | "punchy";
 
 export type PostDraftType = {
-	group: GroupType;
-	/** All selected platforms belonging to this group. */
-	platforms: PlatformType[];
-	/** Single-post content. For X threads, this is the joined preview (for copy). */
+	/** The platform this post is written for. */
+	platform: PlatformType;
+	/** Single-post content. For a thread, this is the joined preview (for copy). */
 	content: string;
-	/** Individual posts in an X thread — only present when the short group is in thread mode. */
+	/** Individual posts in a thread — only present when threading is on. */
 	thread?: string[];
 	hashtags: string[];
 	charCount: number;
@@ -41,7 +38,8 @@ export type VoiceType = "i" | "we" | "they";
 
 export type LevelType = 1 | 2 | 3 | 4 | 5;
 
-export type SubstackLengthType = "medium" | "long";
+/** Target length for the long-capable platforms (LinkedIn + Substack). */
+export type PostLengthType = "short" | "medium" | "long";
 
 export type WritingPreferencesType = {
 	voice: VoiceType;
@@ -49,7 +47,7 @@ export type WritingPreferencesType = {
 	hashtagLevel: LevelType;
 	alwaysIncludeHashtags: string[];
 	neverUseHashtags: string[];
-	substackLength: SubstackLengthType;
+	postLength: PostLengthType;
 };
 
 export type PresetTemplateType = {

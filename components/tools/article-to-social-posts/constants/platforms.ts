@@ -1,16 +1,14 @@
-import {
-	AtSignIcon,
-	BriefcaseIcon,
-	CloudIcon,
-	MailIcon,
-	MessageCircleIcon,
-	BirdIcon,
-} from "lucide-react";
+import type { ComponentType, SVGProps } from "react";
 
-import type {
-	GroupType,
-	PlatformType,
-} from "@/components/tools/article-to-social-posts/types";
+import {
+	BlueskyLogo,
+	LinkedInLogo,
+	MastodonLogo,
+	SubstackLogo,
+	ThreadsLogo,
+	XLogo,
+} from "@/components/icons/brand";
+import type { PlatformType } from "@/components/tools/article-to-social-posts/types";
 
 export const ALL_PLATFORMS: PlatformType[] = [
 	"linkedin",
@@ -52,18 +50,17 @@ export const CHAR_LIMITS: Record<PlatformType, number> = {
 	substack: 500,
 };
 
-/**
- * Lucide deprecated its brand icons, so we use neutral shapes and rely on
- * colors + labels for platform identity. Keep these consistent with the
- * labels/colors to avoid confusing users.
- */
-export const PLATFORM_ICONS: Record<PlatformType, typeof BirdIcon> = {
-	linkedin: BriefcaseIcon,
-	x: BirdIcon,
-	bluesky: CloudIcon,
-	threads: MessageCircleIcon,
-	mastodon: AtSignIcon,
-	substack: MailIcon,
+/** Real brand marks per platform (see `components/icons/brand`). */
+export const PLATFORM_ICONS: Record<
+	PlatformType,
+	ComponentType<SVGProps<SVGSVGElement>>
+> = {
+	linkedin: LinkedInLogo,
+	x: XLogo,
+	bluesky: BlueskyLogo,
+	threads: ThreadsLogo,
+	mastodon: MastodonLogo,
+	substack: SubstackLogo,
 };
 
 export const PLATFORM_COLORS: Record<PlatformType, string> = {
@@ -73,16 +70,4 @@ export const PLATFORM_COLORS: Record<PlatformType, string> = {
 	threads: "text-foreground",
 	mastodon: "text-purple-500",
 	substack: "text-orange-500",
-};
-
-export const GROUP_CHAR_LIMITS: Record<GroupType, number> = {
-	short: 300,
-	medium: 500,
-	long: 3000,
-};
-
-export const GROUP_LABELS: Record<GroupType, string> = {
-	short: "Short",
-	medium: "Medium",
-	long: "Long-form",
 };

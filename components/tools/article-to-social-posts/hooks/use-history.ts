@@ -1,6 +1,5 @@
 "use client";
 
-import { DEFAULT_PREFERENCES } from "@/components/tools/article-to-social-posts/constants/preferences";
 import type {
 	DraftInputType,
 	PlatformType,
@@ -25,38 +24,20 @@ export type HistoryEntryType = {
 	timestamp: number;
 };
 
-/**
- * Tolerate entries stored before the URL/draft split (they had `url` at the
- * top level instead of `input`) and before `preferences` was saved. Synthesize
- * the missing fields on read; the next upsert rewrites them in the new shape.
- */
-type LegacyEntryType = Omit<HistoryEntryType, "input" | "preferences"> & {
-	url?: string;
-	preferences?: WritingPreferencesType;
-};
-
-const migrate = (raw: unknown): HistoryEntryType | null => {
-	if (!raw || typeof raw !== "object") return null;
-	const e = raw as HistoryEntryType & LegacyEntryType;
-	const withInput: HistoryEntryType | null = e.input
-		? e
-		: typeof e.url === "string" && e.url
-			? { ...e, input: { kind: "url", url: e.url } }
-			: null;
-	if (!withInput) return null;
-	return {
-		...withInput,
-		preferences: withInput.preferences ?? DEFAULT_PREFERENCES,
-	};
-};
+/** Basic guard against a corrupt/edited localStorage value (not migration). */
+const isEntry = (e: unknown): e is HistoryEntryType =>
+	!!e &&
+	typeof e === "object" &&
+	typeof (e as HistoryEntryType).id === "string" &&
+	!!(e as HistoryEntryType).input &&
+	!!(e as HistoryEntryType).preview;
 
 const load = (): HistoryEntryType[] => {
 	try {
 		const raw = window.localStorage.getItem(HISTORY_KEY);
 		if (!raw) return [];
 		const parsed = JSON.parse(raw) as unknown[];
-		if (!Array.isArray(parsed)) return [];
-		return parsed.map(migrate).filter((e): e is HistoryEntryType => e !== null);
+		return Array.isArray(parsed) ? parsed.filter(isEntry) : [];
 	} catch {
 		return [];
 	}

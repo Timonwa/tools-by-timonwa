@@ -14,6 +14,7 @@ import { PLATFORM_LABELS } from "@/components/tools/article-to-social-posts/cons
 import {
 	EMOJI_LEVEL_LABELS,
 	HASHTAG_LEVEL_LABELS,
+	MAX_PRESET_NAME,
 	MAX_TEMPLATES,
 	VOICE_LABELS,
 } from "@/components/tools/article-to-social-posts/constants/preferences";
@@ -55,6 +56,7 @@ export default function TemplatesPicker({
 	const [expanded, setExpanded] = useState(!collapsible);
 
 	const full = templates.length >= MAX_TEMPLATES;
+	const activePreset = templates.find((t) => t.id === activeTemplateId);
 
 	const commitSave = () => {
 		const name = nameDraft.trim();
@@ -77,15 +79,26 @@ export default function TemplatesPicker({
 						type="button"
 						onClick={() => setExpanded((e) => !e)}
 						aria-expanded={expanded}
-						className="flex items-center gap-1.5 text-xs font-medium"
+						className="flex min-w-0 items-center gap-1.5 text-xs font-medium"
 					>
-						<BookmarkIcon aria-hidden className="w-3.5 h-3.5 text-primary" />
-						Presets
-						<span className="text-muted-foreground">({templates.length})</span>
+						<BookmarkIcon
+							aria-hidden
+							className="w-3.5 h-3.5 shrink-0 text-primary"
+						/>
+						<span className="shrink-0">Presets</span>
+						<span className="shrink-0 text-muted-foreground">
+							({templates.length})
+						</span>
+						{!expanded && activePreset && (
+							<span className="inline-flex min-w-0 items-center gap-1 rounded-full border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-primary">
+								<CheckIcon aria-hidden className="w-3 h-3 shrink-0" />
+								<span className="max-w-32 truncate">{activePreset.name}</span>
+							</span>
+						)}
 						<ChevronDownIcon
 							aria-hidden
 							className={cn(
-								"w-3.5 h-3.5 text-muted-foreground transition-transform",
+								"w-3.5 h-3.5 shrink-0 text-muted-foreground transition-transform",
 								expanded && "rotate-180",
 							)}
 						/>
@@ -125,25 +138,30 @@ export default function TemplatesPicker({
 					</p>
 
 					{isSaving && (
-						<div className="flex gap-1.5">
-							<Input
-								autoFocus
-								value={nameDraft}
-								onChange={(e) => setNameDraft(e.target.value)}
-								onKeyDown={(e) => {
-									if (e.key === "Enter") {
-										e.preventDefault();
-										commitSave();
-									}
-									if (e.key === "Escape") {
-										e.preventDefault();
-										cancelSave();
-									}
-								}}
-								placeholder="Name it (e.g. my Twitter voice)"
-								maxLength={40}
-								className="h-8 text-xs"
-							/>
+						<div className="flex items-start gap-1.5">
+							<div className="min-w-0 flex-1 space-y-1">
+								<Input
+									autoFocus
+									value={nameDraft}
+									onChange={(e) => setNameDraft(e.target.value)}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											e.preventDefault();
+											commitSave();
+										}
+										if (e.key === "Escape") {
+											e.preventDefault();
+											cancelSave();
+										}
+									}}
+									placeholder="Name it (e.g. My X voice)"
+									maxLength={MAX_PRESET_NAME}
+									className="h-8 w-full text-xs"
+								/>
+								<p className="text-right text-[11px] text-muted-foreground tabular-nums">
+									{nameDraft.length}/{MAX_PRESET_NAME}
+								</p>
+							</div>
 							<Tooltip label="Save preset">
 								<Button
 									size="sm"
@@ -332,26 +350,31 @@ function TemplateEditor({
 	};
 	return (
 		<div className="w-full rounded-md border border-primary/40 bg-primary/5 p-2 space-y-1.5">
-			<div className="flex items-center gap-1.5">
-				<Input
-					autoFocus
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-					onKeyDown={(e) => {
-						if (e.key === "Enter") {
-							e.preventDefault();
-							rename();
-						}
-						if (e.key === "Escape") {
-							e.preventDefault();
-							onDone();
-						}
-					}}
-					maxLength={40}
-					disabled={disabled}
-					aria-label="Preset name"
-					className="h-7 flex-1 text-xs"
-				/>
+			<div className="flex items-start gap-1.5">
+				<div className="min-w-0 flex-1 space-y-1">
+					<Input
+						autoFocus
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								e.preventDefault();
+								rename();
+							}
+							if (e.key === "Escape") {
+								e.preventDefault();
+								onDone();
+							}
+						}}
+						maxLength={MAX_PRESET_NAME}
+						disabled={disabled}
+						aria-label="Preset name"
+						className="h-7 w-full text-xs"
+					/>
+					<p className="text-right text-[11px] text-muted-foreground tabular-nums">
+						{name.length}/{MAX_PRESET_NAME}
+					</p>
+				</div>
 				<Button
 					size="sm"
 					type="button"

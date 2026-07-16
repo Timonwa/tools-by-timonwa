@@ -41,10 +41,12 @@ const readPrefs = (): WritingPreferencesType => {
 						(s): s is string => typeof s === "string",
 					)
 				: DEFAULT_PREFERENCES.neverUseHashtags,
-			substackLength:
-				parsed.substackLength === "medium" || parsed.substackLength === "long"
-					? parsed.substackLength
-					: DEFAULT_PREFERENCES.substackLength,
+			postLength:
+				parsed.postLength === "short" ||
+				parsed.postLength === "medium" ||
+				parsed.postLength === "long"
+					? parsed.postLength
+					: DEFAULT_PREFERENCES.postLength,
 		};
 	} catch {
 		return DEFAULT_PREFERENCES;

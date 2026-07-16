@@ -87,6 +87,9 @@ export default function SettingsDrawer() {
 			<Drawer
 				open={open}
 				onOpenChange={setOpen}
+				// The drawer portals to <body>, outside the tool's `--primary`
+				// scope, so re-apply the tool class here to keep the accent on-brand.
+				className="tool-article-to-social-posts"
 				title={
 					<span className="flex items-center gap-2">
 						<PenLineIcon aria-hidden className="w-4 h-4 text-primary" />
