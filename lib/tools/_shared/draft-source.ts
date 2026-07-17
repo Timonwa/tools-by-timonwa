@@ -18,8 +18,6 @@ function prepareDraftSource(opts: {
 	provider: GeminiProvider;
 	url?: string;
 	text?: string;
-	/** Noun for the material in the prompt, e.g. "article". */
-	material: string;
 }): {
 	usingUrl: boolean;
 	sourceBlock: string;
@@ -29,7 +27,7 @@ function prepareDraftSource(opts: {
 	if (opts.url) {
 		return {
 			usingUrl: true,
-			sourceBlock: `Read the ${opts.material} at this URL with the url_context tool and base your output strictly on its real content:\n${opts.url}`,
+			sourceBlock: `Read the article at this URL with the url_context tool and base your output strictly on its real content:\n${opts.url}`,
 			// The Google provider's tool type lags the core `ToolSet` type in this
 			// version, so cast the provider-executed url_context tool.
 			tools: { url_context: opts.provider.tools.urlContext({}) } as ToolSet,
@@ -40,7 +38,7 @@ function prepareDraftSource(opts: {
 	}
 	return {
 		usingUrl: false,
-		sourceBlock: `${opts.material.toUpperCase()} TEXT:\n"""\n${opts.text ?? ""}\n"""`,
+		sourceBlock: `ARTICLE TEXT:\n"""\n${opts.text ?? ""}\n"""`,
 	};
 }
 
@@ -68,16 +66,10 @@ function urlRetrievalStatus(
 }
 
 /**
- * Turn a draft (pasted text OR a URL) into a schema-validated object.
- *
- * Structured output is enforced by the schema via the AI SDK, so the caller gets
- * a validated object — no manual JSON parsing. In URL mode the model reads the
- * page itself with Gemini's provider-executed `url_context` tool (one call, no
- * client round-trip); in text mode the pasted draft is sent inline. Transient
- * failures (503 / rate limit) are retried automatically.
- *
- * The agent's own task instructions go in `directives`; this helper appends the
- * source block (URL-read instruction or inline text) after them.
+ * Turn a draft (pasted text OR a URL) into a schema-validated object — the schema
+ * enforces structured output, so no manual JSON parsing. URL mode reads the page
+ * via `url_context`; text mode sends it inline. Transient failures are retried.
+ * The agent's task rules go in `directives`; the source block is appended after.
  */
 export async function generateStructuredFromDraft<T>(opts: {
 	schema: z.ZodType<T>;
@@ -91,8 +83,6 @@ export async function generateStructuredFromDraft<T>(opts: {
 	url?: string;
 	/** Text mode: the pasted draft text. */
 	text?: string;
-	/** Noun for the material in the prompt, e.g. "article" (default). */
-	material?: string;
 	serverKey: string | undefined;
 	googleApiKey?: string;
 	googleModel?: string;
@@ -111,7 +101,6 @@ export async function generateStructuredFromDraft<T>(opts: {
 		provider,
 		url: opts.url,
 		text: opts.text,
-		material: opts.material ?? "article",
 	});
 
 	const result = await generateText({

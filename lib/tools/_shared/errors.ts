@@ -4,7 +4,6 @@ export type ToolErrorOptions = {
 	/** Log tag, e.g. "article-to-seo-meta" or "article-to-social-posts:preview". */
 	logTag: string;
 	perUserDaily: number;
-	dailyPool: number;
 	/**
 	 * Whether this request used the user's own Google key (BYOK). It changes the
 	 * advice we give: a BYOK user is pointed at their own key / Google AI Studio,

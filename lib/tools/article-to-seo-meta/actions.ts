@@ -59,7 +59,6 @@ function toToolMessage(error: unknown, byok: boolean): string {
 	return toUserMessage(error, {
 		logTag: "article-to-seo-meta",
 		perUserDaily: HOSTED_PER_USER_DAILY,
-		dailyPool: HOSTED_DAILY_GENERATION_POOL,
 		byok,
 		rules: [
 			[

@@ -56,7 +56,6 @@ function toToolMessage(
 	return toUserMessage(error, {
 		logTag: `article-to-social-posts:${context}`,
 		perUserDaily: HOSTED_PER_USER_DAILY,
-		dailyPool: HOSTED_DAILY_GENERATION_POOL,
 		byok,
 		rules: [
 			[

@@ -1,22 +1,14 @@
-// v7 renamed this to `createGoogle`, but @ai-sdk/google@4.0.15 only ships the
-// new name at runtime — its type declarations still export the (deprecated but
-// functional) `createGoogleGenerativeAI` alias, so that's what we use until the
-// types catch up.
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createGoogle } from "@ai-sdk/google";
 import { env } from "@env";
 
 import type { TokenUsageType } from "@/lib/types/token-usage";
 
 /**
- * Build the Gemini provider + model for a tool call, using the AI SDK's Google
- * provider. Returns the provider too so callers can reach provider-executed
- * tools like `provider.tools.urlContext()`.
- *
- * A caller-supplied (BYOK) key overrides the tool's server key; a model override
- * is only honored alongside a BYOK key — server requests always use `LLM_MODEL`.
- * Throws `NO_SERVER_KEY` when neither key is present, so the action's error
- * mapper can surface a clear "add your own key" message instead of an opaque
- * auth failure from Google.
+ * Build the Gemini provider + model for a tool call. Returns the provider too so
+ * callers can reach provider-executed tools like `provider.tools.urlContext()`.
+ * A BYOK key overrides the server key (and only then is a model override honored;
+ * server requests always use `LLM_MODEL`). Throws `NO_SERVER_KEY` when neither
+ * key is set, so the error mapper can say "add your own key".
  */
 export function getGemini(opts: {
 	serverKey: string | undefined;
@@ -32,7 +24,7 @@ export function getGemini(opts: {
 	const modelId = opts.googleApiKey
 		? opts.googleModel || env.LLM_MODEL
 		: env.LLM_MODEL;
-	const provider = createGoogleGenerativeAI({ apiKey: key });
+	const provider = createGoogle({ apiKey: key });
 	return { provider, model: provider(modelId) };
 }
 
