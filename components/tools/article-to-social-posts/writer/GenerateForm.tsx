@@ -9,12 +9,8 @@ import {
 import ArticleSourceInput from "@/components/_shared/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/ErrorNotice";
 import type { InputKindType } from "@/components/_shared/InputKindTabs";
-import { THREADABLE_PLATFORMS } from "@/components/tools/article-to-social-posts/constants/platforms";
-import type {
-	PlatformType,
-	PresetTemplateType,
-	ToneType,
-} from "@/components/tools/article-to-social-posts/types";
+import { THREADABLE_PLATFORMS } from "../constants/platforms";
+import type { PlatformType, PresetTemplateType, ToneType } from "../types";
 import {
 	Button,
 	Card,

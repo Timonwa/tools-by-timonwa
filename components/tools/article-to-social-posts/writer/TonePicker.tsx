@@ -1,7 +1,7 @@
 "use client";
 
-import { TONES } from "@/components/tools/article-to-social-posts/constants/tones";
-import type { ToneType } from "@/components/tools/article-to-social-posts/types";
+import { TONES } from "../constants/tones";
+import type { ToneType } from "../types";
 
 type TonePickerProps = {
 	value: ToneType;

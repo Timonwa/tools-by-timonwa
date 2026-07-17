@@ -2,7 +2,7 @@
 
 import { Monitor, Moon, Sun } from "lucide-react";
 
-import { type ThemeType, useTheme } from "@/components/theme/use-theme";
+import { type ThemeType, useTheme } from "./use-theme";
 
 const OPTIONS: { value: ThemeType; label: string; Icon: typeof Sun }[] = [
 	{ value: "light", label: "Light", Icon: Sun },

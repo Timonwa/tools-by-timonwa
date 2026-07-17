@@ -10,7 +10,7 @@ import {
 	type SeoVariationType,
 	type TokenUsageType,
 } from "@/components/tools/article-to-seo-meta/types";
-import { generateSeoVariations } from "@/lib/tools/article-to-seo-meta/agents/seo-meta-generator/agent";
+import { generateSeoVariations } from "./agents/seo-meta-generator/agent";
 import type { DraftInputType } from "@/lib/tools/_shared/draft-input";
 import { toUserMessage } from "@/lib/tools/_shared/errors";
 import {

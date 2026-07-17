@@ -3,21 +3,14 @@
 import { PenLineIcon } from "lucide-react";
 import { useState, useSyncExternalStore } from "react";
 
-import { THREADABLE_PLATFORMS } from "@/components/tools/article-to-social-posts/constants/platforms";
-import { usePresets } from "@/components/tools/article-to-social-posts/hooks/use-presets";
-import type {
-	PlatformType,
-	ToneType,
-	WritingPreferencesType,
-} from "@/components/tools/article-to-social-posts/types";
-import {
-	prefsStorage,
-	workflowStorage,
-} from "@/components/tools/article-to-social-posts/utils/storage";
-import PlatformPicker from "@/components/tools/article-to-social-posts/writer/PlatformPicker";
-import TemplatesPicker from "@/components/tools/article-to-social-posts/writer/TemplatesPicker";
-import ThreadFormat from "@/components/tools/article-to-social-posts/writer/ThreadFormat";
-import TonePicker from "@/components/tools/article-to-social-posts/writer/TonePicker";
+import { THREADABLE_PLATFORMS } from "../constants/platforms";
+import { usePresets } from "../hooks/use-presets";
+import type { PlatformType, ToneType, WritingPreferencesType } from "../types";
+import { prefsStorage, workflowStorage } from "../utils/storage";
+import PlatformPicker from "../writer/PlatformPicker";
+import TemplatesPicker from "../writer/TemplatesPicker";
+import ThreadFormat from "../writer/ThreadFormat";
+import TonePicker from "../writer/TonePicker";
 import { Button, Drawer, Tooltip } from "@/components/ui";
 
 import HashtagRulesSection from "./HashtagRules";

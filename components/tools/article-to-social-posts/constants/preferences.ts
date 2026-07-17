@@ -3,7 +3,7 @@ import type {
 	PostLengthType,
 	VoiceType,
 	WritingPreferencesType,
-} from "@/components/tools/article-to-social-posts/types";
+} from "../types";
 
 export const DEFAULT_PREFERENCES: WritingPreferencesType = {
 	voice: "i",

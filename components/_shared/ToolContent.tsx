@@ -3,7 +3,7 @@ import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import MoreTools from "@/components/_shared/MoreTools";
+import MoreTools from "./MoreTools";
 import Newsletter from "@/components/marketing/Newsletter";
 
 export type ToolFaqType = { question: string; answer: string };

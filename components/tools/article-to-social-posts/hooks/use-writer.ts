@@ -19,15 +19,9 @@ import type {
 	PreviewResultType,
 	TokenUsageType,
 	ToneType,
-} from "@/components/tools/article-to-social-posts/types";
-import {
-	buildCopyAll,
-	buildCopyText,
-} from "@/components/tools/article-to-social-posts/utils/draft";
-import {
-	prefsStorage,
-	workflowStorage,
-} from "@/components/tools/article-to-social-posts/utils/storage";
+} from "../types";
+import { buildCopyAll, buildCopyText } from "../utils/draft";
+import { prefsStorage, workflowStorage } from "../utils/storage";
 import {
 	previewPosts,
 	regenerateDraft,

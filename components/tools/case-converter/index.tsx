@@ -3,8 +3,8 @@ import { CaseSensitiveIcon } from "lucide-react";
 import ToolContent from "@/components/_shared/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
-import { caseConverterContent } from "@/components/tools/case-converter/content";
-import CaseConverterTool from "@/components/tools/case-converter/CaseConverterTool";
+import { caseConverterContent } from "./content";
+import CaseConverterTool from "./CaseConverterTool";
 import { PageHero } from "@/components/ui";
 
 export default function CaseConverterPageContent() {

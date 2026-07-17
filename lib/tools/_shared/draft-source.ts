@@ -1,10 +1,10 @@
 import { generateText, isStepCount, Output, type ToolSet } from "ai";
 import type { z } from "zod";
 
-import { getGemini, toTokenUsage } from "@/lib/tools/_shared/ai-provider";
+import { getGemini, toTokenUsage } from "./ai-provider";
 import type { TokenUsageType } from "@/lib/types/token-usage";
 
-export type { DraftInputType } from "@/lib/tools/_shared/draft-input";
+export type { DraftInputType } from "./draft-input";
 
 type GeminiProvider = ReturnType<typeof getGemini>["provider"];
 

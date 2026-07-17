@@ -8,7 +8,7 @@ import {
 	ThreadsLogo,
 	XLogo,
 } from "@/components/icons/brand";
-import type { PlatformType } from "@/components/tools/article-to-social-posts/types";
+import type { PlatformType } from "../types";
 
 export const ALL_PLATFORMS: PlatformType[] = [
 	"linkedin",

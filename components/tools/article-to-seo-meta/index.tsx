@@ -3,10 +3,10 @@ import { SearchIcon } from "lucide-react";
 import ToolContent from "@/components/_shared/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
-import { seoMetaContent } from "@/components/tools/article-to-seo-meta/content";
-import Hero from "@/components/tools/article-to-seo-meta/Hero";
-import HostedUsageNotice from "@/components/tools/article-to-seo-meta/HostedUsageNotice";
-import SeoTool from "@/components/tools/article-to-seo-meta/SeoTool";
+import { seoMetaContent } from "./content";
+import Hero from "./Hero";
+import HostedUsageNotice from "./HostedUsageNotice";
+import SeoTool from "./SeoTool";
 
 export default function ArticleToSeoMetaPageContent() {
 	return (

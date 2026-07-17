@@ -8,13 +8,13 @@ import {
 	HASHTAG_LEVEL_LABELS,
 	POST_LENGTH_LABELS,
 	VOICE_LABELS,
-} from "@/components/tools/article-to-social-posts/constants/preferences";
+} from "../constants/preferences";
 import type {
 	LevelType,
 	PostLengthType,
 	VoiceType,
 	WritingPreferencesType,
-} from "@/components/tools/article-to-social-posts/types";
+} from "../types";
 
 type WritingPreferencesProps = {
 	prefs: WritingPreferencesType;

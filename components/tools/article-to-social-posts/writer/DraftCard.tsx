@@ -10,8 +10,8 @@ import {
 	PLATFORM_COLORS,
 	PLATFORM_ICONS,
 	PLATFORM_LABELS,
-} from "@/components/tools/article-to-social-posts/constants/platforms";
-import type { PostDraftType } from "@/components/tools/article-to-social-posts/types";
+} from "../constants/platforms";
+import type { PostDraftType } from "../types";
 import {
 	Button,
 	Card,

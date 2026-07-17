@@ -3,11 +3,11 @@ import { Share2Icon } from "lucide-react";
 import ToolContent from "@/components/_shared/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
-import { socialPostsContent } from "@/components/tools/article-to-social-posts/content";
-import Hero from "@/components/tools/article-to-social-posts/Hero";
-import HostedUsageNotice from "@/components/tools/article-to-social-posts/HostedUsageNotice";
-import SettingsDrawer from "@/components/tools/article-to-social-posts/settings/SettingsDrawer";
-import Writer from "@/components/tools/article-to-social-posts/writer/Writer";
+import { socialPostsContent } from "./content";
+import Hero from "./Hero";
+import HostedUsageNotice from "./HostedUsageNotice";
+import SettingsDrawer from "./settings/SettingsDrawer";
+import Writer from "./writer/Writer";
 
 export default function ArticleToSocialPostsPageContent() {
 	return (

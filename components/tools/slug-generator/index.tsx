@@ -3,8 +3,8 @@ import { LinkIcon } from "lucide-react";
 import ToolContent from "@/components/_shared/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
-import { slugGeneratorContent } from "@/components/tools/slug-generator/content";
-import SlugGeneratorTool from "@/components/tools/slug-generator/SlugGeneratorTool";
+import { slugGeneratorContent } from "./content";
+import SlugGeneratorTool from "./SlugGeneratorTool";
 import { PageHero } from "@/components/ui";
 
 export default function SlugGeneratorPageContent() {

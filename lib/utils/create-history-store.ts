@@ -2,7 +2,7 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 
-import { createLocalStore } from "@/lib/utils/local-store";
+import { createLocalStore } from "./local-store";
 
 /**
  * Build a shared localStorage-backed history hook for a tool. The list is one

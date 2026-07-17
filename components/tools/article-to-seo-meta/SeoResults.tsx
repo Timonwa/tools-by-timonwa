@@ -17,7 +17,7 @@ import {
 	type SeoVariationType,
 	TITLE_MAX,
 	TITLE_MIN,
-} from "@/components/tools/article-to-seo-meta/types";
+} from "./types";
 import {
 	Button,
 	Card,

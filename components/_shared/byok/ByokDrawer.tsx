@@ -3,7 +3,7 @@
 import { KeyRoundIcon } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Button, Drawer, Tooltip } from "@/components/ui";
-import ByokSection from "@/components/_shared/byok/ByokSection";
+import ByokSection from "./ByokSection";
 
 import {
 	type ByokModelType,

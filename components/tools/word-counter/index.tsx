@@ -3,8 +3,8 @@ import { WholeWordIcon } from "lucide-react";
 import ToolContent from "@/components/_shared/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
-import { wordCounterContent } from "@/components/tools/word-counter/content";
-import WordCounterTool from "@/components/tools/word-counter/WordCounterTool";
+import { wordCounterContent } from "./content";
+import WordCounterTool from "./WordCounterTool";
 import { PageHero } from "@/components/ui";
 
 export default function WordCounterPageContent() {

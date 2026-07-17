@@ -2,10 +2,8 @@
 
 import { useId } from "react";
 
-import DraftReuseControls from "@/components/_shared/DraftReuseControls";
-import InputKindTabs, {
-	type InputKindType,
-} from "@/components/_shared/InputKindTabs";
+import DraftReuseControls from "./DraftReuseControls";
+import InputKindTabs, { type InputKindType } from "./InputKindTabs";
 import { Input, Textarea } from "@/components/ui";
 import { cn } from "@/lib/utils/cn";
 

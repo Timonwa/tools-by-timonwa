@@ -6,7 +6,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { z } from "zod";
 
-import type { GuideMeta } from "@/lib/guides/guides";
+import type { GuideMeta } from "./guides";
 
 const GUIDES_DIR = path.join(process.cwd(), "content", "guides");
 

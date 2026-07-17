@@ -5,8 +5,8 @@ import {
 	PLATFORM_COLORS,
 	PLATFORM_ICONS,
 	PLATFORM_LABELS,
-} from "@/components/tools/article-to-social-posts/constants/platforms";
-import type { PlatformType } from "@/components/tools/article-to-social-posts/types";
+} from "../constants/platforms";
+import type { PlatformType } from "../types";
 
 type PlatformPickerProps = {
 	value: PlatformType[];

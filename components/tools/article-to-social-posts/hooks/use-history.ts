@@ -6,7 +6,7 @@ import type {
 	PreviewResultType,
 	ToneType,
 	WritingPreferencesType,
-} from "@/components/tools/article-to-social-posts/types";
+} from "../types";
 import { createHistoryStore } from "@/lib/utils/create-history-store";
 
 const HISTORY_KEY = "article-to-social-posts:history";

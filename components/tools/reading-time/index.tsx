@@ -3,8 +3,8 @@ import { ClockIcon } from "lucide-react";
 import ToolContent from "@/components/_shared/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
-import { readingTimeContent } from "@/components/tools/reading-time/content";
-import ReadingTimeTool from "@/components/tools/reading-time/ReadingTimeTool";
+import { readingTimeContent } from "./content";
+import ReadingTimeTool from "./ReadingTimeTool";
 import { PageHero } from "@/components/ui";
 
 export default function ReadingTimePageContent() {

@@ -4,7 +4,7 @@ import type {
 	DraftInputType,
 	SeoMetaResultType,
 	TokenUsageType,
-} from "@/components/tools/article-to-seo-meta/types";
+} from "../types";
 import { createHistoryStore } from "@/lib/utils/create-history-store";
 
 const HISTORY_KEY = "article-to-seo-meta:history";

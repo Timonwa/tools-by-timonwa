@@ -18,7 +18,7 @@ import {
 	MAX_ARTICLE_CHARS,
 	type SeoMetaResultType,
 	type TokenUsageType,
-} from "@/components/tools/article-to-seo-meta/types";
+} from "./types";
 import { Button, Input } from "@/components/ui";
 
 import { generateSeoMeta } from "@/lib/tools/article-to-seo-meta/actions";

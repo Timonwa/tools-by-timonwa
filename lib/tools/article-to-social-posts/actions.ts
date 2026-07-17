@@ -18,7 +18,7 @@ import type {
 	ToneType,
 	WritingPreferencesType,
 } from "@/components/tools/article-to-social-posts/types";
-import { generateDrafts } from "@/lib/tools/article-to-social-posts/agents/draft-generator/agent";
+import { generateDrafts } from "./agents/draft-generator/agent";
 import { toUserMessage } from "@/lib/tools/_shared/errors";
 import {
 	enforceQuota,

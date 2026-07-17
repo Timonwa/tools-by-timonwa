@@ -1,7 +1,7 @@
 import HubNavbar from "@/components/layout/HubNavbar";
-import Newsletter from "@/components/marketing/Newsletter";
-import Hero from "@/components/marketing/home/Hero";
-import ToolsGrid from "@/components/marketing/home/ToolsGrid";
+import Newsletter from "../Newsletter";
+import Hero from "./Hero";
+import ToolsGrid from "./ToolsGrid";
 
 export default function HubHomePageContent() {
 	return (

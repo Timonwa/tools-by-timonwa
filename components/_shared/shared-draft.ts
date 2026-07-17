@@ -8,7 +8,7 @@ import {
 	useSyncExternalStore,
 } from "react";
 
-import type { InputKindType } from "@/components/_shared/InputKindTabs";
+import type { InputKindType } from "./InputKindTabs";
 import { createLocalStore } from "@/lib/utils/local-store";
 
 /**

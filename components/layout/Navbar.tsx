@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
-import NavActions from "@/components/layout/NavActions";
+import NavActions from "./NavActions";
 import { ROUTES } from "@/lib/config/routes";
 
 type IconComponentType = ComponentType<SVGProps<SVGSVGElement>>;
