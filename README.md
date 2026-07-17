@@ -88,7 +88,7 @@ Contributions are welcome — bug fixes, UX and accessibility improvements, agen
 - **Your input** is sent to Google Gemini only for that request; not logged or stored (URL-based fetches are cached in memory for up to an hour).
 - **History, preferences, and templates** live only in your browser's `localStorage`.
 - **Rate-limit counters** store a keyed (HMAC-SHA256) hash of your IP plus a daily count in Upstash Redis (resets at UTC midnight); bring-your-own-key requests skip this.
-- **No accounts, no profiles, no tracking, and no analytics** of any kind.
+- **No accounts, no profiles, no cross-site tracking.** Anonymous, cookieless usage analytics via [Umami](https://umami.is) — no personal data.
 
 Full details: [tech.timonwa.com/privacy](https://tech.timonwa.com/privacy).
 

@@ -6,7 +6,7 @@ import { z } from "zod";
  */
 
 const schema = z.object({
-	// Gates production-only integrations (rate limiting). Set explicitly on deploy.
+	// Gates production-only integrations (rate limiting, analytics). Set on deploy.
 	APP_ENV: z.enum(["development", "production"]).default("development"),
 	// Hub-level Gemini key; per-tool keys fall back to this one.
 	GOOGLE_API_KEY: z.string().optional(),
@@ -35,5 +35,5 @@ export const env = schema.parse({
 	IP_HASH_SECRET: process.env.IP_HASH_SECRET,
 });
 
-/** Gates production-only integrations (rate limiting) off local/preview builds. */
+/** Gates production-only integrations (rate limiting, analytics) off local builds. */
 export const isProduction = env.APP_ENV === "production";
