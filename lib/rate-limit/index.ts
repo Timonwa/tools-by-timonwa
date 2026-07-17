@@ -1,8 +1,8 @@
-import { createHash } from "node:crypto";
+import { createHash, createHmac } from "node:crypto";
 import { Redis } from "@upstash/redis";
 import { headers } from "next/headers";
 
-import { isProduction } from "@env";
+import { env, isProduction } from "@env";
 
 /**
  * Shared hosted-demo rate limiting. Per-tool config (`toolSlug`,
@@ -10,7 +10,8 @@ import { isProduction } from "@env";
  * counters are scoped by slug so tools don't share each other's budgets.
  *
  * Two daily limits, both resetting at UTC midnight:
- *   - Per-user: keyed by SHA-256(IP). One user, one tool, N/day.
+ *   - Per-user: keyed by a hash of the IP (HMAC-SHA256 when IP_HASH_SECRET is
+ *     set, else plain SHA-256). One user, one tool, N/day.
  *   - Global pool: shared across all visitors of that tool.
  *
  * BYOK users skip both — they're paying their own Gemini quota.
@@ -20,23 +21,16 @@ import { isProduction } from "@env";
  * Gemini quota is the backstop.
  */
 
-type ToolQuotaConfig = {
+export type QuotaConfig = {
 	toolSlug: string;
 	perUserDaily: number;
 	dailyPool: number;
 };
 
 export type CheckResultType =
-	| { allowed: true; userRemaining: number; poolRemaining: number }
-	| { allowed: false; reason: "user" | "pool"; resetInSeconds: number };
+	{ allowed: true } | { allowed: false; reason: "user" | "pool" };
 
-export type UsageSnapshotType = {
-	userUsed: number;
-	userRemaining: number;
-	poolUsed: number;
-	poolRemaining: number;
-	configured: boolean;
-};
+export type UsageSnapshotType = { configured: boolean };
 
 function getRedis(): Redis | null {
 	// Production only — never rate-limit locally or on preview, even if the
@@ -46,16 +40,6 @@ function getRedis(): Redis | null {
 	const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 	if (!url || !token) return null;
 	return new Redis({ url, token });
-}
-
-export function isRateLimitConfigured(): boolean {
-	return (
-		isProduction &&
-		Boolean(
-			process.env.UPSTASH_REDIS_REST_URL &&
-			process.env.UPSTASH_REDIS_REST_TOKEN,
-		)
-	);
 }
 
 function todayUtc(): string {
@@ -83,7 +67,13 @@ async function getClientHash(): Promise<string> {
 	const forwarded = h.get("x-forwarded-for");
 	const real = h.get("x-real-ip");
 	const ip = forwarded?.split(",")[0].trim() ?? real ?? "anonymous";
-	return createHash("sha256").update(ip).digest("hex").slice(0, 16);
+	// HMAC with a secret pepper when configured (production) so a leaked hash
+	// can't be brute-forced back to an IP; plain SHA-256 otherwise (local/self-host).
+	const secret = env.IP_HASH_SECRET;
+	const digest = secret
+		? createHmac("sha256", secret).update(ip).digest("hex")
+		: createHash("sha256").update(ip).digest("hex");
+	return digest.slice(0, 16);
 }
 
 /**
@@ -91,17 +81,11 @@ async function getClientHash(): Promise<string> {
  * ONCE per billable request, before the LLM call. Skip for BYOK users.
  */
 export async function checkAndIncrement(
-	config: ToolQuotaConfig,
+	config: QuotaConfig,
 ): Promise<CheckResultType> {
 	const { toolSlug, perUserDaily, dailyPool } = config;
 	const redis = getRedis();
-	if (!redis) {
-		return {
-			allowed: true,
-			userRemaining: perUserDaily,
-			poolRemaining: dailyPool,
-		};
-	}
+	if (!redis) return { allowed: true };
 
 	try {
 		const date = todayUtc();
@@ -112,74 +96,20 @@ export async function checkAndIncrement(
 
 		const userCount = await redis.incr(userKey);
 		if (userCount === 1) await redis.expire(userKey, ttl);
-		if (userCount > perUserDaily) {
-			return { allowed: false, reason: "user", resetInSeconds: ttl };
-		}
+		if (userCount > perUserDaily) return { allowed: false, reason: "user" };
 
 		const poolCount = await redis.incr(poolKey);
 		if (poolCount === 1) await redis.expire(poolKey, ttl);
-		if (poolCount > dailyPool) {
-			return { allowed: false, reason: "pool", resetInSeconds: ttl };
-		}
+		if (poolCount > dailyPool) return { allowed: false, reason: "pool" };
 
-		return {
-			allowed: true,
-			userRemaining: Math.max(0, perUserDaily - userCount),
-			poolRemaining: Math.max(0, dailyPool - poolCount),
-		};
+		return { allowed: true };
 	} catch (error) {
 		console.error(`[rate-limit:${toolSlug}] Redis error (failing open)`, error);
-		return {
-			allowed: true,
-			userRemaining: perUserDaily,
-			poolRemaining: dailyPool,
-		};
+		return { allowed: true };
 	}
 }
 
-/**
- * Non-incrementing read of current usage for this tool. For the hosted-usage
- * pill in the navbar.
- */
-export async function peekUsage(
-	config: ToolQuotaConfig,
-): Promise<UsageSnapshotType> {
-	const { toolSlug, perUserDaily, dailyPool } = config;
-	const redis = getRedis();
-	if (!redis) {
-		return {
-			userUsed: 0,
-			userRemaining: perUserDaily,
-			poolUsed: 0,
-			poolRemaining: dailyPool,
-			configured: false,
-		};
-	}
-
-	try {
-		const date = todayUtc();
-		const clientHash = await getClientHash();
-		const [userRaw, poolRaw] = await redis.mget<[number | null, number | null]>(
-			`ratelimit:${toolSlug}:user:${clientHash}:${date}`,
-			`ratelimit:${toolSlug}:pool:${date}`,
-		);
-		const userUsed = userRaw ?? 0;
-		const poolUsed = poolRaw ?? 0;
-		return {
-			userUsed,
-			userRemaining: Math.max(0, perUserDaily - userUsed),
-			poolUsed,
-			poolRemaining: Math.max(0, dailyPool - poolUsed),
-			configured: true,
-		};
-	} catch (error) {
-		console.error(`[rate-limit:${toolSlug}] Redis peek error`, error);
-		return {
-			userUsed: 0,
-			userRemaining: perUserDaily,
-			poolUsed: 0,
-			poolRemaining: dailyPool,
-			configured: false,
-		};
-	}
+/** Whether hosted rate-limiting is active — drives the navbar "free/day" pill. */
+export function peekUsage(): UsageSnapshotType {
+	return { configured: getRedis() !== null };
 }

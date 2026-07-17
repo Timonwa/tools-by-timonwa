@@ -9,7 +9,6 @@ import {
 import ArticleSourceInput from "@/components/_shared/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/ErrorNotice";
 import type { InputKindType } from "@/components/_shared/InputKindTabs";
-import { MAX_DRAFT_CHARS } from "@/components/tools/article-to-social-posts/constants/draft-input";
 import { THREADABLE_PLATFORMS } from "@/components/tools/article-to-social-posts/constants/platforms";
 import type {
 	PlatformType,
@@ -24,6 +23,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui";
+import { MAX_ARTICLE_CHARS } from "@/lib/config/limits";
 
 import PlatformPicker from "./PlatformPicker";
 import TemplatesPicker from "./TemplatesPicker";
@@ -99,7 +99,7 @@ export default function GenerateForm({
 }: GenerateFormProps) {
 	const hasInput =
 		inputKind === "url" ? url.trim().length > 0 : text.trim().length > 0;
-	const textOver = text.length > MAX_DRAFT_CHARS;
+	const textOver = text.length > MAX_ARTICLE_CHARS;
 	const disabled = isBusy || !hasInput || platforms.length === 0 || textOver;
 	// Only call it "Regenerate" when the current input is the article on screen.
 	// A changed source reads as "Generate" so it never looks like an overwrite.
@@ -114,7 +114,7 @@ export default function GenerateForm({
 				</CardTitle>
 				<CardDescription>
 					Paste an article&apos;s URL or its text (up to{" "}
-					{MAX_DRAFT_CHARS.toLocaleString()} characters). Posts are generated
+					{MAX_ARTICLE_CHARS.toLocaleString()} characters). Posts are generated
 					for every selected platform — copy them and post to each site
 					manually.
 				</CardDescription>
@@ -145,7 +145,7 @@ export default function GenerateForm({
 						onToggleTextReuse={onToggleTextReuse}
 						onClearText={onClearDraft}
 						disabled={isGenerating}
-						maxChars={MAX_DRAFT_CHARS}
+						maxChars={MAX_ARTICLE_CHARS}
 					/>
 
 					<TonePicker

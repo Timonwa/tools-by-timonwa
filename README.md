@@ -87,7 +87,7 @@ Contributions are welcome — bug fixes, UX and accessibility improvements, agen
 - **Bring-your-own keys** live in your browser's `sessionStorage`, cleared on tab close — never on a server.
 - **Your input** is sent to Google Gemini only for that request; not logged or stored (URL-based fetches are cached in memory for up to an hour).
 - **History, preferences, and templates** live only in your browser's `localStorage`.
-- **Rate-limit counters** store a SHA-256 hash of your IP plus a daily count in Upstash Redis (resets at UTC midnight); bring-your-own-key requests skip this.
+- **Rate-limit counters** store a keyed (HMAC-SHA256) hash of your IP plus a daily count in Upstash Redis (resets at UTC midnight); bring-your-own-key requests skip this.
 - **No accounts, no profiles, no tracking, and no analytics** of any kind.
 
 Full details: [tech.timonwa.com/privacy](https://tech.timonwa.com/privacy).

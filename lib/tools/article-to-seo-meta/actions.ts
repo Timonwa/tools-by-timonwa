@@ -185,5 +185,5 @@ export async function regenerateSeoMetaVariation(input: {
 }
 
 export async function getUsage() {
-	return await readUsage(QUOTA_CONFIG);
+	return readUsage();
 }

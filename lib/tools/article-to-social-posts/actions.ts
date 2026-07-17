@@ -1,6 +1,6 @@
 "use server";
 
-import { MAX_DRAFT_CHARS } from "@/components/tools/article-to-social-posts/constants/draft-input";
+import { MAX_ARTICLE_CHARS } from "@/lib/config/limits";
 import {
 	HOSTED_DAILY_GENERATION_POOL,
 	HOSTED_PER_USER_DAILY,
@@ -65,7 +65,7 @@ function toToolMessage(
 			],
 			[
 				/DRAFT_TOO_LONG/,
-				`Your text is too long. Keep it under ${MAX_DRAFT_CHARS.toLocaleString()} characters (about 2,500 words), then try again.`,
+				`Your text is too long. Keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} characters (about 2,500 words), then try again.`,
 			],
 			[/DRAFT_EMPTY/, "Paste or type your article text before generating."],
 			[
@@ -111,7 +111,8 @@ function buildPost(
 function validateInput(input: DraftInputType): void {
 	if (input.kind === "text") {
 		if (!input.text.trim()) throw new Error("DRAFT_EMPTY");
-		if (input.text.length > MAX_DRAFT_CHARS) throw new Error("DRAFT_TOO_LONG");
+		if (input.text.length > MAX_ARTICLE_CHARS)
+			throw new Error("DRAFT_TOO_LONG");
 	}
 }
 
@@ -281,11 +282,7 @@ export async function regenerateDraft(params: {
 	}
 }
 
-/**
- * Non-incrementing read of the caller's current daily usage, for the
- * navbar pill and anywhere else that wants to show "X left". Returns
- * fallback values when Upstash isn't configured.
- */
+/** Whether hosted rate-limiting is active, for the navbar usage pill. */
 export async function getUsage() {
-	return await readUsage(QUOTA_CONFIG);
+	return readUsage();
 }

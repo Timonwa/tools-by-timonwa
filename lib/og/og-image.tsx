@@ -7,21 +7,13 @@ export const OG_SIZE = { width: 1200, height: 630 } as const;
 export const OG_CONTENT_TYPE = "image/png";
 
 export type OgImageConfig = {
-	/** Eyebrow line, top-left. e.g. "SEO meta generator · Open source". */
 	eyebrow: string;
-	/** Title words in the default color (rendered before the accent words). */
 	titleLead: string;
-	/** Title words in the accent color. */
 	titleAccent: string;
-	/** One-line supporting copy under the title. */
 	subtitle: string;
-	/** Up to ~3 short pills under the description. */
 	pills: string[];
-	/** Accent hex — the status dot and the highlighted title words. */
 	accent: string;
-	/** Dark tint hex seeding the top-left radial glow. */
 	backgroundTint: string;
-	/** Upper bound for the title size in px (auto-shrinks to fit one line). */
 	titleFontSize?: number;
 };
 

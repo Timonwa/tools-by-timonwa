@@ -34,6 +34,10 @@ export function subscribeByok(onChange: () => void) {
 	};
 }
 
+/**
+ * The user's raw Gemini API key (the secret). `get` returns the stored string or
+ * `null` when unset — unvalidated. Paired with `byokModelStorage` (the model it calls).
+ */
 export const byokStorage = {
 	get(): string | null {
 		if (!canUseStorage()) return null;
@@ -59,6 +63,10 @@ export const byokStorage = {
 	},
 };
 
+/**
+ * Which model the BYOK key should call. Unlike `byokStorage`, `get` never returns
+ * null — it validates against `BYOK_MODELS`, falling back to `DEFAULT_BYOK_MODEL`.
+ */
 export const byokModelStorage = {
 	get(): ByokModelType {
 		if (!canUseStorage()) return DEFAULT_BYOK_MODEL;

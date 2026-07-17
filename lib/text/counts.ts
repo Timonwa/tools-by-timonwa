@@ -1,8 +1,6 @@
 /**
- * Framework-agnostic text metrics. Shared by the deterministic text tools
- * (Word & Character Counter, Reading Time) so every tool counts the same way.
- * Character counts iterate code points (`[...text]`) so emoji and accented
- * letters count as one, matching what most online counters report.
+ * Shared text metrics for the deterministic tools. Character counts iterate code
+ * points (`[...text]`) so emoji and accented letters count as one.
  */
 
 export type TextCountsType = {

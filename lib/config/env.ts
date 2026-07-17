@@ -4,6 +4,7 @@ import { z } from "zod";
  * Validated env access, imported as `import { env } from "@env"`. All optional so
  * the app builds without them; features degrade gracefully when unset.
  */
+
 const schema = z.object({
 	// Gates production-only integrations (rate limiting). Set explicitly on deploy.
 	APP_ENV: z.enum(["development", "production"]).default("development"),
@@ -16,6 +17,9 @@ const schema = z.object({
 	// Upstash Redis for daily quotas — production only, fails open when absent.
 	UPSTASH_REDIS_REST_URL: z.string().optional(),
 	UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+	// Secret pepper for hashing IPs in rate-limit keys. Unset → plain SHA-256
+	// (fine locally); set in production so hashed IPs aren't brute-force reversible.
+	IP_HASH_SECRET: z.string().optional(),
 });
 
 export const env = schema.parse({
@@ -28,6 +32,7 @@ export const env = schema.parse({
 	LLM_MODEL: process.env.LLM_MODEL,
 	UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
 	UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+	IP_HASH_SECRET: process.env.IP_HASH_SECRET,
 });
 
 /** Gates production-only integrations (rate limiting) off local/preview builds. */

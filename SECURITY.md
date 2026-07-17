@@ -64,6 +64,6 @@ Before reporting, skim the **Privacy** section of [README.md](./README.md) for t
 - **Your BYOK key** → browser `sessionStorage` only, cleared on tab close, never sent to or stored on Timonwa's servers
 - **Your tool input** (pasted text / URLs) → request-scoped on the server, not cached, not logged; lives in your browser's React state otherwise
 - **Fetched article content** (for URL-based tools) → 1-hour in-memory cache, keyed by URL
-- **Rate-limit counters** → SHA-256 hash of IP + daily counter in Upstash Redis, resets at UTC midnight
+- **Rate-limit counters** → keyed (HMAC-SHA256) hash of IP + daily counter in Upstash Redis, resets at UTC midnight
 
 Thanks again. ❤️

@@ -1,6 +1,6 @@
 /**
- * Reading- and speaking-time estimates from a word count. Reading speed is a
- * preset (words per minute); speaking is a fixed conversational pace.
+ * Reading/speaking-time estimates from a word count. Reading speed is a WPM
+ * preset; speaking is a fixed conversational pace.
  */
 
 export const READING_WPM = {
