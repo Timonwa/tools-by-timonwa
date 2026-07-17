@@ -41,7 +41,7 @@ export function toUserMessage(error: unknown, opts: ToolErrorOptions): string {
 	// No Gemini key configured on the server at all — only the hosted path hits
 	// this (BYOK always sends a key). Not transient, so no "try again".
 	if (/NO_SERVER_KEY/.test(message))
-		return "This tool isn't set up to run for free right now. Add your own free Google key to use it — it only takes a couple of minutes.";
+		return "This tool isn't available to run right now. Add your own free Google key to use it — it only takes a couple of minutes.";
 
 	// The AI SDK couldn't produce a valid object; finishReason says why.
 	if (NoObjectGeneratedError.isInstance(error)) {
@@ -75,7 +75,7 @@ export function toUserMessage(error: unknown, opts: ToolErrorOptions): string {
 	if (/RESOURCE_EXHAUSTED|rate.?limit|quota|\b429\b/i.test(raw))
 		return byok
 			? "Your Google key has been used too many times for now. Wait a minute and try again, or check how much it has left in Google AI Studio."
-			: "Lots of people are using the free version right now. Wait a minute and try again — or add your own free Google key to skip the wait.";
+			: "We're getting a lot of requests right now. Wait a minute and try again — or add your own free Google key to skip the wait.";
 
 	// Google rejected the key (or the request had no valid identity).
 	if (
@@ -87,13 +87,13 @@ export function toUserMessage(error: unknown, opts: ToolErrorOptions): string {
 			? "Google didn't accept your API key. Open “Set API key” and paste it again, or create a new free key. New to this? The 2-minute guide walks you through it."
 			: "Something went wrong on our end. Please try again in a moment, or add your own free Google key to keep going.";
 
-	// Hosted free allowance used up — this person.
+	// Hosted per-user daily allowance used up.
 	if (/RATE_LIMIT_USER/.test(raw))
-		return `You've used up your ${opts.perUserDaily} free generations for today. Add your own free Google key to keep going — the free ones reset tomorrow.`;
+		return `You've used up your ${opts.perUserDaily} generations for today. Add your own free Google key to keep going — they reset tomorrow.`;
 
-	// Hosted free allowance used up — shared across everyone.
+	// Hosted shared daily allowance used up — across everyone.
 	if (/RATE_LIMIT_POOL/.test(raw))
-		return "Everyone's shared free generations are used up for today. Add your own free Google key to keep going — the free ones reset tomorrow.";
+		return "The daily limit for everyone is used up for today. Add your own free Google key to keep going — it resets tomorrow.";
 
 	// Content tripped Google's safety filter.
 	if (/SAFETY|safety.?filter|blocked.*safety/i.test(raw))
