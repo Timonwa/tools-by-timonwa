@@ -121,6 +121,22 @@ export const workflowStorage = createLocalStore<WorkflowStateType>({
 	serverValue: DEFAULT_WORKFLOW,
 });
 
+// Workflow mutators — shared by the main writer form and the preferences drawer.
+// Each reads the latest persisted state at call time, so there's no stale closure.
+export const setTone = (tone: ToneType) =>
+	workflowStorage.set({ ...workflowStorage.get(), tone });
+
+export const togglePlatform = (platform: PlatformType) => {
+	const current = workflowStorage.get();
+	const platforms = current.platforms.includes(platform)
+		? current.platforms.filter((p) => p !== platform)
+		: [...current.platforms, platform];
+	workflowStorage.set({ ...current, platforms });
+};
+
+export const setXThreadLength = (xThreadLength: number) =>
+	workflowStorage.set({ ...workflowStorage.get(), xThreadLength });
+
 /**
  * Preset templates — named snapshots of tone + platforms + thread length +
  * writing preferences. Persisted across sessions in localStorage.

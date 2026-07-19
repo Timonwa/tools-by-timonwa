@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import MoreTools from "./MoreTools";
 import Newsletter from "@/components/marketing/Newsletter";
 
-export type ToolFaqType = { question: string; answer: string };
+type ToolFaqType = { question: string; answer: string };
 
 export type ToolContentType = {
 	/** Article body authored as Markdown (headings, lists, bold, links). */

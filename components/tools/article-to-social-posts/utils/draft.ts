@@ -35,5 +35,3 @@ export const buildCopyAll = (
 				`### ${PLATFORM_LABELS[d.platform]}\n\n${buildCopyText(d, articleUrl)}\n`,
 		)
 		.join("\n---\n\n");
-
-export { timeAgo } from "@/lib/utils/time";

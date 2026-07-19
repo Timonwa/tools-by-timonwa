@@ -5,8 +5,14 @@ import { useState, useSyncExternalStore } from "react";
 
 import { THREADABLE_PLATFORMS } from "../constants/platforms";
 import { usePresets } from "../hooks/use-presets";
-import type { PlatformType, ToneType, WritingPreferencesType } from "../types";
-import { prefsStorage, workflowStorage } from "../utils/storage";
+import type { WritingPreferencesType } from "../types";
+import {
+	prefsStorage,
+	setTone,
+	setXThreadLength,
+	togglePlatform,
+	workflowStorage,
+} from "../utils/storage";
 import PlatformPicker from "../writer/PlatformPicker";
 import TemplatesPicker from "../writer/TemplatesPicker";
 import ThreadFormat from "../writer/ThreadFormat";
@@ -41,19 +47,6 @@ export default function SettingsDrawer() {
 	const updatePrefs = (patch: Partial<WritingPreferencesType>) => {
 		prefsStorage.set({ ...prefs, ...patch });
 	};
-
-	const setTone = (t: ToneType) =>
-		workflowStorage.set({ ...workflow, tone: t });
-
-	const togglePlatform = (p: PlatformType) => {
-		const next = platforms.includes(p)
-			? platforms.filter((x) => x !== p)
-			: [...platforms, p];
-		workflowStorage.set({ ...workflow, platforms: next });
-	};
-
-	const setXThreadLength = (n: number) =>
-		workflowStorage.set({ ...workflow, xThreadLength: n });
 
 	return (
 		<>

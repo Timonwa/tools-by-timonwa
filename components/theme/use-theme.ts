@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useSyncExternalStore } from "react";
 
 export type ThemeType = "light" | "dark" | "system";
-export type ResolvedThemeType = "light" | "dark";
+type ResolvedThemeType = "light" | "dark";
 
 /** Cross-instance sync — broadcasts when any component changes the theme. */
 const THEME_EVENT = "app:theme-change";

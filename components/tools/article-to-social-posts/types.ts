@@ -59,5 +59,3 @@ export type PresetTemplateType = {
 	xThreadLength: number;
 	preferences: WritingPreferencesType;
 };
-
-export type { ByokModelType } from "@/lib/config/byok";
