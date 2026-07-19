@@ -6,14 +6,15 @@ import {
 	CREATOR_TWITTER,
 	CREATOR_URL,
 	REPO_URL,
+	SITE_NAME,
 	SITE_URL,
 } from "@/lib/config/site";
 
 const TOOL_PATH = "/article-to-social-posts";
 const TOOL_URL = `${SITE_URL}${TOOL_PATH}`;
-const TOOL_TITLE = "Article to Social Posts — Turn articles into social posts";
+const TOOL_TITLE = "Article to Social Posts — a post for each network";
 const TOOL_DESCRIPTION =
-	"Paste an article URL or its text and get a post tailored to each network — X, LinkedIn, Threads, Bluesky, Mastodon, and Substack — with tone, hashtag, and thread controls. Free and open source.";
+	"Turn an article URL or draft into a post tuned for X, LinkedIn, Threads, Bluesky, Mastodon, and Substack — with tone, hashtag, and thread controls. Free.";
 
 export const metadata: Metadata = {
 	title: TOOL_TITLE,
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 	openGraph: {
 		type: "website",
 		url: TOOL_URL,
-		siteName: "Article to Social Posts",
+		siteName: SITE_NAME,
 		title: TOOL_TITLE,
 		description: TOOL_DESCRIPTION,
 		locale: "en_US",
@@ -44,7 +45,7 @@ const jsonLd = {
 	alternateName: "Article to Social",
 	url: TOOL_URL,
 	description: TOOL_DESCRIPTION,
-	applicationCategory: "WriterApplication",
+	applicationCategory: "BusinessApplication",
 	applicationSubCategory: "Social media content tool",
 	operatingSystem: "Any",
 	browserRequirements: "Requires JavaScript. Requires a modern browser.",

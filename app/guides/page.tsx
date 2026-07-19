@@ -10,7 +10,7 @@ import { ROUTES } from "@/lib/config/routes";
 import { getAllGuides } from "@/lib/guides/loader";
 
 const PATH = ROUTES.guides;
-const TITLE = `Guides — ${SITE_NAME}`;
+const TITLE = "Guides";
 const DESCRIPTION =
 	"Short, practical guides for the tools — setup, tips, and step-by-step walkthroughs, including how to get a free API key.";
 

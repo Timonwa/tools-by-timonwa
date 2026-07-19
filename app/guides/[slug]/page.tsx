@@ -35,7 +35,7 @@ export async function generateMetadata({
 
 	const path = ROUTES.guide(slug);
 	const url = `${SITE_URL}${path}`;
-	const title = `${guide.title} — ${SITE_NAME}`;
+	const title = guide.title;
 
 	return {
 		title,

@@ -6,15 +6,15 @@ import {
 	CREATOR_TWITTER,
 	CREATOR_URL,
 	REPO_URL,
+	SITE_NAME,
 	SITE_URL,
 } from "@/lib/config/site";
 
 const TOOL_PATH = "/reading-time";
 const TOOL_URL = `${SITE_URL}${TOOL_PATH}`;
-const TOOL_TITLE =
-	"Reading Time Estimator — how long your article takes to read";
+const TOOL_TITLE = "Reading Time Estimator — how long an article takes to read";
 const TOOL_DESCRIPTION =
-	"Paste an article and get its reading and speaking time, with adjustable reading speed and a copy-ready “X min read” label for your blog. Free, no sign-up, runs in your browser.";
+	"Paste an article for its reading and speaking time, with adjustable speed and a copy-ready “X min read” label. Free, no sign-up, runs in your browser.";
 
 export const metadata: Metadata = {
 	title: TOOL_TITLE,
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 	openGraph: {
 		type: "website",
 		url: TOOL_URL,
-		siteName: "Reading Time Estimator",
+		siteName: SITE_NAME,
 		title: TOOL_TITLE,
 		description: TOOL_DESCRIPTION,
 		locale: "en_US",
@@ -45,7 +45,7 @@ const jsonLd = {
 	alternateName: "Reading Time Calculator",
 	url: TOOL_URL,
 	description: TOOL_DESCRIPTION,
-	applicationCategory: "Utility",
+	applicationCategory: "UtilitiesApplication",
 	applicationSubCategory: "Text tool",
 	operatingSystem: "Any",
 	browserRequirements: "Requires JavaScript. Requires a modern browser.",
