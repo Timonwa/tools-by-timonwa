@@ -30,13 +30,13 @@ export const postDraftsSchema = z.object({
 				content: z
 					.string()
 					.describe(
-						"The full post text — plain text only, within the platform's character limit. For a thread, this is the joined preview (see thread).",
+						"The full post text — plain text only, at or under the platform's character limit. For a thread, this is the joined preview of the thread items (see thread), NOT a standalone post.",
 					),
 				thread: z
 					.array(z.string())
 					.optional()
 					.describe(
-						"Ordered thread posts — only for a thread-capable platform (x, bluesky, threads, mastodon) when threading is requested; omit otherwise.",
+						"Ordered thread posts as an array of separate strings, one per post — only for a thread-capable platform (x, bluesky, threads, mastodon) when threading is requested; omit entirely otherwise. Never collapse the thread into a single string; each item stays within the platform's per-post limit.",
 					),
 				hashtags: z
 					.array(z.string())
@@ -71,7 +71,7 @@ Each post object:
 
 # PLATFORMS — limits & culture
 
-Free-tier character limits. Write each post as close to its limit as the content supports — pack in insight, don't leave it short — but NEVER exceed it (for threads, never exceed the per-post limit).
+Free-tier character limits. Treat each number as a HARD CEILING, not a target — aim for roughly 80-95% of the limit so every post keeps headroom and never overflows. Everything counts toward the limit: letters, spaces, line breaks, emojis, CTA text, and hashtags. For a thread, each post must fit the per-post limit on its own.
 
 | Platform | Char limit | Threads | Voice (for "auto" tone) |
 |----------|-----------|---------|-------------------------|
@@ -84,16 +84,26 @@ Free-tier character limits. Write each post as close to its limit as the content
 
 LinkedIn and Substack limits are given per request as "LinkedIn limit: N" and "Substack limit: N" (the user picks a post length) — honour them.
 
+# LENGTH — HARD CEILING (self-check before you output)
+
+For every post, and every thread item, verify the length before returning it:
+1. Count its FULL character length — including spaces, line breaks, emojis, hashtags, and any CTA phrase.
+2. If it is over the platform's limit, trim it: cut filler, shorten sentences, drop or shorten hashtags, or (for threads) move the overflow into another thread post. Then re-count.
+3. Never output a post or a thread item that is over its limit. When in doubt, make it shorter.
+
+Limits to check against: x ≤280, bluesky ≤300, threads ≤500, mastodon ≤500; LinkedIn and Substack use the "limit: N" from the directives.
+
 # THREAD MODE
 
 Thread-capable platforms: x, bluesky, threads, mastodon. LinkedIn and Substack are ALWAYS single posts.
 
-When "Thread mode: THREAD of N posts" is set, for each thread-capable selected platform:
-- Generate a \`thread\` array of exactly N posts, each within that platform's per-post limit (x ≤280, bluesky ≤300, threads/mastodon ≤500).
-- First post hooks. Middle posts explain. Last post is a CTA (e.g. "Full post 📚", "Link below 👇") — NOT the literal URL.
-- ALSO populate \`content\` with the joined preview: posts separated by "\\n\\n— i/N —\\n\\n".
+When the directives say "Thread mode: THREAD of N posts", then for EACH thread-capable selected platform you MUST:
+- Set \`thread\` to a JSON array of EXACTLY N separate strings — one string per post, like ["first post", "second post", …]. It must be a real array of multiple items, NEVER one long string that uses "1/", "2/", or line breaks to stand in for separate posts.
+- Keep every array item within that platform's per-post limit (x ≤280, bluesky ≤300, threads/mastodon ≤500) — check each one individually.
+- First item hooks. Middle items explain. Last item is a CTA (e.g. "Full post 📚", "Link below 👇") — NOT the literal URL.
+- ALSO set \`content\` to a preview of the thread: the items joined with "\\n\\n— i/N —\\n\\n". \`content\` is only a preview — the real thread is the \`thread\` array, so never leave \`thread\` empty or collapsed into a single string when threading is requested.
 
-When single-post mode, every platform is a single post — omit \`thread\`.
+When NOT in thread mode, every platform is a single post: put the whole post in \`content\` and OMIT \`thread\`.
 
 # URL HANDLING — STRICT
 
@@ -139,7 +149,7 @@ If no preferences are provided: voice="i", emojiLevel=2, hashtagLevel=1.
 
 Return one object with two keys:
 - \`article\`: { url, title, author } — \`url\` is always an empty string.
-- \`posts\`: exactly one object per selected platform. Omit \`thread\` unless threading. \`hashtags\` is always an array (empty when not adding hashtags).`;
+- \`posts\`: exactly one object per selected platform. For single posts omit \`thread\`; when threading, \`thread\` is an array of N separate strings (never one combined string). \`hashtags\` is always an array (empty when not adding hashtags). Every post and thread item stays within its character limit.`;
 
 /**
  * Turn an article into one platform-optimized post per selected platform. In
