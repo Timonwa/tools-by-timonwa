@@ -7,8 +7,8 @@ import {
 	SubstackLogo,
 	ThreadsLogo,
 	XLogo,
-} from "@/components/icons/brand";
-import type { PlatformType } from "@/components/tools/article-to-social-posts/types";
+} from "@/components/ui/logos";
+import type { PlatformType } from "../types";
 
 export const ALL_PLATFORMS: PlatformType[] = [
 	"linkedin",
@@ -50,7 +50,7 @@ export const CHAR_LIMITS: Record<PlatformType, number> = {
 	substack: 500,
 };
 
-/** Real brand marks per platform (see `components/icons/brand`). */
+/** Real brand marks per platform (see `components/ui/logos`). */
 export const PLATFORM_ICONS: Record<
 	PlatformType,
 	ComponentType<SVGProps<SVGSVGElement>>

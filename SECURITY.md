@@ -53,7 +53,7 @@ Please include:
 
 - Prompt injection of the LLM — tool agents' output is schema-validated and prompts are not treated as a secret (see `CONTRIBUTING.md`)
 - Rate-limit evasion — a known limitation of the hosted daily quota
-- Vulnerabilities in third-party services (Google AI Studio, Upstash, Vercel, Cloudflare) — please report those directly to the respective vendors
+- Vulnerabilities in third-party services (Google AI Studio, Upstash, Vercel) — please report those directly to the respective vendors
 - Missing best-practice HTTP headers that have no concrete impact
 - Findings from automated scanners without a reproducible exploit
 
@@ -61,9 +61,9 @@ Please include:
 
 Before reporting, skim the **Privacy** section of [README.md](./README.md) for the full data-flow picture. TL;DR:
 
-- **Your BYOK key** → browser `sessionStorage` only, cleared on tab close, never sent to or stored on Timonwa's servers
+- **Your BYOK key** → browser `sessionStorage` only, cleared on tab close; sent with a request to the server only to make the Gemini call, never stored or logged
 - **Your tool input** (pasted text / URLs) → request-scoped on the server, not cached, not logged; lives in your browser's React state otherwise
 - **Fetched article content** (for URL-based tools) → 1-hour in-memory cache, keyed by URL
-- **Rate-limit counters** → SHA-256 hash of IP + daily counter in Upstash Redis, resets at UTC midnight
+- **Rate-limit counters** → keyed (HMAC-SHA256) hash of IP + daily counter in Upstash Redis, resets at UTC midnight
 
 Thanks again. ❤️

@@ -19,7 +19,7 @@ import {
 import { timeAgo } from "@/lib/utils/time";
 
 /** One row of history. The tool maps its own entries into this shape. */
-export type HistoryItemType = {
+type HistoryItemType = {
 	id: string;
 	/** Source kind — drives the URL / Text badge. */
 	kind: "url" | "text";

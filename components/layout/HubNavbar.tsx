@@ -1,6 +1,6 @@
 import { WrenchIcon } from "lucide-react";
 
-import Navbar from "@/components/layout/Navbar";
+import Navbar from "./Navbar";
 import { SITE_NAME } from "@/lib/config/site";
 
 /**

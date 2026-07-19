@@ -7,7 +7,6 @@ import {
 	CREATOR_TWITTER,
 	CREATOR_URL,
 	SITE_DESCRIPTION,
-	SITE_DOMAIN,
 	SITE_NAME,
 	SITE_TITLE,
 	SITE_URL,
@@ -77,8 +76,9 @@ export default function RootLayout({
 				{isProduction && (
 					<Script
 						defer
-						data-domain={SITE_DOMAIN}
-						src="https://plausible.io/js/script.js"
+						src="https://cloud.umami.is/script.js"
+						data-website-id="4550710a-0c5e-462a-8012-5d3ee2f3769e"
+						data-performance="true"
 						strategy="afterInteractive"
 					/>
 				)}

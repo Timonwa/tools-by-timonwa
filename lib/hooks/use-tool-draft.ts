@@ -8,7 +8,7 @@ import {
 	useSyncExternalStore,
 } from "react";
 
-import type { InputKindType } from "@/components/_shared/InputKindTabs";
+import type { InputKindType } from "@/lib/tools/_shared/draft-input";
 import { createLocalStore } from "@/lib/utils/local-store";
 
 /**
@@ -77,10 +77,10 @@ const urlEnabledStore = flagStore(URL_ENABLED_KEY);
 const kindStore = stringStore(KIND_KEY);
 
 /** Seed for a history restore: a bare text string, or a full source. */
-export type ToolDraftSeedType =
+type ToolDraftSeedType =
 	string | { text?: string; url?: string; kind?: InputKindType };
 
-export type ToolDraftType = {
+type ToolDraftType = {
 	/** Current draft text — the shared value when text reuse is on, else local. */
 	text: string;
 	setText: (value: string) => void;

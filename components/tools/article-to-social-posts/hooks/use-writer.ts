@@ -10,24 +10,21 @@ import {
 	useTransition,
 } from "react";
 
-import type { InputKindType } from "@/components/_shared/InputKindTabs";
-import { useToolDraft } from "@/components/_shared/shared-draft";
+import { useToolDraft } from "@/lib/hooks/use-tool-draft";
 import type {
 	DraftInputType,
-	PlatformType,
 	PostDraftType,
 	PreviewResultType,
 	TokenUsageType,
-	ToneType,
-} from "@/components/tools/article-to-social-posts/types";
-import {
-	buildCopyAll,
-	buildCopyText,
-} from "@/components/tools/article-to-social-posts/utils/draft";
+} from "../types";
+import { buildCopyAll, buildCopyText } from "../utils/draft";
 import {
 	prefsStorage,
+	setTone,
+	setXThreadLength,
+	togglePlatform,
 	workflowStorage,
-} from "@/components/tools/article-to-social-posts/utils/storage";
+} from "../utils/storage";
 import {
 	previewPosts,
 	regenerateDraft,
@@ -35,8 +32,6 @@ import {
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { type HistoryEntryType, useHistory } from "./use-history";
 import { usePresets } from "./use-presets";
-
-export type { InputKindType };
 
 export function useWriter() {
 	const {
@@ -122,26 +117,6 @@ export function useWriter() {
 		const id = setTimeout(persistDraftEdits, 600);
 		return () => clearTimeout(id);
 	}, [editableDrafts]);
-
-	const setTone = useCallback(
-		(t: ToneType) => workflowStorage.set({ ...workflow, tone: t }),
-		[workflow],
-	);
-
-	const togglePlatform = useCallback(
-		(p: PlatformType) => {
-			const next = platforms.includes(p)
-				? platforms.filter((x) => x !== p)
-				: [...platforms, p];
-			workflowStorage.set({ ...workflow, platforms: next });
-		},
-		[workflow, platforms],
-	);
-
-	const setXThreadLength = useCallback(
-		(n: number) => workflowStorage.set({ ...workflow, xThreadLength: n }),
-		[workflow],
-	);
 
 	const resetResults = useCallback(() => {
 		setPreview(null);

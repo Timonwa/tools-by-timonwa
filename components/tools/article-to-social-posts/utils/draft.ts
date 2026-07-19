@@ -1,5 +1,5 @@
-import { PLATFORM_LABELS } from "@/components/tools/article-to-social-posts/constants/platforms";
-import type { PostDraftType } from "@/components/tools/article-to-social-posts/types";
+import { PLATFORM_LABELS } from "../constants/platforms";
+import type { PostDraftType } from "../types";
 
 const appendUrl = (body: string, articleUrl?: string): string => {
 	const u = articleUrl?.trim();
@@ -35,5 +35,3 @@ export const buildCopyAll = (
 				`### ${PLATFORM_LABELS[d.platform]}\n\n${buildCopyText(d, articleUrl)}\n`,
 		)
 		.join("\n---\n\n");
-
-export { timeAgo } from "@/lib/utils/time";

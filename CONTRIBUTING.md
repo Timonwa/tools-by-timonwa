@@ -25,7 +25,7 @@ By participating, you agree to the [Code of Conduct](https://tech.timonwa.com/co
 - Bug fixes and UX polish
 - Accessibility improvements
 - Agent draft quality (prompt tweaks, tone/voice refinements)
-- New **text-first, single-purpose AI tools** that fit the "does one thing well" shape (coordinate first)
+- New **text-first, single-purpose tools** — AI-backed or client-only — that fit the "does one thing well" shape (coordinate first)
 - Performance, build, and CI improvements
 - Documentation
 
@@ -79,14 +79,14 @@ app/
   (tools)/<slug>/                              # thin page.tsx + layout.tsx (metadata + JSON-LD)
 components/
   ui/          # app-agnostic primitives (barrel: @/components/ui)
-  _shared/     # cross-feature widgets (byok, hosted-usage-notice)
+  _shared/     # cross-feature widgets (byok, source input, article card, history sidebar)
   layout/  theme/  marketing/home/
   tools/<slug>/  # sections, index.tsx (composer), hooks/, constants/
 lib/
   config/      # site, tools, byok, limits, env
   tools/
-    _shared/   # quota, api-key, agent-runtime, errors  (reused by every tool)
-    <slug>/    # actions.ts + agents/
+    _shared/   # ai-provider, api-key, quota, draft-source, errors  (shared by AI tools)
+    <slug>/    # actions.ts + agents/  (AI tools only; client-only tools have no lib/ folder)
   rate-limit/  utils/  types/
 ```
 
@@ -96,8 +96,9 @@ When building or extending a tool, reuse the shared layer rather than re-impleme
 
 1. **Route** — `app/(tools)/<slug>/page.tsx` (thin: import + render the content component) and `layout.tsx` (metadata + JSON-LD).
 2. **UI** — `components/tools/<slug>/`: section components + an `index.tsx` composer; co-locate `hooks/`, `constants/`, `types.ts`. Use primitives from `@/components/ui`.
-3. **Server** — `lib/tools/<slug>/actions.ts` (a `"use server"` action) + `agents/`. Reuse:
-   - `createRunnerProvider` + `accumulateAgentRun` — `lib/tools/_shared/agent-runtime`
+3. **Server** _(AI tools only — client-only tools like the counters and converters stop at step 2)_ — `lib/tools/<slug>/actions.ts` (a `"use server"` action) + `agents/`. Reuse:
+   - `generateStructuredFromDraft` — `lib/tools/_shared/draft-source` (runs the agent over a URL/text draft)
+   - `getGemini` / `toTokenUsage` — `lib/tools/_shared/ai-provider`
    - `enforceQuota` / `readUsage` — `lib/tools/_shared/quota`
    - `toUserMessage` — `lib/tools/_shared/errors` · `resolveToolKey` — `lib/tools/_shared/api-key`
    - `createHistoryStore` — `lib/utils/create-history-store` (local history)

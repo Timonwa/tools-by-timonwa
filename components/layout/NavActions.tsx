@@ -12,7 +12,7 @@ import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 
 import { buttonClasses } from "@/components/ui";
 import ByokDrawer from "@/components/_shared/byok/ByokDrawer";
-import ToolsMenu from "@/components/layout/ToolsMenu";
+import ToolsMenu from "./ToolsMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import { ROUTES } from "@/lib/config/routes";
 import { REPO_URL, SUPPORT_URL } from "@/lib/config/site";

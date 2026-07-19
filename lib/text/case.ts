@@ -99,9 +99,9 @@ const AP_MINOR = new Set([
 	...PREPOSITIONS.filter((w) => w.length <= 3),
 ]);
 const CHICAGO_MINOR = new Set([...ARTICLES, ...CONJUNCTIONS, ...PREPOSITIONS]);
-// APA lowercases the same minor words but only when shorter than 4 letters —
-// any word of 4+ letters is capitalized.
-const APA_MINOR = new Set([...ARTICLES, ...CONJUNCTIONS, ...PREPOSITIONS]);
+// APA uses the same minor-word set as Chicago; it just also capitalizes any word
+// of 4+ letters (the `capLongWords` flag), applied before this set is consulted.
+const APA_MINOR = CHICAGO_MINOR;
 
 const titleCase = (
 	text: string,

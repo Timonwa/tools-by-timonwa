@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 
 import HubNavbar from "@/components/layout/HubNavbar";
 import ToolMain from "@/components/layout/ToolMain";
-import Newsletter from "@/components/marketing/Newsletter";
+import Newsletter from "@/components/_shared/content/Newsletter";
 import { PageHero } from "@/components/ui";
 import {
 	CREATOR_NAME,
@@ -35,7 +35,7 @@ export async function generateMetadata({
 
 	const path = ROUTES.guide(slug);
 	const url = `${SITE_URL}${path}`;
-	const title = `${guide.title} — ${SITE_NAME}`;
+	const title = guide.title;
 
 	return {
 		title,

@@ -1,4 +1,4 @@
-import type { ToneType } from "@/components/tools/article-to-social-posts/types";
+import type { ToneType } from "../types";
 
 export const TONES: { value: ToneType; label: string; description: string }[] =
 	[

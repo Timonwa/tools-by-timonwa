@@ -1,10 +1,7 @@
 /**
- * Hub-level BYOK (Bring Your Own Key) constants. Every AI tool in the hub
- * can read the user's pasted Google API key + model from sessionStorage and
- * send it to its own server action — one key, every tool.
- *
- * Models listed here are Gemini-only for now. If a future tool uses a
- * different provider, split this per-provider rather than widening the enum.
+ * Hub-level BYOK (Bring Your Own Key) constants — one Google key + model, read
+ * from sessionStorage and shared by every AI tool. Gemini-only; split
+ * per-provider before widening the enum.
  */
 
 // Use Google's "-latest" aliases, not pinned versions like `gemini-flash-latest`.

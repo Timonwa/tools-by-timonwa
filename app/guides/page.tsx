@@ -3,14 +3,14 @@ import type { Metadata } from "next";
 
 import HubNavbar from "@/components/layout/HubNavbar";
 import ToolMain from "@/components/layout/ToolMain";
-import Newsletter from "@/components/marketing/Newsletter";
+import Newsletter from "@/components/_shared/content/Newsletter";
 import { LinkCard, PageHero } from "@/components/ui";
 import { SITE_NAME, SITE_URL } from "@/lib/config/site";
 import { ROUTES } from "@/lib/config/routes";
 import { getAllGuides } from "@/lib/guides/loader";
 
 const PATH = ROUTES.guides;
-const TITLE = `Guides — ${SITE_NAME}`;
+const TITLE = "Guides";
 const DESCRIPTION =
 	"Short, practical guides for the tools — setup, tips, and step-by-step walkthroughs, including how to get a free API key.";
 

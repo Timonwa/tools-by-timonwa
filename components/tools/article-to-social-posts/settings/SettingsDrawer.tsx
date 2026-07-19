@@ -3,21 +3,20 @@
 import { PenLineIcon } from "lucide-react";
 import { useState, useSyncExternalStore } from "react";
 
-import { THREADABLE_PLATFORMS } from "@/components/tools/article-to-social-posts/constants/platforms";
-import { usePresets } from "@/components/tools/article-to-social-posts/hooks/use-presets";
-import type {
-	PlatformType,
-	ToneType,
-	WritingPreferencesType,
-} from "@/components/tools/article-to-social-posts/types";
+import { THREADABLE_PLATFORMS } from "../constants/platforms";
+import { usePresets } from "../hooks/use-presets";
+import type { WritingPreferencesType } from "../types";
 import {
 	prefsStorage,
+	setTone,
+	setXThreadLength,
+	togglePlatform,
 	workflowStorage,
-} from "@/components/tools/article-to-social-posts/utils/storage";
-import PlatformPicker from "@/components/tools/article-to-social-posts/writer/PlatformPicker";
-import TemplatesPicker from "@/components/tools/article-to-social-posts/writer/TemplatesPicker";
-import ThreadFormat from "@/components/tools/article-to-social-posts/writer/ThreadFormat";
-import TonePicker from "@/components/tools/article-to-social-posts/writer/TonePicker";
+} from "../utils/storage";
+import PlatformPicker from "../writer/PlatformPicker";
+import TemplatesPicker from "../writer/TemplatesPicker";
+import ThreadFormat from "../writer/ThreadFormat";
+import TonePicker from "../writer/TonePicker";
 import { Button, Drawer, Tooltip } from "@/components/ui";
 
 import HashtagRulesSection from "./HashtagRules";
@@ -48,19 +47,6 @@ export default function SettingsDrawer() {
 	const updatePrefs = (patch: Partial<WritingPreferencesType>) => {
 		prefsStorage.set({ ...prefs, ...patch });
 	};
-
-	const setTone = (t: ToneType) =>
-		workflowStorage.set({ ...workflow, tone: t });
-
-	const togglePlatform = (p: PlatformType) => {
-		const next = platforms.includes(p)
-			? platforms.filter((x) => x !== p)
-			: [...platforms, p];
-		workflowStorage.set({ ...workflow, platforms: next });
-	};
-
-	const setXThreadLength = (n: number) =>
-		workflowStorage.set({ ...workflow, xThreadLength: n });
 
 	return (
 		<>

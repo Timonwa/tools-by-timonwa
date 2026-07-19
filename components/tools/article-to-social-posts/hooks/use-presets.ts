@@ -2,21 +2,18 @@
 
 import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
 
-import {
-	DEFAULT_PREFERENCES,
-	MAX_TEMPLATES,
-} from "@/components/tools/article-to-social-posts/constants/preferences";
+import { DEFAULT_PREFERENCES, MAX_TEMPLATES } from "../constants/preferences";
 import type {
 	PlatformType,
 	PresetTemplateType,
 	ToneType,
 	WritingPreferencesType,
-} from "@/components/tools/article-to-social-posts/types";
+} from "../types";
 import {
 	prefsStorage,
 	templatesStorage,
 	workflowStorage,
-} from "@/components/tools/article-to-social-posts/utils/storage";
+} from "../utils/storage";
 
 /**
  * Distinct starter presets seeded on first run — deliberately different (a

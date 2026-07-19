@@ -7,15 +7,10 @@ import jsxA11y from "eslint-plugin-jsx-a11y";
 const eslintConfig = defineConfig([
 	...nextVitals,
 	...nextTs,
-	// eslint-config-next already registers the jsx-a11y plugin; enable its full
-	// recommended ruleset (broader than next's subset) without redefining the
-	// plugin. This is the a11y static gate — keep it on in CI so regressions can't merge.
+	// Full jsx-a11y recommended set (broader than next's subset) as the CI a11y gate.
 	{ rules: { ...jsxA11y.flatConfigs.recommended.rules } },
-	// Intentional, reviewed autofocus exceptions. TemplatesPicker focuses a rename
-	// field revealed on click (focus management for a control shown on user action).
-	// The slug generator focuses its single-line input — short and type-oriented, so
-	// the mobile-keyboard pop is minimal, unlike the paste-oriented textarea tools
-	// (word counter, reading time, case converter) which keep autofocus off.
+	// Reviewed autofocus exceptions: a rename field revealed on click, and the slug
+	// generator's short single-line input. Paste-oriented textarea tools keep it off.
 	{
 		files: [
 			"components/tools/article-to-social-posts/writer/TemplatesPicker.tsx",
@@ -23,16 +18,9 @@ const eslintConfig = defineConfig([
 		],
 		rules: { "jsx-a11y/no-autofocus": "off" },
 	},
-	// Disable ESLint rules that conflict with Prettier (must come last).
+	// Must come last: disables rules that conflict with Prettier.
 	prettier,
-	// Override default ignores of eslint-config-next.
-	globalIgnores([
-		// Default ignores of eslint-config-next:
-		".next/**",
-		"out/**",
-		"build/**",
-		"next-env.d.ts",
-	]),
+	globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 ]);
 
 export default eslintConfig;

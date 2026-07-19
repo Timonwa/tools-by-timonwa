@@ -3,7 +3,7 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 
 import { Button, Tooltip } from "@/components/ui";
-import { type ThemeType, useTheme } from "@/components/theme/use-theme";
+import { type ThemeType, useTheme } from "./use-theme";
 
 const NEXT: Record<ThemeType, ThemeType> = {
 	light: "dark",

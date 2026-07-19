@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
-import { ROUTES } from "@/lib/config/routes";
+import { ROUTES } from "./routes";
 
 /**
  * Tools in the hub. The directory home and the navbar dropdown both read from

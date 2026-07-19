@@ -1,6 +1,6 @@
 /**
- * Turn a title/headline into a clean, URL-safe slug. Diacritics are stripped
- * (café → cafe); non-latin scripts are dropped rather than transliterated.
+ * Title/headline → clean, URL-safe slug. Diacritics are stripped (café → cafe);
+ * non-latin scripts are dropped rather than transliterated.
  */
 
 export type SlugSeparatorType = "-" | "_";

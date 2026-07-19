@@ -14,21 +14,13 @@ import {
 	TagsIcon,
 } from "lucide-react";
 
-import ArticleCard from "@/components/_shared/ArticleCard";
-import ErrorNotice from "@/components/_shared/ErrorNotice";
-import HistorySidebar from "@/components/_shared/HistorySidebar";
-import SeoForm, {
-	type SeoFormParamsType,
-} from "@/components/tools/article-to-seo-meta/SeoForm";
-import SeoResults from "@/components/tools/article-to-seo-meta/SeoResults";
-import {
-	useHistory,
-	type HistoryEntryType,
-} from "@/components/tools/article-to-seo-meta/hooks/use-history";
-import type {
-	SeoMetaResultType,
-	TokenUsageType,
-} from "@/components/tools/article-to-seo-meta/types";
+import ArticleCard from "@/components/_shared/result/ArticleCard";
+import ErrorNotice from "@/components/_shared/result/ErrorNotice";
+import HistorySidebar from "@/components/_shared/result/HistorySidebar";
+import SeoForm, { type SeoFormParamsType } from "./SeoForm";
+import SeoResults from "./SeoResults";
+import { useHistory, type HistoryEntryType } from "./hooks/use-history";
+import type { SeoMetaResultType, TokenUsageType } from "./types";
 import {
 	Button,
 	Card,

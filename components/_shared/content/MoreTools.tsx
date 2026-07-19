@@ -1,6 +1,6 @@
 import { ArrowRightIcon } from "lucide-react";
-import Link from "next/link";
 
+import { LinkCard } from "@/components/ui";
 import { TOOLS } from "@/lib/config/tools";
 
 /**
@@ -33,10 +33,7 @@ export default function MoreTools({
 					const Icon = t.icon;
 					return (
 						<li key={t.slug}>
-							<Link
-								href={t.href}
-								className="group flex h-full flex-col rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-							>
+							<LinkCard href={t.href}>
 								<span
 									aria-hidden
 									className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary"
@@ -56,7 +53,7 @@ export default function MoreTools({
 										className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
 									/>
 								</span>
-							</Link>
+							</LinkCard>
 						</li>
 					);
 				})}

@@ -1,6 +1,6 @@
 "use server";
 
-import { MAX_DRAFT_CHARS } from "@/components/tools/article-to-social-posts/constants/draft-input";
+import { MAX_ARTICLE_CHARS } from "@/lib/config/limits";
 import {
 	HOSTED_DAILY_GENERATION_POOL,
 	HOSTED_PER_USER_DAILY,
@@ -18,7 +18,7 @@ import type {
 	ToneType,
 	WritingPreferencesType,
 } from "@/components/tools/article-to-social-posts/types";
-import { generateDrafts } from "@/lib/tools/article-to-social-posts/agents/draft-generator/agent";
+import { generateDrafts } from "./agents/draft-generator/agent";
 import { toUserMessage } from "@/lib/tools/_shared/errors";
 import {
 	enforceQuota,
@@ -33,11 +33,10 @@ const QUOTA_CONFIG: QuotaConfig = {
 };
 
 /**
- * Server actions RETURN their outcome as data — they never throw a
- * user-facing message. Next.js redacts thrown Server Action errors in
- * production (replacing the message with a generic digest), so a thrown
- * friendly string only survives in dev. Returning it as data means the same
- * message reaches the user in both environments.
+ * Server actions RETURN their outcome as data rather than throwing: Next.js
+ * redacts thrown Server Action messages in production (a generic digest), so a
+ * thrown friendly string would only survive in dev. Returning it reaches the
+ * user in both environments.
  */
 export type PreviewActionResultType =
 	{ ok: true; data: PreviewResultType } | { ok: false; error: string };
@@ -56,7 +55,6 @@ function toToolMessage(
 	return toUserMessage(error, {
 		logTag: `article-to-social-posts:${context}`,
 		perUserDaily: HOSTED_PER_USER_DAILY,
-		dailyPool: HOSTED_DAILY_GENERATION_POOL,
 		byok,
 		rules: [
 			[
@@ -65,7 +63,7 @@ function toToolMessage(
 			],
 			[
 				/DRAFT_TOO_LONG/,
-				`Your text is too long. Keep it under ${MAX_DRAFT_CHARS.toLocaleString()} characters (about 2,500 words), then try again.`,
+				`Your text is too long. Keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} characters (about 2,500 words), then try again.`,
 			],
 			[/DRAFT_EMPTY/, "Paste or type your article text before generating."],
 			[
@@ -111,7 +109,8 @@ function buildPost(
 function validateInput(input: DraftInputType): void {
 	if (input.kind === "text") {
 		if (!input.text.trim()) throw new Error("DRAFT_EMPTY");
-		if (input.text.length > MAX_DRAFT_CHARS) throw new Error("DRAFT_TOO_LONG");
+		if (input.text.length > MAX_ARTICLE_CHARS)
+			throw new Error("DRAFT_TOO_LONG");
 	}
 }
 
@@ -281,11 +280,7 @@ export async function regenerateDraft(params: {
 	}
 }
 
-/**
- * Non-incrementing read of the caller's current daily usage, for the
- * navbar pill and anywhere else that wants to show "X left". Returns
- * fallback values when Upstash isn't configured.
- */
+/** Whether hosted rate-limiting is active, for the navbar usage pill. */
 export async function getUsage() {
-	return await readUsage(QUOTA_CONFIG);
+	return readUsage();
 }

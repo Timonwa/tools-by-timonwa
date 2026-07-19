@@ -10,15 +10,15 @@ import {
 } from "react";
 import { useFormStatus } from "react-dom";
 
-import ArticleSourceInput from "@/components/_shared/ArticleSourceInput";
-import ErrorNotice from "@/components/_shared/ErrorNotice";
-import { useToolDraft } from "@/components/_shared/shared-draft";
+import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
+import ErrorNotice from "@/components/_shared/result/ErrorNotice";
+import { useToolDraft } from "@/lib/hooks/use-tool-draft";
 import {
 	type DraftInputType,
 	MAX_ARTICLE_CHARS,
 	type SeoMetaResultType,
 	type TokenUsageType,
-} from "@/components/tools/article-to-seo-meta/types";
+} from "./types";
 import { Button, Input } from "@/components/ui";
 
 import { generateSeoMeta } from "@/lib/tools/article-to-seo-meta/actions";

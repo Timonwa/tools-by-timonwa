@@ -2,10 +2,8 @@
 
 import { FileTextIcon, LinkIcon } from "lucide-react";
 
+import type { InputKindType } from "@/lib/tools/_shared/draft-input";
 import { cn } from "@/lib/utils/cn";
-
-/** Which source a draft-based tool reads from. Mirrors `DraftInputType`. */
-export type InputKindType = "url" | "text";
 
 /**
  * URL / paste-text tab switcher shared by the draft-based tools (social posts,

@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { useId, useState } from "react";
 
-import { Input } from "@/components/ui";
+import { Button, Input } from "@/components/ui";
 import { BYOK_MODELS, type ByokModelType } from "@/lib/config/byok";
 import { ROUTES } from "@/lib/config/routes";
 import { AI_STUDIO_KEYS_URL } from "@/lib/config/site";
@@ -200,21 +200,13 @@ export default function ByokSection({
 			)}
 
 			<div className="space-y-2 pt-2">
-				<button
-					type="button"
-					onClick={handleSave}
-					className="w-full h-9 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-				>
+				<Button onClick={handleSave} className="w-full">
 					Save key
-				</button>
+				</Button>
 				{savedKey && (
-					<button
-						type="button"
-						onClick={handleClear}
-						className="w-full h-9 rounded-md border border-border bg-background text-sm font-medium hover:bg-accent transition-colors"
-					>
+					<Button variant="outline" onClick={handleClear} className="w-full">
 						Clear key
-					</button>
+					</Button>
 				)}
 			</div>
 		</section>

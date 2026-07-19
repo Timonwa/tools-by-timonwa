@@ -5,8 +5,8 @@ import { useId, useState } from "react";
 import {
 	MAX_HASHTAG_RULES_PER_LIST,
 	normalizeHashtag,
-} from "@/components/tools/article-to-social-posts/constants/preferences";
-import type { WritingPreferencesType } from "@/components/tools/article-to-social-posts/types";
+} from "../constants/preferences";
+import type { WritingPreferencesType } from "../types";
 import { Input } from "@/components/ui";
 import { cn } from "@/lib/utils/cn";
 

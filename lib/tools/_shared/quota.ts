@@ -1,15 +1,14 @@
-import { checkAndIncrement, peekUsage } from "@/lib/rate-limit";
+import {
+	checkAndIncrement,
+	peekUsage,
+	type QuotaConfig,
+} from "@/lib/rate-limit";
 
 /**
- * Per-tool hosted-demo quota config. Counters are scoped by `toolSlug` so
- * tools don't share each other's budgets. New AI tools define one of these and
- * pass it to `enforceQuota` / `readUsage`.
+ * Per-tool hosted-demo quota config. Counters are scoped by `toolSlug` so tools
+ * don't share budgets. New AI tools define one and pass it to `enforceQuota`.
  */
-export type QuotaConfig = {
-	toolSlug: string;
-	perUserDaily: number;
-	dailyPool: number;
-};
+export type { QuotaConfig };
 
 /**
  * Enforce a tool's hosted daily quota. BYOK requests (a user-supplied key)
@@ -27,7 +26,7 @@ export async function enforceQuota(config: QuotaConfig, byokKey?: string) {
 	}
 }
 
-/** Non-incrementing read of the caller's current usage (for the navbar pill). */
-export function readUsage(config: QuotaConfig) {
-	return peekUsage(config);
+/** Whether hosted rate-limiting is active (for the navbar pill). */
+export function readUsage() {
+	return peekUsage();
 }

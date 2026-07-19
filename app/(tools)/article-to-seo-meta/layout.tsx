@@ -6,15 +6,15 @@ import {
 	CREATOR_TWITTER,
 	CREATOR_URL,
 	REPO_URL,
+	SITE_NAME,
 	SITE_URL,
 } from "@/lib/config/site";
 
 const TOOL_PATH = "/article-to-seo-meta";
 const TOOL_URL = `${SITE_URL}${TOOL_PATH}`;
-const TOOL_TITLE =
-	"Article to SEO Meta — SEO titles and descriptions with counts in spec";
+const TOOL_TITLE = "Article to SEO Meta — titles & descriptions in spec";
 const TOOL_DESCRIPTION =
-	"Paste an article URL or its text and get 1-3 SEO title + description variations sized to Google's display limits (50-60 / 150-160 chars). Optional primary keyword included in every variation.";
+	"Paste an article URL or text and get 1-3 SEO title and description variations sized to Google's limits (50-60 / 150-160 chars), each with your keyword.";
 
 export const metadata: Metadata = {
 	title: TOOL_TITLE,
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 	openGraph: {
 		type: "website",
 		url: TOOL_URL,
-		siteName: "Article to SEO Meta",
+		siteName: SITE_NAME,
 		title: TOOL_TITLE,
 		description: TOOL_DESCRIPTION,
 		locale: "en_US",
@@ -45,7 +45,7 @@ const jsonLd = {
 	alternateName: "SEO Meta Generator",
 	url: TOOL_URL,
 	description: TOOL_DESCRIPTION,
-	applicationCategory: "DeveloperApplication",
+	applicationCategory: "BusinessApplication",
 	applicationSubCategory: "SEO tool",
 	operatingSystem: "Any",
 	browserRequirements: "Requires JavaScript. Requires a modern browser.",

@@ -1,18 +1,15 @@
 "use client";
 
-import { ALL_PLATFORMS } from "@/components/tools/article-to-social-posts/constants/platforms";
-import {
-	DEFAULT_PREFERENCES,
-	MAX_TEMPLATES,
-} from "@/components/tools/article-to-social-posts/constants/preferences";
-import { TONES } from "@/components/tools/article-to-social-posts/constants/tones";
+import { ALL_PLATFORMS } from "../constants/platforms";
+import { DEFAULT_PREFERENCES, MAX_TEMPLATES } from "../constants/preferences";
+import { TONES } from "../constants/tones";
 import type {
 	LevelType,
 	PlatformType,
 	PresetTemplateType,
 	ToneType,
 	WritingPreferencesType,
-} from "@/components/tools/article-to-social-posts/types";
+} from "../types";
 import { createLocalStore } from "@/lib/utils/local-store";
 
 const PREFS_KEY = "article-to-social-posts:writing-preferences";
@@ -123,6 +120,22 @@ export const workflowStorage = createLocalStore<WorkflowStateType>({
 	},
 	serverValue: DEFAULT_WORKFLOW,
 });
+
+// Workflow mutators — shared by the main writer form and the preferences drawer.
+// Each reads the latest persisted state at call time, so there's no stale closure.
+export const setTone = (tone: ToneType) =>
+	workflowStorage.set({ ...workflowStorage.get(), tone });
+
+export const togglePlatform = (platform: PlatformType) => {
+	const current = workflowStorage.get();
+	const platforms = current.platforms.includes(platform)
+		? current.platforms.filter((p) => p !== platform)
+		: [...current.platforms, platform];
+	workflowStorage.set({ ...current, platforms });
+};
+
+export const setXThreadLength = (xThreadLength: number) =>
+	workflowStorage.set({ ...workflowStorage.get(), xThreadLength });
 
 /**
  * Preset templates — named snapshots of tone + platforms + thread length +

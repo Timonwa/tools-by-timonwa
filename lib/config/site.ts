@@ -1,7 +1,6 @@
 /**
- * Single source of truth for the hub's identity, creator, and every off-site
- * link. Registered once here and imported everywhere (metadata, JSON-LD, OG
- * images, navbar, footer) — change a value here to update the whole site.
+ * Hub identity, creator, and off-site links — imported everywhere (metadata,
+ * JSON-LD, OG images, navbar, footer). Edit here to change the whole site.
  */
 
 /** Canonical hub URL and display name. */
@@ -13,7 +12,7 @@ export const SITE_DESCRIPTION =
 	"A growing collection of focused, open-source tools by Timonwa — one home for small software that does one thing well.";
 
 /** Creator / author — referenced from metadata, JSON-LD, and the footer. */
-export const CREATOR_NAME = "Timonwa";
+export const CREATOR_NAME = "Timonwa Akintokun";
 /** Link hub (linktree-style) for the creator. */
 export const CREATOR_URL = "https://links.timonwa.com";
 /** Twitter/X handle (used in Twitter card metadata). */
