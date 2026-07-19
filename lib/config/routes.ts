@@ -9,10 +9,12 @@ export const ROUTES = {
 	home: "/" as Route,
 	tools: "/tools" as Route,
 	categories: "/categories" as Route,
-	category: (id: string): Route => `/categories/${id}` as Route,
+	category: (id: string): Route =>
+		`/categories/${encodeURIComponent(id)}` as Route,
 	toolsCategory: (category: string): Route =>
-		`/tools?category=${category}` as Route,
-	tool: (slug: string): Route => `/${slug}` as Route,
+		`/tools?category=${encodeURIComponent(category)}` as Route,
+	tool: (slug: string): Route => `/${encodeURIComponent(slug)}` as Route,
 	guides: "/guides" as Route,
-	guide: (slug: string): Route => `/guides/${slug}` as Route,
+	guide: (slug: string): Route =>
+		`/guides/${encodeURIComponent(slug)}` as Route,
 };
