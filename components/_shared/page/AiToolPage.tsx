@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
-import ToolContent, { type ToolContentType } from "../content/ToolContent";
+import ToolContent from "../content/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
 import { ROUTES } from "@/lib/config/routes";
@@ -17,7 +17,6 @@ type AiToolPageProps = {
 	usageNotice: ReactNode;
 	/** Optional navbar actions slot — e.g. a writing-preferences drawer. */
 	settings?: ReactNode;
-	content: ToolContentType;
 	/** The tool's hero and body, rendered above the SEO content block. */
 	children: ReactNode;
 };
@@ -34,7 +33,6 @@ export default function AiToolPage({
 	icon,
 	usageNotice,
 	settings,
-	content,
 	children,
 }: AiToolPageProps) {
 	return (
@@ -51,7 +49,7 @@ export default function AiToolPage({
 			/>
 			<ToolMain>
 				{children}
-				<ToolContent content={content} currentSlug={slug} />
+				<ToolContent currentSlug={slug} />
 			</ToolMain>
 		</>
 	);

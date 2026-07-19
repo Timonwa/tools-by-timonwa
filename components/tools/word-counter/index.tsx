@@ -1,7 +1,6 @@
 import { WholeWordIcon } from "lucide-react";
 
 import ClientToolPage from "@/components/_shared/page/ClientToolPage";
-import { wordCounterContent } from "./content";
 import WordCounterTool from "./WordCounterTool";
 
 export default function WordCounterPageContent() {
@@ -18,7 +17,6 @@ export default function WordCounterPageContent() {
 				</>
 			}
 			subtitle="Live word, character, sentence, and paragraph counts — plus reading time and the character limits that matter for SEO and social. Nothing leaves your browser."
-			content={wordCounterContent}
 		>
 			<WordCounterTool />
 		</ClientToolPage>

@@ -1,0 +1,86 @@
+export const faq = [
+	{
+		question: "What is an SEO meta description?",
+		answer:
+			"A meta description is the short summary of a page shown under its title in search results. It isn't a direct ranking factor, but a clear, compelling description improves click-through, which can help the page over time.",
+	},
+	{
+		question: "How long should a title tag and meta description be?",
+		answer:
+			"Aim for about 50 to 60 characters for the title tag and 150 to 160 for the meta description. Past those lengths, Google usually truncates the text in search results, so writing within them keeps your snippet intact.",
+	},
+	{
+		question: "Does the meta description affect SEO ranking?",
+		answer:
+			"Not directly. Google doesn't rank pages by their meta description, but a well-written one earns more clicks from the results page, and higher click-through can indirectly support ranking. The title tag, by contrast, does carry ranking weight.",
+	},
+	{
+		question: "Should every page have a unique meta description?",
+		answer:
+			"Yes. Each page should have its own title and description that match its content. Duplicate metadata across pages is a common SEO mistake and wastes the chance to rank for different searches.",
+	},
+	{
+		question: "How do I write a good meta description?",
+		answer:
+			"Summarize the page's value in 150 to 160 characters, include the main keyword naturally, and give a concrete reason to click — a benefit, an answer, or a hook. Avoid repeating the title word for word.",
+	},
+	{
+		question: "What is the difference between a title tag and an H1 heading?",
+		answer:
+			"A title tag is the clickable headline shown in search results and browser tabs, set in the page's HTML head. An H1 is the main visible heading on the page itself. They often differ: the title tag is written for search, the H1 for readers.",
+	},
+	{
+		question: "Can I include my keyword in every title and description?",
+		answer:
+			"Yes. If you set a primary keyword, this tool includes it in every title and description it generates, so your target term always appears.",
+	},
+	{
+		question: "Does this tool store my article or use it to train AI?",
+		answer:
+			"No. Your article is sent to the model only to generate the metadata for that single request; it isn't saved on our servers or used for training. If you add your own key, requests go straight to Google with it.",
+	},
+	{
+		question: "Do I need an account or API key to use it?",
+		answer:
+			"No account is required and there's a free daily allowance. For unlimited use, add your own free Google AI Studio key in settings — it stays in your browser.",
+	},
+	{
+		question: "Can I use an article URL, or do I have to paste the text?",
+		answer:
+			"Either. Paste a published article's URL and the tool reads the page, or paste the article text directly — handy for writing metadata before a piece goes live.",
+	},
+	{
+		question: "How do I add these meta tags to my website?",
+		answer:
+			"Copy the generated title into your page's title tag (or your CMS's SEO title field) and the description into the meta description field. Platforms like WordPress, Webflow, and Ghost expose both in the page's SEO settings.",
+	},
+];
+
+## What is Article to SEO Meta?
+
+Article to SEO Meta turns a finished article — from a URL or the text you paste in — into ready-to-use SEO title and meta description variations, each sized to the lengths Google actually displays (roughly 50 to 60 characters for the title, 150 to 160 for the description). Give it a link or paste your text, optionally name a primary keyword, and get one to three options to drop straight into your CMS. Because it reads the whole piece, the metadata reflects what the article is really about rather than a generic guess.
+
+## Who is Article to SEO Meta for?
+
+Bloggers, content marketers, and SEO specialists who need title tags and meta descriptions that fit Google's limits and read well, without hand-counting characters. Site owners and freelancers use it to backfill missing metadata across old posts, and writers use it to get a strong first draft of a title and description the moment a piece is finished.
+
+## How to use it
+
+1. Paste a published article's URL, or the article text (a near-final draft works too).
+2. Optionally add the primary keyword you want to rank for.
+3. Choose how many variations you'd like (one to three) and generate.
+4. Check the live character counts, edit or regenerate any variation, then copy the title, the description, or both.
+
+## What makes a good title tag and meta description
+
+- **Title tag** — specific, front-loads the main keyword, and stays around 50 to 60 characters so it isn't cut off. Google explains how it builds the [title link](https://developers.google.com/search/docs/appearance/title-link) shown in results.
+- **Meta description** — reads like ad copy for the page: summarize the value in 150 to 160 characters, work in the keyword naturally, and give a reason to click. See Google's [snippet documentation](https://developers.google.com/search/docs/appearance/snippet).
+- **Unique per page** — every page deserves its own title and description; duplicates confuse search engines and waste the chance to match different queries.
+
+## Do meta tags still matter for SEO?
+
+The meta description isn't a direct ranking factor, but it heavily influences click-through rate — and a page that earns more clicks from search tends to perform better over time. The title tag does carry ranking weight and is often the first thing a searcher reads. Tight, compelling metadata is one of the cheapest SEO wins available.
+
+## Free, open source, and private
+
+This tool is powered by Google's Gemini through the open-source **Vercel AI SDK**. It's free with a daily limit and no account; add your own free Google AI Studio key for unlimited runs. Your article or URL is sent to the model only to generate the metadata for that request — it isn't stored on our servers or used to train anything.

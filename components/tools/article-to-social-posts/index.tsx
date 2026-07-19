@@ -1,7 +1,6 @@
 import { Share2Icon } from "lucide-react";
 
 import AiToolPage from "@/components/_shared/page/AiToolPage";
-import { socialPostsContent } from "./content";
 import Hero from "./Hero";
 import HostedUsageNotice from "./HostedUsageNotice";
 import SettingsDrawer from "./settings/SettingsDrawer";
@@ -15,7 +14,6 @@ export default function ArticleToSocialPostsPageContent() {
 			icon={Share2Icon}
 			usageNotice={<HostedUsageNotice />}
 			settings={<SettingsDrawer />}
-			content={socialPostsContent}
 		>
 			<Hero />
 			<Writer />

@@ -1,86 +1,32 @@
 import { PlusIcon } from "lucide-react";
-import type { Components } from "react-markdown";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import type { ComponentType } from "react";
 
 import MoreTools from "./MoreTools";
 import Newsletter from "./Newsletter";
 
 type ToolFaqType = { question: string; answer: string };
 
-export type ToolContentType = {
-	/** Article body authored as Markdown (headings, lists, bold, links). */
-	article: string;
-	/** FAQs — plain text, rendered as disclosures and emitted as FAQPage JSON-LD. */
-	faq: ToolFaqType[];
-};
-
 /**
- * Markdown → styled elements. Links that point off-site (absolute http URLs)
- * open in a new tab; in-app relative links stay in the same tab.
+ * The SEO/article content block below a tool: the tool's MDX article, an FAQ
+ * (with FAQPage structured data for rich results), and a "more tools" grid.
+ * Server-rendered so every word is in the initial HTML and crawlable, and placed
+ * under the tool so it never gets in the way of using it. Each tool's copy lives
+ * in `content/tools/<slug>.mdx` — the default export is the article, the `faq`
+ * export drives the disclosures and the JSON-LD.
  */
-const markdownComponents: Components = {
-	h2: ({ children }) => (
-		<h2 className="mt-10 text-xl font-semibold tracking-tight first:mt-0">
-			{children}
-		</h2>
-	),
-	h3: ({ children }) => (
-		<h3 className="mt-6 text-lg font-semibold">{children}</h3>
-	),
-	p: ({ children }) => (
-		<p className="mt-3 leading-relaxed text-muted-foreground">{children}</p>
-	),
-	ul: ({ children }) => (
-		<ul className="mt-3 list-disc space-y-1.5 pl-5 text-muted-foreground marker:text-muted-foreground/60">
-			{children}
-		</ul>
-	),
-	ol: ({ children }) => (
-		<ol className="mt-3 list-decimal space-y-1.5 pl-5 text-muted-foreground">
-			{children}
-		</ol>
-	),
-	li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-	strong: ({ children }) => (
-		<strong className="font-semibold text-foreground">{children}</strong>
-	),
-	blockquote: ({ children }) => (
-		<blockquote className="mt-4 border-l-2 border-border pl-4 italic">
-			{children}
-		</blockquote>
-	),
-	a: ({ href, children }) => {
-		const external = /^https?:\/\//.test(href ?? "");
-		return (
-			<a
-				href={href}
-				className="font-medium text-primary underline underline-offset-2 hover:no-underline"
-				{...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-			>
-				{children}
-			</a>
-		);
-	},
-};
-
-/**
- * The SEO/article content block below a tool: a Markdown article, an FAQ (with
- * FAQPage structured data for rich results), and a "more tools" grid. Server-
- * rendered so every word is in the initial HTML and crawlable, and placed under
- * the tool so it never gets in the way of using it.
- */
-export default function ToolContent({
-	content,
+export default async function ToolContent({
 	currentSlug,
 }: {
-	content: ToolContentType;
 	currentSlug: string;
 }) {
+	const mod = await import(`@/content/tools/${currentSlug}.mdx`);
+	const Article = mod.default as ComponentType;
+	const faq = (mod as { faq: ToolFaqType[] }).faq;
+
 	const faqJsonLd = {
 		"@context": "https://schema.org",
 		"@type": "FAQPage",
-		mainEntity: content.faq.map((f) => ({
+		mainEntity: faq.map((f) => ({
 			"@type": "Question",
 			name: f.question,
 			acceptedAnswer: { "@type": "Answer", text: f.answer },
@@ -93,12 +39,7 @@ export default function ToolContent({
 
 			<div className="mt-16 space-y-12 border-t border-border/60 pt-12">
 				<article className="max-w-3xl">
-					<ReactMarkdown
-						remarkPlugins={[remarkGfm]}
-						components={markdownComponents}
-					>
-						{content.article}
-					</ReactMarkdown>
+					<Article />
 				</article>
 
 				<section aria-labelledby="faq-heading" className="max-w-3xl space-y-4">
@@ -106,7 +47,7 @@ export default function ToolContent({
 						Frequently asked questions
 					</h2>
 					<div className="divide-y divide-border/60 overflow-hidden rounded-xl border border-border">
-						{content.faq.map((item) => (
+						{faq.map((item) => (
 							<details key={item.question} className="group">
 								<summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 font-medium [&::-webkit-details-marker]:hidden">
 									{item.question}

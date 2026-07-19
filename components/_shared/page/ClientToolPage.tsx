@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
-import ToolContent, { type ToolContentType } from "../content/ToolContent";
+import ToolContent from "../content/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
 import { PageHero } from "@/components/ui";
@@ -17,7 +17,6 @@ type ClientToolPageProps = {
 	eyebrowLabel: string;
 	title: ReactNode;
 	subtitle: string;
-	content: ToolContentType;
 	/** Constrain the hero + tool to a narrow column (e.g. the slug generator). */
 	constrained?: boolean;
 	/** The tool itself, rendered between the hero and the SEO content block. */
@@ -36,7 +35,6 @@ export default function ClientToolPage({
 	eyebrowLabel,
 	title,
 	subtitle,
-	content,
 	constrained,
 	children,
 }: ClientToolPageProps) {
@@ -65,7 +63,7 @@ export default function ClientToolPage({
 			/>
 			<ToolMain>
 				{constrained ? <div className="mx-auto max-w-3xl">{hero}</div> : hero}
-				<ToolContent content={content} currentSlug={slug} />
+				<ToolContent currentSlug={slug} />
 			</ToolMain>
 		</>
 	);

@@ -1,7 +1,6 @@
 import { LinkIcon } from "lucide-react";
 
 import ClientToolPage from "@/components/_shared/page/ClientToolPage";
-import { slugGeneratorContent } from "./content";
 import SlugGeneratorTool from "./SlugGeneratorTool";
 
 export default function SlugGeneratorPageContent() {
@@ -18,7 +17,6 @@ export default function SlugGeneratorPageContent() {
 				</>
 			}
 			subtitle="Paste a title, product name, or any text and get a tidy, URL-safe slug — accents and punctuation stripped, separator and stop words your call. Nothing leaves your browser."
-			content={slugGeneratorContent}
 			constrained
 		>
 			<SlugGeneratorTool />

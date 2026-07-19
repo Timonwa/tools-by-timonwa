@@ -1,7 +1,6 @@
 import { ClockIcon } from "lucide-react";
 
 import ClientToolPage from "@/components/_shared/page/ClientToolPage";
-import { readingTimeContent } from "./content";
 import ReadingTimeTool from "./ReadingTimeTool";
 
 export default function ReadingTimePageContent() {
@@ -17,7 +16,6 @@ export default function ReadingTimePageContent() {
 				</>
 			}
 			subtitle="Paste an article to see reading and speaking time at your chosen pace — and grab a copy-ready “X min read” label for the top of your post. Nothing leaves your browser."
-			content={readingTimeContent}
 		>
 			<ReadingTimeTool />
 		</ClientToolPage>
