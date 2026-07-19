@@ -10,8 +10,8 @@ import {
 	useTransition,
 } from "react";
 
-import type { InputKindType } from "@/components/_shared/InputKindTabs";
-import { useToolDraft } from "@/components/_shared/shared-draft";
+import type { InputKindType } from "@/components/_shared/draft/InputKindTabs";
+import { useToolDraft } from "@/components/_shared/draft/shared-draft";
 import type {
 	DraftInputType,
 	PostDraftType,

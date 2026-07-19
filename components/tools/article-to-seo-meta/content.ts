@@ -1,4 +1,4 @@
-import type { ToolContentType } from "@/components/_shared/ToolContent";
+import type { ToolContentType } from "@/components/_shared/content/ToolContent";
 
 export const seoMetaContent: ToolContentType = {
 	article: `## What is Article to SEO Meta?

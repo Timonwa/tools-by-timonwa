@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 
 import HubNavbar from "@/components/layout/HubNavbar";
 import ToolMain from "@/components/layout/ToolMain";
-import Newsletter from "@/components/marketing/Newsletter";
+import Newsletter from "@/components/_shared/content/Newsletter";
 import { LinkCard, PageHero } from "@/components/ui";
 import { SITE_NAME, SITE_URL } from "@/lib/config/site";
 import { ROUTES } from "@/lib/config/routes";

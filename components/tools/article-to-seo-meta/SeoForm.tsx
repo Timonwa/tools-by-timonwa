@@ -10,9 +10,9 @@ import {
 } from "react";
 import { useFormStatus } from "react-dom";
 
-import ArticleSourceInput from "@/components/_shared/ArticleSourceInput";
-import ErrorNotice from "@/components/_shared/ErrorNotice";
-import { useToolDraft } from "@/components/_shared/shared-draft";
+import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
+import ErrorNotice from "@/components/_shared/result/ErrorNotice";
+import { useToolDraft } from "@/components/_shared/draft/shared-draft";
 import {
 	type DraftInputType,
 	MAX_ARTICLE_CHARS,

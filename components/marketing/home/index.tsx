@@ -1,5 +1,5 @@
 import HubNavbar from "@/components/layout/HubNavbar";
-import Newsletter from "../Newsletter";
+import Newsletter from "@/components/_shared/content/Newsletter";
 import Hero from "./Hero";
 import ToolsGrid from "./ToolsGrid";
 

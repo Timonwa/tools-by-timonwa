@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
-import ToolContent, { type ToolContentType } from "./ToolContent";
+import ToolContent, { type ToolContentType } from "../content/ToolContent";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
 import { PageHero } from "@/components/ui";

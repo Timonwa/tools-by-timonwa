@@ -14,9 +14,9 @@ import {
 	TagsIcon,
 } from "lucide-react";
 
-import ArticleCard from "@/components/_shared/ArticleCard";
-import ErrorNotice from "@/components/_shared/ErrorNotice";
-import HistorySidebar from "@/components/_shared/HistorySidebar";
+import ArticleCard from "@/components/_shared/result/ArticleCard";
+import ErrorNotice from "@/components/_shared/result/ErrorNotice";
+import HistorySidebar from "@/components/_shared/result/HistorySidebar";
 import SeoForm, { type SeoFormParamsType } from "./SeoForm";
 import SeoResults from "./SeoResults";
 import { useHistory, type HistoryEntryType } from "./hooks/use-history";

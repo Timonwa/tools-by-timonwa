@@ -2,8 +2,8 @@
 
 import { useId, useMemo } from "react";
 
-import DraftReuseControls from "@/components/_shared/DraftReuseControls";
-import { useToolDraft } from "@/components/_shared/shared-draft";
+import DraftReuseControls from "@/components/_shared/draft/DraftReuseControls";
+import { useToolDraft } from "@/components/_shared/draft/shared-draft";
 import { Card, CardContent, Textarea } from "@/components/ui";
 import { getTextCounts } from "@/lib/text/counts";
 import {

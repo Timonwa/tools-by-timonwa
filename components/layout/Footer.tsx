@@ -1,7 +1,7 @@
 import { HeartIcon, WrenchIcon } from "lucide-react";
 import Link from "next/link";
 
-import { GithubMark } from "@/components/icons/brand";
+import { GithubMark } from "@/components/ui/logos";
 import { Tooltip } from "@/components/ui";
 import {
 	CREATOR_NAME,

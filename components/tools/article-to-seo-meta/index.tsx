@@ -1,6 +1,6 @@
 import { SearchIcon } from "lucide-react";
 
-import AiToolPage from "@/components/_shared/AiToolPage";
+import AiToolPage from "@/components/_shared/page/AiToolPage";
 import { seoMetaContent } from "./content";
 import Hero from "./Hero";
 import HostedUsageNotice from "./HostedUsageNotice";

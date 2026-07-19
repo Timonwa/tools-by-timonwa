@@ -2,8 +2,8 @@
 
 import { FilePlus2Icon, Loader2Icon, RefreshCwIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
-import ArticleCard from "@/components/_shared/ArticleCard";
-import HistorySidebar from "@/components/_shared/HistorySidebar";
+import ArticleCard from "@/components/_shared/result/ArticleCard";
+import HistorySidebar from "@/components/_shared/result/HistorySidebar";
 import type { HistoryEntryType } from "../hooks/use-history";
 import { useWriter } from "../hooks/use-writer";
 import { Button } from "@/components/ui";

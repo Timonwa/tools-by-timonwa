@@ -1,6 +1,6 @@
 import { WholeWordIcon } from "lucide-react";
 
-import ClientToolPage from "@/components/_shared/ClientToolPage";
+import ClientToolPage from "@/components/_shared/page/ClientToolPage";
 import { wordCounterContent } from "./content";
 import WordCounterTool from "./WordCounterTool";
 

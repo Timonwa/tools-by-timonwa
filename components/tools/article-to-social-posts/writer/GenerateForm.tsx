@@ -6,9 +6,9 @@ import {
 	SparklesIcon,
 	Wand2Icon,
 } from "lucide-react";
-import ArticleSourceInput from "@/components/_shared/ArticleSourceInput";
-import ErrorNotice from "@/components/_shared/ErrorNotice";
-import type { InputKindType } from "@/components/_shared/InputKindTabs";
+import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
+import ErrorNotice from "@/components/_shared/result/ErrorNotice";
+import type { InputKindType } from "@/components/_shared/draft/InputKindTabs";
 import { THREADABLE_PLATFORMS } from "../constants/platforms";
 import type { PlatformType, PresetTemplateType, ToneType } from "../types";
 import {

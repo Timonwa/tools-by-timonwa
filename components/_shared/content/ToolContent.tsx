@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import MoreTools from "./MoreTools";
-import Newsletter from "@/components/marketing/Newsletter";
+import Newsletter from "./Newsletter";
 
 type ToolFaqType = { question: string; answer: string };
 

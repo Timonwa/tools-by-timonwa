@@ -1,4 +1,4 @@
-import type { ToolContentType } from "@/components/_shared/ToolContent";
+import type { ToolContentType } from "@/components/_shared/content/ToolContent";
 
 export const socialPostsContent: ToolContentType = {
 	article: `## What is Article to Social Posts?
