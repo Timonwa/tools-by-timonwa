@@ -3,7 +3,7 @@
 import { useId, useMemo, useState } from "react";
 
 import DraftReuseControls from "@/components/_shared/draft/DraftReuseControls";
-import { useToolDraft } from "@/components/_shared/draft/shared-draft";
+import { useToolDraft } from "@/lib/hooks/use-tool-draft";
 import { Card, CardContent, CopyButton, Textarea } from "@/components/ui";
 import { countWords } from "@/lib/text/counts";
 import {

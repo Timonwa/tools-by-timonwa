@@ -3,8 +3,9 @@
 import { useId } from "react";
 
 import DraftReuseControls from "./DraftReuseControls";
-import InputKindTabs, { type InputKindType } from "./InputKindTabs";
+import InputKindTabs from "./InputKindTabs";
 import { Input, Textarea } from "@/components/ui";
+import type { InputKindType } from "@/lib/tools/_shared/draft-input";
 import { cn } from "@/lib/utils/cn";
 
 const DEFAULT_MAX_CHARS = 15000;

@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/result/ErrorNotice";
-import type { InputKindType } from "@/components/_shared/draft/InputKindTabs";
+import type { InputKindType } from "@/lib/tools/_shared/draft-input";
 import { THREADABLE_PLATFORMS } from "../constants/platforms";
 import type { PlatformType, PresetTemplateType, ToneType } from "../types";
 import {

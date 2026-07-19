@@ -12,7 +12,7 @@ import { useFormStatus } from "react-dom";
 
 import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/result/ErrorNotice";
-import { useToolDraft } from "@/components/_shared/draft/shared-draft";
+import { useToolDraft } from "@/lib/hooks/use-tool-draft";
 import {
 	type DraftInputType,
 	MAX_ARTICLE_CHARS,

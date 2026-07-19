@@ -10,8 +10,7 @@ import {
 	useTransition,
 } from "react";
 
-import type { InputKindType } from "@/components/_shared/draft/InputKindTabs";
-import { useToolDraft } from "@/components/_shared/draft/shared-draft";
+import { useToolDraft } from "@/lib/hooks/use-tool-draft";
 import type {
 	DraftInputType,
 	PostDraftType,
@@ -33,8 +32,6 @@ import {
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { type HistoryEntryType, useHistory } from "./use-history";
 import { usePresets } from "./use-presets";
-
-export type { InputKindType };
 
 export function useWriter() {
 	const {

@@ -6,3 +6,6 @@
  */
 export type DraftInputType =
 	{ kind: "url"; url: string } | { kind: "text"; text: string };
+
+/** Which source a draft-based tool reads from — the `kind` of a DraftInputType. */
+export type InputKindType = DraftInputType["kind"];
