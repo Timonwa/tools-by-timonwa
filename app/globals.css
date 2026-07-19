@@ -166,3 +166,15 @@
 		left: 100%;
 	}
 }
+
+/* Gentle vertical bob for the decorative category-icon tiles. Staggered per
+ * tile via inline animation-delay; respects prefers-reduced-motion. */
+@keyframes tool-float {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-8px);
+	}
+}
