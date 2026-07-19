@@ -8,6 +8,7 @@ import type {
 	WritingPreferencesType,
 } from "../types";
 import { createHistoryStore } from "@/lib/utils/create-history-store";
+import { createLocalStorageJson } from "@/lib/utils/local-storage-json";
 
 const HISTORY_KEY = "article-to-social-posts:history";
 const MAX_HISTORY = 10;
@@ -32,22 +33,10 @@ const isEntry = (e: unknown): e is HistoryEntryType =>
 	!!(e as HistoryEntryType).input &&
 	!!(e as HistoryEntryType).preview;
 
-const load = (): HistoryEntryType[] => {
-	try {
-		const raw = window.localStorage.getItem(HISTORY_KEY);
-		if (!raw) return [];
-		const parsed = JSON.parse(raw) as unknown[];
-		return Array.isArray(parsed) ? parsed.filter(isEntry) : [];
-	} catch {
-		return [];
-	}
-};
-
-const save = (items: HistoryEntryType[]) => {
-	try {
-		window.localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
-	} catch {}
-};
+const { load, save } = createLocalStorageJson<HistoryEntryType>(
+	HISTORY_KEY,
+	isEntry,
+);
 
 /** Identity of an entry's source — same URL or same pasted text = same entry. */
 const inputKey = (input: DraftInputType) =>
