@@ -77,12 +77,27 @@ function toToolMessage(error: unknown, byok: boolean): string {
 	});
 }
 
+/** Validate the draft source and normalize it into url/text for the agent. */
+function resolveSource(source: DraftInputType): {
+	url?: string;
+	text?: string;
+} {
+	if (source.kind === "url") {
+		const url = source.url?.trim();
+		if (!url) throw new Error("URL_EMPTY");
+		return { url };
+	}
+	const text = source.text?.trim();
+	if (!text) throw new Error("ARTICLE_EMPTY");
+	if (text.length > MAX_ARTICLE_CHARS) throw new Error("ARTICLE_TOO_LONG");
+	return { text };
+}
+
 /**
- * Server actions RETURN their outcome as data — they never throw a
- * user-facing message. Next.js redacts thrown Server Action errors in
- * production (replacing the message with a generic digest), so a thrown
- * friendly string only survives in dev. Returning it as data means the same
- * message reaches the user in both environments.
+ * Server actions RETURN their outcome as data rather than throwing: Next.js
+ * redacts thrown Server Action messages in production (a generic digest), so a
+ * thrown friendly string would only survive in dev. Returning it reaches the
+ * user in both environments.
  */
 export type SeoActionResultType =
 	| { ok: true; result: SeoMetaResultType; usage: TokenUsageType }
@@ -100,17 +115,7 @@ export async function generateSeoMeta(input: {
 	googleModel?: string;
 }): Promise<SeoActionResultType> {
 	try {
-		const { source } = input;
-		let url: string | undefined;
-		let text: string | undefined;
-		if (source.kind === "url") {
-			url = source.url?.trim();
-			if (!url) throw new Error("URL_EMPTY");
-		} else {
-			text = source.text?.trim();
-			if (!text) throw new Error("ARTICLE_EMPTY");
-			if (text.length > MAX_ARTICLE_CHARS) throw new Error("ARTICLE_TOO_LONG");
-		}
+		const { url, text } = resolveSource(input.source);
 
 		await enforceQuota(QUOTA_CONFIG, input.googleApiKey);
 
@@ -150,17 +155,7 @@ export async function regenerateSeoMetaVariation(input: {
 	googleModel?: string;
 }): Promise<SeoVariationActionResultType> {
 	try {
-		const { source } = input;
-		let url: string | undefined;
-		let text: string | undefined;
-		if (source.kind === "url") {
-			url = source.url?.trim();
-			if (!url) throw new Error("URL_EMPTY");
-		} else {
-			text = source.text?.trim();
-			if (!text) throw new Error("ARTICLE_EMPTY");
-			if (text.length > MAX_ARTICLE_CHARS) throw new Error("ARTICLE_TOO_LONG");
-		}
+		const { url, text } = resolveSource(input.source);
 
 		await enforceQuota(QUOTA_CONFIG, input.googleApiKey);
 

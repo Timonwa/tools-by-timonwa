@@ -36,8 +36,8 @@ function getRedis(): Redis | null {
 	// Production only — never rate-limit locally or on preview, even if the
 	// Upstash env vars happen to be present.
 	if (!isProduction) return null;
-	const url = process.env.UPSTASH_REDIS_REST_URL;
-	const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+	const url = env.UPSTASH_REDIS_REST_URL;
+	const token = env.UPSTASH_REDIS_REST_TOKEN;
 	if (!url || !token) return null;
 	return new Redis({ url, token });
 }
