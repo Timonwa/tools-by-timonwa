@@ -1,0 +1,66 @@
+import { ArrowRightIcon } from "lucide-react";
+import Link from "next/link";
+
+import Newsletter from "@/components/_shared/content/Newsletter";
+import ToolGrid from "@/components/_shared/tool/ToolGrid";
+import HubNavbar from "@/components/layout/HubNavbar";
+import ToolMain from "@/components/layout/ToolMain";
+import { Breadcrumbs, buttonClasses, PageHero } from "@/components/ui";
+import type { CategoryType } from "@/lib/config/categories";
+import { ROUTES } from "@/lib/config/routes";
+import { getToolsInCategory } from "@/lib/config/tools";
+
+/** A single category's page: its tools, with a link back to the full directory. */
+export default function CategoryDetail({
+	category,
+}: {
+	category: CategoryType;
+}) {
+	const tools = getToolsInCategory(category.id);
+
+	return (
+		<>
+			<HubNavbar />
+			<ToolMain>
+				<Breadcrumbs
+					items={[
+						{ label: "Home", href: ROUTES.home },
+						{ label: "Categories", href: ROUTES.categories },
+						{ label: category.label },
+					]}
+				/>
+				<PageHero
+					className="mb-10"
+					eyebrow={{ icon: category.icon, label: `${category.label} tools` }}
+					title={
+						<>
+							{category.label} <span className="hero-gradient-text">tools</span>
+						</>
+					}
+					subtitle={category.description}
+				/>
+
+				{tools.length > 0 ? (
+					<ToolGrid tools={tools} />
+				) : (
+					<p className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
+						No {category.label.toLowerCase()} tools yet — they&apos;re on the
+						way. Get notified below.
+					</p>
+				)}
+
+				<div className="mt-8">
+					<Link
+						href={ROUTES.tools}
+						className={buttonClasses({ variant: "outline" })}
+					>
+						Browse all tools
+						<ArrowRightIcon aria-hidden className="h-4 w-4" />
+					</Link>
+				</div>
+
+				<Newsletter className="mt-16" />
+			</ToolMain>
+		</>
+	);
+}

@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
 import ToolContent from "../content/ToolContent";
+import ToolBreadcrumbs from "../tool/ToolBreadcrumbs";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
 import { ROUTES } from "@/lib/config/routes";
@@ -48,6 +49,7 @@ export default function AiToolPage({
 				actionsSlot={settings}
 			/>
 			<ToolMain>
+				<ToolBreadcrumbs slug={slug} name={name} />
 				{children}
 				<ToolContent currentSlug={slug} />
 			</ToolMain>

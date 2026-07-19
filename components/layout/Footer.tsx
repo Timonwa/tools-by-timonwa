@@ -1,12 +1,14 @@
 import { HeartIcon, WrenchIcon } from "lucide-react";
 import Link from "next/link";
 
-import { GithubMark } from "@/components/ui/logos";
+import { GithubMark, LinkedInLogo, XLogo } from "@/components/ui/logos";
 import { Tooltip } from "@/components/ui";
+import { TOOL_CATEGORIES } from "@/lib/config/categories";
 import {
 	CREATOR_NAME,
 	CREATOR_BLOG_URL,
-	CREATOR_TWITTER,
+	CREATOR_LINKEDIN_URL,
+	CREATOR_SHOP_URL,
 	CREATOR_TWITTER_URL,
 	CREATOR_URL,
 	LICENSE_URL,
@@ -29,9 +31,9 @@ const PROJECT_LINKS = [
 ];
 
 const CONNECT_LINKS = [
+	{ href: CREATOR_SHOP_URL, label: "Shop" },
 	{ href: CREATOR_BLOG_URL, label: "Blog" },
 	{ href: CREATOR_URL, label: "All my links" },
-	{ href: CREATOR_TWITTER_URL, label: `X (${CREATOR_TWITTER})` },
 ];
 
 const LEGAL_LINKS = [
@@ -45,6 +47,9 @@ const YEAR = new Date().getFullYear();
 
 const linkClass =
 	"text-muted-foreground transition-colors hover:text-foreground";
+
+const iconLinkClass =
+	"flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground";
 
 function ExternalList({ links }: { links: { href: string; label: string }[] }) {
 	return (
@@ -73,9 +78,9 @@ export default function Footer() {
 	return (
 		<footer className="border-t border-border/50 bg-background/50">
 			<div className="container mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-				<div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-4 lg:grid-cols-12">
+				<div className="grid gap-10 lg:grid-cols-12 lg:gap-x-8">
 					{/* Brand */}
-					<div className="sm:col-span-4 lg:col-span-4">
+					<div className="lg:col-span-3">
 						<Link
 							href={ROUTES.home}
 							className="inline-flex items-center gap-2 text-base font-semibold"
@@ -98,7 +103,7 @@ export default function Footer() {
 									target="_blank"
 									rel="noopener noreferrer"
 									aria-label="Support"
-									className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+									className={iconLinkClass}
 								>
 									<HeartIcon aria-hidden className="h-4 w-4" />
 								</a>
@@ -109,94 +114,159 @@ export default function Footer() {
 									target="_blank"
 									rel="noopener noreferrer"
 									aria-label="Star on GitHub"
-									className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+									className={iconLinkClass}
 								>
 									<GithubMark aria-hidden className="h-4 w-4" />
+								</a>
+							</Tooltip>
+							<Tooltip label={`X (Twitter)`}>
+								<a
+									href={CREATOR_TWITTER_URL}
+									target="_blank"
+									rel="noopener noreferrer"
+									aria-label={`${CREATOR_NAME} on X`}
+									className={iconLinkClass}
+								>
+									<XLogo aria-hidden className="h-4 w-4" />
+								</a>
+							</Tooltip>
+							<Tooltip label="LinkedIn">
+								<a
+									href={CREATOR_LINKEDIN_URL}
+									target="_blank"
+									rel="noopener noreferrer"
+									aria-label={`${CREATOR_NAME} on LinkedIn`}
+									className={iconLinkClass}
+								>
+									<LinkedInLogo aria-hidden className="h-4 w-4" />
 								</a>
 							</Tooltip>
 						</div>
 					</div>
 
-					{/* Tools */}
-					<nav aria-labelledby="footer-tools-heading" className="lg:col-span-2">
-						<h2
-							id="footer-tools-heading"
-							className="text-sm font-semibold text-foreground"
-						>
-							Tools
-						</h2>
-						<ul className="mt-3 space-y-2 text-sm">
-							{tools.map((tool) => (
-								<li key={tool.slug}>
-									<Link href={tool.href} className={linkClass}>
-										{tool.name}
+					<div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:col-span-9 lg:grid-cols-5">
+						{/* Tools */}
+						<nav aria-labelledby="footer-tools-heading">
+							<h2
+								id="footer-tools-heading"
+								className="text-sm font-semibold text-foreground"
+							>
+								Tools
+							</h2>
+							<ul className="mt-3 space-y-2 text-sm">
+								<li>
+									<Link href={ROUTES.tools} className={linkClass}>
+										All tools
 									</Link>
 								</li>
-							))}
-						</ul>
-					</nav>
+								{tools.map((tool) => (
+									<li key={tool.slug}>
+										<Link href={tool.href} className={linkClass}>
+											{tool.name}
+										</Link>
+									</li>
+								))}
+							</ul>
+						</nav>
 
-					{/* Guides */}
-					<nav
-						aria-labelledby="footer-guides-heading"
-						className="lg:col-span-2"
-					>
-						<h2
-							id="footer-guides-heading"
-							className="text-sm font-semibold text-foreground"
-						>
-							Guides
-						</h2>
-						<ul className="mt-3 space-y-2 text-sm">
-							<li>
-								<Link href={ROUTES.guides} className={linkClass}>
-									All guides
-								</Link>
-							</li>
-							{guides.map((guide) => (
-								<li key={guide.slug}>
-									<Link href={ROUTES.guide(guide.slug)} className={linkClass}>
-										{guide.title}
+						{/* Categories */}
+						<nav aria-labelledby="footer-categories-heading">
+							<h2
+								id="footer-categories-heading"
+								className="text-sm font-semibold text-foreground"
+							>
+								Categories
+							</h2>
+							<ul className="mt-3 space-y-2 text-sm">
+								<li>
+									<Link href={ROUTES.categories} className={linkClass}>
+										All categories
 									</Link>
 								</li>
-							))}
-						</ul>
-					</nav>
+								{TOOL_CATEGORIES.map((category) => (
+									<li key={category.id}>
+										<Link
+											href={ROUTES.category(category.id)}
+											className={linkClass}
+										>
+											{category.label}
+										</Link>
+									</li>
+								))}
+							</ul>
+						</nav>
 
-					{/* Project */}
-					<nav
-						aria-labelledby="footer-project-heading"
-						className="lg:col-span-2"
-					>
-						<h2
-							id="footer-project-heading"
-							className="text-sm font-semibold text-foreground"
-						>
-							Project
-						</h2>
-						<ExternalList links={PROJECT_LINKS} />
-					</nav>
+						{/* Guides */}
+						<nav aria-labelledby="footer-guides-heading">
+							<h2
+								id="footer-guides-heading"
+								className="text-sm font-semibold text-foreground"
+							>
+								Guides
+							</h2>
+							<ul className="mt-3 space-y-2 text-sm">
+								<li>
+									<Link href={ROUTES.guides} className={linkClass}>
+										All guides
+									</Link>
+								</li>
+								{guides.map((guide) => (
+									<li key={guide.slug}>
+										<Link href={ROUTES.guide(guide.slug)} className={linkClass}>
+											{guide.title}
+										</Link>
+									</li>
+								))}
+							</ul>
+						</nav>
 
-					{/* More by the creator */}
-					<nav
-						aria-labelledby="footer-connect-heading"
-						className="lg:col-span-2"
-					>
-						<h2
-							id="footer-connect-heading"
-							className="text-sm font-semibold text-foreground"
-						>
-							More by {CREATOR_NAME}
-						</h2>
-						<ExternalList links={CONNECT_LINKS} />
-					</nav>
+						{/* Project */}
+						<nav aria-labelledby="footer-project-heading">
+							<h2
+								id="footer-project-heading"
+								className="text-sm font-semibold text-foreground"
+							>
+								Project
+							</h2>
+							<ExternalList links={PROJECT_LINKS} />
+						</nav>
+
+						{/* More by the creator */}
+						<nav aria-labelledby="footer-connect-heading">
+							<h2
+								id="footer-connect-heading"
+								className="text-sm font-semibold text-foreground"
+							>
+								More by {CREATOR_NAME.split(" ")[0]}
+							</h2>
+							<ExternalList links={CONNECT_LINKS} />
+						</nav>
+					</div>
 				</div>
 
 				{/* Bottom bar */}
 				<div className="mt-10 flex flex-col gap-3 border-t border-border/40 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
 					<p>
-						© {YEAR} {CREATOR_NAME} · {SITE_NAME} is open source under the MIT
-						License.
+						© {YEAR}{" "}
+						<a
+							href={CREATOR_URL}
+							target="_blank"
+							rel="noopener noreferrer"
+							className={`${linkClass} underline underline-offset-2`}
+						>
+							{CREATOR_NAME}
+						</a>{" "}
+						· <span className="font-medium text-primary">{SITE_NAME}</span> is
+						open source under the{" "}
+						<a
+							href={LICENSE_URL}
+							target="_blank"
+							rel="noopener noreferrer"
+							className={`${linkClass} underline underline-offset-2`}
+						>
+							MIT License
+						</a>
+						.
 					</p>
 					<nav aria-label="Legal">
 						<ul className="flex items-center gap-x-4">

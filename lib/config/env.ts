@@ -20,6 +20,9 @@ const schema = z.object({
 	// Secret pepper for hashing IPs in rate-limit keys. Unset → plain SHA-256
 	// (fine locally); set in production so hashed IPs aren't brute-force reversible.
 	IP_HASH_SECRET: z.string().optional(),
+	// Sender.net API token for newsletter signups. Unset → the signup form
+	// reports it's unavailable instead of silently dropping addresses.
+	SENDER_API_TOKEN: z.string().optional(),
 });
 
 export const env = schema.parse({
@@ -33,6 +36,7 @@ export const env = schema.parse({
 	UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
 	UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
 	IP_HASH_SECRET: process.env.IP_HASH_SECRET,
+	SENDER_API_TOKEN: process.env.SENDER_API_TOKEN,
 });
 
 /** Gates production-only integrations (rate limiting, analytics) off local builds. */

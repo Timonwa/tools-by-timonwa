@@ -1,6 +1,7 @@
 import type { ComponentType, ReactNode, SVGProps } from "react";
 
 import ToolContent from "../content/ToolContent";
+import ToolBreadcrumbs from "../tool/ToolBreadcrumbs";
 import Navbar from "@/components/layout/Navbar";
 import ToolMain from "@/components/layout/ToolMain";
 import { PageHero } from "@/components/ui";
@@ -40,6 +41,7 @@ export default function ClientToolPage({
 }: ClientToolPageProps) {
 	const hero = (
 		<>
+			<ToolBreadcrumbs slug={slug} name={name} />
 			<PageHero
 				className="mb-10"
 				eyebrow={{ icon, label: eyebrowLabel }}

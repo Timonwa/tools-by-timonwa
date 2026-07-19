@@ -10,6 +10,10 @@ import type { GuideMeta } from "./guides";
 
 const GUIDES_DIR = path.join(process.cwd(), "content", "guides");
 
+// A guide slug is a filename minus `.mdx`; restrict it to a URL-safe allowlist
+// so a stray file can never flow into an href as anything but a clean segment.
+const SLUG_PATTERN = /^[a-z0-9-]+$/;
+
 // Validates each guide's frontmatter so a malformed or incomplete file fails
 // the build loudly instead of shipping a broken page. Mirrors GuideMeta.
 const FrontmatterSchema = z.object({
@@ -46,7 +50,8 @@ export function getGuideSlugs(): string[] {
 	return fs
 		.readdirSync(GUIDES_DIR)
 		.filter((file) => file.endsWith(".mdx"))
-		.map((file) => file.replace(/\.mdx$/, ""));
+		.map((file) => file.replace(/\.mdx$/, ""))
+		.filter((slug) => SLUG_PATTERN.test(slug));
 }
 
 /** Every guide, newest first. Used by the index, sitemap, and static params. */
@@ -58,7 +63,7 @@ export function getAllGuides(): GuideMeta[] {
 
 /** A single guide by slug, or undefined if there's no such file. */
 export function getGuide(slug: string): GuideMeta | undefined {
-	if (!/^[a-z0-9-]+$/.test(slug)) return undefined;
+	if (!SLUG_PATTERN.test(slug)) return undefined;
 	if (!fs.existsSync(path.join(GUIDES_DIR, `${slug}.mdx`))) return undefined;
 	return readGuide(slug);
 }

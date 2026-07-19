@@ -1,0 +1,38 @@
+import { TagsIcon } from "lucide-react";
+
+import Newsletter from "@/components/_shared/content/Newsletter";
+import CategoryGrid from "@/components/_shared/tool/CategoryGrid";
+import HubNavbar from "@/components/layout/HubNavbar";
+import ToolMain from "@/components/layout/ToolMain";
+import { Breadcrumbs, PageHero } from "@/components/ui";
+import { ROUTES } from "@/lib/config/routes";
+
+export default function CategoriesPageContent() {
+	return (
+		<>
+			<HubNavbar />
+			<ToolMain>
+				<Breadcrumbs
+					items={[
+						{ label: "Home", href: ROUTES.home },
+						{ label: "Categories" },
+					]}
+				/>
+				<PageHero
+					className="mb-10"
+					eyebrow={{ icon: TagsIcon, label: "Categories" }}
+					title={
+						<>
+							Browse tools by{" "}
+							<span className="hero-gradient-text">category</span>
+						</>
+					}
+					subtitle="Every tool belongs to one or more categories — pick a lane to see what's there, and what's on the way."
+				/>
+				<h2 className="sr-only">All categories</h2>
+				<CategoryGrid />
+				<Newsletter className="mt-16" />
+			</ToolMain>
+		</>
+	);
+}

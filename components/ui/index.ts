@@ -1,6 +1,7 @@
 // Barrel for the app-agnostic UI primitives. Safe to barrel because every
 // module here is client-safe and has no server-only imports (unlike lib/,
 // which mixes server + client code). Import as: `import { Button, Card } from "./"`.
+export { default as Breadcrumbs } from "./Breadcrumbs";
 export { default as Button, buttonClasses } from "./Button";
 export {
 	Card,

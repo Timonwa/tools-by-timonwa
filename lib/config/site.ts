@@ -21,10 +21,17 @@ export const CREATOR_TWITTER = "@timonwa_";
 /** Creator's public profiles — used for JSON-LD `sameAs`. Derived from the
  * handle so there's a single place to change it. */
 export const CREATOR_TWITTER_URL = `https://x.com/${CREATOR_TWITTER.slice(1)}`;
+export const CREATOR_LINKEDIN_URL = "https://linkedin.com/in/timonwa";
 export const CREATOR_SITE_URL = "https://tech.timonwa.com";
+/** Creator's shop — linked from the footer. */
+export const CREATOR_SHOP_URL = `${CREATOR_SITE_URL}/shop`;
 /** The creator's blog — the footer "Blog" link points here, not the site root. */
 export const CREATOR_BLOG_URL = `${CREATOR_SITE_URL}/blog`;
-export const CREATOR_SAME_AS = [CREATOR_TWITTER_URL, CREATOR_SITE_URL];
+export const CREATOR_SAME_AS = [
+	CREATOR_TWITTER_URL,
+	CREATOR_LINKEDIN_URL,
+	CREATOR_SITE_URL,
+];
 
 /** GitHub repo — Navbar star button, Footer license + repo links, tool JSON-LD. */
 export const REPO_URL = "https://github.com/Timonwa/tools-by-timonwa";
