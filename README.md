@@ -84,8 +84,8 @@ Contributions are welcome — bug fixes, UX and accessibility improvements, agen
 
 ## Privacy
 
-- **Bring-your-own keys** live in your browser's `sessionStorage`, cleared on tab close — never on a server.
-- **Your input** is sent to Google Gemini only for that request; not logged or stored (URL-based fetches are cached in memory for up to an hour).
+- **Bring-your-own keys** live in your browser's `sessionStorage`, cleared on tab close. They're sent with a request only to make that Gemini call on your behalf — never logged or stored.
+- **Your input** is sent through the server to Google Gemini only for that request; not logged or stored (URL-based fetches are cached in memory for up to an hour). There's no database.
 - **History, preferences, and templates** live only in your browser's `localStorage`.
 - **Rate-limit counters** store a keyed (HMAC-SHA256) hash of your IP plus a daily count in Upstash Redis (resets at UTC midnight); bring-your-own-key requests skip this.
 - **No accounts, no profiles, no cross-site tracking.** Anonymous, cookieless usage analytics via [Umami](https://umami.is) — no personal data.
