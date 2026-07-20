@@ -1,10 +1,15 @@
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgImage } from "@/lib/og/og-image";
 
+/** Edge runtime declaration for the OG image route. */
 export const runtime = "edge";
+/** Alt text for the Slug Generator OG image. */
 export const alt = "Slug Generator — turn any text into a clean, URL-safe slug";
+/** Dimensions of the generated OG image. */
 export const size = OG_SIZE;
+/** MIME type of the generated OG image. */
 export const contentType = OG_CONTENT_TYPE;
 
+/** OG image for the Slug Generator tool page. */
 export default function Image() {
 	return renderOgImage({
 		eyebrow: "Slug generator · Open source",

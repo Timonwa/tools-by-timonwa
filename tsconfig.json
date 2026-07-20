@@ -19,8 +19,8 @@
 			}
 		],
 		"paths": {
-			"@/*": ["./*"],
-			"@env": ["./lib/config/env.ts"]
+			"@/*": ["./src/*"],
+			"@env": ["./src/lib/config/env.ts"]
 		}
 	},
 	"include": [

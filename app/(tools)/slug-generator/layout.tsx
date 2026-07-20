@@ -16,6 +16,7 @@ const TOOL_TITLE = "Slug Generator — turn any text into a clean URL slug";
 const TOOL_DESCRIPTION =
 	"Turn any title or heading into a clean, URL-safe slug — strips accents and punctuation, with separator, lowercase, and stop-word options. Runs in your browser.";
 
+/** Route metadata for the Slug Generator tool. */
 export const metadata: Metadata = {
 	title: TOOL_TITLE,
 	description: TOOL_DESCRIPTION,
@@ -79,6 +80,7 @@ const jsonLd = {
 	sameAs: [REPO_URL],
 };
 
+/** Layout wrapper for the Slug Generator route — applies tool brand scope and injects JSON-LD. */
 export default function SlugGeneratorLayout({
 	children,
 }: {
@@ -88,7 +90,6 @@ export default function SlugGeneratorLayout({
 		<div className="tool-slug-generator contents">
 			<script
 				type="application/ld+json"
-				// JSON-LD structured data per Next.js docs
 				dangerouslySetInnerHTML={{
 					__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
 				}}

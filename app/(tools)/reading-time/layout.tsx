@@ -16,6 +16,7 @@ const TOOL_TITLE = "Reading Time Estimator — how long an article takes to read
 const TOOL_DESCRIPTION =
 	"Paste an article for its reading and speaking time, with adjustable speed and a copy-ready “X min read” label. Free, no sign-up, runs in your browser.";
 
+/** Route metadata for the Reading Time Estimator tool. */
 export const metadata: Metadata = {
 	title: TOOL_TITLE,
 	description: TOOL_DESCRIPTION,
@@ -77,6 +78,7 @@ const jsonLd = {
 	sameAs: [REPO_URL],
 };
 
+/** Layout wrapper for the Reading Time Estimator route — applies tool brand scope and injects JSON-LD. */
 export default function ReadingTimeLayout({
 	children,
 }: {
@@ -86,7 +88,6 @@ export default function ReadingTimeLayout({
 		<div className="tool-reading-time contents">
 			<script
 				type="application/ld+json"
-				// JSON-LD structured data per Next.js docs
 				dangerouslySetInnerHTML={{
 					__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
 				}}

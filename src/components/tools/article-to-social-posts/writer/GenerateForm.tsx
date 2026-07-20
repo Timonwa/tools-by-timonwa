@@ -1,0 +1,210 @@
+"use client";
+
+import {
+	FilePlus2Icon,
+	Loader2Icon,
+	SparklesIcon,
+	Wand2Icon,
+} from "lucide-react";
+import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
+import ErrorNotice from "@/components/_shared/result/ErrorNotice";
+import type { InputKindType } from "@/lib/tools/_shared/draft-input";
+import { THREADABLE_PLATFORMS } from "../constants/platforms";
+import type { PlatformType, PresetTemplateType, ToneType } from "../types";
+import {
+	Button,
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui";
+import { MAX_ARTICLE_CHARS } from "@/lib/config/limits";
+
+import PlatformPicker from "./PlatformPicker";
+import TemplatesPicker from "./TemplatesPicker";
+import TonePicker from "./TonePicker";
+import ThreadFormat from "./ThreadFormat";
+
+type GenerateFormProps = {
+	inputKind: InputKindType;
+	onInputKindChange: (kind: InputKindType) => void;
+	url: string;
+	onUrlChange: (url: string) => void;
+	text: string;
+	onTextChange: (text: string) => void;
+	textReuse: boolean;
+	onToggleTextReuse: (next: boolean) => void;
+	urlReuse: boolean;
+	onToggleUrlReuse: (next: boolean) => void;
+	onClearDraft: () => void;
+	tone: ToneType;
+	onToneChange: (tone: ToneType) => void;
+	platforms: PlatformType[];
+	onTogglePlatform: (p: PlatformType) => void;
+	xThreadLength: number;
+	onXThreadLengthChange: (n: number) => void;
+	isGenerating: boolean;
+	isBusy: boolean;
+	hasResult: boolean;
+	isNewArticle: boolean;
+	onStartOver: () => void;
+	error: string | null;
+	onSubmit: (e: React.FormEvent) => void;
+	templates: PresetTemplateType[];
+	activeTemplateId: string | null;
+	onApplyTemplate: (t: PresetTemplateType) => void;
+	onSaveTemplate: (name: string) => void;
+	onDeleteTemplate: (id: string) => void;
+	onUpdateTemplate: (id: string) => void;
+	onRenameTemplate: (id: string, name: string) => void;
+};
+
+export default function GenerateForm({
+	inputKind,
+	onInputKindChange,
+	url,
+	onUrlChange,
+	text,
+	onTextChange,
+	textReuse,
+	onToggleTextReuse,
+	urlReuse,
+	onToggleUrlReuse,
+	onClearDraft,
+	tone,
+	onToneChange,
+	platforms,
+	onTogglePlatform,
+	xThreadLength,
+	onXThreadLengthChange,
+	isGenerating,
+	isBusy,
+	hasResult,
+	isNewArticle,
+	onStartOver,
+	error,
+	onSubmit,
+	templates,
+	activeTemplateId,
+	onApplyTemplate,
+	onSaveTemplate,
+	onDeleteTemplate,
+	onUpdateTemplate,
+	onRenameTemplate,
+}: GenerateFormProps) {
+	const hasInput =
+		inputKind === "url" ? url.trim().length > 0 : text.trim().length > 0;
+	const textOver = text.length > MAX_ARTICLE_CHARS;
+	const disabled = isBusy || !hasInput || platforms.length === 0 || textOver;
+	// Only call it "Regenerate" when the current input is the article on screen.
+	// A changed source reads as "Generate" so it never looks like an overwrite.
+	const isRegenerate = hasResult && !isNewArticle;
+
+	return (
+		<Card>
+			<CardHeader>
+				<CardTitle className="flex items-center gap-2 text-lg">
+					<Wand2Icon className="w-5 h-5 text-primary" />
+					Generate social media posts
+				</CardTitle>
+				<CardDescription>
+					Paste an article&apos;s URL or its text (up to{" "}
+					{MAX_ARTICLE_CHARS.toLocaleString()} characters). Posts are generated
+					for every selected platform — copy them and post to each site
+					manually.
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<form onSubmit={onSubmit} className="flex flex-col gap-4">
+					<TemplatesPicker
+						templates={templates}
+						activeTemplateId={activeTemplateId}
+						onApply={onApplyTemplate}
+						onSave={onSaveTemplate}
+						onDelete={onDeleteTemplate}
+						onUpdate={onUpdateTemplate}
+						onRename={onRenameTemplate}
+						disabled={isGenerating}
+					/>
+
+					<ArticleSourceInput
+						inputKind={inputKind}
+						onInputKindChange={onInputKindChange}
+						url={url}
+						onUrlChange={onUrlChange}
+						urlReuse={urlReuse}
+						onToggleUrlReuse={onToggleUrlReuse}
+						text={text}
+						onTextChange={onTextChange}
+						textReuse={textReuse}
+						onToggleTextReuse={onToggleTextReuse}
+						onClearText={onClearDraft}
+						disabled={isGenerating}
+						maxChars={MAX_ARTICLE_CHARS}
+					/>
+
+					<TonePicker
+						value={tone}
+						onChange={onToneChange}
+						disabled={isGenerating}
+					/>
+
+					<PlatformPicker
+						value={platforms}
+						onToggle={onTogglePlatform}
+						disabled={isGenerating}
+					/>
+
+					{platforms.some((p) => THREADABLE_PLATFORMS.includes(p)) && (
+						<ThreadFormat
+							length={xThreadLength}
+							onChange={onXThreadLengthChange}
+							disabled={isGenerating}
+						/>
+					)}
+
+					<div className="flex flex-col gap-2 sm:flex-row">
+						<Button
+							type="submit"
+							size="lg"
+							className="w-full sm:flex-1"
+							disabled={disabled}
+						>
+							{isGenerating ? (
+								<>
+									<Loader2Icon className="w-4 h-4 animate-spin" />
+									{inputKind === "url"
+										? `Reading article & ${isRegenerate ? "regenerating" : "generating"} posts...`
+										: `${isRegenerate ? "Regenerating" : "Generating"} posts...`}
+								</>
+							) : (
+								<>
+									<SparklesIcon className="w-4 h-4" />
+									{isRegenerate ? "Regenerate posts" : "Generate posts"}
+								</>
+							)}
+						</Button>
+
+						{hasResult && (
+							<Button
+								type="button"
+								variant="outline"
+								size="lg"
+								onClick={onStartOver}
+								disabled={isBusy}
+								className="w-full sm:w-auto"
+								title="Clear the current posts and start a fresh article — your saved posts stay in history"
+							>
+								<FilePlus2Icon className="w-4 h-4" />
+								New article
+							</Button>
+						)}
+					</div>
+
+					{error && <ErrorNotice message={error} />}
+				</form>
+			</CardContent>
+		</Card>
+	);
+}

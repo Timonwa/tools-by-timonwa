@@ -1,0 +1,48 @@
+@keyframes hero-gradient-shift {
+	to {
+		background-position: 200% 50%;
+	}
+}
+
+.hero-gradient-text {
+	background-image: linear-gradient(
+		90deg,
+		var(--primary),
+		oklch(0.75 0.18 330),
+		var(--primary)
+	);
+	background-size: 200% auto;
+	background-position: 0% 50%;
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	animation: hero-gradient-shift 5s linear infinite;
+}
+
+/**
+ * Shine sweep across the hero badge. Animates only the `left` of the gradient
+ * bar — the parent clips it, so it appears to glint across the pill once per
+ * cycle, then rests off-screen before looping. Respects prefers-reduced-motion.
+ */
+@keyframes hero-badge-sweep {
+	0%,
+	12% {
+		left: -32%;
+	}
+	35%,
+	100% {
+		left: 100%;
+	}
+}
+
+/* Gentle vertical bob for the decorative category-icon tiles. Staggered per
+ * tile via inline animation-delay; respects prefers-reduced-motion. */
+@keyframes tool-float {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-8px);
+	}
+}

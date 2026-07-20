@@ -93,7 +93,6 @@ export default function GuidesIndexPage() {
 
 				<script
 					type="application/ld+json"
-					// ItemList structured data for the guides index.
 					dangerouslySetInnerHTML={{
 						__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
 					}}

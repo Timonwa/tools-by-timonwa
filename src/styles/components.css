@@ -1,0 +1,29 @@
+/* Marketing section typography + rhythm. Other shared patterns (cards, pills,
+   toggles, outputs) live as primitives in components/ui, not as classes here. */
+
+@layer components {
+	/* Marketing section rhythm — vertical spacing + column stack between sections. */
+	.section {
+		@apply mx-auto mt-20 flex max-w-6xl flex-col gap-8 sm:mt-24;
+	}
+
+	/* Small uppercase label above a section heading. */
+	.section-eyebrow {
+		@apply text-muted-foreground text-xs font-semibold tracking-wide uppercase;
+	}
+
+	/* Canonical section <h2>. */
+	.section-heading {
+		@apply text-2xl font-semibold tracking-tight sm:text-3xl;
+	}
+
+	/* Paragraph below the section heading. */
+	.section-subtitle {
+		@apply text-muted-foreground mt-2;
+	}
+
+	/* In-card / feature-row <h3>. */
+	.feature-heading {
+		@apply text-xl font-semibold;
+	}
+}

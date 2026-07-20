@@ -1,11 +1,16 @@
 import { OG_CONTENT_TYPE, OG_SIZE, renderOgImage } from "@/lib/og/og-image";
 
+/** Edge runtime declaration for the OG image route. */
 export const runtime = "edge";
+/** Alt text for the Word & Character Counter OG image. */
 export const alt =
 	"Word & Character Counter — live word, character, and reading-time counts with platform limits";
+/** Dimensions of the generated OG image. */
 export const size = OG_SIZE;
+/** MIME type of the generated OG image. */
 export const contentType = OG_CONTENT_TYPE;
 
+/** OG image for the Word & Character Counter tool page. */
 export default function Image() {
 	return renderOgImage({
 		eyebrow: "Word & character counter · Open source",
