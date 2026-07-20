@@ -19,6 +19,17 @@ type Props = {
 	copyLabel: string;
 };
 
+// Safely extracts an HTTP or HTTPS URL from a string, returning undefined if invalid.
+function safeHttpUrl(url: string | undefined): string | undefined {
+	if (!url) return undefined;
+	try {
+		const { protocol } = new URL(url);
+		return protocol === "http:" || protocol === "https:" ? url : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
 /** Results header for the draft-based AI tools: source title/author/link, token usage, copy-all. */
 export default function ArticleCard({
 	article,
@@ -27,6 +38,7 @@ export default function ArticleCard({
 	onCopyAll,
 	copyLabel,
 }: Props) {
+	const linkUrl = safeHttpUrl(article.url);
 	return (
 		<Card>
 			<CardHeader>
@@ -53,14 +65,14 @@ export default function ArticleCard({
 				</h4>
 				<div className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
 					{article.author && <span>by {article.author}</span>}
-					{article.url ? (
+					{linkUrl ? (
 						<a
-							href={article.url}
+							href={linkUrl}
 							target="_blank"
 							rel="noopener noreferrer"
 							className="truncate hover:text-foreground underline underline-offset-2"
 						>
-							{article.url}
+							{linkUrl}
 						</a>
 					) : (
 						<span className="italic">Pasted text</span>

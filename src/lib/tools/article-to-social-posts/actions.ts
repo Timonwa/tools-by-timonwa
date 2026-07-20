@@ -19,6 +19,7 @@ import type {
 	WritingPreferencesType,
 } from "@/components/tools/article-to-social-posts/types";
 import { generateDrafts } from "./agents/draft-generator/agent";
+import { assertSafeArticleUrl } from "@/lib/tools/_shared/draft-input";
 import { toUserMessage } from "@/lib/tools/_shared/errors";
 import {
 	enforceQuota,
@@ -96,11 +97,12 @@ function buildPost(
 }
 
 function validateInput(input: DraftInputType): void {
-	if (input.kind === "text") {
-		if (!input.text.trim()) throw new Error("DRAFT_EMPTY");
-		if (input.text.length > MAX_ARTICLE_CHARS)
-			throw new Error("DRAFT_TOO_LONG");
+	if (input.kind === "url") {
+		assertSafeArticleUrl(input.url);
+		return;
 	}
+	if (!input.text.trim()) throw new Error("DRAFT_EMPTY");
+	if (input.text.length > MAX_ARTICLE_CHARS) throw new Error("DRAFT_TOO_LONG");
 }
 
 const THREADABLE = ["x", "bluesky", "threads", "mastodon"];

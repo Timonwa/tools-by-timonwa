@@ -47,11 +47,21 @@ function secondsUntilUtcMidnight(): number {
 	return Math.max(60, Math.ceil((midnight.getTime() - now.getTime()) / 1000));
 }
 
+if (isProduction && !env.IP_HASH_SECRET) {
+	console.warn(
+		"[rate-limit] IP_HASH_SECRET is not set in production — IP hashes fall back to unkeyed SHA-256 and are brute-force reversible. Set IP_HASH_SECRET.",
+	);
+}
+
 async function getClientHash(): Promise<string> {
 	const h = await headers();
 	const forwarded = h.get("x-forwarded-for");
 	const real = h.get("x-real-ip");
-	const ip = forwarded?.split(",")[0].trim() ?? real ?? "anonymous";
+	// `x-real-ip` is set by the platform proxy (Vercel) to the true client IP and
+	// isn't client-spoofable. The left-most `x-forwarded-for` entry IS attacker-
+	// controlled, so fall back to the right-most (proxy-appended) entry, not the first.
+	const forwardedIp = forwarded?.split(",").at(-1)?.trim();
+	const ip = real?.trim() || forwardedIp || "anonymous";
 	// HMAC with a secret pepper when configured (production) so a leaked hash
 	// can't be brute-forced back to an IP; plain SHA-256 otherwise (local/self-host).
 	const secret = env.IP_HASH_SECRET;
