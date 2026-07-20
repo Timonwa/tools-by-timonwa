@@ -1,5 +1,6 @@
 "use client";
 
+import DOMPurify from "dompurify";
 import { DownloadIcon, SettingsIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -136,6 +137,18 @@ export default function SvgToJsxTool() {
 	const trimmed = svg.trim();
 	const hasSvg = /<svg[\s>]/i.test(trimmed);
 	const wrap = componentName.trim().length > 0;
+
+	// Pasted markup is injected via dangerouslySetInnerHTML; sanitize first.
+	// DOMPurify needs a real DOM, so it's a no-op during prerender.
+	const safePreview = useMemo(
+		() =>
+			typeof window === "undefined"
+				? ""
+				: DOMPurify.sanitize(trimmed, {
+						USE_PROFILES: { svg: true, svgFilters: true },
+					}),
+		[trimmed],
+	);
 
 	const generated = useMemo(() => {
 		if (!hasSvg) return "";
@@ -294,8 +307,7 @@ export default function SvgToJsxTool() {
 										? "text-neutral-100"
 										: "text-neutral-900",
 								)}
-								// The rendered icon is the user's own markup, shown locally.
-								dangerouslySetInnerHTML={{ __html: trimmed }}
+								dangerouslySetInnerHTML={{ __html: safePreview }}
 							/>
 						) : (
 							<p

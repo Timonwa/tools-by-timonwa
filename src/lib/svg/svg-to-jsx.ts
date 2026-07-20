@@ -33,6 +33,19 @@ const NAMESPACED_ATTRS: Record<string, string> = {
 	"xml:base": "xmlBase",
 };
 
+// Remove HTML comments, repeating until none are left. A single pass can expose a
+// new comment it didn't see before (e.g. `<!--<!-->` leaves a `<!--` behind).
+function stripComments(input: string): string {
+	const re = /<!--[\s\S]*?--!?>/g;
+	let prev: string;
+	let out = input;
+	do {
+		prev = out;
+		out = out.replace(re, "");
+	} while (out !== prev);
+	return out;
+}
+
 const toCamel = (name: string) =>
 	name.replace(/[-:]([a-z])/g, (_, c: string) => c.toUpperCase());
 
@@ -94,7 +107,7 @@ export function svgToJsx(input: string, options: SvgToJsxOptions = {}): string {
 	} = options;
 	const quote = quotes === "single" ? "'" : '"';
 
-	const cleaned = stripPreamble(input).replace(/<!--[\s\S]*?-->/g, "");
+	const cleaned = stripComments(stripPreamble(input));
 	const nodes = tokenizeMarkup(cleaned);
 	if (!nodes.length) return "";
 

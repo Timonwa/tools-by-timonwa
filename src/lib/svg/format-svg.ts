@@ -24,7 +24,7 @@ export function stripPreamble(input: string): string {
 /** Split markup into a flat node stream (best-effort; no full XML parser). */
 export function tokenizeMarkup(input: string): MarkupNode[] {
 	const nodes: MarkupNode[] = [];
-	const re = /<!--([\s\S]*?)-->|<([\s\S]*?)>/g;
+	const re = /<!--([\s\S]*?)--!?>|<([\s\S]*?)>/g;
 	let last = 0;
 	let m: RegExpExecArray | null;
 	while ((m = re.exec(input))) {
