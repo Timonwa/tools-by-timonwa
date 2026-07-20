@@ -2,7 +2,10 @@ import type { Route } from "next";
 import {
 	CaseSensitiveIcon,
 	ClockIcon,
+	CodeXmlIcon,
+	FingerprintIcon,
 	LinkIcon,
+	PilcrowIcon,
 	SearchIcon,
 	Share2Icon,
 	WholeWordIcon,
@@ -12,14 +15,6 @@ import type { ComponentType, SVGProps } from "react";
 import type { CategoryIdType } from "./categories";
 import { ROUTES } from "./routes";
 
-/**
- * Tools in the hub. The directory home and the navbar dropdown both read from
- * this list — adding a new tool is a single entry. `slug` must match the
- * route segment under `app/(tools)/<slug>/`; `href` is derived from it via
- * ROUTES.tool so the route pattern lives in one place. `categories` (max 3)
- * drive the /tools filter and browse-by-category; the FIRST is the primary one
- * shown in the tool's breadcrumb.
- */
 export type ToolType = {
 	slug: string;
 	name: string;
@@ -27,6 +22,7 @@ export type ToolType = {
 	href: Route;
 	icon: ComponentType<SVGProps<SVGSVGElement>>;
 	categories: CategoryIdType[];
+	featured?: boolean;
 	status?: "live" | "soon";
 };
 
@@ -37,6 +33,7 @@ const RAW_TOOLS: Omit<ToolType, "href">[] = [
 		tagline: "Turn articles into platform-optimized social media posts.",
 		icon: Share2Icon,
 		categories: ["writing", "ai"],
+		featured: true,
 		status: "live",
 	},
 	{
@@ -46,6 +43,7 @@ const RAW_TOOLS: Omit<ToolType, "href">[] = [
 			"Generate SEO-friendly title and description variations with character counts in spec.",
 		icon: SearchIcon,
 		categories: ["writing", "ai", "seo"],
+		featured: true,
 		status: "live",
 	},
 	{
@@ -55,15 +53,26 @@ const RAW_TOOLS: Omit<ToolType, "href">[] = [
 			"Live word, character, sentence, and reading-time counts, with platform character limits.",
 		icon: WholeWordIcon,
 		categories: ["writing", "seo"],
+		featured: true,
 		status: "live",
 	},
 	{
-		slug: "case-converter",
-		name: "Case Converter",
+		slug: "svg-to-jsx",
+		name: "SVG to JSX Converter",
+		tagline: "Convert raw SVG markup into a clean React/JSX component.",
+		icon: CodeXmlIcon,
+		categories: ["developer"],
+		featured: true,
+		status: "live",
+	},
+	{
+		slug: "hash-generator",
+		name: "Hash Generator",
 		tagline:
-			"Switch text between UPPERCASE, Title Case, camelCase, snake_case, and more.",
-		icon: CaseSensitiveIcon,
-		categories: ["writing", "developer"],
+			"Hash text with SHA-1, SHA-256, SHA-384, and SHA-512 in your browser.",
+		icon: FingerprintIcon,
+		categories: ["developer"],
+		featured: true,
 		status: "live",
 	},
 	{
@@ -83,24 +92,71 @@ const RAW_TOOLS: Omit<ToolType, "href">[] = [
 		categories: ["writing"],
 		status: "live",
 	},
+	{
+		slug: "case-converter",
+		name: "Case Converter",
+		tagline:
+			"Switch text between UPPERCASE, Title Case, camelCase, snake_case, and more.",
+		icon: CaseSensitiveIcon,
+		categories: ["writing", "developer"],
+		featured: true,
+		status: "live",
+	},
+	{
+		slug: "lorem-ipsum",
+		name: "Lorem Ipsum Generator",
+		tagline:
+			"Generate placeholder paragraphs, sentences, or words in one click.",
+		icon: PilcrowIcon,
+		categories: ["developer", "writing"],
+		status: "live",
+	},
 ];
 
+/** Every tool, alphabetical by name — the order every grid and list renders in. */
 export const TOOLS: ToolType[] = RAW_TOOLS.map((tool) => ({
 	...tool,
 	href: ROUTES.tool(tool.slug),
-}));
+})).sort((a, b) => a.name.localeCompare(b.name));
 
 /** Live tools only (excludes "soon"), for grids, the directory, and previews. */
 export const LIVE_TOOLS: ToolType[] = TOOLS.filter((t) => t.status !== "soon");
+
+/** The curated set shown on the home page (falls back to nothing if unset). */
+export const FEATURED_TOOLS: ToolType[] = LIVE_TOOLS.filter((t) => t.featured);
 
 /** A tool's primary category — the first one, shown in its breadcrumb. */
 export const getPrimaryCategory = (tool: ToolType): CategoryIdType =>
 	tool.categories[0];
 
-/** Live tools that belong to a category (in registry order). */
+/** Live tools that belong to a category (alphabetical, following TOOLS). */
 export const getToolsInCategory = (category: CategoryIdType): ToolType[] =>
 	LIVE_TOOLS.filter((t) => t.categories.includes(category));
 
 /** Look up a tool by slug (e.g. to build a tool page's breadcrumb). */
 export const getToolBySlug = (slug: string): ToolType | undefined =>
 	TOOLS.find((t) => t.slug === slug);
+
+/**
+ * Tools to suggest below a tool page: live tools that share a category with it,
+ * primary-category matches first, then any other shared category. If fewer than
+ * `max` share a category, the rest of the live tools backfill so the grid is
+ * never sparse. Within each group, alphabetical order (from TOOLS) is kept.
+ */
+export const getRelatedTools = (slug: string, max = 3): ToolType[] => {
+	const current = getToolBySlug(slug);
+	const pool = LIVE_TOOLS.filter((t) => t.slug !== slug);
+	if (!current) return pool.slice(0, max);
+
+	const sharesCategory = (t: ToolType) =>
+		t.categories.some((c) => current.categories.includes(c));
+	const sharesPrimary = (t: ToolType) =>
+		t.categories.includes(current.categories[0]);
+
+	const related = pool
+		.filter(sharesCategory)
+		.sort((a, b) => Number(sharesPrimary(b)) - Number(sharesPrimary(a)));
+	const backfill = pool.filter((t) => !sharesCategory(t));
+
+	return [...related, ...backfill].slice(0, max);
+};

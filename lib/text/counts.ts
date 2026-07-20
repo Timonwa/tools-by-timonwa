@@ -1,8 +1,3 @@
-/**
- * Shared text metrics for the deterministic tools. Character counts iterate code
- * points (`[...text]`) so emoji and accented letters count as one.
- */
-
 export type TextCountsType = {
 	characters: number;
 	charactersNoSpaces: number;
@@ -14,6 +9,7 @@ export type TextCountsType = {
 
 const codePoints = (text: string): number => [...text].length;
 
+/** Word count — returns 0 for blank/whitespace-only input. */
 export const countWords = (text: string): number => {
 	const trimmed = text.trim();
 	return trimmed ? trimmed.split(/\s+/).length : 0;
@@ -39,6 +35,7 @@ const countParagraphs = (text: string): number =>
 const countLines = (text: string): number =>
 	text ? text.split(/\r\n|\r|\n/).length : 0;
 
+/** Aggregate all text metrics from a single string. */
 export const getTextCounts = (text: string): TextCountsType => ({
 	characters: countCharacters(text),
 	charactersNoSpaces: countCharactersNoSpaces(text),

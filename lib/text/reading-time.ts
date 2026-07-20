@@ -1,8 +1,3 @@
-/**
- * Reading/speaking-time estimates from a word count. Reading speed is a WPM
- * preset; speaking is a fixed conversational pace.
- */
-
 export const READING_WPM = {
 	slow: 150,
 	average: 225,
@@ -11,6 +6,7 @@ export const READING_WPM = {
 
 export type ReadingSpeedType = keyof typeof READING_WPM;
 
+/** Fixed conversational speaking pace in words-per-minute. */
 export const SPEAKING_WPM = 130;
 
 /** Whole-minute reading estimate (rounded, min 1 for any non-empty text). */
@@ -21,6 +17,7 @@ export const readingMinutes = (words: number, wpm: number): number =>
 export const durationSeconds = (words: number, wpm: number): number =>
 	words <= 0 ? 0 : Math.round((words / wpm) * 60);
 
+/** Human-readable duration string from a total seconds value. */
 export const formatDuration = (totalSeconds: number): string => {
 	if (totalSeconds <= 0) return "0 sec";
 	const mins = Math.floor(totalSeconds / 60);

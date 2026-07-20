@@ -104,20 +104,10 @@ Match the article's language and register. Professional article → professional
 - No citation markers like [1] or [1.2] — when reading from a URL, strip any bracketed source numbers.
 - Titles are complete phrases, not fragments.`;
 
-/**
- * Generate 1-3 SEO { title, description } variations for an article draft.
- * Structured output is enforced by the schema via the AI SDK, so the caller
- * gets a validated object — no manual JSON parsing. In URL mode the model reads
- * the page itself with Gemini's provider-executed `url_context` tool; in text
- * mode the pasted article is sent inline. Transient failures (503 / rate limit)
- * are retried automatically.
- */
+/** Agent — generate 1-3 validated SEO { title, description } variations from a draft (URL or text). */
 export function generateSeoVariations(opts: {
-	/** Task-specific instructions (variationCount / primaryKeyword). */
 	directives: string;
-	/** URL mode: the article URL for the model to read via url_context. */
 	url?: string;
-	/** Text mode: the pasted article text. */
 	text?: string;
 	googleApiKey?: string;
 	googleModel?: string;

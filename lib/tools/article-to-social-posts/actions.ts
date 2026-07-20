@@ -32,12 +32,6 @@ const QUOTA_CONFIG: QuotaConfig = {
 	dailyPool: HOSTED_DAILY_GENERATION_POOL,
 };
 
-/**
- * Server actions RETURN their outcome as data rather than throwing: Next.js
- * redacts thrown Server Action messages in production (a generic digest), so a
- * thrown friendly string would only survive in dev. Returning it reaches the
- * user in both environments.
- */
 export type PreviewActionResultType =
 	{ ok: true; data: PreviewResultType } | { ok: false; error: string };
 
@@ -78,11 +72,6 @@ function toToolMessage(
 	});
 }
 
-/**
- * The character limit for a platform. LinkedIn and Substack follow the
- * post-length preference (short / medium / long); the microblog platforms use
- * their own fixed limits.
- */
 function platformLimit(
 	platform: PlatformType,
 	postLength: PostLengthType,
@@ -123,7 +112,6 @@ function threadLine(platforms: PlatformType[], xThreadLength: number): string {
 		: "Thread mode: single posts only (no threading)";
 }
 
-/** The tone / platforms / limits / thread / preferences block for the model. */
 function buildDirectives(
 	tone: ToneType,
 	platforms: PlatformType[],
@@ -145,10 +133,7 @@ function buildDirectives(
 	return lines.join("\n");
 }
 
-/**
- * Generate one post per selected platform. URL input is read by the model via
- * Gemini's url_context tool; text input is sent inline. A single model call.
- */
+/** Server action — generate one platform-optimized post per selected platform from an article draft. */
 export async function previewPosts(params: {
 	input: DraftInputType;
 	tone: ToneType;
@@ -211,10 +196,7 @@ export async function previewPosts(params: {
 	}
 }
 
-/**
- * Regenerate a single platform's post. URL input hits Gemini's url_context
- * cache; text input is re-sent by the client.
- */
+/** Server action — regenerate a single platform's post; uses a higher temperature to diverge from the first attempt. */
 export async function regenerateDraft(params: {
 	input: DraftInputType;
 	platform: PlatformType;

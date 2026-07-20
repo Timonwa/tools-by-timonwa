@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-/**
- * Validated env access, imported as `import { env } from "@env"`. All optional so
- * the app builds without them; features degrade gracefully when unset.
- */
-
 const schema = z.object({
 	// Gates production-only integrations (rate limiting, analytics). Set on deploy.
 	APP_ENV: z.enum(["development", "production"]).default("development"),
@@ -25,6 +20,7 @@ const schema = z.object({
 	SENDER_API_TOKEN: z.string().optional(),
 });
 
+/** Validated environment variables — all optional so the app builds without them; features degrade gracefully when unset. */
 export const env = schema.parse({
 	APP_ENV: process.env.APP_ENV,
 	GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,

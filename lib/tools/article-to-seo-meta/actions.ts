@@ -31,11 +31,6 @@ function buildDirectives(keyword: string | undefined, count: number): string {
 	return lines.join("\n");
 }
 
-/**
- * Directives for regenerating a SINGLE variation. Each variation is meant to
- * hit a distinct angle, so we ask for exactly one and hand the model the ones
- * the user already has — so it produces a fresh angle instead of repeating them.
- */
 function buildRegenerateDirectives(
 	keyword: string | undefined,
 	existing: SeoVariationType[],
@@ -77,7 +72,6 @@ function toToolMessage(error: unknown, byok: boolean): string {
 	});
 }
 
-/** Validate the draft source and normalize it into url/text for the agent. */
 function resolveSource(source: DraftInputType): {
 	url?: string;
 	text?: string;
@@ -93,12 +87,6 @@ function resolveSource(source: DraftInputType): {
 	return { text };
 }
 
-/**
- * Server actions RETURN their outcome as data rather than throwing: Next.js
- * redacts thrown Server Action messages in production (a generic digest), so a
- * thrown friendly string would only survive in dev. Returning it reaches the
- * user in both environments.
- */
 export type SeoActionResultType =
 	| { ok: true; result: SeoMetaResultType; usage: TokenUsageType }
 	| { ok: false; error: string };
@@ -107,6 +95,7 @@ export type SeoVariationActionResultType =
 	| { ok: true; variation: SeoVariationType; usage: TokenUsageType }
 	| { ok: false; error: string };
 
+/** Server action — generate 1-3 SEO meta variations for an article draft. */
 export async function generateSeoMeta(input: {
 	source: DraftInputType;
 	primaryKeyword?: string;
@@ -143,10 +132,7 @@ export async function generateSeoMeta(input: {
 	}
 }
 
-/**
- * Regenerate a single variation, keeping the others. The current variations are
- * passed so the model returns a fresh angle rather than a near-duplicate.
- */
+/** Server action — regenerate one SEO variation; existing variations are passed so the model returns a fresh angle rather than a near-duplicate. */
 export async function regenerateSeoMetaVariation(input: {
 	source: DraftInputType;
 	primaryKeyword?: string;
@@ -178,6 +164,7 @@ export async function regenerateSeoMetaVariation(input: {
 	}
 }
 
+/** Server action — hosted rate-limiting snapshot for the navbar usage pill. */
 export async function getUsage() {
 	return readUsage();
 }

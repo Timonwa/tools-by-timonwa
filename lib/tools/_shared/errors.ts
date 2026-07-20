@@ -1,32 +1,15 @@
 import { APICallError, NoObjectGeneratedError } from "ai";
 
+/** Options for `toUserMessage` — log tag, quota shape, BYOK flag, and tool-specific error rules. */
 export type ToolErrorOptions = {
-	/** Log tag, e.g. "article-to-seo-meta" or "article-to-social-posts:preview". */
 	logTag: string;
 	perUserDaily: number;
-	/**
-	 * Whether this request used the user's own Google key (BYOK). It changes the
-	 * advice we give: a BYOK user is pointed at their own key / Google AI Studio,
-	 * while a hosted user is invited to add a free key to keep going. Without it,
-	 * we'd tell someone who already added a key to "add your own key".
-	 */
 	byok?: boolean;
-	/** Tool-specific [pattern, message] rules, checked before the shared ones. */
 	rules?: [RegExp, string][];
-	/** Message when nothing else matches. */
 	fallback: string;
 };
 
-/**
- * Turn an error into a message a non-developer can act on in one read — and log
- * the original for debugging. It reads the AI SDK's typed errors directly
- * (`APICallError.statusCode`, `NoObjectGeneratedError.finishReason`) so the
- * classification is accurate, then falls back to message matching. Every message
- * says, in everyday words, what happened and what to do next — no "model",
- * "parse", "rate limit", "schema", or "BYOK" jargon. Advice adapts to whether
- * the request used the user's own key (`byok`). Tools pass `rules` for their own
- * cases, which are checked first.
- */
+/** AI SDK error → plain-English user message — reads typed SDK errors directly, adapts advice to BYOK vs hosted, checks tool-specific rules first. */
 export function toUserMessage(error: unknown, opts: ToolErrorOptions): string {
 	console.error(`[${opts.logTag}]`, error);
 	const byok = opts.byok ?? false;

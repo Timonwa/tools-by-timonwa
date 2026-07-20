@@ -4,12 +4,7 @@ import { z } from "zod";
 
 import { env } from "@env";
 
-/**
- * Newsletter subscription via Sender.net. Adds the address to the hub's groups
- * with a single API call. The token lives in SENDER_API_TOKEN (Settings → API
- * access tokens in the Sender dashboard); without it the form reports that
- * signup is unavailable rather than silently dropping the address.
- */
+// Sender.net REST endpoint — requires SENDER_API_TOKEN; missing token surfaces an error to the user rather than silently dropping the address.
 const SENDER_SUBSCRIBERS_URL = "https://api.sender.net/v2/subscribers";
 
 // Groups a new subscriber joins: "All customers" (account-wide) and
@@ -23,6 +18,7 @@ export type NewsletterState = {
 	message?: string;
 };
 
+/** Server action — validate and submit an email address to the Sender.net subscriber list. */
 export async function subscribeNewsletter(
 	_prevState: NewsletterState,
 	formData: FormData,

@@ -1,11 +1,6 @@
 "use client";
 
-/**
- * Read/write a validated JSON array in localStorage. Both accessors swallow
- * errors (private-mode writes, corrupt values, quota) and fall back to an empty
- * list, so a bad stored value never crashes a tool. Pair with a type guard to
- * drop any entry that doesn't match the current shape.
- */
+/** Validated JSON-array reader/writer for localStorage; swallows errors and falls back to an empty list so a corrupt entry never crashes a tool. */
 export function createLocalStorageJson<T>(
 	key: string,
 	guard: (value: unknown) => value is T,

@@ -17,12 +17,7 @@ export type OgImageConfig = {
 	titleFontSize?: number;
 };
 
-/**
- * Render a branded 1200×630 social card. Every OG / Twitter route shares this:
- * a route exports `alt`/`size`/`contentType`/`runtime` and calls this with its
- * own copy and accent. Keep it dependency-light — it runs on the edge and uses
- * inline styles only (Satori supports no external CSS or components).
- */
+/** Branded 1200×630 social card renderer — shared by every OG/Twitter route; inline styles only because Satori has no external CSS or component support. */
 export function renderOgImage(config: OgImageConfig) {
 	const {
 		eyebrow,

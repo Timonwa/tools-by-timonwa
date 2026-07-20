@@ -4,11 +4,6 @@ import { TOOL_GEMINI_KEY } from "@/components/tools/article-to-social-posts/cons
 import { generateStructuredFromDraft } from "@/lib/tools/_shared/draft-source";
 import type { TokenUsageType } from "@/lib/types/token-usage";
 
-/**
- * Schema the draft generator must return: one post object per selected
- * platform. No grouping — each platform gets copy tuned to its own character
- * limit and culture.
- */
 export const postDraftsSchema = z.object({
 	article: z.object({
 		url: z
@@ -151,22 +146,12 @@ Return one object with two keys:
 - \`article\`: { url, title, author } — \`url\` is always an empty string.
 - \`posts\`: exactly one object per selected platform. For single posts omit \`thread\`; when threading, \`thread\` is an array of N separate strings (never one combined string). \`hashtags\` is always an array (empty when not adding hashtags). Every post and thread item stays within its character limit.`;
 
-/**
- * Turn an article into one platform-optimized post per selected platform. In
- * URL mode the model reads the page itself with Gemini's provider-executed
- * \`url_context\` tool; in text mode the pasted article is sent inline. Structured
- * output is enforced by the schema; transient failures are retried.
- */
 export function generateDrafts(opts: {
-	/** The tone / platforms / preferences block for this request. */
 	directives: string;
-	/** URL mode: the article URL for the model to read via url_context. */
 	url?: string;
-	/** Text mode: the pasted article text. */
 	text?: string;
 	googleApiKey?: string;
 	googleModel?: string;
-	/** Sampling temperature. Higher = more divergent (used for regenerate). */
 	temperature?: number;
 }): Promise<{ object: PostDraftsOutputType; usage: TokenUsageType }> {
 	return generateStructuredFromDraft<PostDraftsOutputType>({

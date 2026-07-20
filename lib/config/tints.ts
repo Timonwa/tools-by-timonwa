@@ -1,13 +1,5 @@
-/**
- * The decorative accent palette — five dark-aware hues defined as theme tokens
- * (`--tint-1` … `--tint-5` in app/styles/tokens.css) and surfaced as Tailwind
- * `tint-*` color utilities. Marketing pages and category coloring both draw
- * from this one palette so the "variety" stays consistent and centralized.
- *
- * These maps hold LITERAL class strings on purpose: Tailwind's scanner only
- * keeps classes it can see as complete tokens, so `bg-tint-${n}` would be
- * purged. Index a map by `TintType` instead of interpolating.
- */
+// Maps hold LITERAL class strings — Tailwind's scanner purges anything interpolated like `bg-tint-${n}`; index by TintType instead.
+
 export type TintType = 1 | 2 | 3 | 4 | 5;
 
 export const TINTS: TintType[] = [1, 2, 3, 4, 5];

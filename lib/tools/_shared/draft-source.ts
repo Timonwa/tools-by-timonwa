@@ -8,12 +8,6 @@ export type { DraftInputType } from "./draft-input";
 
 type GeminiProvider = ReturnType<typeof getGemini>["provider"];
 
-/**
- * Build the prompt tail, tools, and stop condition for reading a draft — either
- * a URL (read by the model via Gemini's provider-executed `url_context` tool) or
- * pasted text (sent inline). Shared by every draft-based agent so URL handling
- * lives in exactly one place.
- */
 function prepareDraftSource(opts: {
 	provider: GeminiProvider;
 	url?: string;
@@ -44,10 +38,6 @@ function prepareDraftSource(opts: {
 
 type UrlMeta = { retrievedUrl?: string; urlRetrievalStatus?: string };
 
-/**
- * `urlContext` reports a per-URL retrieval status in each step's provider
- * metadata. Find the status Gemini recorded for our URL (across steps).
- */
 function urlRetrievalStatus(
 	steps: readonly { providerMetadata?: unknown }[],
 	url: string,
@@ -65,30 +55,20 @@ function urlRetrievalStatus(
 	return undefined;
 }
 
-/**
- * Turn a draft (pasted text OR a URL) into a schema-validated object — the schema
- * enforces structured output, so no manual JSON parsing. URL mode reads the page
- * via `url_context`; text mode sends it inline. Transient failures are retried.
- * The agent's task rules go in `directives`; the source block is appended after.
- */
+/** Schema-validated generation from a draft — URL mode reads via `url_context`; text mode sends inline; transient failures are retried automatically. */
 export async function generateStructuredFromDraft<T>(opts: {
 	schema: z.ZodType<T>;
 	schemaName: string;
 	schemaDescription: string;
-	/** System prompt with the task's rules. */
 	system: string;
-	/** Task-specific instructions prepended before the source block. */
 	directives: string;
-	/** URL mode: the article URL for the model to read via url_context. */
 	url?: string;
-	/** Text mode: the pasted draft text. */
 	text?: string;
 	serverKey: string | undefined;
 	googleApiKey?: string;
 	googleModel?: string;
 	temperature?: number;
 	maxOutputTokens: number;
-	/** Total call timeout. Defaults to 90s in URL mode, 60s in text mode. */
 	timeoutMs?: number;
 }): Promise<{ object: T; usage: TokenUsageType }> {
 	const { provider, model } = getGemini({

@@ -3,13 +3,7 @@ import { env } from "@env";
 
 import type { TokenUsageType } from "@/lib/types/token-usage";
 
-/**
- * Build the Gemini provider + model for a tool call. Returns the provider too so
- * callers can reach provider-executed tools like `provider.tools.urlContext()`.
- * A BYOK key overrides the server key (and only then is a model override honored;
- * server requests always use `LLM_MODEL`). Throws `NO_SERVER_KEY` when neither
- * key is set, so the error mapper can say "add your own key".
- */
+/** Gemini provider + model for a tool call — BYOK key overrides the server key; throws `NO_SERVER_KEY` when neither is set. */
 export function getGemini(opts: {
 	serverKey: string | undefined;
 	googleApiKey?: string;
@@ -28,10 +22,7 @@ export function getGemini(opts: {
 	return { provider, model: provider(modelId) };
 }
 
-/**
- * Map the AI SDK's token usage to our internal shape (input → prompt,
- * output → completion). Any field can be undefined when a provider omits it.
- */
+/** AI SDK token usage mapped to the internal shape — undefined provider fields default to 0. */
 export function toTokenUsage(usage: {
 	inputTokens?: number;
 	outputTokens?: number;

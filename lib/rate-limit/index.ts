@@ -4,22 +4,7 @@ import { headers } from "next/headers";
 
 import { env, isProduction } from "@env";
 
-/**
- * Shared hosted-demo rate limiting. Per-tool config (`toolSlug`,
- * `perUserDaily`, `dailyPool`) is passed in by each tool's server action —
- * counters are scoped by slug so tools don't share each other's budgets.
- *
- * Two daily limits, both resetting at UTC midnight:
- *   - Per-user: keyed by a hash of the IP (HMAC-SHA256 when IP_HASH_SECRET is
- *     set, else plain SHA-256). One user, one tool, N/day.
- *   - Global pool: shared across all visitors of that tool.
- *
- * BYOK users skip both — they're paying their own Gemini quota.
- *
- * Fail-open: if Upstash isn't configured or the check throws, requests go
- * through. Better UX than blocking a real tool on infra flakiness — the free
- * Gemini quota is the backstop.
- */
+// Shared hosted-demo rate limiting: per-user (HMAC-SHA256 IP hash) + global pool, both resetting UTC midnight; BYOK users skip both; fails open so infra flakiness never blocks a real request.
 
 export type QuotaConfig = {
 	toolSlug: string;
@@ -76,10 +61,7 @@ async function getClientHash(): Promise<string> {
 	return digest.slice(0, 16);
 }
 
-/**
- * Increment both counters and return whether the request is allowed. Call
- * ONCE per billable request, before the LLM call. Skip for BYOK users.
- */
+/** Increment both quota counters and return whether the request is allowed — call once per billable request, before the LLM call; skip for BYOK. */
 export async function checkAndIncrement(
 	config: QuotaConfig,
 ): Promise<CheckResultType> {

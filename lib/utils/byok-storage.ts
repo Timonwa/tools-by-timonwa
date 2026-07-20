@@ -6,15 +6,8 @@ import {
 	DEFAULT_BYOK_MODEL,
 } from "@/lib/config/byok";
 
-/**
- * Hub-level BYOK storage. One key, one model preference, shared by every AI
- * tool. Uses sessionStorage so the key clears when the tab closes — writing
- * preferences live longer, but API keys should not.
- */
-
 const API_KEY = "byok:google-api-key";
 const BYOK_MODEL_KEY = "byok:google-model";
-/** Dispatched on any BYOK write so `useSyncExternalStore` readers re-sync. */
 const BYOK_CHANGE_EVENT = "app:byok-change";
 
 const canUseStorage = () => typeof window !== "undefined";
@@ -34,10 +27,7 @@ export function subscribeByok(onChange: () => void) {
 	};
 }
 
-/**
- * The user's raw Gemini API key (the secret). `get` returns the stored string or
- * `null` when unset — unvalidated. Paired with `byokModelStorage` (the model it calls).
- */
+/** sessionStorage accessor for the user's raw Gemini API key; clears when the tab closes. */
 export const byokStorage = {
 	get(): string | null {
 		if (!canUseStorage()) return null;
@@ -63,10 +53,7 @@ export const byokStorage = {
 	},
 };
 
-/**
- * Which model the BYOK key should call. Unlike `byokStorage`, `get` never returns
- * null — it validates against `BYOK_MODELS`, falling back to `DEFAULT_BYOK_MODEL`.
- */
+/** sessionStorage accessor for the BYOK model preference; get never returns null — falls back to DEFAULT_BYOK_MODEL. */
 export const byokModelStorage = {
 	get(): ByokModelType {
 		if (!canUseStorage()) return DEFAULT_BYOK_MODEL;

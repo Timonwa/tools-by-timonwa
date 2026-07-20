@@ -1,21 +1,9 @@
 "use client";
 
-/**
- * A tiny localStorage-backed external store for `useSyncExternalStore`.
- *
- * Reading storage on mount via `setState` in an effect is the "you might not
- * need an Effect" anti-pattern (and trips `react-hooks/set-state-in-effect`).
- * Instead, model the persisted value as an external store: `getSnapshot`
- * returns a cached reference (stable until a write, so React doesn't loop),
- * `getServerSnapshot` returns a stable SSR fallback, and writes update the
- * cache + notify subscribers. Cross-tab `storage` events invalidate the cache.
- */
+/** localStorage-backed external store for useSyncExternalStore; avoids setState-in-effect by modeling persisted state as a subscribable cache. */
 export function createLocalStore<T>(opts: {
-	/** Parse the current value from storage (only called client-side). */
 	read: () => T;
-	/** Persist a value to storage. */
 	write: (value: T) => void;
-	/** Stable value returned on the server / when storage is unavailable. */
 	serverValue: T;
 }) {
 	const canUse = () => typeof window !== "undefined";
@@ -50,10 +38,8 @@ export function createLocalStore<T>(opts: {
 		};
 	};
 
-	/** Read the current value imperatively (e.g. inside an event handler). */
 	const get = (): T => getSnapshot();
 
-	/** Write a new value: update cache, persist, and notify subscribers. */
 	const set = (value: T) => {
 		cache = value;
 		loaded = true;

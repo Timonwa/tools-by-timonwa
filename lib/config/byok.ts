@@ -1,16 +1,10 @@
-/**
- * Hub-level BYOK (Bring Your Own Key) constants — one Google key + model, read
- * from sessionStorage and shared by every AI tool. Gemini-only; split
- * per-provider before widening the enum.
- */
+/** Hub-level BYOK constants — one Google Gemini key + model, read from sessionStorage and shared by every AI tool. */
 
-// Use Google's "-latest" aliases, not pinned versions like `gemini-flash-latest`.
-// Google blocks pinned older models for newly-created keys ("no longer available
-// to new users"), which would break BYOK for anyone who just made a key — exactly
-// our audience. The aliases always resolve to a currently-available model.
+// "-latest" aliases, not pinned versions: Google blocks pinned older models for newly-created keys, which would break BYOK for anyone who just made a key.
 export type ByokModelType =
 	"gemini-flash-lite-latest" | "gemini-flash-latest" | "gemini-pro-latest";
 
+/** Default model used when the user hasn't picked one. */
 export const DEFAULT_BYOK_MODEL: ByokModelType = "gemini-flash-lite-latest";
 
 export const BYOK_MODELS: {
@@ -35,8 +29,5 @@ export const BYOK_MODELS: {
 	},
 ];
 
-/**
- * Fire this event from anywhere (e.g. a tool's hosted-usage pill) to open
- * the hub's BYOK drawer. Listened for by `<ByokDrawer />` in the Navbar.
- */
+/** Custom event fired to open the BYOK drawer — listened for by `<ByokDrawer />` in the Navbar. */
 export const OPEN_BYOK_EVENT = "hub:open-byok";

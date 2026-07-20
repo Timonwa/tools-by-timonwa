@@ -1,8 +1,3 @@
-/**
- * Title/headline → clean, URL-safe slug. Diacritics are stripped (café → cafe);
- * non-latin scripts are dropped rather than transliterated.
- */
-
 export type SlugSeparatorType = "-" | "_";
 
 export type SlugOptionsType = {
@@ -42,6 +37,7 @@ const STOP_WORDS = new Set([
 	"were",
 ]);
 
+/** Title or headline to a clean, URL-safe slug. */
 export const slugify = (
 	input: string,
 	options: SlugOptionsType = {},

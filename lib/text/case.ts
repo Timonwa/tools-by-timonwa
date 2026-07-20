@@ -1,9 +1,4 @@
-/**
- * Text case transforms, grouped for the Case Converter UI. Whole-text cases
- * (upper/lower/sentence/start/alternating/inverse and the title-case standards)
- * preserve words in place; programmer cases (camel/pascal/snake/kebab/constant/
- * dot/path) tokenize the text into words first.
- */
+/** Text case transforms, grouped for the Case Converter UI; programmer cases tokenize first, whole-text cases preserve words in place. */
 
 export type CaseIdType =
 	| "title-ap"
@@ -185,6 +180,7 @@ export type CaseGroupType = {
 	cases: CaseOptionType[];
 };
 
+/** All case groups in display order, wiring ids to labels and icons. */
 export const CASE_GROUPS: CaseGroupType[] = [
 	{
 		id: "writing",
@@ -291,5 +287,6 @@ export const CASE_GROUPS: CaseGroupType[] = [
 	},
 ];
 
+/** Apply the named case transform to a string. */
 export const convertCase = (text: string, id: CaseIdType): string =>
 	TRANSFORMS[id](text);

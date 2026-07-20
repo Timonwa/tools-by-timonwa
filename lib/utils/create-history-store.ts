@@ -4,13 +4,7 @@ import { useCallback, useSyncExternalStore } from "react";
 
 import { createLocalStore } from "./local-store";
 
-/**
- * Build a shared localStorage-backed history hook for a tool. The list is one
- * module-level external store (read via `useSyncExternalStore`, so every reader
- * stays in sync with no setState-in-effect), and `remove`/`clear` are generic.
- * Each tool supplies its own `read`/`write` (parsing/validation) and an
- * `applyUpsert` reducer for its dedup rule.
- */
+/** Factory for a localStorage-backed history hook; each tool provides read/write and an applyUpsert reducer for its dedup rule. */
 export function createHistoryStore<
 	Entry extends { id: string },
 	UpsertInput,

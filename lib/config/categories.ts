@@ -14,19 +14,8 @@ import {
 	TINT_SURFACE,
 } from "./tints";
 
-/**
- * Purposeful tool categories — the axes people actually browse by. A tool can
- * belong to several (max three); its FIRST category is the primary one used for
- * the breadcrumb. Categories drive the `/tools` filter, the home "browse by
- * category" section, and each tool page's breadcrumb.
- */
 export type CategoryIdType = "writing" | "ai" | "seo" | "developer" | "media";
 
-/**
- * Per-category color, drawn from the shared `tint` palette (see lib/config/tints).
- * `badge` colors the pill, `chip` the icon tile, and `border` the card's hover
- * edge. Derived from the category's `tint` so every surface stays in sync.
- */
 export type CategoryColorType = {
 	badge: string;
 	chip: string;
@@ -42,10 +31,8 @@ const colorForTint = (tint: TintType): CategoryColorType => ({
 export type CategoryType = {
 	id: CategoryIdType;
 	label: string;
-	/** One line for the "browse by category" card and the filtered directory. */
 	description: string;
 	icon: ComponentType<SVGProps<SVGSVGElement>>;
-	/** The palette hue for this category, shared across every colored surface. */
 	tint: TintType;
 	color: CategoryColorType;
 };
@@ -97,6 +84,7 @@ export const TOOL_CATEGORIES: CategoryType[] = [
 
 const BY_ID = new Map(TOOL_CATEGORIES.map((c) => [c.id, c]));
 
+/** Look up a category by ID, throwing if the ID isn't registered. */
 export const getCategory = (id: CategoryIdType): CategoryType => {
 	const category = BY_ID.get(id);
 	if (!category) throw new Error(`Unknown tool category: ${id}`);

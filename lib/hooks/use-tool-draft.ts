@@ -11,21 +11,6 @@ import {
 import type { InputKindType } from "@/lib/tools/_shared/draft-input";
 import { createLocalStore } from "@/lib/utils/local-store";
 
-/**
- * Shared drafts across the tools. Opt-in, with two INDEPENDENT channels, each
- * with its own "reuse" toggle:
- *
- * - TEXT — a pasted draft, shared by every text input (Word Counter, Reading
- *   Time, and the AI tools' "Paste draft" tab). Toggle: `textReuse`.
- * - URL — an article link, shared only by the AI tools (they're the only ones
- *   that read a URL). Toggle: `urlReuse`.
- *
- * The channels never affect each other: a URL never reaches a text-only tool,
- * and sharing text never touches a shared URL. Which tab an AI tool shows
- * (`inputKind`) is local to that tool. Backed by external stores read through
- * `useSyncExternalStore` so every tool stays in sync (and across tabs) with no
- * setState-in-effect. Off by default; nothing is stored until asked.
- */
 const TEXT_KEY = "tools:shared-draft";
 const URL_KEY = "tools:shared-draft-url";
 const TEXT_ENABLED_KEY = "tools:shared-draft-enabled";
@@ -76,38 +61,24 @@ const urlEnabledStore = flagStore(URL_ENABLED_KEY);
 // tab you last used. A view pointer, not content — not gated by either reuse.
 const kindStore = stringStore(KIND_KEY);
 
-/** Seed for a history restore: a bare text string, or a full source. */
 type ToolDraftSeedType =
 	string | { text?: string; url?: string; kind?: InputKindType };
 
 type ToolDraftType = {
-	/** Current draft text — the shared value when text reuse is on, else local. */
 	text: string;
 	setText: (value: string) => void;
-	/** Whether the draft text is shared across the text tools. */
 	textReuse: boolean;
 	toggleTextReuse: (next: boolean) => void;
-	/** Current article URL — the shared value when URL reuse is on, else local. */
 	url: string;
 	setUrl: (value: string) => void;
-	/** Whether the URL is shared across the AI tools. */
 	urlReuse: boolean;
 	toggleUrlReuse: (next: boolean) => void;
-	/** Which input this tool is showing (url / text). Local to each tool. */
 	inputKind: InputKindType;
 	setInputKind: (kind: InputKindType) => void;
-	/** Empty the text draft (shared or local, matching the current mode). */
 	clear: () => void;
 };
 
-/**
- * Draft state for one tool's source field(s).
- *
- * @param seed initial values, e.g. a history restore that remounts the form.
- *   A bare string seeds the text (back-compat); an object can also seed the URL
- *   and active tab. When the matching reuse toggle is on and a seed value is
- *   non-empty, it is adopted into that shared channel; otherwise it seeds local.
- */
+/** Draft state for one tool's source field(s); two opt-in shared channels (text + URL) backed by localStorage external stores so every tool stays in sync. */
 export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
 	const seedObj = typeof seed === "string" ? { text: seed } : seed;
 	const seedText = seedObj.text ?? "";
