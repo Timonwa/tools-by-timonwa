@@ -6,14 +6,13 @@ import { cn } from "@/lib/utils/cn";
 
 export default function Hero() {
 	return (
-		<div className="relative isolate overflow-x-clip py-10 sm:py-16">
-			{/* One soft, rounded, blurred gradient — fades at its edges so there's no
-			    hard box, just an ambient wash of color behind the hero. */}
+		<div className="relative isolate py-10 sm:py-16">
+			{/* Full-bleed ambient wash — breaks out of the max-w container to span the viewport (the root clips any overflow); blurred so it fades with no hard edges. */}
 			<div
 				aria-hidden
-				className="pointer-events-none absolute inset-x-0 -top-16 -z-10 flex justify-center"
+				className="pointer-events-none absolute -top-16 left-1/2 -z-10 w-screen -translate-x-1/2"
 			>
-				<div className="h-72 w-3xl max-w-full rounded-full bg-linear-to-r from-tint-3/25 via-primary/20 to-tint-1/25 opacity-70 blur-[100px]" />
+				<div className="h-72 w-full rounded-full bg-linear-to-r from-tint-3/25 via-primary/20 to-tint-1/25 opacity-70 blur-[100px]" />
 			</div>
 
 			<PageHero
