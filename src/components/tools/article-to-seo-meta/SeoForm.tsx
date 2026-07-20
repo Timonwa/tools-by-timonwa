@@ -23,6 +23,7 @@ import { Button, Input, SegmentedControl } from "@/components/ui";
 
 import { generateSeoMeta } from "@/lib/tools/article-to-seo-meta/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
+import { emitHostedUsage } from "@/lib/utils/hosted-usage-signal";
 
 export type SeoFormParamsType = {
 	source: DraftInputType;
@@ -172,6 +173,7 @@ export default function SeoForm({
 					googleModel: byokKey ? byokModelStorage.get() : undefined,
 				});
 				if (!res.ok) return { error: res.error };
+				emitHostedUsage(res.remaining);
 				onResult(res.result, res.usage, {
 					source,
 					primaryKeyword: trimmedKeyword,
