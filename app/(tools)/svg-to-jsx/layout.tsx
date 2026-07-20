@@ -70,7 +70,7 @@ const jsonLd = {
 		"Spread props onto the root <svg>",
 		"One-click copy",
 		"Runs entirely in your browser — nothing is uploaded",
-		"Open source, MIT licensed",
+		"Open source",
 	],
 	creator: {
 		"@type": "Person",

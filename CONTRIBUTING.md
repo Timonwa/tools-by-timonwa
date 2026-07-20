@@ -141,4 +141,4 @@ Don't open a public issue for security bugs — use [GitHub's private security a
 
 ## License
 
-By contributing, you agree your work is released under the [MIT License](./LICENSE).
+By contributing, you agree your work is released under the [AGPL-3.0 License](./LICENSE).

@@ -69,7 +69,7 @@ const jsonLd = {
 		"Regenerate for a fresh batch",
 		"One-click copy",
 		"Runs entirely in your browser — nothing is uploaded",
-		"Open source, MIT licensed",
+		"Open source",
 	],
 	creator: {
 		"@type": "Person",

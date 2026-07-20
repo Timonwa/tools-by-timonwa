@@ -47,7 +47,7 @@ const FEATURES: FeatureType[] = [
 	{
 		icon: Code2Icon,
 		title: "Open source",
-		body: "MIT-licensed and built in the open. Read the code or bring your own key.",
+		body: "Open source and built in the open. Read the code or bring your own key.",
 		tint: 3,
 	},
 	{

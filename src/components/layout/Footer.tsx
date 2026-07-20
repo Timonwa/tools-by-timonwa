@@ -11,7 +11,6 @@ import {
 	CREATOR_SHOP_URL,
 	CREATOR_TWITTER_URL,
 	CREATOR_URL,
-	LICENSE_URL,
 	PRIVACY_URL,
 	REPO_URL,
 	SITE_DESCRIPTION,
@@ -27,7 +26,6 @@ const PROJECT_LINKS = [
 	{ href: SUPPORT_URL, label: "Support" },
 	{ href: REPO_URL, label: "Star on GitHub" },
 	{ href: `${REPO_URL}/issues`, label: "Report an issue" },
-	{ href: LICENSE_URL, label: "MIT License" },
 ];
 
 const CONNECT_LINKS = [
@@ -257,16 +255,7 @@ export default function Footer() {
 							{CREATOR_NAME}
 						</a>{" "}
 						· <span className="font-medium text-primary">{SITE_NAME}</span> is
-						open source under the{" "}
-						<a
-							href={LICENSE_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-							className={`${linkClass} underline underline-offset-2`}
-						>
-							MIT License
-						</a>
-						.
+						open source.
 					</p>
 					<nav aria-label="Legal">
 						<ul className="flex items-center gap-x-4">

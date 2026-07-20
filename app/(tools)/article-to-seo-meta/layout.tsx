@@ -69,7 +69,7 @@ const jsonLd = {
 		"Per-field character counter with in-range, close, or out-of-range indicators",
 		"Regenerate a single variation for a fresh angle",
 		"Edit variations inline and copy title, description, or both in one click",
-		"Open source, MIT licensed",
+		"Open source",
 	],
 	creator: {
 		"@type": "Person",

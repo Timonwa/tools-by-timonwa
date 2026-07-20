@@ -67,7 +67,7 @@ const jsonLd = {
 		"Alternating and inverse case",
 		"One-click copy, live preview",
 		"Runs entirely in your browser — nothing is uploaded",
-		"Open source, MIT licensed",
+		"Open source",
 	],
 	creator: {
 		"@type": "Person",

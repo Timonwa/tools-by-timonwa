@@ -83,7 +83,7 @@ const jsonLd = {
 		"Local history across sessions",
 		"Bring Your Own Key (Google AI Studio / Gemini) for unlimited use",
 		"Copy-only by design — no OAuth, no publishing credentials stored",
-		"Open source, MIT licensed",
+		"Open source",
 	],
 	creator: {
 		"@type": "Person",

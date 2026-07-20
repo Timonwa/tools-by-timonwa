@@ -18,7 +18,7 @@ export default function Hero() {
 
 			<PageHero
 				className="mb-12 sm:mb-16"
-				eyebrow={{ icon: WrenchIcon, label: "Open source · MIT" }}
+				eyebrow={{ icon: WrenchIcon, label: "Open source" }}
 				title={
 					<>
 						Small tools that{" "}

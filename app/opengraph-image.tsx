@@ -8,7 +8,7 @@ export const contentType = OG_CONTENT_TYPE;
 
 export default function Image() {
 	return renderOgImage({
-		eyebrow: "Open source · MIT",
+		eyebrow: "Open source",
 		titleLead: "Tools by",
 		titleAccent: "Timonwa",
 		subtitle:
