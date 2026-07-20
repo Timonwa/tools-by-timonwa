@@ -13,8 +13,6 @@ const MAX_HISTORY = 10;
 
 export type HistoryEntryType = {
 	id: string;
-	/** The article source (pasted text or a URL) — stored so the user can
-	 * re-load + regenerate. */
 	source: DraftInputType;
 	primaryKeyword?: string;
 	variationCount: 1 | 2 | 3;
@@ -45,6 +43,7 @@ const { load, save } = createLocalStorageJson<HistoryEntryType>(
 	isEntry,
 );
 
+/** Article-to-SEO-Meta history hook — deduplicates by source, capped at 10 entries. */
 export const useHistory = createHistoryStore<
 	HistoryEntryType,
 	Omit<HistoryEntryType, "id"> & { id?: string }

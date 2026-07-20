@@ -24,6 +24,7 @@ const PLATFORM_LIMITS: { label: string; limit: number }[] = [
 
 const numberFmt = new Intl.NumberFormat("en-US");
 
+/** Live word/character counter with reading-time estimates and per-platform character-limit bars. */
 export default function WordCounterTool() {
 	const { text, setText, textReuse, toggleTextReuse, clear } = useToolDraft();
 	const reuseId = useId();
@@ -141,6 +142,7 @@ export default function WordCounterTool() {
 	);
 }
 
+/** Stat tile showing a formatted duration alongside a words-per-minute hint. */
 function DurationCard({
 	label,
 	value,

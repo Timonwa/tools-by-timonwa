@@ -24,6 +24,7 @@ import {
 } from "@/components/ui";
 import { TINT_TEXT } from "@/lib/config/tints";
 
+/** Character-count class — destructive when over, amber when within 10% of limit. */
 const charCountClass = (count: number, limit: number): string =>
 	count > limit
 		? "text-destructive font-semibold"
@@ -42,6 +43,7 @@ type Props = {
 	onRegenerate: () => void;
 };
 
+/** Editable post card — single post or thread view, copy, and per-post regeneration. */
 export default function DraftCard({
 	draft,
 	isRegenerating,
@@ -79,7 +81,6 @@ export default function DraftCard({
 					<div className="flex flex-col gap-2">
 						{draft.thread?.map((post, i) => (
 							<div
-								// stable order
 								key={i}
 								className="flex flex-col rounded-md border border-border bg-muted/30 p-2 gap-1"
 							>

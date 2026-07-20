@@ -15,11 +15,7 @@ import {
 	workflowStorage,
 } from "../utils/storage";
 
-/**
- * Distinct starter presets seeded on first run — deliberately different (a
- * polished single LinkedIn post, a punchy X thread, casual across networks) so
- * new users see the range of what a preset can do and have somewhere to start.
- */
+/** Three deliberately varied starter presets seeded on first run so new users have examples spanning the full range of settings. */
 const STARTER_PRESETS: Omit<PresetTemplateType, "id" | "createdAt">[] = [
 	{
 		name: "LinkedIn pro",
@@ -44,10 +40,7 @@ const STARTER_PRESETS: Omit<PresetTemplateType, "id" | "createdAt">[] = [
 	},
 ];
 
-/**
- * Deep match: tone, xThreadLength, platforms (order-insensitive), and every
- * field of WritingPreferencesType including hashtag rule lists.
- */
+/** Deep equality check — tone, xThreadLength, platforms (order-insensitive), and every WritingPreferencesType field. */
 function templateMatchesState(
 	t: PresetTemplateType,
 	state: { tone: ToneType; platforms: PlatformType[]; xThreadLength: number },
@@ -77,12 +70,7 @@ function sameTagList(a: string[], b: string[]): boolean {
 	return true;
 }
 
-/**
- * Shared preset (saved config) state + CRUD, backed by the workflow / prefs /
- * templates localStorage stores. Used by both the writer form and the Writing
- * preferences drawer, so managing presets in either place stays in sync.
- * Handlers read the stores fresh at call time, so they never go stale.
- */
+/** Shared preset CRUD hook backed by localStorage stores — used by both the writer form and the settings drawer so they stay in sync. */
 export function usePresets() {
 	const workflow = useSyncExternalStore(
 		workflowStorage.subscribe,
@@ -100,9 +88,7 @@ export function usePresets() {
 		templatesStorage.getServerSnapshot,
 	);
 
-	// The active preset is whichever saved one exactly matches the current
-	// workflow + prefs — derived, so it lights up on apply/save and clears the
-	// moment the user diverges.
+	// Derived — lights up when state exactly matches a saved preset, clears the moment the user diverges.
 	const activeId = useMemo(
 		() =>
 			templates.find((t) => templateMatchesState(t, workflow, prefs))?.id ??
@@ -110,8 +96,6 @@ export function usePresets() {
 		[templates, workflow, prefs],
 	);
 
-	// Seed the distinct starter presets on first run, so new users have varied
-	// examples to apply and see how the feature works.
 	useEffect(() => {
 		if (templatesStorage.get().length > 0) return;
 		templatesStorage.set(
@@ -156,8 +140,7 @@ export function usePresets() {
 		templatesStorage.set(templatesStorage.get().filter((t) => t.id !== id));
 	}, []);
 
-	// Overwrite a preset's saved config with the current settings — edit in
-	// place, no delete + re-save.
+	// Overwrites config in place — no delete + re-save, so order is preserved.
 	const update = useCallback((id: string) => {
 		const wf = workflowStorage.get();
 		templatesStorage.set(

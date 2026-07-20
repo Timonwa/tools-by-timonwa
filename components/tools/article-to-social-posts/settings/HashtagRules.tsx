@@ -16,6 +16,7 @@ type HashtagRulesProps = {
 
 type FieldType = "alwaysIncludeHashtags" | "neverUseHashtags";
 
+/** Hashtag allow/block rule editor — always-include and never-use lists. */
 export default function HashtagRulesSection({
 	prefs,
 	onChange,
@@ -67,6 +68,7 @@ export default function HashtagRulesSection({
 	);
 }
 
+/** Single hashtag list — label, tag pills, and a commit-on-enter/blur input. */
 function TagList({
 	label,
 	helper,

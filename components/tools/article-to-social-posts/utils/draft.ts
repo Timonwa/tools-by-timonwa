@@ -11,6 +11,7 @@ const appendUrl = (body: string, articleUrl?: string): string => {
 	return `${body}\n\n${u}`;
 };
 
+/** Builds the clipboard string for a single draft — formats threads as numbered posts and appends the article URL. */
 export const buildCopyText = (
 	draft: PostDraftType,
 	articleUrl?: string,
@@ -25,6 +26,7 @@ export const buildCopyText = (
 	return appendUrl(draft.content, articleUrl);
 };
 
+/** Builds a combined clipboard string for all drafts, separated by Markdown dividers. */
 export const buildCopyAll = (
 	drafts: PostDraftType[],
 	articleUrl?: string,

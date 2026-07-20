@@ -22,13 +22,7 @@ import { Button, Drawer, Tooltip } from "@/components/ui";
 import HashtagRulesSection from "./HashtagRules";
 import WritingPreferencesSection from "./WritingPreferences";
 
-/**
- * Tool-scoped writing preferences for the article-to-social-posts writer: the
- * full default config (tone, platforms, thread format, voice, emoji/hashtag
- * density, and hashtag rules). Shares the same stores as the main form, so
- * changes here are the defaults every generation starts from. BYOK lives in the
- * hub-level drawer — it's hub-wide user state, not a per-tool concern.
- */
+/** Slide-out drawer for tool-scoped defaults — tone, platforms, thread format, writing style, and hashtag rules. */
 export default function SettingsDrawer() {
 	const [open, setOpen] = useState(false);
 	const prefs = useSyncExternalStore(

@@ -35,13 +35,14 @@ import {
 } from "@/lib/tools/article-to-seo-meta/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 
-/** History row headline: the article title, else the URL, else a text snippet. */
+/** History row label — article title, then URL, then a text snippet. */
 const historyLabel = (h: HistoryEntryType): string => {
 	if (h.result.article?.title) return h.result.article.title;
 	if (h.source.kind === "url") return h.source.url;
 	return h.source.text.trim().slice(0, 120) || "Article";
 };
 
+/** Orchestrator for the Article to SEO Meta tool — form, results, history, and regeneration. */
 export default function SeoTool() {
 	const [result, setResult] = useState<SeoMetaResultType | undefined>();
 	const [editableVariations, setEditableVariations] = useState<
@@ -56,17 +57,14 @@ export default function SeoTool() {
 	const [regeneratingAll, setRegeneratingAll] = useState(false);
 	const [copiedAll, setCopiedAll] = useState(false);
 	const [initial, setInitial] = useState<SeoFormParamsType | undefined>();
-	// The form exposes its "new article" reset here so the bottom button can
-	// clear the form's inputs (which the form owns), not just the results.
+	// Lets the bottom "new article" button clear the form's inputs, which the form owns.
 	const formResetRef = useRef<(() => void) | null>(null);
-	// Bumped on a history restore to remount SeoForm with fresh seed values
-	// (React's "reset all state via key" pattern — no restore effect needed).
+	// Bumped on a history restore to remount SeoForm with fresh seed values (key-reset pattern).
 	const [restoreNonce, setRestoreNonce] = useState(0);
 	const { history, upsert, remove } = useHistory();
 	const resultsRef = useRef<HTMLDivElement>(null);
 
-	// Results stack below the form (same layout as Article to Social Posts), so
-	// scroll them into view when a new set lands.
+	// Scroll results into view when a new set lands (they render below the form).
 	useEffect(() => {
 		if (result) {
 			resultsRef.current?.scrollIntoView({
@@ -116,9 +114,7 @@ export default function SeoTool() {
 		[],
 	);
 
-	// Regenerate a single variation, passing the current set so the model returns
-	// a fresh angle rather than a near-duplicate. Targets the generated source
-	// (`initial`), not whatever's typed in the form.
+	// Passes the current set so the model returns a fresh angle rather than a near-duplicate; targets `initial`, not whatever's typed in the form.
 	const regenerateVariation = useCallback(
 		async (index: number) => {
 			if (!initial) return;
@@ -152,7 +148,6 @@ export default function SeoTool() {
 		[initial, editableVariations],
 	);
 
-	// "New article": clear the results here; the form clears its own inputs.
 	const handleReset = useCallback(() => {
 		setResult(undefined);
 		setEditableVariations([]);
@@ -173,8 +168,6 @@ export default function SeoTool() {
 		setTimeout(() => setCopiedAll(false), 1200);
 	}, [editableVariations]);
 
-	// Regenerate every variation for the article on screen (`initial`), keeping
-	// the current set visible until the new one lands.
 	const regenerateAll = useCallback(async () => {
 		if (!initial) return;
 		setRegeneratingAll(true);
@@ -212,8 +205,7 @@ export default function SeoTool() {
 		}
 	}, [initial, upsert]);
 
-	// Non-reactive persist logic — always sees the latest result/usage/initial
-	// without them being effect dependencies (React 19.2 useEffectEvent).
+	// useEffectEvent so the callback always sees fresh result/usage/initial without listing them as effect deps.
 	const persistEdits = useEffectEvent(() => {
 		if (!result || !initial || editableVariations.length === 0) return;
 		upsert({
@@ -226,15 +218,13 @@ export default function SeoTool() {
 		});
 	});
 
-	// Persist edits back to history, debounced 600 ms, on every edit.
 	useEffect(() => {
 		if (editableVariations.length === 0) return;
 		const id = setTimeout(persistEdits, 600);
 		return () => clearTimeout(id);
 	}, [editableVariations]);
 
-	// Any run in flight — a full generate (`loading`), a bottom "regenerate all",
-	// or a single variation. Every action button gates on it so requests can't race.
+	// Any run in flight; every action button gates on this so requests can't race.
 	const busy = loading || regeneratingAll || regeneratingIndex !== null;
 
 	return (
@@ -357,6 +347,7 @@ export default function SeoTool() {
 	);
 }
 
+/** Skeleton placeholder shown while SEO variations are being generated. */
 function LoadingState() {
 	return (
 		<div className="flex flex-col gap-4">

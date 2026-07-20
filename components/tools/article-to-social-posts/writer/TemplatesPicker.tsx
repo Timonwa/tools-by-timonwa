@@ -39,6 +39,7 @@ type TemplatesPickerProps = {
 	collapsible?: boolean;
 };
 
+/** Preset manager — save, apply, rename, update, and delete named setting bundles. */
 export default function TemplatesPicker({
 	templates,
 	activeTemplateId,
@@ -224,6 +225,7 @@ export default function TemplatesPicker({
 	);
 }
 
+/** Preset pill — apply on click, edit or delete via inline icon buttons. */
 function TemplateChip({
 	template,
 	active,
@@ -325,6 +327,7 @@ function TemplateChip({
 	);
 }
 
+/** Inline editor for a preset — rename only, or rename-and-overwrite preferences. */
 function TemplateEditor({
 	template,
 	disabled,
@@ -419,6 +422,7 @@ function TemplateEditor({
 	);
 }
 
+/** Hover/focus tooltip showing a preset's full settings summary. */
 function TemplatePreview({ template }: { template: PresetTemplateType }) {
 	const { tone, platforms, xThreadLength, preferences: p } = template;
 	return (
@@ -459,11 +463,14 @@ function TemplatePreview({ template }: { template: PresetTemplateType }) {
 	);
 }
 
+/** Label-value row inside the preset tooltip. */
 function Row({ label, value }: { label: string; value: string }) {
 	return (
 		<div className="flex gap-2">
 			<span className="text-muted-foreground min-w-[64px]">{label}</span>
-			<span className="font-medium text-foreground break-words">{value}</span>
+			<span className="font-medium text-foreground wrap-break-word">
+				{value}
+			</span>
 		</div>
 	);
 }

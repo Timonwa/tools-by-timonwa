@@ -42,6 +42,7 @@ const { load, save } = createLocalStorageJson<HistoryEntryType>(
 const inputKey = (input: DraftInputType) =>
 	input.kind === "url" ? `url:${input.url.trim()}` : `text:${input.text}`;
 
+/** Session history store — deduplicates by source so re-generating the same article updates rather than appends. */
 export const useHistory = createHistoryStore<
 	HistoryEntryType,
 	Omit<HistoryEntryType, "id"> & { id?: string }

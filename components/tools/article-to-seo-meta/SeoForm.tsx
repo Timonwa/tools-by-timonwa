@@ -39,15 +39,9 @@ type SeoFormProps = {
 		params: SeoFormParamsType,
 	) => void;
 	onLoadingChange?: (loading: boolean) => void;
-	/** Clear the parent's results when starting a fresh article. */
 	onReset?: () => void;
-	/** Parent-held ref that receives this form's "new article" reset, so a
-	 * button outside the form (e.g. below the results) can clear the inputs. */
 	resetRef?: RefObject<(() => void) | null>;
-	/** Any run in flight (full generate or a single-variation regenerate). */
 	busy?: boolean;
-	/** Seed values for a restore-from-history. The parent remounts this form
-	 * (via `key`) when restoring, so these are read once on mount. */
 	initial?: SeoFormParamsType;
 	hasResult?: boolean;
 };

@@ -3,7 +3,6 @@ export type SeoVariationType = {
 	description: string;
 };
 
-/** The source article the metadata was written for (shown in the result card). */
 export type SeoArticleType = {
 	title?: string;
 	author?: string;
@@ -11,8 +10,7 @@ export type SeoArticleType = {
 };
 
 export type SeoMetaResultType = {
-	// Optional so a history entry saved before this field existed still loads.
-	article?: SeoArticleType;
+	article?: SeoArticleType; // optional so pre-field history entries still load
 	variations: SeoVariationType[];
 };
 

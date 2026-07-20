@@ -60,11 +60,6 @@ export const prefsStorage = createLocalStore<WritingPreferencesType>({
 	serverValue: DEFAULT_PREFERENCES,
 });
 
-/**
- * Workflow state — tone + platforms + thread length. Persists across sessions
- * so the form comes back the way the user left it (and templates can match
- * the restored state on reload).
- */
 export type WorkflowStateType = {
 	tone: ToneType;
 	platforms: PlatformType[];
@@ -137,10 +132,6 @@ export const togglePlatform = (platform: PlatformType) => {
 export const setXThreadLength = (xThreadLength: number) =>
 	workflowStorage.set({ ...workflowStorage.get(), xThreadLength });
 
-/**
- * Preset templates — named snapshots of tone + platforms + thread length +
- * writing preferences. Persisted across sessions in localStorage.
- */
 const EMPTY_TEMPLATES: PresetTemplateType[] = [];
 
 const readTemplates = (): PresetTemplateType[] => {
@@ -156,6 +147,7 @@ const readTemplates = (): PresetTemplateType[] => {
 	}
 };
 
+/** localStorage-backed external store for named preset templates. */
 export const templatesStorage = createLocalStore<PresetTemplateType[]>({
 	read: readTemplates,
 	write: (items) => {

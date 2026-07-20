@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/logos";
 import type { PlatformType } from "../types";
 
+/** Ordered list of every supported platform. */
 export const ALL_PLATFORMS: PlatformType[] = [
 	"linkedin",
 	"x",
@@ -27,6 +28,7 @@ export const THREADABLE_PLATFORMS: PlatformType[] = [
 	"mastodon",
 ];
 
+/** Human-readable display name for each platform. */
 export const PLATFORM_LABELS: Record<PlatformType, string> = {
 	linkedin: "LinkedIn",
 	x: "X (Twitter)",
@@ -36,11 +38,7 @@ export const PLATFORM_LABELS: Record<PlatformType, string> = {
 	substack: "Substack Notes",
 };
 
-/**
- * Max characters allowed per post on each platform.
- * Substack Notes has no hard limit but the UI encourages short posts;
- * 500 keeps drafts snappy and consistent with the medium-community group.
- */
+/** Max characters per post; Substack has no hard limit so 500 is enforced to keep drafts concise. */
 export const CHAR_LIMITS: Record<PlatformType, number> = {
 	linkedin: 3000,
 	x: 280,
@@ -63,6 +61,7 @@ export const PLATFORM_ICONS: Record<
 	substack: SubstackLogo,
 };
 
+/** Tailwind text-color class for each platform's brand color. */
 export const PLATFORM_COLORS: Record<PlatformType, string> = {
 	linkedin: "text-blue-600 dark:text-blue-400",
 	x: "text-foreground",

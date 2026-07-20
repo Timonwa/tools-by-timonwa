@@ -5,6 +5,7 @@ import type {
 	WritingPreferencesType,
 } from "../types";
 
+/** Factory-default writing preferences applied on first use. */
 export const DEFAULT_PREFERENCES: WritingPreferencesType = {
 	voice: "i",
 	emojiLevel: 2,
@@ -21,11 +22,7 @@ export const MAX_TEMPLATES = 10;
 /** Max preset name length — keeps chips short and the collapsed label tidy. */
 export const MAX_PRESET_NAME = 30;
 
-/**
- * Normalize a raw user-entered hashtag. Strips leading `#`, trims whitespace,
- * drops invalid characters (spaces become underscores inside, outside drop).
- * Returns empty string for unusable input so callers can filter.
- */
+/** Strips leading #, trims whitespace, drops invalid characters; returns "" for unusable input so callers can filter. */
 export const normalizeHashtag = (raw: string): string => {
 	const stripped = raw.trim().replace(/^#+/, "").trim();
 	if (!stripped) return "";
@@ -33,12 +30,14 @@ export const normalizeHashtag = (raw: string): string => {
 	return stripped.replace(/[^\p{L}\p{N}_-]/gu, "").slice(0, 40);
 };
 
+/** Display label for each grammatical-voice option. */
 export const VOICE_LABELS: Record<VoiceType, string> = {
 	i: "I",
 	we: "We",
 	they: "Third-person",
 };
 
+/** Display label for each emoji-density level. */
 export const EMOJI_LEVEL_LABELS: Record<LevelType, string> = {
 	1: "None",
 	2: "Light",
@@ -47,6 +46,7 @@ export const EMOJI_LEVEL_LABELS: Record<LevelType, string> = {
 	5: "Heavy",
 };
 
+/** Display label for each hashtag-density level. */
 export const HASHTAG_LEVEL_LABELS: Record<LevelType, string> = {
 	1: "None",
 	2: "Few",
@@ -55,17 +55,14 @@ export const HASHTAG_LEVEL_LABELS: Record<LevelType, string> = {
 	5: "Lots",
 };
 
-/**
- * Target character length for the long-capable platforms (LinkedIn + Substack).
- * The microblog platforms (X, Bluesky, Threads, Mastodon) keep their own fixed
- * limits and ignore this.
- */
+/** Target character counts for long-capable platforms (LinkedIn + Substack); microblog platforms use their own fixed limits. */
 export const LENGTH_LIMITS: Record<PostLengthType, number> = {
 	short: 600,
 	medium: 1500,
 	long: 3000,
 };
 
+/** Display label for each post-length option (includes approximate character count). */
 export const POST_LENGTH_LABELS: Record<PostLengthType, string> = {
 	short: "Short (~600)",
 	medium: "Medium (~1,500)",

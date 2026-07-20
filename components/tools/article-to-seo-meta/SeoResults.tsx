@@ -1,15 +1,6 @@
 "use client";
 
-import {
-	CheckIcon,
-	ClipboardCheckIcon,
-	ClipboardCopyIcon,
-	CopyIcon,
-	Loader2Icon,
-	RefreshCwIcon,
-	TagsIcon,
-} from "lucide-react";
-import { useState } from "react";
+import { Loader2Icon, RefreshCwIcon, TagsIcon } from "lucide-react";
 
 import {
 	DESC_MAX,
@@ -24,6 +15,7 @@ import {
 	CardContent,
 	CardHeader,
 	CardTitle,
+	CopyButton,
 	Textarea,
 	Tooltip,
 } from "@/components/ui";
@@ -41,9 +33,7 @@ function status(len: number, min: number, max: number): RangeStatusType {
 
 type Props = {
 	variations: SeoVariationType[];
-	/** Index currently regenerating, or null (drives the per-card spinner). */
 	regeneratingIndex: number | null;
-	/** Any run in flight — disables regenerate on every card so requests can't race. */
 	busy: boolean;
 	onVariationChange: (
 		index: number,
@@ -53,6 +43,7 @@ type Props = {
 	onRegenerate: (index: number) => void;
 };
 
+/** Grid of editable SEO variation cards with per-card regenerate and copy actions. */
 export default function SeoResults({
 	variations,
 	regeneratingIndex,
@@ -64,7 +55,6 @@ export default function SeoResults({
 		<div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
 			{variations.map((v, i) => (
 				<VariationCard
-					// stable order
 					key={i}
 					index={i + 1}
 					variation={v}
@@ -78,6 +68,7 @@ export default function SeoResults({
 	);
 }
 
+/** Single SEO variation card with editable title and description fields. */
 function VariationCard({
 	index,
 	variation,
@@ -151,6 +142,7 @@ function VariationCard({
 	);
 }
 
+/** Editable textarea for one SEO field with a character-range badge. */
 function Field({
 	label,
 	value,
@@ -189,7 +181,7 @@ function Field({
 						{value.length} / {min}–{max}
 					</span>
 				</div>
-				<CopyButton label="Copy" value={value} icon={CopyIcon} />
+				<CopyButton label="Copy" value={value} variant="ghost" />
 			</div>
 			<Textarea
 				aria-label={label}
@@ -201,45 +193,5 @@ function Field({
 				)}
 			/>
 		</div>
-	);
-}
-
-function CopyButton({
-	label,
-	value,
-	className,
-	icon: Icon = ClipboardCopyIcon,
-}: {
-	label: string;
-	value: string;
-	className?: string;
-	icon?: typeof ClipboardCopyIcon;
-}) {
-	const [copied, setCopied] = useState(false);
-	const CopiedIcon = Icon === CopyIcon ? CheckIcon : ClipboardCheckIcon;
-	return (
-		<Button
-			type="button"
-			variant={className ? "outline" : "ghost"}
-			size="sm"
-			className={className}
-			onClick={() => {
-				navigator.clipboard.writeText(value);
-				setCopied(true);
-				setTimeout(() => setCopied(false), 1200);
-			}}
-		>
-			{copied ? (
-				<>
-					<CopiedIcon aria-hidden className="w-3.5 h-3.5" />
-					Copied
-				</>
-			) : (
-				<>
-					<Icon aria-hidden className="w-3.5 h-3.5" />
-					{label}
-				</>
-			)}
-		</Button>
 	);
 }

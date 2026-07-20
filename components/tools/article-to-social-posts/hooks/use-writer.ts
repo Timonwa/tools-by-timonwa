@@ -33,6 +33,7 @@ import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { type HistoryEntryType, useHistory } from "./use-history";
 import { usePresets } from "./use-presets";
 
+/** Central state and action hook for the social-post writer — wires input, generation, editing, history, and presets. */
 export function useWriter() {
 	const {
 		text,
@@ -62,17 +63,14 @@ export function useWriter() {
 		prefsStorage.getServerSnapshot,
 	);
 
-	// `generate` runs in a transition — `isGenerating` is its pending flag.
-	// `regenerate` uses its own transition but reports per-draft pending via the
-	// `regenerating` map below (a single transition flag can't distinguish cards).
+	// `regenerate` uses its own transition but tracks per-draft loading via `regenerating` — a single flag can't distinguish cards.
 	const [isGenerating, startGenerate] = useTransition();
 	const [, startRegenerate] = useTransition();
 	const [preview, setPreview] = useState<PreviewResultType | null>(null);
 	const [editableDrafts, setEditableDrafts] = useState<PostDraftType[]>([]);
 	const [error, setError] = useState<string | null>(null);
 
-	// Source of truth for regenerate — captured at generate-time so edits to
-	// the form after generating don't silently change what regenerate sees.
+	// Captured at generate-time so form edits after generation don't silently change what regenerate sees.
 	const [lastInput, setLastInput] = useState<DraftInputType | null>(null);
 
 	const [regenerating, setRegenerating] = useState<Record<string, boolean>>({});
@@ -80,7 +78,6 @@ export function useWriter() {
 
 	const [lastUsage, setLastUsage] = useState<TokenUsageType | null>(null);
 
-	// Presets (saved configs) — shared with the Writing preferences drawer.
 	const {
 		templates,
 		activeId: activeTemplateId,
@@ -93,8 +90,7 @@ export function useWriter() {
 
 	const { history, upsert, remove: removeHistoryEntry } = useHistory();
 
-	// Non-reactive persist logic — always reads the latest preview/input/tone/etc.
-	// without them being effect dependencies (React 19.2 useEffectEvent).
+	// useEffectEvent — reads latest values without them becoming effect dependencies (React 19.2).
 	const persistDraftEdits = useEffectEvent(() => {
 		if (!preview || !lastInput || isGenerating || editableDrafts.length === 0)
 			return;
@@ -110,8 +106,7 @@ export function useWriter() {
 		});
 	});
 
-	// Persist edits back to history so they survive a reload or history load.
-	// Debounced 600 ms to avoid hammering localStorage on every keystroke.
+	// Debounced 600 ms — avoids hammering localStorage on every keystroke.
 	useEffect(() => {
 		if (editableDrafts.length === 0) return;
 		const id = setTimeout(persistDraftEdits, 600);
@@ -140,10 +135,7 @@ export function useWriter() {
 		return text.trim() ? { kind: "text", text } : null;
 	}, [inputKind, url, text]);
 
-	// True when the form's current input isn't the article on screen — either
-	// there's no result yet, or the user changed the source (e.g. switched tabs
-	// and pasted a new URL). Drives the "Generate" vs "Regenerate" label so a new
-	// source never looks like it will overwrite the posts already shown.
+	// Drives "Generate" vs "Regenerate" label — true when the form source differs from the article on screen.
 	const isNewArticle = useMemo(() => {
 		if (!preview || !lastInput) return true;
 		const cur = currentInput();
@@ -153,10 +145,7 @@ export function useWriter() {
 		return key(cur) !== key(lastInput);
 	}, [preview, lastInput, currentInput]);
 
-	// Shared generation path for both a fresh generate and "regenerate all".
-	// `reset: true` clears the screen first (a new run from the form); `false`
-	// keeps the current posts visible and swaps them in when the new set lands,
-	// so regenerating from the bottom doesn't blank the results mid-flight.
+	// `reset: false` keeps current posts visible until the new set lands — avoids blanking results mid-flight.
 	const runPreview = useCallback(
 		(input: DraftInputType, { reset }: { reset: boolean }) => {
 			if (platforms.length === 0) return;
@@ -230,8 +219,6 @@ export function useWriter() {
 		[currentInput, runPreview],
 	);
 
-	// Regenerate every post for the article currently on screen (not whatever is
-	// typed in the form), using the current tone/platforms/prefs.
 	const regenerateAll = useCallback(() => {
 		if (!lastInput) return;
 		runPreview(lastInput, { reset: false });
@@ -344,9 +331,7 @@ export function useWriter() {
 		[setText, setUrl, setInputKind],
 	);
 
-	// One "busy" flag for the whole tool: true during a full generate/regenerate
-	// (`isGenerating`) or any single-post regenerate. Every action button gates on
-	// it so one in-flight request can't race another.
+	// Single busy gate — prevents a second in-flight request racing the first.
 	const isBusy = isGenerating || Object.values(regenerating).some(Boolean);
 
 	return {

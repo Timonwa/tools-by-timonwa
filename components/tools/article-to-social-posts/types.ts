@@ -7,11 +7,8 @@ export type ToneType =
 	"auto" | "professional" | "casual" | "educational" | "punchy";
 
 export type PostDraftType = {
-	/** The platform this post is written for. */
 	platform: PlatformType;
-	/** Single-post content. For a thread, this is the joined preview (for copy). */
 	content: string;
-	/** Individual posts in a thread — only present when threading is on. */
 	thread?: string[];
 	hashtags: string[];
 	charCount: number;
@@ -21,7 +18,6 @@ export type PostDraftType = {
 export type ArticlePreviewType = {
 	url: string;
 	title: string;
-	/** Best-effort extraction from the page — may be empty. */
 	author: string;
 };
 
@@ -38,7 +34,6 @@ export type VoiceType = "i" | "we" | "they";
 
 export type LevelType = 1 | 2 | 3 | 4 | 5;
 
-/** Target length for the long-capable platforms (LinkedIn + Substack). */
 export type PostLengthType = "short" | "medium" | "long";
 
 export type WritingPreferencesType = {

@@ -27,6 +27,7 @@ const LEVELS: LevelType[] = [1, 2, 3, 4, 5];
 const VOICES = Object.keys(VOICE_LABELS) as VoiceType[];
 const POST_LENGTHS = Object.keys(POST_LENGTH_LABELS) as PostLengthType[];
 
+/** Styled ToggleButton alias used across every preference fieldset. */
 function Chip({
 	active,
 	label,
@@ -51,6 +52,7 @@ function Chip({
 	);
 }
 
+/** Voice, emoji density, hashtag density, and post-length preference controls. */
 export default function WritingPreferencesSection({
 	prefs,
 	onChange,
