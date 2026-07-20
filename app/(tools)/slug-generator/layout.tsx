@@ -10,16 +10,17 @@ import {
 	SITE_URL,
 } from "@/lib/config/site";
 
-const TOOL_PATH = "/reading-time";
+const TOOL_PATH = "/slug-generator";
 const TOOL_URL = `${SITE_URL}${TOOL_PATH}`;
-const TOOL_TITLE = "Reading Time Estimator — how long an article takes to read";
+const TOOL_TITLE = "Slug Generator — turn any text into a clean URL slug";
 const TOOL_DESCRIPTION =
-	"Paste an article for its reading and speaking time, with adjustable speed and a copy-ready “X min read” label. Free, no sign-up, runs in your browser.";
+	"Turn any title or heading into a clean, URL-safe slug — strips accents and punctuation, with separator, lowercase, and stop-word options. Runs in your browser.";
 
+/** Route metadata for the Slug Generator tool. */
 export const metadata: Metadata = {
 	title: TOOL_TITLE,
 	description: TOOL_DESCRIPTION,
-	applicationName: "Reading Time Estimator",
+	applicationName: "Slug Generator",
 	alternates: { canonical: TOOL_PATH },
 	openGraph: {
 		type: "website",
@@ -41,30 +42,32 @@ export const metadata: Metadata = {
 const jsonLd = {
 	"@context": "https://schema.org",
 	"@type": "WebApplication",
-	name: "Reading Time Estimator",
-	alternateName: "Reading Time Calculator",
+	name: "Slug Generator",
+	alternateName: "URL Slug Generator",
 	url: TOOL_URL,
 	description: TOOL_DESCRIPTION,
 	applicationCategory: "UtilitiesApplication",
-	applicationSubCategory: "Text tool",
+	applicationSubCategory: "SEO tool",
 	operatingSystem: "Any",
 	browserRequirements: "Requires JavaScript. Requires a modern browser.",
 	offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 	isAccessibleForFree: true,
 	inLanguage: "en",
 	keywords: [
-		"reading time estimator",
-		"reading time calculator",
-		"how long to read",
-		"words per minute",
-		"speaking time calculator",
-		"min read label",
-		"open source reading time",
+		"slug generator",
+		"url slug generator",
+		"title to slug",
+		"text to slug",
+		"seo slug",
+		"permalink generator",
+		"open source slug generator",
 	].join(", "),
 	featureList: [
-		"Estimate reading and speaking time from any text",
-		"Adjustable reading speed (slow, average, fast)",
-		"Copy-ready “X min read” label for blog posts",
+		"Turn any title, heading, or text into a clean, URL-safe slug",
+		"Strips accents and punctuation",
+		"Choose a hyphen or underscore separator",
+		"Optional lowercasing and stop-word removal",
+		"One-click copy, live preview",
 		"Runs entirely in your browser — nothing is uploaded",
 		"Open source, MIT licensed",
 	],
@@ -77,16 +80,16 @@ const jsonLd = {
 	sameAs: [REPO_URL],
 };
 
-export default function ReadingTimeLayout({
+/** Layout wrapper for the Slug Generator route — applies tool brand scope and injects JSON-LD. */
+export default function SlugGeneratorLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
 	return (
-		<div className="tool-reading-time contents">
+		<div className="tool-slug-generator contents">
 			<script
 				type="application/ld+json"
-				// JSON-LD structured data per Next.js docs
 				dangerouslySetInnerHTML={{
 					__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
 				}}

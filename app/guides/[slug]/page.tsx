@@ -126,7 +126,6 @@ export default async function GuidePage({ params }: GuidePageProps) {
 
 				<script
 					type="application/ld+json"
-					// TechArticle structured data for the guide.
 					dangerouslySetInnerHTML={{
 						__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
 					}}

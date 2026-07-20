@@ -16,6 +16,7 @@ const TOOL_TITLE = "Word & Character Counter — reading time & limits";
 const TOOL_DESCRIPTION =
 	"Count words, characters, sentences, and paragraphs as you type, with reading time and live limits for SEO titles, meta descriptions, and social posts.";
 
+/** Route metadata for the Word & Character Counter tool. */
 export const metadata: Metadata = {
 	title: TOOL_TITLE,
 	description: TOOL_DESCRIPTION,
@@ -77,6 +78,7 @@ const jsonLd = {
 	sameAs: [REPO_URL],
 };
 
+/** Layout wrapper for the Word & Character Counter route — applies tool brand scope and injects JSON-LD. */
 export default function WordCounterLayout({
 	children,
 }: {
@@ -86,7 +88,6 @@ export default function WordCounterLayout({
 		<div className="tool-word-counter contents">
 			<script
 				type="application/ld+json"
-				// JSON-LD structured data per Next.js docs
 				dangerouslySetInnerHTML={{
 					__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
 				}}
