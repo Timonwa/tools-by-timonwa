@@ -43,7 +43,6 @@ type Props = {
 	onRegenerate: () => void;
 };
 
-/** Editable post card — single post or thread view, copy, and per-post regeneration. */
 export default function DraftCard({
 	draft,
 	isRegenerating,

@@ -10,7 +10,7 @@ export type SeoArticleType = {
 };
 
 export type SeoMetaResultType = {
-	article?: SeoArticleType; // optional so pre-field history entries still load
+	article?: SeoArticleType;
 	variations: SeoVariationType[];
 };
 
