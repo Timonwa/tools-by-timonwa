@@ -53,7 +53,7 @@ const iconLinkClass =
 
 function ExternalList({ links }: { links: { href: string; label: string }[] }) {
 	return (
-		<ul className="mt-3 space-y-2 text-sm">
+		<ul className="mt-3 flex flex-col gap-2 text-sm">
 			{links.map((link) => (
 				<li key={link.href}>
 					<a
@@ -153,7 +153,7 @@ export default function Footer() {
 							>
 								Tools
 							</h2>
-							<ul className="mt-3 space-y-2 text-sm">
+							<ul className="mt-3 flex flex-col gap-2 text-sm">
 								<li>
 									<Link href={ROUTES.tools} className={linkClass}>
 										All tools
@@ -177,7 +177,7 @@ export default function Footer() {
 							>
 								Categories
 							</h2>
-							<ul className="mt-3 space-y-2 text-sm">
+							<ul className="mt-3 flex flex-col gap-2 text-sm">
 								<li>
 									<Link href={ROUTES.categories} className={linkClass}>
 										All categories
@@ -204,7 +204,7 @@ export default function Footer() {
 							>
 								Guides
 							</h2>
-							<ul className="mt-3 space-y-2 text-sm">
+							<ul className="mt-3 flex flex-col gap-2 text-sm">
 								<li>
 									<Link href={ROUTES.guides} className={linkClass}>
 										All guides

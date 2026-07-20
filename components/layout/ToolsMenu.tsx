@@ -16,11 +16,8 @@ import { TOOLS } from "@/lib/config/tools";
 import { cn } from "@/lib/utils/cn";
 
 type ToolsMenuProps = {
-	/** Controlled open state (the Navbar keeps only one menu open at a time). */
 	open: boolean;
-	/** Toggle handler for the trigger button. */
 	onToggle: () => void;
-	/** Called after a link is chosen so the parent can close the menu. */
 	onNavigate: () => void;
 };
 

@@ -21,11 +21,8 @@ import { REPO_URL, SUPPORT_URL } from "@/lib/config/site";
 import { cn } from "@/lib/utils/cn";
 
 type NavActionsProps = {
-	/** Tool-specific control (e.g. a settings drawer) shown among the secondary actions. */
 	actionsSlot?: ReactNode;
-	/** GitHub repo URL for the "Star on GitHub" link. Defaults to the hub repo. */
 	repoUrl?: string;
-	/** Show the bring-your-own-key control. Off for deterministic tools. */
 	showByok?: boolean;
 };
 
