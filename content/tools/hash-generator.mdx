@@ -1,0 +1,63 @@
+export const faq = [
+	{
+		question: "What is a hash?",
+		answer:
+			"A hash is a fixed-length fingerprint of some input, produced by a one-way function. The same text always yields the same hash, but you can't work backwards from the hash to the original text. Changing a single character produces a completely different result.",
+	},
+	{
+		question:
+			"What's the difference between SHA-1, SHA-256, SHA-384, and SHA-512?",
+		answer:
+			"They're members of the SHA family that differ in output length and strength. SHA-1 produces 160 bits and is considered broken for security. SHA-256, SHA-384, and SHA-512 are part of SHA-2 and produce 256, 384, and 512 bits — SHA-256 is the common default.",
+	},
+	{
+		question: "Is SHA-1 still safe to use?",
+		answer:
+			"Not for security. SHA-1 is vulnerable to collision attacks and shouldn't be used for signatures or integrity where an attacker is a threat. It's included here for compatibility with older systems and checksums that still expect it.",
+	},
+	{
+		question: "Can a hash be reversed or decrypted?",
+		answer:
+			"No. Hashing is one-way, so there's nothing to decrypt. The only way to find an input for a given hash is to guess and re-hash candidates, which is why weak or common inputs can still be found by brute force.",
+	},
+	{
+		question: "Is my text uploaded to generate the hash?",
+		answer:
+			"No. Hashes are computed locally with your browser's built-in Web Crypto API. Your text never leaves the device — nothing is uploaded, logged, or stored.",
+	},
+	{
+		question: "What can I use these hashes for?",
+		answer:
+			"Common uses include verifying a file or message hasn't changed (integrity checks), generating cache keys or content fingerprints, and comparing values without storing the original. For passwords, use a purpose-built algorithm like bcrypt or Argon2 instead.",
+	},
+	{
+		question: "Why isn't MD5 included?",
+		answer:
+			"MD5 is badly broken and isn't part of the browser's Web Crypto API, so it isn't offered here. If you only need a non-security checksum, SHA-256 is a fast, widely supported replacement.",
+	},
+];
+
+## What is a hash generator?
+
+A hash generator turns any text into a fixed-length fingerprint — its hash. The same input always produces the same output, and even a one-character change produces a completely different hash, which makes hashes useful for spotting whether data has changed. This tool computes SHA-1, SHA-256, SHA-384, and SHA-512 as you type, using your browser's built-in Web Crypto API, so your text never leaves the device.
+
+## SHA-1 vs SHA-256 vs SHA-384 vs SHA-512
+
+All four belong to the SHA family and are one-way functions; they differ in output size and security:
+
+- **SHA-1** — 160-bit output. Broken for security use; kept for legacy checksums.
+- **SHA-256** — 256-bit output from SHA-2. The common default for integrity and fingerprints.
+- **SHA-384** and **SHA-512** — longer SHA-2 variants, for when a larger digest is required.
+
+When in doubt, reach for SHA-256.
+
+## How to use the hash generator
+
+1. Type or paste text into the input.
+2. All four digests appear immediately and update as you type.
+3. Toggle **uppercase hex** if a system you're matching expects capitals.
+4. Copy the hash you need with its Copy button.
+
+## What hashing is good for (and what it isn't)
+
+Hashing verifies **integrity** — that a file, message, or value hasn't changed — and creates stable fingerprints for caching and comparison. It is **not** encryption: there's no key and nothing to reverse. And it's **not** the right tool for storing passwords on its own — use a slow, salted algorithm such as bcrypt, scrypt, or Argon2 for that, since a raw SHA hash of a password is far too fast to be safe.

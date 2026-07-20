@@ -1,0 +1,65 @@
+export const faq = [
+	{
+		question: "What is an SVG to JSX converter?",
+		answer:
+			"It's a tool that rewrites raw SVG markup so it drops straight into React. SVG uses HTML-style attributes like class and stroke-width, but JSX expects React names like className and strokeWidth — the converter renames every attribute, turns inline styles into objects, and hands you valid JSX.",
+	},
+	{
+		question: "Why doesn't my raw SVG work in React?",
+		answer:
+			"JSX is not HTML. Attributes such as class, stroke-width, and clip-rule are invalid in JSX, and an inline style string throws because React expects a style object. Pasting an SVG unchanged usually causes a compile error or a warning until those names are converted.",
+	},
+	{
+		question: "Does it convert class to className?",
+		answer:
+			"Yes. class becomes className, hyphenated attributes like stroke-width become strokeWidth, and namespaced ones like xlink:href become xlinkHref. Data and ARIA attributes keep their dashes, because React expects those unchanged.",
+	},
+	{
+		question: "What happens to inline styles?",
+		answer:
+			"An inline style string such as fill:#fff;stroke-width:2 is converted into a JSX style object with camelCased keys, like style={{ fill: '#fff', strokeWidth: '2' }}, which is what React requires.",
+	},
+	{
+		question: "Can it wrap the SVG in a component?",
+		answer:
+			"Yes. Give it a component name and it returns a ready-to-use component — optionally typed for TypeScript with React.SVGProps — and can spread props onto the root svg so callers pass className, width, or an accessible label.",
+	},
+	{
+		question: "Is my SVG uploaded anywhere?",
+		answer:
+			"No. The conversion runs entirely in your browser with JavaScript. Your markup is never sent to a server, logged, or stored.",
+	},
+	{
+		question: "Should I inline SVGs or load them with an img tag?",
+		answer:
+			"Inline SVG (as a component) when you need to style or animate it with CSS, change its color with currentColor, or pass props. Use an img tag for large, static illustrations you never restyle, so the markup stays out of your bundle.",
+	},
+];
+
+## What is an SVG to JSX converter?
+
+An SVG to JSX converter turns a raw `<svg>` snippet — the kind you export from a design tool or copy from an icon set — into markup React can render. SVG looks like HTML, but JSX has different rules: attribute names, inline styles, and self-closing tags all have to match what React expects. This tool applies those rules for you and returns clean JSX you can paste straight into a component.
+
+Everything runs in your browser — your SVG is never uploaded.
+
+## Why raw SVG breaks in React
+
+Paste an unmodified SVG into a component and the compiler complains, because a handful of things are spelled differently in JSX:
+
+- **`class` → `className`** — `class` is a reserved word in JavaScript.
+- **Hyphenated attributes → camelCase** — `stroke-width` becomes `strokeWidth`, `clip-rule` becomes `clipRule`, `stop-color` becomes `stopColor`.
+- **Namespaced attributes** — `xlink:href` becomes `xlinkHref`, `xml:space` becomes `xmlSpace`.
+- **Inline `style` strings → objects** — `style="fill:#fff"` must become `style={{ fill: '#fff' }}`.
+
+Miss one and you get a build error or a runtime warning. The converter handles all of them in one pass.
+
+## How to use the converter
+
+1. Paste your SVG markup into the input — or load the example to see the shape of the output.
+2. The JSX appears instantly, with every attribute renamed and inline styles converted.
+3. Optionally set a **component name** to wrap the SVG in a reusable component, tick **TypeScript** for typed props, and **spread props** so the component forwards `className`, `width`, and the rest to the root `<svg>`.
+4. Copy the result into your project.
+
+## Making the SVG reusable
+
+Wrapping the SVG in a component with `{...props}` on the root `<svg>` lets you restyle one shared icon everywhere it's used — set its size with a `width` prop, recolor it by giving the SVG `fill="currentColor"` and setting `color` in CSS, or add an `aria-label` for screen readers. That's the advantage of inline SVG over an `<img>`: it's part of the DOM, so CSS and props reach it.

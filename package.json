@@ -36,8 +36,10 @@
 		"next": "16.2.10",
 		"react": "19.2.7",
 		"react-dom": "19.2.7",
+		"react-simple-code-editor": "^0.14.1",
 		"remark-frontmatter": "^5.0.0",
 		"remark-gfm": "^4.0.1",
+		"sugar-high": "^1.2.1",
 		"tailwind-merge": "^3.6.0",
 		"zod": "^4.4.3"
 	},
