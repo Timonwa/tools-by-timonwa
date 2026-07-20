@@ -19,7 +19,7 @@ import {
 	type SeoMetaResultType,
 	type TokenUsageType,
 } from "./types";
-import { Button, Input } from "@/components/ui";
+import { Button, Input, SegmentedControl } from "@/components/ui";
 
 import { generateSeoMeta } from "@/lib/tools/article-to-seo-meta/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
@@ -197,7 +197,7 @@ export default function SeoForm({
 	);
 
 	return (
-		<form action={formAction} className="space-y-5">
+		<form action={formAction} className="flex flex-col gap-5">
 			<ArticleSourceInput
 				inputKind={inputKind}
 				onInputKindChange={setInputKind}
@@ -233,27 +233,15 @@ export default function SeoForm({
 
 			<fieldset>
 				<legend className="block text-sm font-medium mb-2">Variations</legend>
-				<div className="inline-flex rounded-md border border-border overflow-hidden">
-					{[1, 2, 3].map((n) => {
-						const active = count === n;
-						return (
-							<button
-								key={n}
-								type="button"
-								onClick={() => setCount(n as 1 | 2 | 3)}
-								disabled={isPending}
-								aria-pressed={active}
-								className={`px-4 py-1.5 text-sm font-medium transition-colors ${
-									active
-										? "bg-primary text-primary-foreground"
-										: "bg-background hover:bg-accent"
-								}`}
-							>
-								{n}
-							</button>
-						);
-					})}
-				</div>
+				<SegmentedControl
+					value={count}
+					onChange={setCount}
+					disabled={isPending}
+					options={([1, 2, 3] as const).map((n) => ({
+						value: n,
+						label: String(n),
+					}))}
+				/>
 			</fieldset>
 
 			{state?.error && <ErrorNotice message={state.error} />}

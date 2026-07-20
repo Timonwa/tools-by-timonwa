@@ -116,7 +116,7 @@ export default function GenerateForm({
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<form onSubmit={onSubmit} className="space-y-4">
+				<form onSubmit={onSubmit} className="flex flex-col gap-4">
 					<TemplatesPicker
 						templates={templates}
 						activeTemplateId={activeTemplateId}

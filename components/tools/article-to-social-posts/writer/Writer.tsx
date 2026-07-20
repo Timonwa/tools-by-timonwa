@@ -33,7 +33,7 @@ export default function Writer() {
 
 	return (
 		<div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-			<div className="space-y-6 min-w-0">
+			<div className="flex flex-col gap-6 min-w-0">
 				<GenerateForm
 					inputKind={w.inputKind}
 					onInputKindChange={w.setInputKind}
@@ -69,7 +69,7 @@ export default function Writer() {
 				/>
 
 				{w.preview && (
-					<div ref={resultsRef} className="space-y-6">
+					<div ref={resultsRef} className="flex flex-col gap-6">
 						<ArticleCard
 							article={w.preview.article}
 							usage={w.lastUsage}
@@ -78,7 +78,7 @@ export default function Writer() {
 							copyLabel="Copy all posts"
 						/>
 
-						<div className="columns-1 md:columns-2 gap-4 space-y-4">
+						<div className="columns-1 md:columns-2 gap-4 [&>*]:mb-4">
 							{w.editableDrafts.map((draft) => (
 								<DraftCard
 									key={draft.platform}

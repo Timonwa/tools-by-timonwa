@@ -4,23 +4,20 @@ import Link from "next/link";
 import ToolGrid from "@/components/_shared/tool/ToolGrid";
 import { buttonClasses } from "@/components/ui";
 import { ROUTES } from "@/lib/config/routes";
-import { LIVE_TOOLS } from "@/lib/config/tools";
+import { FEATURED_TOOLS, LIVE_TOOLS } from "@/lib/config/tools";
 
-/** Home only previews the first few tools; the full set lives at /tools. */
-const PREVIEW_COUNT = 6;
-
+/** Home previews the featured tools; the full set lives at /tools. */
 export default function ToolsPreview() {
-	const preview = LIVE_TOOLS.slice(0, PREVIEW_COUNT);
-	const hasMore = LIVE_TOOLS.length > PREVIEW_COUNT;
+	const hasMore = LIVE_TOOLS.length > FEATURED_TOOLS.length;
 
 	return (
-		<section aria-labelledby="tools-heading" className="space-y-6">
+		<section aria-labelledby="tools-heading" className="flex flex-col gap-6">
 			<div className="flex items-center justify-between gap-4">
 				<h2
 					id="tools-heading"
 					className="text-sm font-medium uppercase tracking-wide text-muted-foreground"
 				>
-					Tools
+					Featured tools
 				</h2>
 				<Link
 					href={ROUTES.tools}
@@ -31,7 +28,7 @@ export default function ToolsPreview() {
 				</Link>
 			</div>
 
-			<ToolGrid tools={preview} />
+			<ToolGrid tools={FEATURED_TOOLS} />
 
 			{hasMore && (
 				<div className="flex justify-center pt-2">

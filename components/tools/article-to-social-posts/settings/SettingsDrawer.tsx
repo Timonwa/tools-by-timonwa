@@ -55,18 +55,15 @@ export default function SettingsDrawer() {
 				side="bottom"
 				align="end"
 				desktopOnly
-				className="w-full xl:w-auto"
 			>
 				<Button
 					variant="ghost"
-					size="sm"
+					size="icon-sm"
 					onClick={() => setOpen(true)}
 					aria-label="Writing preferences"
-					className="w-full justify-start xl:w-auto xl:justify-center"
 					aria-expanded={open}
 				>
 					<PenLineIcon aria-hidden className="w-4 h-4" />
-					<span className="xl:hidden">Writing preferences</span>
 				</Button>
 			</Tooltip>
 
@@ -84,7 +81,7 @@ export default function SettingsDrawer() {
 				}
 				description="Your defaults for every generation, saved on this device."
 			>
-				<div className="px-4 sm:px-5 py-5 space-y-6">
+				<div className="px-4 sm:px-5 py-5 flex flex-col gap-6">
 					<TemplatesPicker
 						templates={presets.templates}
 						activeTemplateId={presets.activeId}
