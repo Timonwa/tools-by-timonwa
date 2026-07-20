@@ -7,8 +7,7 @@ import {
 	normalizeHashtag,
 } from "../constants/preferences";
 import type { WritingPreferencesType } from "../types";
-import { Input } from "@/components/ui";
-import { cn } from "@/lib/utils/cn";
+import { Badge, Input } from "@/components/ui";
 
 type HashtagRulesProps = {
 	prefs: WritingPreferencesType;
@@ -37,7 +36,7 @@ export default function HashtagRulesSection({
 	};
 
 	return (
-		<section aria-labelledby={headingId} className="space-y-4">
+		<section aria-labelledby={headingId} className="flex flex-col gap-4">
 			<div className="flex items-center gap-2">
 				<HashIcon aria-hidden className="w-4 h-4 text-primary" />
 				<h3 id={headingId} className="text-sm font-semibold">
@@ -99,7 +98,7 @@ function TagList({
 	};
 
 	return (
-		<div className="space-y-2">
+		<div className="flex flex-col gap-2">
 			<label htmlFor={inputId} className="text-xs font-medium block">
 				{label}
 			</label>
@@ -109,10 +108,7 @@ function TagList({
 					<span className="text-[11px] text-muted-foreground italic">None</span>
 				)}
 				{tags.map((tag) => (
-					<span
-						key={tag}
-						className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded-full bg-primary/10 text-primary border border-primary/20"
-					>
+					<Badge key={tag} variant="primary">
 						<span className="font-mono">#{tag}</span>
 						<button
 							type="button"
@@ -122,7 +118,7 @@ function TagList({
 						>
 							<XIcon aria-hidden className="w-3 h-3" />
 						</button>
-					</span>
+					</Badge>
 				))}
 			</div>
 
@@ -140,7 +136,7 @@ function TagList({
 				/>
 			</div>
 
-			<p className={cn("text-[10px] text-muted-foreground")}>{helper}</p>
+			<p className="text-[10px] text-muted-foreground">{helper}</p>
 		</div>
 	);
 }

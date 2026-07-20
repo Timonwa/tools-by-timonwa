@@ -7,6 +7,13 @@ import {
 } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
+import {
+	type TintType,
+	TINT_HOVER_BORDER,
+	TINT_ICON,
+	TINT_SURFACE,
+} from "./tints";
+
 /**
  * Purposeful tool categories — the axes people actually browse by. A tool can
  * belong to several (max three); its FIRST category is the primary one used for
@@ -16,9 +23,9 @@ import type { ComponentType, SVGProps } from "react";
 export type CategoryIdType = "writing" | "ai" | "seo" | "developer" | "media";
 
 /**
- * Per-category color, as literal Tailwind class strings (so the scanner keeps
- * them — dynamic `bg-${x}` names would be purged). `badge` colors the pill,
- * `chip` the icon tile, and `border` the card's hover edge.
+ * Per-category color, drawn from the shared `tint` palette (see lib/config/tints).
+ * `badge` colors the pill, `chip` the icon tile, and `border` the card's hover
+ * edge. Derived from the category's `tint` so every surface stays in sync.
  */
 export type CategoryColorType = {
 	badge: string;
@@ -26,12 +33,20 @@ export type CategoryColorType = {
 	border: string;
 };
 
+const colorForTint = (tint: TintType): CategoryColorType => ({
+	badge: TINT_SURFACE[tint],
+	chip: TINT_ICON[tint],
+	border: TINT_HOVER_BORDER[tint],
+});
+
 export type CategoryType = {
 	id: CategoryIdType;
 	label: string;
 	/** One line for the "browse by category" card and the filtered directory. */
 	description: string;
 	icon: ComponentType<SVGProps<SVGSVGElement>>;
+	/** The palette hue for this category, shared across every colored surface. */
+	tint: TintType;
 	color: CategoryColorType;
 };
 
@@ -42,60 +57,41 @@ export const TOOL_CATEGORIES: CategoryType[] = [
 		label: "Writing",
 		description: "Draft, edit, and shape words — from counts to clean copy.",
 		icon: PenLineIcon,
-		color: {
-			badge: "border-sky-500/25 bg-sky-500/10 text-sky-700 dark:text-sky-300",
-			chip: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
-			border: "hover:border-sky-500/40",
-		},
+		tint: 1,
+		color: colorForTint(1),
 	},
 	{
 		id: "ai",
 		label: "AI",
 		description:
 			"AI generators that turn an article into ready-to-use content.",
-		color: {
-			badge:
-				"border-violet-500/25 bg-violet-500/10 text-violet-700 dark:text-violet-300",
-			chip: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
-			border: "hover:border-violet-500/40",
-		},
 		icon: SparklesIcon,
+		tint: 3,
+		color: colorForTint(3),
 	},
 	{
 		id: "seo",
 		label: "SEO",
 		description: "Get found: titles, slugs, and metadata sized for search.",
-		color: {
-			badge:
-				"border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-			chip: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-			border: "hover:border-emerald-500/40",
-		},
 		icon: SearchIcon,
+		tint: 4,
+		color: colorForTint(4),
 	},
 	{
 		id: "developer",
 		label: "Developer",
 		description: "Quick, dependable utilities for everyday coding tasks.",
-		color: {
-			badge:
-				"border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300",
-			chip: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-			border: "hover:border-amber-500/40",
-		},
 		icon: CodeIcon,
+		tint: 2,
+		color: colorForTint(2),
 	},
 	{
 		id: "media",
 		label: "Media",
 		description: "Images, share cards, and assets for publishing a post.",
-		color: {
-			badge:
-				"border-rose-500/25 bg-rose-500/10 text-rose-700 dark:text-rose-300",
-			chip: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
-			border: "hover:border-rose-500/40",
-		},
 		icon: ImageIcon,
+		tint: 5,
+		color: colorForTint(5),
 	},
 ];
 

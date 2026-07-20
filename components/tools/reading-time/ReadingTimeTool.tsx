@@ -4,7 +4,14 @@ import { useId, useMemo, useState } from "react";
 
 import DraftReuseControls from "@/components/_shared/draft/DraftReuseControls";
 import { useToolDraft } from "@/lib/hooks/use-tool-draft";
-import { Card, CardContent, CopyButton, Textarea } from "@/components/ui";
+import {
+	Card,
+	CardContent,
+	CopyButton,
+	StatCard,
+	Textarea,
+	ToggleButton,
+} from "@/components/ui";
 import { countWords } from "@/lib/text/counts";
 import {
 	durationSeconds,
@@ -14,7 +21,6 @@ import {
 	type ReadingSpeedType,
 	SPEAKING_WPM,
 } from "@/lib/text/reading-time";
-import { cn } from "@/lib/utils/cn";
 
 const SPEEDS: { id: ReadingSpeedType; label: string }[] = [
 	{ id: "slow", label: "Slow" },
@@ -36,7 +42,7 @@ export default function ReadingTimeTool() {
 	return (
 		<div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
 			<Card className="min-w-0 self-start">
-				<CardContent className="space-y-3">
+				<CardContent className="flex flex-col gap-3">
 					<div className="flex flex-col gap-2">
 						<label htmlFor="rt-input" className="text-sm font-medium">
 							Your text
@@ -46,7 +52,7 @@ export default function ReadingTimeTool() {
 							value={text}
 							onChange={(e) => setText(e.target.value)}
 							placeholder="Paste your article draft…"
-							className="min-h-64 max-h-96 overflow-y-auto"
+							className="min-h-64 max-h-96 overflow-y-auto no-scrollbar"
 						/>
 					</div>
 					<DraftReuseControls
@@ -59,45 +65,39 @@ export default function ReadingTimeTool() {
 				</CardContent>
 			</Card>
 
-			<div className="min-w-0 space-y-6">
-				<fieldset className="min-w-0 space-y-2 border-0 p-0">
+			<div className="flex min-w-0 flex-col gap-6">
+				<fieldset className="flex min-w-0 flex-col gap-2 border-0 p-0">
 					<legend className="text-sm font-medium text-muted-foreground">
 						Reading speed
 					</legend>
 					<div className="flex flex-wrap gap-2">
 						{SPEEDS.map((s) => (
-							<button
+							<ToggleButton
 								key={s.id}
-								type="button"
-								onClick={() => setSpeed(s.id)}
+								active={speed === s.id}
 								aria-pressed={speed === s.id}
-								className={cn(
-									"inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm transition-colors",
-									speed === s.id
-										? "border-primary bg-primary/10 font-medium text-primary"
-										: "border-border hover:bg-accent hover:text-accent-foreground",
-								)}
+								onClick={() => setSpeed(s.id)}
 							>
 								{s.label}
 								<span className="text-xs text-muted-foreground">
 									{READING_WPM[s.id]} wpm
 								</span>
-							</button>
+							</ToggleButton>
 						))}
 					</div>
 				</fieldset>
 
 				<dl className="grid gap-3">
-					<EstimateCard
+					<StatCard
 						label="Reading time"
 						value={formatDuration(durationSeconds(words, wpm))}
-						primary
+						highlight
 					/>
-					<EstimateCard
+					<StatCard
 						label="Speaking time"
 						value={formatDuration(durationSeconds(words, SPEAKING_WPM))}
 					/>
-					<EstimateCard label="Words" value={numberFmt.format(words)} />
+					<StatCard label="Words" value={numberFmt.format(words)} />
 				</dl>
 
 				<Card>
@@ -117,35 +117,6 @@ export default function ReadingTimeTool() {
 					</CardContent>
 				</Card>
 			</div>
-		</div>
-	);
-}
-
-function EstimateCard({
-	label,
-	value,
-	primary,
-}: {
-	label: string;
-	value: string;
-	primary?: boolean;
-}) {
-	return (
-		<div
-			className={cn(
-				"flex flex-col-reverse gap-1 rounded-xl border px-4 py-4",
-				primary ? "border-primary/40 bg-primary/5" : "border-border bg-card",
-			)}
-		>
-			<dt className="text-xs text-muted-foreground">{label}</dt>
-			<dd
-				className={cn(
-					"text-2xl font-bold leading-none",
-					primary && "text-primary",
-				)}
-			>
-				{value}
-			</dd>
 		</div>
 	);
 }

@@ -1,16 +1,11 @@
 import { ArrowRightIcon } from "lucide-react";
 
-import { LinkCard } from "@/components/ui";
+import { IconBadge, LinkCard } from "@/components/ui";
 import type { CategoryType } from "@/lib/config/categories";
 import { ROUTES } from "@/lib/config/routes";
 import { LIVE_TOOLS } from "@/lib/config/tools";
-import { cn } from "@/lib/utils/cn";
 
-/**
- * A category tile — icon, label, description, and live tool count. Links into
- * the filtered `/tools` directory; empty categories render as "Coming soon".
- * Shared by the home "browse by category" section and the /categories page.
- */
+/** A category tile linking into the filtered /tools; empty categories show "Coming soon". */
 export default function CategoryCard({ category }: { category: CategoryType }) {
 	const Icon = category.icon;
 	const count = LIVE_TOOLS.filter((t) =>
@@ -24,15 +19,7 @@ export default function CategoryCard({ category }: { category: CategoryType }) {
 			disabled={soon}
 			className={soon ? undefined : category.color.border}
 		>
-			<span
-				aria-hidden
-				className={cn(
-					"mb-4 flex h-10 w-10 items-center justify-center rounded-lg",
-					category.color.chip,
-				)}
-			>
-				<Icon className="h-5 w-5" />
-			</span>
+			<IconBadge icon={Icon} tint={category.tint} className="mb-4" />
 			<h3 className="mb-1 text-lg font-semibold leading-tight">
 				{category.label}
 			</h3>

@@ -4,6 +4,7 @@ import type { Route } from "next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import ToolGrid from "@/components/_shared/tool/ToolGrid";
+import { ToggleButton } from "@/components/ui";
 import { type CategoryIdType, TOOL_CATEGORIES } from "@/lib/config/categories";
 import { LIVE_TOOLS } from "@/lib/config/tools";
 import { cn } from "@/lib/utils/cn";
@@ -34,21 +35,21 @@ function FilterChip({
 	onClick: () => void;
 }) {
 	return (
-		<button
-			type="button"
+		<ToggleButton
+			shape="pill"
+			active={active}
 			aria-pressed={active}
 			onClick={onClick}
 			className={cn(
-				"inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
-				active
-					? (activeClass ?? "border-primary bg-primary/10 text-primary")
-					: "border-border text-muted-foreground hover:bg-accent hover:text-foreground",
+				!active && "bg-transparent text-muted-foreground hover:text-foreground",
+				// A category tint for the active state overrides the default primary.
+				active && activeClass,
 			)}
 		>
 			{icon}
 			{label}
 			<span className="text-xs opacity-70">{count}</span>
-		</button>
+		</ToggleButton>
 	);
 }
 
@@ -76,7 +77,7 @@ export default function FilterableTools() {
 	};
 
 	return (
-		<div className="space-y-6">
+		<div className="flex flex-col gap-6">
 			<div
 				role="group"
 				aria-label="Filter tools by category"

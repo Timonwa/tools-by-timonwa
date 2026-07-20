@@ -22,10 +22,7 @@ function SubmitButton() {
 	);
 }
 
-/**
- * "Get notified when a new tool ships" signup. Posts to the Sender.net server
- * action (lib/newsletter/actions.ts) via useActionState.
- */
+/** "New tools in your inbox" signup — posts to the Sender.net server action. */
 export default function Newsletter({ className }: { className?: string }) {
 	const [state, formAction] = useActionState(subscribeNewsletter, INITIAL);
 	const headingId = useId();
@@ -46,7 +43,7 @@ export default function Newsletter({ className }: { className?: string }) {
 			/>
 			<div
 				aria-hidden
-				className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-sky-500/15 blur-3xl"
+				className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-tint-1/15 blur-3xl"
 			/>
 			<div className="relative">
 				<span

@@ -20,7 +20,7 @@ import {
 } from "../constants/preferences";
 import { TONES } from "../constants/tones";
 import type { PresetTemplateType } from "../types";
-import { Button, Input, Tooltip } from "@/components/ui";
+import { Badge, Button, Input, Tooltip } from "@/components/ui";
 
 import { cn } from "@/lib/utils/cn";
 
@@ -72,7 +72,7 @@ export default function TemplatesPicker({
 	};
 
 	return (
-		<div className="rounded-md border border-border bg-muted/30 p-2.5 space-y-2">
+		<div className="flex flex-col rounded-md border border-border bg-muted/30 p-2.5 gap-2">
 			<div className="flex items-center justify-between">
 				{collapsible ? (
 					<button
@@ -90,10 +90,10 @@ export default function TemplatesPicker({
 							({templates.length})
 						</span>
 						{!expanded && activePreset && (
-							<span className="inline-flex min-w-0 items-center gap-1 rounded-full border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-primary">
+							<Badge variant="primary" className="min-w-0">
 								<CheckIcon aria-hidden className="w-3 h-3 shrink-0" />
 								<span className="max-w-32 truncate">{activePreset.name}</span>
-							</span>
+							</Badge>
 						)}
 						<ChevronDownIcon
 							aria-hidden
@@ -139,7 +139,7 @@ export default function TemplatesPicker({
 
 					{isSaving && (
 						<div className="flex items-start gap-1.5">
-							<div className="min-w-0 flex-1 space-y-1">
+							<div className="flex flex-col min-w-0 flex-1 gap-1">
 								<Input
 									autoFocus
 									value={nameDraft}
@@ -250,7 +250,7 @@ function TemplateChip({
 					disabled={disabled}
 					aria-pressed={active}
 					className={cn(
-						"rounded-full border pl-2.5 pr-2.5 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+						"rounded-md border pl-2.5 pr-2.5 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
 						confirmingDelete
 							? "border-destructive/50 bg-destructive/5"
 							: active
@@ -279,7 +279,7 @@ function TemplateChip({
 							}}
 							aria-label={`Confirm delete preset ${template.name}`}
 							disabled={disabled}
-							className="rounded-full p-1 text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
+							className="rounded-md p-1 text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
 						>
 							<Trash2Icon aria-hidden className="w-3.5 h-3.5" />
 						</button>
@@ -289,7 +289,7 @@ function TemplateChip({
 							type="button"
 							onClick={() => setConfirmingDelete(false)}
 							aria-label="Cancel delete"
-							className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+							className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
 						>
 							<XIcon aria-hidden className="w-3.5 h-3.5" />
 						</button>
@@ -303,7 +303,7 @@ function TemplateChip({
 							onClick={onEdit}
 							aria-label={`Edit preset ${template.name}`}
 							disabled={disabled}
-							className="rounded-full p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:cursor-not-allowed"
+							className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:cursor-not-allowed"
 						>
 							<PencilIcon aria-hidden className="w-3.5 h-3.5" />
 						</button>
@@ -314,7 +314,7 @@ function TemplateChip({
 							onClick={() => setConfirmingDelete(true)}
 							aria-label={`Delete preset ${template.name}`}
 							disabled={disabled}
-							className="rounded-full p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
+							className="rounded-md p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
 						>
 							<Trash2Icon aria-hidden className="w-3.5 h-3.5" />
 						</button>
@@ -349,8 +349,8 @@ function TemplateEditor({
 		onDone();
 	};
 	return (
-		<div className="w-full rounded-md border border-primary/40 bg-primary/5 p-2 space-y-2">
-			<div className="space-y-1">
+		<div className="flex flex-col w-full rounded-md border border-primary/40 bg-primary/5 p-2 gap-2">
+			<div className="flex flex-col gap-1">
 				<div className="flex items-center gap-1.5">
 					<Input
 						autoFocus
@@ -426,7 +426,7 @@ function TemplatePreview({ template }: { template: PresetTemplateType }) {
 			role="tooltip"
 			className="pointer-events-none absolute left-0 top-full z-20 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-md border border-border/60 bg-popover/90 backdrop-blur-md px-3 py-2 text-[11px] leading-snug text-popover-foreground shadow-md opacity-0 translate-y-1 transition-all duration-150 ease-out group-hover/preview:opacity-100 group-hover/preview:translate-y-0 group-focus-within/preview:opacity-100 group-focus-within/preview:translate-y-0"
 		>
-			<div className="space-y-1">
+			<div className="flex flex-col gap-1">
 				<Row label="Tone" value={toneLabel(tone)} />
 				<Row
 					label="Platforms"

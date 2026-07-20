@@ -10,12 +10,7 @@ type Props = {
 	getUsage: () => Promise<{ configured: boolean }>;
 };
 
-/**
- * Renders a "free/day" pill once the hosted quota is confirmed configured.
- * `getUsage` is a Server Function, which Next.js does not allow calling during
- * render (that would create a fetch waterfall) — so it's invoked from an effect
- * after mount, not via `use()`. Each tool wraps this with its own quota + action.
- */
+/** A "free/day" pill shown once the hosted quota is confirmed; `getUsage` runs from an effect (not `use()`) to avoid a waterfall. */
 export default function HostedUsagePill({ perUserDaily, getUsage }: Props) {
 	const [configured, setConfigured] = useState<boolean | null>(null);
 

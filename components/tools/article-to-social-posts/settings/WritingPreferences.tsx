@@ -3,6 +3,8 @@
 import { PaletteIcon } from "lucide-react";
 import { useId } from "react";
 
+import { ToggleButton } from "@/components/ui";
+
 import {
 	EMOJI_LEVEL_LABELS,
 	HASHTAG_LEVEL_LABELS,
@@ -37,19 +39,15 @@ function Chip({
 	onClick: () => void;
 }) {
 	return (
-		<button
-			type="button"
+		<ToggleButton
+			size="sm"
+			active={active}
 			aria-pressed={active}
 			aria-label={label}
 			onClick={onClick}
-			className={`px-2 py-1.5 rounded-md border text-xs transition-colors ${
-				active
-					? "border-primary bg-primary/10 ring-2 ring-primary"
-					: "border-border bg-background hover:bg-accent"
-			}`}
 		>
 			{children}
-		</button>
+		</ToggleButton>
 	);
 }
 
@@ -64,7 +62,7 @@ export default function WritingPreferencesSection({
 	const lengthLabelId = useId();
 
 	return (
-		<section aria-labelledby={headingId} className="space-y-4">
+		<section aria-labelledby={headingId} className="flex flex-col gap-4">
 			<div className="flex items-center gap-2">
 				<PaletteIcon aria-hidden className="w-4 h-4 text-primary" />
 				<h3 id={headingId} className="text-sm font-semibold">
@@ -75,7 +73,7 @@ export default function WritingPreferencesSection({
 				Applied to every post. Stored on this device.
 			</p>
 
-			<div className="space-y-2">
+			<div className="flex flex-col gap-2">
 				<div id={voiceLabelId} className="text-xs font-medium text-foreground">
 					Voice
 				</div>
@@ -96,7 +94,7 @@ export default function WritingPreferencesSection({
 				</fieldset>
 			</div>
 
-			<div className="space-y-2">
+			<div className="flex flex-col gap-2">
 				<div className="flex items-center justify-between">
 					<span
 						id={emojiLabelId}
@@ -125,7 +123,7 @@ export default function WritingPreferencesSection({
 				</fieldset>
 			</div>
 
-			<div className="space-y-2">
+			<div className="flex flex-col gap-2">
 				<div className="flex items-center justify-between">
 					<span
 						id={hashtagLabelId}
@@ -154,7 +152,7 @@ export default function WritingPreferencesSection({
 				</fieldset>
 			</div>
 
-			<div className="space-y-2">
+			<div className="flex flex-col gap-2">
 				<div id={lengthLabelId} className="text-xs font-medium text-foreground">
 					Post length{" "}
 					<span className="text-muted-foreground font-normal">

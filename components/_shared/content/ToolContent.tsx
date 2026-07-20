@@ -6,14 +6,7 @@ import Newsletter from "./Newsletter";
 
 type ToolFaqType = { question: string; answer: string };
 
-/**
- * The SEO/article content block below a tool: the tool's MDX article, an FAQ
- * (with FAQPage structured data for rich results), and a "more tools" grid.
- * Server-rendered so every word is in the initial HTML and crawlable, and placed
- * under the tool so it never gets in the way of using it. Each tool's copy lives
- * in `content/tools/<slug>.mdx` — the default export is the article, the `faq`
- * export drives the disclosures and the JSON-LD.
- */
+/** The SEO content block below a tool — MDX article, FAQ (FAQPage JSON-LD), and a "more tools" grid; copy from `content/tools/<slug>.mdx`. */
 export default async function ToolContent({
 	currentSlug,
 }: {
@@ -37,12 +30,15 @@ export default async function ToolContent({
 		<>
 			<Newsletter className="mt-16" />
 
-			<div className="mt-16 space-y-12 border-t border-border/60 pt-12">
+			<div className="mt-16 flex flex-col gap-12 border-t border-border/60 pt-12">
 				<article className="max-w-3xl">
 					<Article />
 				</article>
 
-				<section aria-labelledby="faq-heading" className="max-w-3xl space-y-4">
+				<section
+					aria-labelledby="faq-heading"
+					className="max-w-3xl flex flex-col gap-4"
+				>
 					<h2 id="faq-heading" className="text-xl font-semibold tracking-tight">
 						Frequently asked questions
 					</h2>

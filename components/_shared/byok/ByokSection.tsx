@@ -34,6 +34,7 @@ type ByokSectionProps = {
 const mask = (k: string) =>
 	k.length > 10 ? `${k.slice(0, 6)}…${k.slice(-4)}` : "•••";
 
+/** The BYOK form: Gemini key input (masked reveal + format check), model picker, and save/clear. */
 export default function ByokSection({
 	savedKey,
 	byokModel,
@@ -56,7 +57,7 @@ export default function ByokSection({
 	};
 
 	return (
-		<section aria-labelledby={headingId} className="space-y-4">
+		<section aria-labelledby={headingId} className="flex flex-col gap-4">
 			<div className="flex items-center gap-2">
 				<KeyRoundIcon aria-hidden className="w-4 h-4 text-primary" />
 				<h3 id={headingId} className="text-sm font-semibold">
@@ -68,12 +69,12 @@ export default function ByokSection({
 				when the free daily limit runs out.
 			</p>
 
-			<div className="rounded-md border border-border bg-muted/40 p-3 text-xs text-muted-foreground space-y-1.5">
+			<div className="rounded-md border border-border bg-muted/40 p-3 text-xs text-muted-foreground flex flex-col gap-1.5">
 				<div className="flex items-center gap-1.5 font-medium text-foreground">
 					<CheckCircle2Icon aria-hidden className="w-3.5 h-3.5 text-primary" />
 					Private to your browser
 				</div>
-				<ul className="list-disc list-inside space-y-1 pl-0.5">
+				<ul className="list-disc list-inside flex flex-col gap-1 pl-0.5">
 					<li>
 						Stored in <code className="text-foreground">sessionStorage</code> —
 						cleared when you close this tab
@@ -103,7 +104,7 @@ export default function ByokSection({
 				</Link>
 			</div>
 
-			<div className="space-y-2">
+			<div className="flex flex-col gap-2">
 				<label htmlFor={keyInputId} className="text-sm font-medium block">
 					Google API key
 				</label>
@@ -165,7 +166,7 @@ export default function ByokSection({
 			)}
 
 			{savedKey && (
-				<div className="space-y-2">
+				<div className="flex flex-col gap-2">
 					<div id={modelLabelId} className="text-sm font-medium block">
 						Model
 					</div>
@@ -199,7 +200,7 @@ export default function ByokSection({
 				</div>
 			)}
 
-			<div className="space-y-2 pt-2">
+			<div className="flex flex-col gap-2 pt-2">
 				<Button onClick={handleSave} className="w-full">
 					Save key
 				</Button>

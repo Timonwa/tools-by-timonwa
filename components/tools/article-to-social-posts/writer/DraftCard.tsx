@@ -13,6 +13,7 @@ import {
 } from "../constants/platforms";
 import type { PostDraftType } from "../types";
 import {
+	Badge,
 	Button,
 	Card,
 	CardContent,
@@ -21,12 +22,13 @@ import {
 	Textarea,
 	Tooltip,
 } from "@/components/ui";
+import { TINT_TEXT } from "@/lib/config/tints";
 
 const charCountClass = (count: number, limit: number): string =>
 	count > limit
 		? "text-destructive font-semibold"
 		: count > limit * 0.9
-			? "text-yellow-500 dark:text-yellow-400"
+			? TINT_TEXT[2]
 			: "text-muted-foreground";
 
 type Props = {
@@ -72,14 +74,14 @@ export default function DraftCard({
 					</span>
 				</CardTitle>
 			</CardHeader>
-			<CardContent className="space-y-3">
+			<CardContent className="flex flex-col gap-3">
 				{isThread ? (
-					<div className="space-y-2">
+					<div className="flex flex-col gap-2">
 						{draft.thread?.map((post, i) => (
 							<div
 								// stable order
 								key={i}
-								className="rounded-md border border-border bg-muted/30 p-2 space-y-1"
+								className="flex flex-col rounded-md border border-border bg-muted/30 p-2 gap-1"
 							>
 								<div className="text-[10px] text-muted-foreground">
 									{i + 1} / {draft.thread?.length}
@@ -122,12 +124,12 @@ export default function DraftCard({
 				{draft.hashtags.length > 0 && (
 					<div className="flex flex-wrap gap-1">
 						{draft.hashtags.map((h) => (
-							<span
+							<Badge
 								key={h}
-								className="text-xs px-2 py-0.5 rounded-full bg-accent text-accent-foreground"
+								className="border-transparent bg-accent text-accent-foreground"
 							>
 								#{h.replace(/^#/, "")}
-							</span>
+							</Badge>
 						))}
 					</div>
 				)}

@@ -1,5 +1,7 @@
 "use client";
 
+import { ToggleButton } from "@/components/ui";
+
 import { TONES } from "../constants/tones";
 import type { ToneType } from "../types";
 
@@ -19,23 +21,20 @@ export default function TonePicker({
 			<legend className="text-sm font-medium mb-2">Tone</legend>
 			<div className="flex flex-wrap gap-2">
 				{TONES.map((t) => (
-					<button
+					<ToggleButton
 						key={t.value}
-						type="button"
+						size="sm"
+						active={value === t.value}
 						aria-pressed={value === t.value}
 						onClick={() => onChange(t.value)}
 						disabled={disabled}
-						className={`grow basis-32 px-2 py-2 rounded-md border text-left text-xs transition-colors ${
-							value === t.value
-								? "border-primary bg-primary/10 ring-2 ring-primary"
-								: "border-border bg-background hover:bg-accent"
-						}`}
+						className="grow basis-32 flex-col items-start gap-0.5 py-2 text-left"
 					>
 						<div className="font-medium">{t.label}</div>
 						<div className="text-muted-foreground text-[11px] leading-tight">
 							{t.description}
 						</div>
-					</button>
+					</ToggleButton>
 				))}
 			</div>
 		</fieldset>

@@ -1,5 +1,7 @@
 "use client";
 
+import { ToggleButton } from "@/components/ui";
+
 import {
 	ALL_PLATFORMS,
 	PLATFORM_COLORS,
@@ -27,21 +29,16 @@ export default function PlatformPicker({
 					const Icon = PLATFORM_ICONS[p];
 					const active = value.includes(p);
 					return (
-						<button
+						<ToggleButton
 							key={p}
-							type="button"
+							active={active}
 							aria-pressed={active}
 							onClick={() => onToggle(p)}
 							disabled={disabled}
-							className={`flex items-center gap-2 px-3 py-2 rounded-md border text-sm transition-colors ${
-								active
-									? "border-primary bg-primary/10 ring-2 ring-primary"
-									: "border-border bg-background hover:bg-accent"
-							}`}
 						>
 							<Icon aria-hidden className={`w-4 h-4 ${PLATFORM_COLORS[p]}`} />
 							{PLATFORM_LABELS[p]}
-						</button>
+						</ToggleButton>
 					);
 				})}
 			</div>

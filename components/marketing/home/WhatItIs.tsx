@@ -1,21 +1,12 @@
+import { Badge } from "@/components/ui";
 import { TOOL_CATEGORIES } from "@/lib/config/categories";
+import type { TintType } from "@/lib/config/tints";
 import { cn } from "@/lib/utils/cn";
 
-const AUDIENCES = [
-	{
-		label: "Writers",
-		className: "border-sky-500/25 bg-sky-500/10 text-sky-700 dark:text-sky-300",
-	},
-	{
-		label: "Developers",
-		className:
-			"border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300",
-	},
-	{
-		label: "Creators",
-		className:
-			"border-violet-500/25 bg-violet-500/10 text-violet-700 dark:text-violet-300",
-	},
+const AUDIENCES: { label: string; tint: TintType }[] = [
+	{ label: "Writers", tint: 1 },
+	{ label: "Developers", tint: 2 },
+	{ label: "Creators", tint: 3 },
 ];
 
 // Scatter positions for the decorative category-icon cluster (matches the order
@@ -32,7 +23,7 @@ export default function WhatItIs() {
 	return (
 		<section
 			aria-labelledby="about-heading"
-			className="relative mt-20 overflow-hidden rounded-3xl border border-border bg-linear-to-br from-primary/10 via-card to-card p-8 sm:mt-24 sm:p-12"
+			className="relative mt-20 overflow-hidden rounded-2xl border border-border bg-linear-to-br from-primary/10 via-card to-card p-8 sm:mt-24 sm:p-12"
 		>
 			<div
 				aria-hidden
@@ -56,14 +47,10 @@ export default function WhatItIs() {
 					</p>
 					<ul className="mt-6 flex flex-wrap gap-2">
 						{AUDIENCES.map((audience) => (
-							<li
-								key={audience.label}
-								className={cn(
-									"rounded-full border px-3 py-1 text-sm font-medium",
-									audience.className,
-								)}
-							>
-								{audience.label}
+							<li key={audience.label}>
+								<Badge tint={audience.tint} size="md">
+									{audience.label}
+								</Badge>
 							</li>
 						))}
 					</ul>

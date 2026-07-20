@@ -28,6 +28,7 @@ import {
 	Tooltip,
 } from "@/components/ui";
 
+import { TINT_SURFACE } from "@/lib/config/tints";
 import { cn } from "@/lib/utils/cn";
 
 type RangeStatusType = "in-range" | "close" | "out";
@@ -103,7 +104,7 @@ function VariationCard({
 					Variation {index}
 				</CardTitle>
 			</CardHeader>
-			<CardContent className="space-y-4">
+			<CardContent className="flex flex-col gap-4">
 				<Field
 					label="Title"
 					value={variation.title}
@@ -180,8 +181,7 @@ function Field({
 							"shrink-0 text-[11px] font-medium tabular-nums rounded-full px-2 py-0.5 border",
 							status === "in-range" &&
 								"bg-primary/10 text-primary border-primary/30",
-							status === "close" &&
-								"bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30",
+							status === "close" && TINT_SURFACE[2],
 							status === "out" &&
 								"bg-destructive/10 text-destructive border-destructive/30",
 						)}

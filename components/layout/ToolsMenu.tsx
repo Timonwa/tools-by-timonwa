@@ -92,7 +92,7 @@ export default function ToolsMenu({
 					</div>
 				</div>
 
-				<div className="max-h-[min(50vh,20rem)] overflow-y-auto px-2 pb-2">
+				<div className="max-h-[min(50vh,20rem)] overflow-y-auto no-scrollbar px-2 pb-2">
 					{tools.length > 0 ? (
 						<ul className="flex flex-col gap-1">
 							{tools.map((t) => {
@@ -161,7 +161,7 @@ export default function ToolsMenu({
 				</div>
 
 				<Link
-					href={ROUTES.home}
+					href={ROUTES.tools}
 					onClick={onNavigate}
 					className="flex items-center justify-center gap-1 border-t border-border/60 px-3 py-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
 				>

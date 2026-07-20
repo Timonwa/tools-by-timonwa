@@ -2,7 +2,15 @@
 
 import { useMemo, useState } from "react";
 
-import { Card, CardContent, CopyButton, Input } from "@/components/ui";
+import {
+	Card,
+	CardContent,
+	CopyButton,
+	Input,
+	OutputBlock,
+	SegmentedControl,
+} from "@/components/ui";
+import { TINT_TEXT } from "@/lib/config/tints";
 import { slugify, type SlugSeparatorType } from "@/lib/text/slugify";
 import { cn } from "@/lib/utils/cn";
 
@@ -31,9 +39,9 @@ export default function SlugGeneratorTool() {
 	const overTarget = slugLength > SLUG_LENGTH_TARGET;
 
 	return (
-		<div className="space-y-4">
+		<div className="flex flex-col gap-4">
 			<Card>
-				<CardContent className="space-y-4">
+				<CardContent className="flex flex-col gap-4">
 					<div className="flex flex-col gap-2">
 						<label htmlFor="slug-input" className="text-sm font-medium">
 							Title or text
@@ -48,25 +56,15 @@ export default function SlugGeneratorTool() {
 					</div>
 
 					<div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-						<fieldset className="flex items-center gap-2">
+						<fieldset className="flex min-w-0 items-center flex-wrap gap-2">
 							<legend className="sr-only">Separator</legend>
 							<span className="text-sm text-muted-foreground">Separator</span>
-							{SEPARATORS.map((s) => (
-								<button
-									key={s.value}
-									type="button"
-									onClick={() => setSeparator(s.value)}
-									aria-pressed={separator === s.value}
-									className={cn(
-										"rounded-md border px-2.5 py-1 text-sm cursor-pointer",
-										separator === s.value
-											? "border-primary bg-primary/10 text-primary"
-											: "border-border hover:bg-accent hover:text-accent-foreground",
-									)}
-								>
-									{s.label}
-								</button>
-							))}
+							<SegmentedControl
+								value={separator}
+								onChange={setSeparator}
+								options={SEPARATORS}
+								ariaLabel="Separator"
+							/>
 						</fieldset>
 						<Toggle
 							checked={lowercase}
@@ -83,33 +81,31 @@ export default function SlugGeneratorTool() {
 			</Card>
 
 			<Card>
-				<CardContent className="space-y-3">
+				<CardContent className="flex flex-col gap-3">
 					<div className="flex items-center justify-between gap-3">
 						<span className="text-sm font-medium">Slug</span>
 						<CopyButton value={slug} />
 					</div>
-					<div className="rounded-lg border border-border bg-muted/40 px-3 py-2 font-mono text-sm break-all min-h-9">
+					<OutputBlock className="min-h-9">
 						{slug || (
 							<span className="text-muted-foreground">
 								your-slug-appears-here
 							</span>
 						)}
-					</div>
+					</OutputBlock>
 					{slug && (
 						<div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
 							<span
 								className={cn(
 									"tabular-nums",
-									overTarget
-										? "text-amber-600 dark:text-amber-500"
-										: "text-muted-foreground",
+									overTarget ? TINT_TEXT[2] : "text-muted-foreground",
 								)}
 							>
 								{slugLength} / {SLUG_LENGTH_TARGET} characters · {wordCount}{" "}
 								{wordCount === 1 ? "word" : "words"}
 							</span>
 							{overTarget && (
-								<span className="text-amber-600 dark:text-amber-500">
+								<span className={TINT_TEXT[2]}>
 									— shorter slugs read better
 								</span>
 							)}

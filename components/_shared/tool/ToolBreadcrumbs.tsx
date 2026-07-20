@@ -4,10 +4,7 @@ import { getCategory } from "@/lib/config/categories";
 import { ROUTES } from "@/lib/config/routes";
 import { getPrimaryCategory, getToolBySlug } from "@/lib/config/tools";
 
-/**
- * A tool page's breadcrumb: Home › <primary category> › <tool name>. The
- * category segment deep-links into the filtered `/tools` directory.
- */
+/** Tool breadcrumb (Home › Tools › category › tool); the category deep-links the filtered /tools. */
 export default function ToolBreadcrumbs({
 	slug,
 	name,
@@ -20,8 +17,9 @@ export default function ToolBreadcrumbs({
 
 	const items: BreadcrumbItemType[] = [
 		{ label: "Home", href: ROUTES.home },
+		{ label: "Tools", href: ROUTES.tools },
 		...(category
-			? [{ label: category.label, href: ROUTES.category(category.id) }]
+			? [{ label: category.label, href: ROUTES.toolsCategory(category.id) }]
 			: []),
 		{ label: name },
 	];

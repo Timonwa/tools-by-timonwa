@@ -7,9 +7,19 @@ import {
 	SproutIcon,
 } from "lucide-react";
 
+import { IconBadge, Section, SectionHeader } from "@/components/ui";
+import { TINT_BORDER, type TintType } from "@/lib/config/tints";
 import { cn } from "@/lib/utils/cn";
 
-const FEATURES = [
+type FeatureType = {
+	icon: typeof ShieldCheckIcon;
+	title: string;
+	body: string;
+	big?: boolean;
+	tint?: TintType;
+};
+
+const FEATURES: FeatureType[] = [
 	{
 		icon: ShieldCheckIcon,
 		title: "Private by default",
@@ -20,53 +30,42 @@ const FEATURES = [
 		icon: SparklesIcon,
 		title: "Free, no signup",
 		body: "Every tool is free with a daily AI allowance. No account, no credit card.",
-		chip: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-		border: "border-emerald-500/20",
+		tint: 4,
 	},
 	{
 		icon: RulerIcon,
 		title: "Built to spec",
 		body: "Character counts and platform limits are baked in, so output fits SEO and social.",
-		chip: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
-		border: "border-sky-500/20",
+		tint: 1,
 	},
 	{
 		icon: GaugeIcon,
 		title: "Instant",
 		body: "No installs, no page reloads — results appear as you type or in one request.",
-		chip: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-		border: "border-amber-500/20",
+		tint: 2,
 	},
 	{
 		icon: Code2Icon,
 		title: "Open source",
 		body: "MIT-licensed and built in the open. Read the code or bring your own key.",
-		chip: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
-		border: "border-violet-500/20",
+		tint: 3,
 	},
 	{
 		icon: SproutIcon,
 		title: "Growing collection",
 		body: "New writing, developer, and publishing tools ship regularly — just getting started.",
-		chip: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
-		border: "border-rose-500/20",
+		tint: 5,
 	},
 ];
 
 export default function WhyUseIt() {
 	return (
-		<section aria-labelledby="why-heading" className="mt-20 space-y-8 sm:mt-24">
-			<div>
-				<h2
-					id="why-heading"
-					className="text-2xl font-semibold tracking-tight sm:text-3xl"
-				>
-					Why use it
-				</h2>
-				<p className="mt-2 text-muted-foreground">
-					Focused, fast, and respectful of your privacy.
-				</p>
-			</div>
+		<Section aria-labelledby="why-heading">
+			<SectionHeader
+				id="why-heading"
+				title="Why use it"
+				subtitle="Focused, fast, and respectful of your privacy."
+			/>
 			<ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 				{FEATURES.map((feature) => {
 					const Icon = feature.icon;
@@ -102,17 +101,12 @@ export default function WhyUseIt() {
 					return (
 						<li
 							key={feature.title}
-							className={cn("rounded-xl border bg-card p-5", feature.border)}
+							className={cn(
+								"rounded-xl border bg-card p-5",
+								feature.tint && TINT_BORDER[feature.tint],
+							)}
 						>
-							<span
-								aria-hidden
-								className={cn(
-									"flex h-10 w-10 items-center justify-center rounded-lg",
-									feature.chip,
-								)}
-							>
-								<Icon className="h-5 w-5" />
-							</span>
+							<IconBadge icon={Icon} tint={feature.tint} />
 							<h3 className="mt-4 font-semibold">{feature.title}</h3>
 							<p className="mt-1 text-sm leading-relaxed text-muted-foreground">
 								{feature.body}
@@ -121,6 +115,6 @@ export default function WhyUseIt() {
 					);
 				})}
 			</ul>
-		</section>
+		</Section>
 	);
 }

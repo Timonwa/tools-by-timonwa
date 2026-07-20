@@ -4,7 +4,7 @@ import { useId, useMemo } from "react";
 
 import DraftReuseControls from "@/components/_shared/draft/DraftReuseControls";
 import { useToolDraft } from "@/lib/hooks/use-tool-draft";
-import { Card, CardContent, Textarea } from "@/components/ui";
+import { Card, CardContent, StatCard, Textarea } from "@/components/ui";
 import { getTextCounts } from "@/lib/text/counts";
 import {
 	durationSeconds,
@@ -46,7 +46,7 @@ export default function WordCounterTool() {
 	return (
 		<div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
 			<Card className="min-w-0 self-start">
-				<CardContent className="space-y-3">
+				<CardContent className="flex flex-col gap-3">
 					<div className="flex flex-col gap-2">
 						<label htmlFor="counter-input" className="text-sm font-medium">
 							Your text
@@ -56,7 +56,7 @@ export default function WordCounterTool() {
 							value={text}
 							onChange={(e) => setText(e.target.value)}
 							placeholder="Paste or type your text…"
-							className="min-h-64 max-h-96 overflow-y-auto"
+							className="min-h-64 max-h-96 overflow-y-auto no-scrollbar"
 						/>
 					</div>
 					<DraftReuseControls
@@ -69,25 +69,21 @@ export default function WordCounterTool() {
 				</CardContent>
 			</Card>
 
-			<div className="@container min-w-0 space-y-6">
-				<section aria-label="Counts" className="space-y-2">
+			<div className="@container flex min-w-0 flex-col gap-6">
+				<section aria-label="Counts" className="flex flex-col gap-2">
 					<h2 className="text-sm font-medium text-muted-foreground">Counts</h2>
 					<dl className="grid grid-cols-2 gap-3 @lg:grid-cols-3">
 						{stats.map((s) => (
-							<div
+							<StatCard
 								key={s.label}
-								className="flex flex-col-reverse items-start justify-end gap-1 rounded-xl border border-border bg-card px-4 py-3"
-							>
-								<dt className="text-xs text-muted-foreground">{s.label}</dt>
-								<dd className="text-2xl font-bold tabular-nums leading-none">
-									{numberFmt.format(s.value)}
-								</dd>
-							</div>
+								label={s.label}
+								value={numberFmt.format(s.value)}
+							/>
 						))}
 					</dl>
 				</section>
 
-				<section aria-label="Estimated time" className="space-y-2">
+				<section aria-label="Estimated time" className="flex flex-col gap-2">
 					<h2 className="text-sm font-medium text-muted-foreground">
 						Estimated time
 					</h2>
@@ -105,7 +101,7 @@ export default function WordCounterTool() {
 					</dl>
 				</section>
 
-				<section aria-label="Character limits" className="space-y-2">
+				<section aria-label="Character limits" className="flex flex-col gap-2">
 					<h2 className="text-sm font-medium text-muted-foreground">
 						Character limits
 					</h2>
@@ -116,7 +112,7 @@ export default function WordCounterTool() {
 							return (
 								<div
 									key={p.label}
-									className="flex flex-col gap-0.5 rounded-lg border border-border bg-card px-3 py-2 text-sm @sm:flex-row @sm:items-baseline @sm:justify-between @sm:gap-3"
+									className="flex flex-col gap-0.5 rounded-lg border border-border bg-card px-4 py-3 text-sm @sm:flex-row @sm:items-baseline @sm:justify-between @sm:gap-3"
 								>
 									<dt className="text-muted-foreground">{p.label}</dt>
 									<dd className="flex items-baseline gap-2 tabular-nums whitespace-nowrap">
@@ -155,7 +151,7 @@ function DurationCard({
 	hint: string;
 }) {
 	return (
-		<div className="flex flex-col-reverse gap-1 rounded-xl border border-border bg-card px-4 py-3">
+		<div className="flex flex-col-reverse gap-1 rounded-lg border border-border bg-card px-4 py-3">
 			<dt className="text-xs text-muted-foreground">{label}</dt>
 			<dd className="flex items-baseline justify-between gap-2">
 				<span className="text-lg font-semibold">{value}</span>

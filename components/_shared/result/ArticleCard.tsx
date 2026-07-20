@@ -16,15 +16,10 @@ type Props = {
 	usage: TokenUsageType | null;
 	copied: boolean;
 	onCopyAll: () => void;
-	/** Copy-button label, e.g. "Copy all posts" or "Copy all variations". */
 	copyLabel: string;
 };
 
-/**
- * Header card for a generated result: the source article's title, author, and
- * link (or "Pasted text"), token usage, and a copy-everything button. Shared by
- * the draft-based AI tools so the results header looks identical across them.
- */
+/** Results header for the draft-based AI tools: source title/author/link, token usage, copy-all. */
 export default function ArticleCard({
 	article,
 	usage,

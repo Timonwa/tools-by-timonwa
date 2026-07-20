@@ -23,19 +23,12 @@ type Props = {
 	onToggleTextReuse: (next: boolean) => void;
 	onClearText: () => void;
 	disabled?: boolean;
-	/** Max characters for the text counter. Defaults to 15,000. */
 	maxChars?: number;
 	urlPlaceholder?: string;
 	textPlaceholder?: string;
 };
 
-/**
- * The full source-input section shared by the draft-based AI tools (Article to
- * Social Posts, Article to SEO Meta): a URL / paste-text tab switcher, the
- * matching field with its character counter and privacy note, and the
- * "reuse across tools" controls. Pairs with `useToolDraft` — the tool owns the
- * state and passes it in, so both tools stay pixel-identical.
- */
+/** Source-input section for the draft-based AI tools: URL/paste tabs, field + counter, and reuse controls. */
 export default function ArticleSourceInput({
 	inputKind,
 	onInputKindChange,

@@ -8,9 +8,9 @@ import {
 	CardContent,
 	CopyButton,
 	Textarea,
+	ToggleButton,
 } from "@/components/ui";
 import { CASE_GROUPS, type CaseIdType, convertCase } from "@/lib/text/case";
-import { cn } from "@/lib/utils/cn";
 
 const ALL_CASES = CASE_GROUPS.flatMap((g) => g.cases);
 
@@ -28,7 +28,7 @@ export default function CaseConverterTool() {
 		// on small; selector spanning the top with input | output below on large.
 		<div className="grid grid-cols-1 gap-4 [grid-template-areas:'input'_'selector'_'output'] lg:grid-cols-2 lg:gap-6 lg:[grid-template-areas:'selector_selector'_'input_output']">
 			<Card className="min-w-0 self-start [grid-area:input]">
-				<CardContent className="space-y-3">
+				<CardContent className="flex flex-col gap-3">
 					<div className="flex flex-col gap-2">
 						<div className="flex items-center justify-between gap-3">
 							<label htmlFor="case-input" className="text-sm font-medium">
@@ -48,13 +48,13 @@ export default function CaseConverterTool() {
 							value={text}
 							onChange={(e) => setText(e.target.value)}
 							placeholder="Type or paste text to convert…"
-							className="min-h-40 max-h-96 overflow-y-auto"
+							className="min-h-40 max-h-96 overflow-y-auto no-scrollbar"
 						/>
 					</div>
 				</CardContent>
 			</Card>
 
-			<div className="space-y-4 [grid-area:selector]">
+			<div className="flex flex-col gap-6 [grid-area:selector]">
 				{CASE_GROUPS.map((group) => {
 					return (
 						<fieldset key={group.id} className="border-0 p-0 m-0 min-w-0">
@@ -69,22 +69,16 @@ export default function CaseConverterTool() {
 							</legend>
 							<div className="flex flex-wrap gap-2">
 								{group.cases.map((c) => (
-									<button
+									<ToggleButton
 										key={c.id}
-										type="button"
-										onClick={() => setActive(c.id)}
+										active={active === c.id}
 										aria-pressed={active === c.id}
 										title={c.description}
-										className={cn(
-											"inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm transition-colors",
-											active === c.id
-												? "border-primary bg-primary/10 font-medium text-primary"
-												: "border-border hover:bg-accent hover:text-accent-foreground",
-										)}
+										onClick={() => setActive(c.id)}
 									>
 										<span aria-hidden>{c.icon}</span>
 										{c.label}
-									</button>
+									</ToggleButton>
 								))}
 							</div>
 						</fieldset>
@@ -93,7 +87,7 @@ export default function CaseConverterTool() {
 			</div>
 
 			<Card className="min-w-0 self-start [grid-area:output]">
-				<CardContent className="space-y-3">
+				<CardContent className="flex flex-col gap-3">
 					<div className="flex items-center justify-between gap-3">
 						<span className="text-sm font-medium">
 							Result{" "}
@@ -110,7 +104,7 @@ export default function CaseConverterTool() {
 						value={output}
 						placeholder="Converted text appears here…"
 						aria-label={activeMeta ? `${activeMeta.label} result` : "Result"}
-						className="min-h-40 max-h-96 overflow-y-auto bg-muted/40"
+						className="min-h-40 max-h-96 overflow-y-auto no-scrollbar bg-muted/40"
 					/>
 				</CardContent>
 			</Card>

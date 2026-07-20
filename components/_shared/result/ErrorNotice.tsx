@@ -2,11 +2,7 @@ import { AlertCircleIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
 
-/**
- * The one error banner every tool uses, so a failure always looks the same and
- * reads the same way. `message` is expected to already be a plain-language,
- * user-facing string (see `toUserMessage`) — this component only presents it.
- */
+/** The shared error banner. `message` must already be a user-facing string (see `toUserMessage`). */
 export default function ErrorNotice({
 	message,
 	className,

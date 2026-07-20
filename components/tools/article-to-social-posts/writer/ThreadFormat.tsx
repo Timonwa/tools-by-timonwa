@@ -2,7 +2,7 @@
 
 import { useId } from "react";
 
-import { Input } from "@/components/ui";
+import { Input, ToggleButton } from "@/components/ui";
 
 type ThreadFormatProps = {
 	length: number;
@@ -21,32 +21,22 @@ export default function ThreadFormat({
 			<legend className="text-sm font-medium mb-2">Thread format</legend>
 			<div className="flex items-center gap-3 flex-wrap">
 				<div className="flex gap-2">
-					<button
-						type="button"
+					<ToggleButton
+						active={length === 1}
 						aria-pressed={length === 1}
 						onClick={() => onChange(1)}
 						disabled={disabled}
-						className={`px-3 py-1.5 rounded-md border text-sm transition-colors ${
-							length === 1
-								? "border-primary bg-primary/10 ring-2 ring-primary"
-								: "border-border bg-background hover:bg-accent"
-						}`}
 					>
 						Single post
-					</button>
-					<button
-						type="button"
+					</ToggleButton>
+					<ToggleButton
+						active={length > 1}
 						aria-pressed={length > 1}
 						onClick={() => onChange(length > 1 ? length : 4)}
 						disabled={disabled}
-						className={`px-3 py-1.5 rounded-md border text-sm transition-colors ${
-							length > 1
-								? "border-primary bg-primary/10 ring-2 ring-primary"
-								: "border-border bg-background hover:bg-accent"
-						}`}
 					>
 						Thread
-					</button>
+					</ToggleButton>
 				</div>
 				{length > 1 && (
 					<div className="flex items-center gap-2 text-sm">

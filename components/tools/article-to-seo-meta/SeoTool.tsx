@@ -239,7 +239,7 @@ export default function SeoTool() {
 
 	return (
 		<div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-			<div className="space-y-6 min-w-0">
+			<div className="flex flex-col gap-6 min-w-0">
 				<Card>
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2 text-lg">
@@ -271,7 +271,7 @@ export default function SeoTool() {
 				{loading && !result ? (
 					<LoadingState />
 				) : result ? (
-					<div ref={resultsRef} className="space-y-4">
+					<div ref={resultsRef} className="flex flex-col gap-4">
 						<ArticleCard
 							article={result.article ?? {}}
 							usage={usage}
@@ -359,23 +359,20 @@ export default function SeoTool() {
 
 function LoadingState() {
 	return (
-		<div className="space-y-4">
+		<div className="flex flex-col gap-4">
 			{[0, 1, 2].map((i) => (
-				<div
-					key={i}
-					className="rounded-xl border border-border bg-card p-5 space-y-4 animate-pulse"
-				>
+				<Card key={i} className="gap-4 p-5 animate-pulse">
 					<div className="h-3 w-20 rounded bg-muted" />
-					<div className="space-y-2">
+					<div className="flex flex-col gap-2">
 						<div className="h-3 w-12 rounded bg-muted" />
 						<div className="h-4 w-full rounded bg-muted" />
 					</div>
-					<div className="space-y-2">
+					<div className="flex flex-col gap-2">
 						<div className="h-3 w-20 rounded bg-muted" />
 						<div className="h-4 w-full rounded bg-muted" />
 						<div className="h-4 w-4/5 rounded bg-muted" />
 					</div>
-				</div>
+				</Card>
 			))}
 		</div>
 	);

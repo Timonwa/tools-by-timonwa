@@ -18,15 +18,11 @@ import {
 } from "@/components/ui";
 import { timeAgo } from "@/lib/utils/time";
 
-/** One row of history. The tool maps its own entries into this shape. */
 type HistoryItemType = {
 	id: string;
-	/** Source kind — drives the URL / Text badge. */
 	kind: "url" | "text";
-	/** The row's headline (article title, URL, or a text snippet). */
 	title: string;
 	timestamp: number;
-	/** Tool-specific trailing metadata, e.g. "· 4 platforms" or "· 3 variations". */
 	meta?: ReactNode;
 };
 
@@ -42,11 +38,7 @@ const DEFAULT_DESCRIPTION =
 	"Your last 10 generations, saved in this browser. Re-generating an article updates its entry — history isn't kept per run.";
 const DEFAULT_EMPTY = "Your generations will appear here.";
 
-/**
- * The history sidebar shared by the draft-based AI tools. Renders the card,
- * scrollable list, source badge, and two-step remove; each tool supplies the
- * row title and its own trailing `meta` (platforms, variations, etc.).
- */
+/** History sidebar for the draft-based AI tools: scrollable list, source badge, two-step remove. */
 export default function HistorySidebar({
 	items,
 	onLoad,
@@ -71,7 +63,7 @@ export default function HistorySidebar({
 					{items.length === 0 ? (
 						<p className="text-xs text-muted-foreground">{emptyText}</p>
 					) : (
-						<ul className="space-y-2 max-h-104 overflow-y-auto pr-1">
+						<ul className="flex flex-col gap-2 max-h-104 overflow-y-auto no-scrollbar pr-1">
 							{items.map((item) => {
 								const isText = item.kind === "text";
 								const Icon = isText ? FileTextIcon : LinkIcon;

@@ -16,12 +16,7 @@ import {
 	subscribeByok,
 } from "@/lib/utils/byok-storage";
 
-/**
- * Hub-level BYOK drawer. One instance lives in the Navbar; every AI tool
- * sends the user's key via sessionStorage to its own server action.
- * Tools can trigger the drawer to open by dispatching `OPEN_BYOK_EVENT`
- * (e.g. from a "X free/day" pill).
- */
+/** Hub-level BYOK drawer (one instance in the Navbar); open it by dispatching `OPEN_BYOK_EVENT`. */
 export default function ByokDrawer() {
 	const [open, setOpen] = useState(false);
 	// BYOK key + model live in sessionStorage — read them as an external store so

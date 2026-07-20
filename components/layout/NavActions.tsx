@@ -4,7 +4,9 @@ import {
 	BookOpenTextIcon,
 	HeartIcon,
 	HomeIcon,
+	LayoutGridIcon,
 	MenuIcon,
+	TagsIcon,
 	XIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -77,6 +79,10 @@ export default function NavActions({
 				onNavigate={close}
 			/>
 
+			{/* Tool action (e.g. writing preferences) — kept on the bar at every
+			    width, not folded into the hamburger. */}
+			{actionsSlot}
+
 			{/* Hamburger — only below xl, where the controls collapse into a panel. */}
 			<button
 				type="button"
@@ -104,7 +110,7 @@ export default function NavActions({
 					"gap-1",
 					"xl:flex xl:static xl:mt-0 xl:w-auto xl:max-h-none xl:flex-row xl:items-center xl:overflow-visible xl:rounded-none xl:border-0 xl:bg-transparent xl:p-0 xl:shadow-none",
 					openMenu === "nav"
-						? "absolute right-2 top-full z-50 mt-2 flex max-h-[70vh] w-[min(20rem,calc(100vw-1rem))] flex-col overflow-y-auto rounded-lg border border-border bg-popover p-2 shadow-lg sm:right-3"
+						? "absolute right-2 top-full z-50 mt-2 flex max-h-[70vh] w-[min(20rem,calc(100vw-1rem))] flex-col overflow-y-auto no-scrollbar rounded-lg border border-border bg-popover p-2 shadow-lg sm:right-3"
 						: "hidden xl:flex",
 				)}
 			>
@@ -122,6 +128,30 @@ export default function NavActions({
 				</Link>
 
 				<Link
+					href={ROUTES.tools}
+					onClick={close}
+					className={cn(
+						buttonClasses({ variant: "ghost", size: "sm" }),
+						"w-full justify-start xl:hidden",
+					)}
+				>
+					<LayoutGridIcon aria-hidden className="w-4 h-4" />
+					<span>Tools</span>
+				</Link>
+
+				<Link
+					href={ROUTES.categories}
+					onClick={close}
+					className={cn(
+						buttonClasses({ variant: "ghost", size: "sm" }),
+						"w-full justify-start xl:hidden",
+					)}
+				>
+					<TagsIcon aria-hidden className="w-4 h-4" />
+					<span>Categories</span>
+				</Link>
+
+				<Link
 					href={ROUTES.guides}
 					onClick={close}
 					className={cn(
@@ -134,7 +164,6 @@ export default function NavActions({
 				</Link>
 
 				{showByok && <ByokDrawer />}
-				{actionsSlot}
 				<ThemeToggle />
 
 				<div className="my-1 border-t border-border/60 xl:hidden" />

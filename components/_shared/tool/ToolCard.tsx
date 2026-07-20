@@ -1,18 +1,12 @@
 import { ArrowRightIcon } from "lucide-react";
 
-import { LinkCard } from "@/components/ui";
+import { Badge, IconBadge, LinkCard } from "@/components/ui";
 import { getCategory } from "@/lib/config/categories";
 import { getPrimaryCategory, type ToolType } from "@/lib/config/tools";
-import { cn } from "@/lib/utils/cn";
 
 import CategoryBadge from "./CategoryBadge";
 
-/**
- * A single tool tile — icon, name, tagline, and its category badges. Shared by
- * the home preview, the `/tools` directory, and the "more tools" grid so every
- * tool listing looks and behaves the same. The icon tile and hover edge take the
- * primary category's color. "Soon" tools render dimmed and non-interactive.
- */
+/** A tool tile — icon, name, tagline, category badges; colored by primary category. "Soon" renders dimmed. */
 export default function ToolCard({ tool }: { tool: ToolType }) {
 	const Icon = tool.icon;
 	const isSoon = tool.status === "soon";
@@ -25,20 +19,8 @@ export default function ToolCard({ tool }: { tool: ToolType }) {
 			className={isSoon ? undefined : color.border}
 		>
 			<div className="mb-4 flex items-center justify-between">
-				<span
-					aria-hidden
-					className={cn(
-						"flex h-10 w-10 items-center justify-center rounded-lg",
-						color.chip,
-					)}
-				>
-					<Icon className="h-5 w-5" />
-				</span>
-				{isSoon && (
-					<span className="rounded-full border border-border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-						Soon
-					</span>
-				)}
+				<IconBadge icon={Icon} colorClass={color.chip} />
+				{isSoon && <Badge variant="soon">Soon</Badge>}
 			</div>
 
 			<h3 className="mb-1 text-lg font-semibold leading-tight">{tool.name}</h3>

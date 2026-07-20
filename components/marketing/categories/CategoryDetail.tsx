@@ -5,7 +5,12 @@ import Newsletter from "@/components/_shared/content/Newsletter";
 import ToolGrid from "@/components/_shared/tool/ToolGrid";
 import HubNavbar from "@/components/layout/HubNavbar";
 import ToolMain from "@/components/layout/ToolMain";
-import { Breadcrumbs, buttonClasses, PageHero } from "@/components/ui";
+import {
+	Breadcrumbs,
+	buttonClasses,
+	EmptyState,
+	PageHero,
+} from "@/components/ui";
 import type { CategoryType } from "@/lib/config/categories";
 import { ROUTES } from "@/lib/config/routes";
 import { getToolsInCategory } from "@/lib/config/tools";
@@ -43,10 +48,10 @@ export default function CategoryDetail({
 				{tools.length > 0 ? (
 					<ToolGrid tools={tools} />
 				) : (
-					<p className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
+					<EmptyState>
 						No {category.label.toLowerCase()} tools yet — they&apos;re on the
 						way. Get notified below.
-					</p>
+					</EmptyState>
 				)}
 
 				<div className="mt-8">
