@@ -1,0 +1,46 @@
+import type { ReactNode } from "react";
+
+import { cn } from "@/lib/utils/cn";
+
+/**
+ * A marketing content section — the shared vertical rhythm (`mt-20 sm:mt-24`),
+ * max width, and column stack. Pair with `SectionHeader` and set
+ * `aria-labelledby` to the header's `id`.
+ */
+export function Section({
+	className,
+	...props
+}: React.ComponentProps<"section">) {
+	return <section className={cn("section", className)} {...props} />;
+}
+
+type SectionHeaderProps = {
+	/** Element id for the heading, so the parent `Section` can label itself. */
+	id?: string;
+	eyebrow?: ReactNode;
+	title: ReactNode;
+	subtitle?: ReactNode;
+	className?: string;
+};
+
+/**
+ * The eyebrow / heading / subtitle block atop a `Section`, using the canonical
+ * `.section-eyebrow`, `.section-heading`, and `.section-subtitle` type styles.
+ */
+export function SectionHeader({
+	id,
+	eyebrow,
+	title,
+	subtitle,
+	className,
+}: SectionHeaderProps) {
+	return (
+		<div className={className}>
+			{eyebrow && <p className="section-eyebrow">{eyebrow}</p>}
+			<h2 id={id} className="section-heading">
+				{title}
+			</h2>
+			{subtitle && <p className="section-subtitle">{subtitle}</p>}
+		</div>
+	);
+}

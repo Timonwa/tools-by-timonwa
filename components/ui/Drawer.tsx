@@ -97,7 +97,7 @@ export default function Drawer({
 					</div>
 				)}
 
-				<div className="flex-1 overflow-y-auto">{children}</div>
+				<div className="flex-1 overflow-y-auto no-scrollbar">{children}</div>
 
 				{footer && (
 					<div className="border-t border-border/50 p-4 sm:p-5">{footer}</div>
