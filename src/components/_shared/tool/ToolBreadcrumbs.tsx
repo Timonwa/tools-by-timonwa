@@ -1,10 +1,11 @@
+import ShareBar from "./ShareBar";
 import { Breadcrumbs } from "@/components/ui";
 import type { BreadcrumbItemType } from "@/components/ui/Breadcrumbs";
 import { getCategory } from "@/lib/config/categories";
 import { ROUTES } from "@/lib/config/routes";
 import { getPrimaryCategory, getToolBySlug } from "@/lib/config/tools";
 
-/** Tool breadcrumb (Home › Tools › category › tool); the category deep-links the filtered /tools. */
+/** Tool breadcrumb (Home › Tools › category › tool) with the share control on the opposite edge of the same row; the category deep-links the filtered /tools. */
 export default function ToolBreadcrumbs({
 	slug,
 	name,
@@ -24,5 +25,10 @@ export default function ToolBreadcrumbs({
 		{ label: name },
 	];
 
-	return <Breadcrumbs items={items} />;
+	return (
+		<div className="mb-6 flex items-center justify-between gap-3 [&>nav]:mb-0">
+			<Breadcrumbs items={items} />
+			<ShareBar slug={slug} name={name} />
+		</div>
+	);
 }

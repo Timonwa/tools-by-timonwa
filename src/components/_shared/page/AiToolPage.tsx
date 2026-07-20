@@ -14,6 +14,7 @@ type AiToolPageProps = {
 	icon: IconComponentType;
 	usageNotice: ReactNode;
 	settings?: ReactNode;
+	menuSlot?: ReactNode;
 	children: ReactNode;
 };
 
@@ -24,6 +25,7 @@ export default function AiToolPage({
 	icon,
 	usageNotice,
 	settings,
+	menuSlot,
 	children,
 }: AiToolPageProps) {
 	return (
@@ -37,6 +39,7 @@ export default function AiToolPage({
 				}}
 				centerSlot={usageNotice}
 				actionsSlot={settings}
+				menuSlot={menuSlot}
 			/>
 			<ToolMain>
 				<ToolBreadcrumbs slug={slug} name={name} />

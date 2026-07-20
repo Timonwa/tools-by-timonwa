@@ -1,4 +1,4 @@
-import { HeartIcon, WrenchIcon } from "lucide-react";
+import { HandCoinsIcon, WrenchIcon } from "lucide-react";
 import Link from "next/link";
 
 import { GithubMark, LinkedInLogo, XLogo } from "@/components/ui/logos";
@@ -97,17 +97,6 @@ export default function Footer() {
 							{SITE_DESCRIPTION}
 						</p>
 						<div className="mt-4 flex items-center gap-2">
-							<Tooltip label="Support">
-								<a
-									href={SUPPORT_URL}
-									target="_blank"
-									rel="noopener noreferrer"
-									aria-label="Support"
-									className={iconLinkClass}
-								>
-									<HeartIcon aria-hidden className="h-4 w-4" />
-								</a>
-							</Tooltip>
 							<Tooltip label="Star on GitHub">
 								<a
 									href={REPO_URL}
@@ -119,7 +108,7 @@ export default function Footer() {
 									<GithubMark aria-hidden className="h-4 w-4" />
 								</a>
 							</Tooltip>
-							<Tooltip label={`X (Twitter)`}>
+							<Tooltip label={`${CREATOR_NAME} on X`}>
 								<a
 									href={CREATOR_TWITTER_URL}
 									target="_blank"
@@ -130,7 +119,7 @@ export default function Footer() {
 									<XLogo aria-hidden className="h-4 w-4" />
 								</a>
 							</Tooltip>
-							<Tooltip label="LinkedIn">
+							<Tooltip label={`${CREATOR_NAME} on LinkedIn`}>
 								<a
 									href={CREATOR_LINKEDIN_URL}
 									target="_blank"
@@ -139,6 +128,17 @@ export default function Footer() {
 									className={iconLinkClass}
 								>
 									<LinkedInLogo aria-hidden className="h-4 w-4" />
+								</a>
+							</Tooltip>
+							<Tooltip label="Support the project" align="start">
+								<a
+									href={SUPPORT_URL}
+									target="_blank"
+									rel="noopener noreferrer"
+									aria-label="Support the project"
+									className={iconLinkClass}
+								>
+									<HandCoinsIcon aria-hidden className="h-4 w-4" />
 								</a>
 							</Tooltip>
 						</div>

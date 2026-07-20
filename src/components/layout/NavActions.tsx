@@ -2,7 +2,7 @@
 
 import {
 	BookOpenTextIcon,
-	HeartIcon,
+	HandCoinsIcon,
 	HomeIcon,
 	LayoutGridIcon,
 	MenuIcon,
@@ -12,8 +12,10 @@ import {
 import Link from "next/link";
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 
-import { buttonClasses } from "@/components/ui";
+import { buttonClasses, Tooltip } from "@/components/ui";
+import { GithubMark } from "@/components/ui/logos";
 import ByokDrawer from "@/components/_shared/byok/ByokDrawer";
+import NavIconButton from "./NavIconButton";
 import ToolsMenu from "./ToolsMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import { ROUTES } from "@/lib/config/routes";
@@ -22,13 +24,15 @@ import { cn } from "@/lib/utils/cn";
 
 type NavActionsProps = {
 	actionsSlot?: ReactNode;
+	menuSlot?: ReactNode;
 	repoUrl?: string;
 	showByok?: boolean;
 };
 
-/** The right side of the Navbar — Tools switcher dropdown, hamburger (below xl), and secondary controls (theme, BYOK, support, GitHub); one DOM subtree restyled per breakpoint so drawers stay mounted. */
+/** The right side of the Navbar, identical at every breakpoint — Tools switcher, the tool `actionsSlot`, a GitHub link, and a menu button whose dropdown holds nav links plus BYOK/theme/support. The dropdown stays mounted (hidden when closed) so its drawers survive. `menuSlot` renders inside it. */
 export default function NavActions({
 	actionsSlot,
+	menuSlot,
 	repoUrl = REPO_URL,
 	showByok = true,
 }: NavActionsProps) {
@@ -56,116 +60,103 @@ export default function NavActions({
 		setOpenMenu((current) => (current === menu ? null : menu));
 	const close = () => setOpenMenu(null);
 
+	const menuRow = cn(
+		buttonClasses({ variant: "ghost", size: "sm" }),
+		"w-full justify-start",
+	);
 	const cta = cn(
 		buttonClasses({ variant: "outline", size: "sm" }),
-		"w-full justify-center xl:w-auto",
+		"w-full justify-center",
 	);
 
 	return (
 		<div ref={ref} className="contents">
+			{/* Tools menu */}
 			<ToolsMenu
 				open={openMenu === "tools"}
 				onToggle={() => toggle("tools")}
 				onNavigate={close}
 			/>
 
-			{/* Tool action (e.g. writing preferences) — kept on the bar at every
-			    width, not folded into the hamburger. */}
-			{actionsSlot}
+			{/* Tool action (e.g. writing preferences) — kept on the bar at every width. */}
+			<div className="hidden md:block">{actionsSlot}</div>
 
-			{/* Hamburger — only below xl, where the controls collapse into a panel. */}
-			<button
-				type="button"
+			{/* Theme toggle — kept on the bar, between the tool action and GitHub. */}
+			<ThemeToggle />
+
+			{/* GitHub — kept on the bar at every width. */}
+			<Tooltip label="Star on GitHub" side="bottom" align="end">
+				<a
+					href={repoUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label="Star on GitHub"
+					className={buttonClasses({ variant: "ghost", size: "icon-sm" })}
+				>
+					<GithubMark aria-hidden className="h-4 w-4" />
+				</a>
+			</Tooltip>
+
+			{/* Menu dropdown button */}
+			<NavIconButton
 				onClick={() => toggle("nav")}
 				aria-expanded={openMenu === "nav"}
 				aria-controls={menuId}
-				aria-label={openMenu === "nav" ? "Close menu" : "Open menu"}
-				title={openMenu === "nav" ? "Close menu" : "Open menu"}
-				className={cn(
-					buttonClasses({ variant: "ghost", size: "icon-sm" }),
-					"xl:hidden",
-				)}
+				label={openMenu === "nav" ? "Close menu" : "Open menu"}
+				tooltipAlign="end"
 			>
 				{openMenu === "nav" ? (
 					<XIcon aria-hidden className="w-5 h-5" />
 				) : (
 					<MenuIcon aria-hidden className="w-5 h-5" />
 				)}
-			</button>
+			</NavIconButton>
 
-			{/* Secondary controls: inline row at xl+, dropdown panel below. */}
+			{/* Menu dropdown links */}
 			<div
 				id={menuId}
 				className={cn(
-					"gap-1",
-					"xl:flex xl:static xl:mt-0 xl:w-auto xl:max-h-none xl:flex-row xl:items-center xl:overflow-visible xl:rounded-none xl:border-0 xl:bg-transparent xl:p-0 xl:shadow-none",
 					openMenu === "nav"
-						? "absolute right-2 top-full z-50 mt-2 flex max-h-[70vh] w-[min(20rem,calc(100vw-1rem))] flex-col overflow-y-auto no-scrollbar rounded-lg border border-border bg-popover p-2 shadow-lg sm:right-3"
-						: "hidden xl:flex",
+						? "absolute right-4 top-full z-50 mt-2 flex max-h-[70vh] w-[min(20rem,calc(100vw-2rem))] flex-col gap-1 overflow-y-auto no-scrollbar rounded-lg border border-border bg-popover p-2 shadow-lg sm:right-6 lg:right-10"
+						: "hidden",
 				)}
 			>
-				{/* Home is the logo on xl+, so it only needs a row in the panel. */}
-				<Link
-					href={ROUTES.home}
-					onClick={close}
-					className={cn(
-						buttonClasses({ variant: "ghost", size: "sm" }),
-						"w-full justify-start xl:hidden",
-					)}
-				>
+				<Link href={ROUTES.home} onClick={close} className={menuRow}>
 					<HomeIcon aria-hidden className="w-4 h-4" />
 					<span>Home</span>
 				</Link>
 
-				<Link
-					href={ROUTES.tools}
-					onClick={close}
-					className={cn(
-						buttonClasses({ variant: "ghost", size: "sm" }),
-						"w-full justify-start xl:hidden",
-					)}
-				>
+				<Link href={ROUTES.tools} onClick={close} className={menuRow}>
 					<LayoutGridIcon aria-hidden className="w-4 h-4" />
 					<span>Tools</span>
 				</Link>
 
-				<Link
-					href={ROUTES.categories}
-					onClick={close}
-					className={cn(
-						buttonClasses({ variant: "ghost", size: "sm" }),
-						"w-full justify-start xl:hidden",
-					)}
-				>
+				<Link href={ROUTES.categories} onClick={close} className={menuRow}>
 					<TagsIcon aria-hidden className="w-4 h-4" />
 					<span>Categories</span>
 				</Link>
 
-				<Link
-					href={ROUTES.guides}
-					onClick={close}
-					className={cn(
-						buttonClasses({ variant: "ghost", size: "sm" }),
-						"w-full justify-start xl:hidden",
-					)}
-				>
+				<Link href={ROUTES.guides} onClick={close} className={menuRow}>
 					<BookOpenTextIcon aria-hidden className="w-4 h-4" />
 					<span>Guides</span>
 				</Link>
 
-				{showByok && <ByokDrawer />}
-				<ThemeToggle />
+				{/* Menu slot for page-specific links */}
+				{menuSlot}
 
-				<div className="my-1 border-t border-border/60 xl:hidden" />
+				{showByok && <ByokDrawer />}
+
+				<ThemeToggle presentation="menuItem" />
+
+				<div className="my-1 border-t border-border/60" />
 
 				<a
 					href={SUPPORT_URL}
 					target="_blank"
 					rel="noopener noreferrer"
 					className={cta}
-					title="Support"
 				>
-					<HeartIcon aria-hidden className="w-4 h-4" />
+					<HandCoinsIcon aria-hidden className="w-4 h-4" />
 					<span>Support</span>
 				</a>
 				<a
@@ -173,7 +164,6 @@ export default function NavActions({
 					target="_blank"
 					rel="noopener noreferrer"
 					className={cta}
-					title="Star on GitHub"
 				>
 					<span aria-hidden>⭐</span>
 					<span>Star on GitHub</span>

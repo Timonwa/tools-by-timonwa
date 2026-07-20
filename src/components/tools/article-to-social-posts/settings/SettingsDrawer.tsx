@@ -17,13 +17,18 @@ import PlatformPicker from "../writer/PlatformPicker";
 import TemplatesPicker from "../writer/TemplatesPicker";
 import ThreadFormat from "../writer/ThreadFormat";
 import TonePicker from "../writer/TonePicker";
-import { Button, Drawer, Tooltip } from "@/components/ui";
+import NavIconButton from "@/components/layout/NavIconButton";
+import { Button, Drawer } from "@/components/ui";
 
 import HashtagRulesSection from "./HashtagRules";
 import WritingPreferencesSection from "./WritingPreferences";
 
-/** Slide-out drawer for tool-scoped defaults — tone, platforms, thread format, writing style, and hashtag rules. */
-export default function SettingsDrawer() {
+/** Slide-out drawer for tool-scoped defaults — tone, platforms, thread format, writing style, and hashtag rules. `presentation` picks the trigger: a bar icon or a full-width menu row. */
+export default function SettingsDrawer({
+	presentation = "icon",
+}: {
+	presentation?: "icon" | "menuItem";
+} = {}) {
 	const [open, setOpen] = useState(false);
 	const prefs = useSyncExternalStore(
 		prefsStorage.subscribe,
@@ -44,22 +49,27 @@ export default function SettingsDrawer() {
 
 	return (
 		<>
-			<Tooltip
-				label="Writing preferences"
-				side="bottom"
-				align="end"
-				desktopOnly
-			>
+			{presentation === "menuItem" ? (
 				<Button
 					variant="ghost"
-					size="icon-sm"
+					size="sm"
 					onClick={() => setOpen(true)}
-					aria-label="Writing preferences"
+					aria-expanded={open}
+					className="w-full justify-start"
+				>
+					<PenLineIcon aria-hidden className="w-4 h-4" />
+					<span>Writing preferences</span>
+				</Button>
+			) : (
+				<NavIconButton
+					label="Writing preferences"
+					tooltipAlign="end"
+					onClick={() => setOpen(true)}
 					aria-expanded={open}
 				>
 					<PenLineIcon aria-hidden className="w-4 h-4" />
-				</Button>
-			</Tooltip>
+				</NavIconButton>
+			)}
 
 			<Drawer
 				open={open}

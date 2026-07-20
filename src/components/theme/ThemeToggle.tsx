@@ -2,7 +2,8 @@
 
 import { Monitor, Moon, Sun } from "lucide-react";
 
-import { Button, Tooltip } from "@/components/ui";
+import NavIconButton from "@/components/layout/NavIconButton";
+import { Button } from "@/components/ui";
 import { type ThemeType, useTheme } from "./use-theme";
 
 const NEXT: Record<ThemeType, ThemeType> = {
@@ -11,32 +12,40 @@ const NEXT: Record<ThemeType, ThemeType> = {
 	system: "light",
 };
 
-export default function ThemeToggle() {
+export default function ThemeToggle({
+	presentation = "icon",
+}: {
+	presentation?: "icon" | "menuItem";
+} = {}) {
 	const { theme, resolvedTheme, setTheme } = useTheme();
 
 	const Icon =
 		theme === "system" ? Monitor : resolvedTheme === "dark" ? Moon : Sun;
 
-	const label = `Theme: ${theme}. Cycle to ${NEXT[theme]}.`;
+	const label = `Theme: ${theme}`;
 
-	return (
-		<Tooltip
-			label={label}
-			side="bottom"
-			align="end"
-			desktopOnly
-			className="w-full xl:w-auto"
-		>
+	if (presentation === "menuItem") {
+		return (
 			<Button
 				variant="ghost"
 				size="sm"
 				onClick={() => setTheme(NEXT[theme])}
 				aria-label={label}
-				className="w-full justify-start xl:w-auto xl:justify-center"
+				className="w-full justify-start"
 			>
 				<Icon aria-hidden className="w-4 h-4" />
-				<span className="capitalize xl:hidden">{theme} mode</span>
+				<span className="capitalize">{theme} mode</span>
 			</Button>
-		</Tooltip>
+		);
+	}
+
+	return (
+		<NavIconButton
+			label={label}
+			tooltipAlign="end"
+			onClick={() => setTheme(NEXT[theme])}
+		>
+			<Icon aria-hidden className="w-4 h-4" />
+		</NavIconButton>
 	);
 }

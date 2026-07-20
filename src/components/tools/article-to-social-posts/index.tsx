@@ -14,6 +14,7 @@ export default function ArticleToSocialPostsPageContent() {
 			icon={Share2Icon}
 			usageNotice={<HostedUsageNotice />}
 			settings={<SettingsDrawer />}
+			menuSlot={<SettingsDrawer presentation="menuItem" />}
 		>
 			<Hero />
 			<Writer />

@@ -41,7 +41,7 @@ export default function ToolsMenu({
 	}, [q]);
 
 	return (
-		<div className="contents xl:relative xl:block">
+		<div className="contents">
 			<Button
 				variant="ghost"
 				size="sm"
@@ -49,7 +49,6 @@ export default function ToolsMenu({
 				aria-expanded={open}
 				aria-controls={menuId}
 				onClick={onToggle}
-				title="Tools"
 			>
 				<LayoutGridIcon aria-hidden className="w-4 h-4" />
 				<span className="hidden sm:inline">Tools</span>
@@ -65,7 +64,7 @@ export default function ToolsMenu({
 			<div
 				id={menuId}
 				className={cn(
-					"absolute right-2 top-full z-50 mt-2 w-[min(20rem,calc(100vw-1rem))] overflow-hidden rounded-lg border border-border bg-popover shadow-lg sm:right-3 lg:right-6 xl:left-0 xl:right-auto",
+					"absolute right-4 top-full z-50 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-border bg-popover shadow-lg sm:right-6 lg:right-10",
 					open ? "block" : "hidden",
 				)}
 			>
