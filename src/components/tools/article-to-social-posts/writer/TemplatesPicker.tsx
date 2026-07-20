@@ -90,12 +90,6 @@ export default function TemplatesPicker({
 						<span className="shrink-0 text-muted-foreground">
 							({templates.length})
 						</span>
-						{!expanded && activePreset && (
-							<Badge variant="primary" className="min-w-0">
-								<CheckIcon aria-hidden className="w-3 h-3 shrink-0" />
-								<span className="max-w-32 truncate">{activePreset.name}</span>
-							</Badge>
-						)}
 						<ChevronDownIcon
 							aria-hidden
 							className={cn(
@@ -103,6 +97,12 @@ export default function TemplatesPicker({
 								expanded && "rotate-180",
 							)}
 						/>
+						{activePreset && (
+							<Badge variant="primary" className="min-w-0">
+								<CheckIcon aria-hidden className="w-3 h-3 shrink-0" />
+								<span className="max-w-32 truncate">{activePreset.name}</span>
+							</Badge>
+						)}
 					</button>
 				) : (
 					<div className="flex items-center gap-1.5 text-xs font-medium">
@@ -117,11 +117,13 @@ export default function TemplatesPicker({
 							setIsSaving(true);
 							setExpanded(true);
 						}}
-						disabled={disabled || full}
+						disabled={disabled || full || Boolean(activePreset)}
 						title={
 							full
 								? `Max ${MAX_TEMPLATES} presets — delete one first`
-								: "Save the current tone, platforms, and writing prefs as a reusable preset"
+								: activePreset
+									? `These settings are already saved as “${activePreset.name}”`
+									: "Save the current tone, platforms, and writing prefs as a reusable preset"
 						}
 						className="text-[11px] text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
 					>

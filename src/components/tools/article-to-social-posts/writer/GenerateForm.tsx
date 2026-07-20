@@ -21,6 +21,7 @@ import {
 } from "@/components/ui";
 import { MAX_ARTICLE_CHARS } from "@/lib/config/limits";
 
+import WritingPreferencesButton from "../settings/WritingPreferencesButton";
 import PlatformPicker from "./PlatformPicker";
 import TemplatesPicker from "./TemplatesPicker";
 import TonePicker from "./TonePicker";
@@ -109,10 +110,8 @@ export default function GenerateForm({
 					Generate social media posts
 				</CardTitle>
 				<CardDescription>
-					Paste an article&apos;s URL or its text (up to{" "}
-					{MAX_ARTICLE_CHARS.toLocaleString()} characters). Posts are generated
-					for every selected platform — copy them and post to each site
-					manually.
+					Paste an article&apos;s URL or text — we draft a post for every
+					platform you pick, ready to copy and post yourself.
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
@@ -126,6 +125,7 @@ export default function GenerateForm({
 						onUpdate={onUpdateTemplate}
 						onRename={onRenameTemplate}
 						disabled={isGenerating}
+						collapsible
 					/>
 
 					<ArticleSourceInput
@@ -163,6 +163,8 @@ export default function GenerateForm({
 							disabled={isGenerating}
 						/>
 					)}
+
+					<WritingPreferencesButton disabled={isGenerating} />
 
 					<div className="flex flex-col gap-2 sm:flex-row">
 						<Button
