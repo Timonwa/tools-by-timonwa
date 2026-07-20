@@ -41,8 +41,7 @@ const LEGAL_LINKS = [
 	{ href: PRIVACY_URL, label: "Privacy" },
 ];
 
-// Resolved at module load (not during render) so it stays static under Cache
-// Components — the copyright year doesn't need request-time freshness.
+// Resolved at module load so it stays static under Cache Components — the copyright year doesn't need request-time freshness.
 const YEAR = new Date().getFullYear();
 
 const linkClass =
@@ -51,6 +50,7 @@ const linkClass =
 const iconLinkClass =
 	"flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:bg-accent hover:text-foreground";
 
+/** A vertical list of external anchor links — used in the footer's Project and Connect nav columns. */
 function ExternalList({ links }: { links: { href: string; label: string }[] }) {
 	return (
 		<ul className="mt-3 flex flex-col gap-2 text-sm">

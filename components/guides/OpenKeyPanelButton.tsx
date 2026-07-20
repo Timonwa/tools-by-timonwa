@@ -5,10 +5,7 @@ import { KeyRoundIcon } from "lucide-react";
 import { Button } from "@/components/ui";
 import { OPEN_BYOK_EVENT } from "@/lib/config/byok";
 
-/**
- * Opens the hub's BYOK drawer (mounted in the Navbar) from inside a guide, so a
- * reader can go straight from "here's how" to pasting their key.
- */
+/** A guide-page button that fires the BYOK drawer event — lets a reader go straight from "here's how" to pasting their key without leaving the guide. */
 export default function OpenKeyPanelButton() {
 	return (
 		<div className="mt-6">

@@ -2,20 +2,12 @@ import { ImageIcon } from "lucide-react";
 import Image from "next/image";
 
 type GuideFigureProps = {
-	/** Path to the screenshot in /public (e.g. "/guides/gemini/create-key.png").
-	 * Until it's added, the figure shows a labeled placeholder so the page still previews. */
 	src?: string;
-	/** Accessible description of the screenshot. Falls back to the caption. */
 	alt?: string;
-	/** Visible caption shown beneath the image. */
 	caption: string;
 };
 
-/**
- * A screenshot slot for guides. Real images drop into /public and are passed
- * via `src`; while they're missing, a labeled placeholder keeps the layout
- * intact for preview.
- */
+/** A screenshot slot for guide pages — renders the image when `src` is provided, or a labeled placeholder so the layout stays intact during authoring. */
 export default function GuideFigure({ src, alt, caption }: GuideFigureProps) {
 	return (
 		<figure className="mt-6">

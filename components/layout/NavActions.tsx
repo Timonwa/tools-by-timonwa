@@ -26,14 +26,7 @@ type NavActionsProps = {
 	showByok?: boolean;
 };
 
-/**
- * Right side of the Navbar. The Tools switcher is always a dropdown. The
- * secondary controls (key, settings, theme, support, GitHub) render as an inline
- * row from `xl` up — where there's room for everything — and collapse into a
- * hamburger dropdown below that. It's one set of controls, restyled per
- * breakpoint via CSS, so the drawers stay mounted (their event listeners keep
- * working) and there are no duplicate instances.
- */
+/** The right side of the Navbar — Tools switcher dropdown, hamburger (below xl), and secondary controls (theme, BYOK, support, GitHub); one DOM subtree restyled per breakpoint so drawers stay mounted. */
 export default function NavActions({
 	actionsSlot,
 	repoUrl = REPO_URL,

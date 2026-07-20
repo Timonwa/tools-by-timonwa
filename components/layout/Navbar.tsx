@@ -14,16 +14,13 @@ type NavbarProps = {
 		icon: IconComponentType;
 		ariaLabel?: string;
 	};
-	/** Rendered between brand and right-side actions. Typically tool-specific (e.g. usage notice). */
 	centerSlot?: ReactNode;
-	/** Rendered in the collapsible actions cluster, alongside ThemeToggle/BYOK. Typically tool-specific (e.g. settings drawer). */
 	actionsSlot?: ReactNode;
-	/** GitHub repo URL for the "Star on GitHub" button. Defaults to the hub repo. */
 	repoUrl?: string;
-	/** Show the bring-your-own-key drawer. Off for deterministic tools that make no API calls. */
 	showByok?: boolean;
 };
 
+/** The primary navbar shell — brand link on the left, optional center slot, and the NavActions cluster on the right. */
 export default function Navbar({
 	brand,
 	centerSlot,

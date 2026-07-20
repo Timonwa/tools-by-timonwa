@@ -6,7 +6,6 @@ import { buttonClasses } from "@/components/ui";
 import { ROUTES } from "@/lib/config/routes";
 import { FEATURED_TOOLS, LIVE_TOOLS } from "@/lib/config/tools";
 
-/** Home previews the featured tools; the full set lives at /tools. */
 export default function ToolsPreview() {
 	const hasMore = LIVE_TOOLS.length > FEATURED_TOOLS.length;
 

@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import {
 	Card,
 	CardContent,
+	Checkbox,
 	CopyButton,
 	Input,
 	OutputBlock,
@@ -66,15 +67,15 @@ export default function SlugGeneratorTool() {
 								ariaLabel="Separator"
 							/>
 						</fieldset>
-						<Toggle
-							checked={lowercase}
-							onChange={setLowercase}
+						<Checkbox
 							label="Lowercase"
+							checked={lowercase}
+							onChange={(e) => setLowercase(e.target.checked)}
 						/>
-						<Toggle
-							checked={removeStopWords}
-							onChange={setRemoveStopWords}
+						<Checkbox
 							label="Remove stop words"
+							checked={removeStopWords}
+							onChange={(e) => setRemoveStopWords(e.target.checked)}
 						/>
 					</div>
 				</CardContent>
@@ -118,27 +119,5 @@ export default function SlugGeneratorTool() {
 				</CardContent>
 			</Card>
 		</div>
-	);
-}
-
-function Toggle({
-	checked,
-	onChange,
-	label,
-}: {
-	checked: boolean;
-	onChange: (value: boolean) => void;
-	label: string;
-}) {
-	return (
-		<label className="flex items-center gap-2 text-sm cursor-pointer select-none">
-			<input
-				type="checkbox"
-				checked={checked}
-				onChange={(e) => onChange(e.target.checked)}
-				className="h-4 w-4 rounded border-border accent-primary cursor-pointer"
-			/>
-			{label}
-		</label>
 	);
 }

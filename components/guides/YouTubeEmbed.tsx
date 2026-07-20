@@ -1,16 +1,11 @@
 import { PlayCircleIcon } from "lucide-react";
 
 type YouTubeEmbedProps = {
-	/** The YouTube video ID (the part after `v=`). Leave empty to show a placeholder. */
 	id: string;
-	/** Accessible title for the embedded player. */
 	title: string;
 };
 
-/**
- * Privacy-friendly (youtube-nocookie) 16:9 video embed for guides. With no
- * `id` yet, it renders a "coming soon" placeholder so the guide still previews.
- */
+/** A privacy-friendly (youtube-nocookie) 16:9 embed for guide pages; renders a "coming soon" placeholder when `id` is empty so the guide still previews. */
 export default function YouTubeEmbed({ id, title }: YouTubeEmbedProps) {
 	return (
 		<div className="relative mt-6 aspect-video w-full overflow-hidden rounded-xl border border-border bg-muted/40">

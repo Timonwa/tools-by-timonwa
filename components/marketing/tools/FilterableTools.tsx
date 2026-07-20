@@ -18,6 +18,7 @@ const VALID = new Set<CategoryIdType>(PRESENT.map((c) => c.id));
 const countIn = (category: CategoryIdType) =>
 	LIVE_TOOLS.filter((t) => t.categories.includes(category)).length;
 
+/** Category filter pill — tinted when active, muted when not. */
 function FilterChip({
 	label,
 	count,
@@ -30,7 +31,6 @@ function FilterChip({
 	count: number;
 	active: boolean;
 	icon?: React.ReactNode;
-	/** Category color classes for the active state; falls back to the theme accent. */
 	activeClass?: string;
 	onClick: () => void;
 }) {
@@ -53,11 +53,6 @@ function FilterChip({
 	);
 }
 
-/**
- * The tool directory's category filter + grid. The active category lives in the
- * URL (`?category=…`) so filtered views are shareable and the breadcrumb on each
- * tool page can deep-link straight into a filtered directory.
- */
 export default function FilterableTools() {
 	const router = useRouter();
 	const pathname = usePathname();

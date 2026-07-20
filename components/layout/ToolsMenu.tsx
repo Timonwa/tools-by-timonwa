@@ -21,11 +21,7 @@ type ToolsMenuProps = {
 	onNavigate: () => void;
 };
 
-/**
- * Tools switcher: a search box, the full (scrollable) tool list in a compact
- * two-column grid, and a link to the hub's all-tools page. The panel anchors to
- * the viewport edge and is width-clamped, so it never clips on small screens.
- */
+/** The tools switcher dropdown — search box, scrollable tool list, and an "all tools" footer link; width-clamped so it never clips on small screens. */
 export default function ToolsMenu({
 	open,
 	onToggle,

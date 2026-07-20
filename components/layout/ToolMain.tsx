@@ -2,12 +2,7 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils/cn";
 
-/**
- * Shared page container for every tool. One place owns the max width and
- * padding so all tools line up. Pass `className` to override the width for a
- * simpler tool (e.g. a narrow single-input tool) — `cn` lets a `max-w-*`
- * utility here win over the default.
- */
+/** The shared page container for every tool — owns max-width and padding so all tools align; pass `className` to override for narrower layouts. */
 export default function ToolMain({
 	children,
 	className,

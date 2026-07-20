@@ -35,9 +35,7 @@ function subscribe(onStoreChange: () => void) {
 	};
 }
 
-// Snapshot encodes both the stored preference and the resolved value, so an OS
-// preference change (which leaves the preference as "system") still yields a
-// new snapshot and re-renders. Returning a string keeps it Object.is-stable.
+// Encodes pref + resolved value so an OS preference change (leaving pref as "system") still yields a new snapshot; a string return keeps it Object.is-stable.
 const getSnapshot = (): `${ThemeType}:${ResolvedThemeType}` => {
 	const pref = readStored();
 	return `${pref}:${resolve(pref)}`;
@@ -46,6 +44,7 @@ const getSnapshot = (): `${ThemeType}:${ResolvedThemeType}` => {
 const getServerSnapshot = (): `${ThemeType}:${ResolvedThemeType}` =>
 	"system:light";
 
+/** A hook for reading and setting the app theme — returns the stored preference, the resolved value, and a setter that persists to localStorage and syncs across instances. */
 export function useTheme() {
 	const snapshot = useSyncExternalStore(
 		subscribe,
@@ -57,8 +56,7 @@ export function useTheme() {
 		ResolvedThemeType,
 	];
 
-	// Keep <html> in sync whenever the resolved theme changes — user action or
-	// OS preference change.
+	// Keeps <html> in sync on both user action and OS preference change.
 	useEffect(() => {
 		apply(resolvedTheme);
 	}, [resolvedTheme]);
