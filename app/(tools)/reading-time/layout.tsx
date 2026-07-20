@@ -67,7 +67,7 @@ const jsonLd = {
 		"Adjustable reading speed (slow, average, fast)",
 		"Copy-ready “X min read” label for blog posts",
 		"Runs entirely in your browser — nothing is uploaded",
-		"Open source, MIT licensed",
+		"Open source",
 	],
 	creator: {
 		"@type": "Person",

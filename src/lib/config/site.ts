@@ -33,9 +33,8 @@ export const CREATOR_SAME_AS = [
 	CREATOR_SITE_URL,
 ];
 
-/** GitHub repo — Navbar star button, Footer license + repo links, tool JSON-LD. */
+/** GitHub repo — Navbar star button, Footer repo links, tool JSON-LD. */
 export const REPO_URL = "https://github.com/Timonwa/tools-by-timonwa";
-export const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;
 
 /** Support / support link (Navbar). */
 export const SUPPORT_URL = "https://tech.timonwa.com/support";

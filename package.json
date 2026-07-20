@@ -2,6 +2,7 @@
 	"name": "tools-by-timonwa",
 	"version": "0.1.0",
 	"description": "A growing collection of small, focused, open-source tools by Timonwa.",
+	"license": "AGPL-3.0-only",
 	"private": true,
 	"scripts": {
 		"dev": "next dev",

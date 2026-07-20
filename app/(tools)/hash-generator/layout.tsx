@@ -67,7 +67,7 @@ const jsonLd = {
 		"Lowercase or uppercase hex output",
 		"One-click copy for each hash",
 		"Computed locally with the Web Crypto API — nothing is uploaded",
-		"Open source, MIT licensed",
+		"Open source",
 	],
 	creator: {
 		"@type": "Person",

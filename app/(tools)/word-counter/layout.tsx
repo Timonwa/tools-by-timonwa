@@ -67,7 +67,7 @@ const jsonLd = {
 		"Reading and speaking time estimates",
 		"Live character limits for SEO titles, meta descriptions, X, Bluesky, and LinkedIn",
 		"Runs entirely in your browser — nothing is uploaded",
-		"Open source, MIT licensed",
+		"Open source",
 	],
 	creator: {
 		"@type": "Person",
