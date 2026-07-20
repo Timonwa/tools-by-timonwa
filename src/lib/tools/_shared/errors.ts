@@ -20,10 +20,24 @@ export function toUserMessage(error: unknown, opts: ToolErrorOptions): string {
 		if (pattern.test(message)) return msg;
 	}
 
+	// Our own coded sentinels next, before any of Google's fuzzier error text
+	// below — a raw "RATE_LIMIT_USER" also matches the generic rate-limit check,
+	// so matching it here is what stops a used-up daily allowance from being
+	// mis-reported as a transient "we're busy right now".
+
 	// No Gemini key configured on the server at all — only the hosted path hits
 	// this (BYOK always sends a key). Not transient, so no "try again".
 	if (/NO_SERVER_KEY/.test(message))
 		return "This tool isn't available to run right now. Add your own free Google key to use it — it only takes a couple of minutes.";
+
+	// This person's hosted daily allowance is used up — not the server being
+	// busy. Only thrown on the hosted path (BYOK skips the quota entirely).
+	if (/RATE_LIMIT_USER/.test(message))
+		return `You've used up your ${opts.perUserDaily} free generations for today. They reset tomorrow — or add your own free Google key to keep going now.`;
+
+	// The shared hosted allowance across everyone is used up — not this person's.
+	if (/RATE_LIMIT_POOL/.test(message))
+		return "The free daily limit shared across everyone is used up for today. It resets tomorrow — or add your own free Google key to keep going now.";
 
 	// The AI SDK couldn't produce a valid object; finishReason says why.
 	if (NoObjectGeneratedError.isInstance(error)) {
@@ -53,7 +67,8 @@ export function toUserMessage(error: unknown, opts: ToolErrorOptions): string {
 	if (/\b503\b|UNAVAILABLE|overload|high demand/i.test(raw))
 		return "Google's AI is busy right now. Wait a few seconds and try again.";
 
-	// Too many requests, too fast, for whichever key is in use.
+	// Google itself throttled the key in use (its own 429 / free-tier quota) —
+	// distinct from our per-user cap above. Transient: wait a moment and retry.
 	if (/RESOURCE_EXHAUSTED|rate.?limit|quota|\b429\b/i.test(raw))
 		return byok
 			? "Your Google key has been used too many times for now. Wait a minute and try again, or check how much it has left in Google AI Studio."
@@ -68,14 +83,6 @@ export function toUserMessage(error: unknown, opts: ToolErrorOptions): string {
 		return byok
 			? "Google didn't accept your API key. Open “Set API key” and paste it again, or create a new free key. New to this? The 2-minute guide walks you through it."
 			: "Something went wrong on our end. Please try again in a moment, or add your own free Google key to keep going.";
-
-	// Hosted per-user daily allowance used up.
-	if (/RATE_LIMIT_USER/.test(raw))
-		return `You've used up your ${opts.perUserDaily} generations for today. Add your own free Google key to keep going — they reset tomorrow.`;
-
-	// Hosted shared daily allowance used up — across everyone.
-	if (/RATE_LIMIT_POOL/.test(raw))
-		return "The daily limit for everyone is used up for today. Add your own free Google key to keep going — it resets tomorrow.";
 
 	// Content tripped Google's safety filter.
 	if (/SAFETY|safety.?filter|blocked.*safety/i.test(raw))
