@@ -38,10 +38,13 @@ Focused web tools for everyday content work — AI tools that turn an article in
 
 | Tool                                                                   | What it does                                                                                 |
 | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| **[Word & Character Counter](https://tools.timonwa.com/word-counter)** | Live word, character, sentence, and reading-time counts, with per-platform character limits. |
 | **[Case Converter](https://tools.timonwa.com/case-converter)**         | Switch text between UPPERCASE, Title Case, camelCase, snake_case, and more.                  |
-| **[Slug Generator](https://tools.timonwa.com/slug-generator)**         | Turn any title or headline into a clean, URL-safe slug.                                      |
+| **[Hash Generator](https://tools.timonwa.com/hash-generator)**         | Hash text with SHA-1, SHA-256, SHA-384, and SHA-512, right in your browser.                  |
+| **[Lorem Ipsum Generator](https://tools.timonwa.com/lorem-ipsum)**     | Generate placeholder paragraphs, sentences, or words in one click.                           |
 | **[Reading Time Estimator](https://tools.timonwa.com/reading-time)**   | Estimate reading and speaking time, with a copy-ready “X min read” label.                    |
+| **[Slug Generator](https://tools.timonwa.com/slug-generator)**         | Turn any title or headline into a clean, URL-safe slug.                                      |
+| **[SVG to JSX Converter](https://tools.timonwa.com/svg-to-jsx)**       | Convert raw SVG markup into a clean React/JSX component.                                     |
+| **[Word & Character Counter](https://tools.timonwa.com/word-counter)** | Live word, character, sentence, and reading-time counts, with per-platform character limits. |
 
 _More on the way._
 
