@@ -1,7 +1,10 @@
 import { createGoogle } from "@ai-sdk/google";
 import { env } from "@env";
 
+import { BYOK_MODELS, DEFAULT_BYOK_MODEL } from "@/lib/config/byok";
 import type { TokenUsageType } from "@/lib/types/token-usage";
+
+const ALLOWED_BYOK_MODELS = new Set<string>(BYOK_MODELS.map((m) => m.value));
 
 /** Gemini provider + model for a tool call — BYOK key overrides the server key; throws `NO_SERVER_KEY` when neither is set. */
 export function getGemini(opts: {
@@ -15,9 +18,13 @@ export function getGemini(opts: {
 			"NO_SERVER_KEY: no Gemini API key is configured. Set GOOGLE_API_KEY in your environment, or use your own key via “Set API key”.",
 		);
 	}
-	const modelId = opts.googleApiKey
-		? opts.googleModel || env.LLM_MODEL
-		: env.LLM_MODEL;
+	// Only honor a caller-supplied model on the BYOK path, and only if it's in the
+	// allowlist — never trust the client-sent string blindly.
+	const byokModel =
+		opts.googleModel && ALLOWED_BYOK_MODELS.has(opts.googleModel)
+			? opts.googleModel
+			: DEFAULT_BYOK_MODEL;
+	const modelId = opts.googleApiKey ? byokModel : env.LLM_MODEL;
 	const provider = createGoogle({ apiKey: key });
 	return { provider, model: provider(modelId) };
 }

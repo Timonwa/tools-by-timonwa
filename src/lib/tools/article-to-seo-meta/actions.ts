@@ -11,7 +11,10 @@ import {
 	type TokenUsageType,
 } from "@/components/tools/article-to-seo-meta/types";
 import { generateSeoVariations } from "./agents/seo-meta-generator/agent";
-import type { DraftInputType } from "@/lib/tools/_shared/draft-input";
+import {
+	assertSafeArticleUrl,
+	type DraftInputType,
+} from "@/lib/tools/_shared/draft-input";
 import { toUserMessage } from "@/lib/tools/_shared/errors";
 import {
 	enforceQuota,
@@ -77,9 +80,7 @@ function resolveSource(source: DraftInputType): {
 	text?: string;
 } {
 	if (source.kind === "url") {
-		const url = source.url?.trim();
-		if (!url) throw new Error("URL_EMPTY");
-		return { url };
+		return { url: assertSafeArticleUrl(source.url) };
 	}
 	const text = source.text?.trim();
 	if (!text) throw new Error("ARTICLE_EMPTY");
