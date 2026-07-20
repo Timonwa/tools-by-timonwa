@@ -89,11 +89,21 @@ function resolveSource(source: DraftInputType): {
 }
 
 export type SeoActionResultType =
-	| { ok: true; result: SeoMetaResultType; usage: TokenUsageType }
+	| {
+			ok: true;
+			result: SeoMetaResultType;
+			usage: TokenUsageType;
+			remaining: number | null;
+	  }
 	| { ok: false; error: string };
 
 export type SeoVariationActionResultType =
-	| { ok: true; variation: SeoVariationType; usage: TokenUsageType }
+	| {
+			ok: true;
+			variation: SeoVariationType;
+			usage: TokenUsageType;
+			remaining: number | null;
+	  }
 	| { ok: false; error: string };
 
 /** Server action — generate 1-3 SEO meta variations for an article draft. */
@@ -107,7 +117,7 @@ export async function generateSeoMeta(input: {
 	try {
 		const { url, text } = resolveSource(input.source);
 
-		await enforceQuota(QUOTA_CONFIG, input.googleApiKey);
+		const remaining = await enforceQuota(QUOTA_CONFIG, input.googleApiKey);
 
 		const count = Math.min(3, Math.max(1, input.variationCount ?? 3));
 		const keyword = input.primaryKeyword?.trim() || undefined;
@@ -124,7 +134,7 @@ export async function generateSeoMeta(input: {
 			...object,
 			article: { ...object.article, url: url ?? "" },
 		};
-		return { ok: true, result, usage };
+		return { ok: true, result, usage, remaining };
 	} catch (error) {
 		return {
 			ok: false,
@@ -144,7 +154,7 @@ export async function regenerateSeoMetaVariation(input: {
 	try {
 		const { url, text } = resolveSource(input.source);
 
-		await enforceQuota(QUOTA_CONFIG, input.googleApiKey);
+		const remaining = await enforceQuota(QUOTA_CONFIG, input.googleApiKey);
 
 		const keyword = input.primaryKeyword?.trim() || undefined;
 		const { object, usage } = await generateSeoVariations({
@@ -156,7 +166,7 @@ export async function regenerateSeoMetaVariation(input: {
 		});
 		const variation = object.variations[0];
 		if (!variation) throw new Error("EMPTY_RESULT");
-		return { ok: true, variation, usage };
+		return { ok: true, variation, usage, remaining };
 	} catch (error) {
 		return {
 			ok: false,

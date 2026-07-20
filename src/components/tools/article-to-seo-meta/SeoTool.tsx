@@ -34,6 +34,7 @@ import {
 	regenerateSeoMetaVariation,
 } from "@/lib/tools/article-to-seo-meta/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
+import { emitHostedUsage } from "@/lib/utils/hosted-usage-signal";
 
 /** History row label — article title, then URL, then a text snippet. */
 const historyLabel = (h: HistoryEntryType): string => {
@@ -133,6 +134,7 @@ export default function SeoTool() {
 					setRegenError(res.error);
 					return;
 				}
+				emitHostedUsage(res.remaining);
 				setEditableVariations((cur) =>
 					cur.map((v, i) => (i === index ? res.variation : v)),
 				);
@@ -185,6 +187,7 @@ export default function SeoTool() {
 				setRegenError(res.error);
 				return;
 			}
+			emitHostedUsage(res.remaining);
 			setResult(res.result);
 			setEditableVariations(res.result.variations);
 			setUsage(res.usage);

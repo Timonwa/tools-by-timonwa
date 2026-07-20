@@ -13,7 +13,8 @@ export type QuotaConfig = {
 };
 
 export type CheckResultType =
-	{ allowed: true } | { allowed: false; reason: "user" | "pool" };
+	| { allowed: true; remaining: number | null }
+	| { allowed: false; reason: "user" | "pool" };
 
 export type UsageSnapshotType = { configured: boolean };
 
@@ -71,13 +72,15 @@ async function getClientHash(): Promise<string> {
 	return digest.slice(0, 16);
 }
 
-/** Increment both quota counters and return whether the request is allowed — call once per billable request, before the LLM call; skip for BYOK. */
+/** Increment both quota counters and return whether the request is allowed, plus the caller's per-user generations left today (null when untracked) — call once per billable request, before the LLM call; skip for BYOK. */
 export async function checkAndIncrement(
 	config: QuotaConfig,
 ): Promise<CheckResultType> {
 	const { toolSlug, perUserDaily, dailyPool } = config;
 	const redis = getRedis();
-	if (!redis) return { allowed: true };
+	// Untracked (local/self-host/no Upstash) — allowed, but there's no counter to
+	// report a remaining figure from.
+	if (!redis) return { allowed: true, remaining: null };
 
 	try {
 		const date = todayUtc();
@@ -94,10 +97,11 @@ export async function checkAndIncrement(
 		if (poolCount === 1) await redis.expire(poolKey, ttl);
 		if (poolCount > dailyPool) return { allowed: false, reason: "pool" };
 
-		return { allowed: true };
+		// `userCount` already includes this request, so this is what's left after it.
+		return { allowed: true, remaining: Math.max(0, perUserDaily - userCount) };
 	} catch (error) {
 		console.error(`[rate-limit:${toolSlug}] Redis error (failing open)`, error);
-		return { allowed: true };
+		return { allowed: true, remaining: null };
 	}
 }
 

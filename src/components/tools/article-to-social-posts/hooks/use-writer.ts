@@ -30,6 +30,7 @@ import {
 	regenerateDraft,
 } from "@/lib/tools/article-to-social-posts/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
+import { emitHostedUsage } from "@/lib/utils/hosted-usage-signal";
 import { type HistoryEntryType, useHistory } from "./use-history";
 import { usePresets } from "./use-presets";
 
@@ -168,6 +169,7 @@ export function useWriter() {
 						setError(result.error);
 						return;
 					}
+					emitHostedUsage(result.remaining);
 					const preview = result.data;
 					setPreview(preview);
 					setEditableDrafts(preview.drafts);
@@ -277,6 +279,7 @@ export function useWriter() {
 						setError(result.error);
 						return;
 					}
+					emitHostedUsage(result.remaining);
 					setEditableDrafts((cur) =>
 						cur.map((d) => (d.platform === draft.platform ? result.draft : d)),
 					);

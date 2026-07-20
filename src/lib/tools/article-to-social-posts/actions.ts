@@ -34,10 +34,16 @@ const QUOTA_CONFIG: QuotaConfig = {
 };
 
 export type PreviewActionResultType =
-	{ ok: true; data: PreviewResultType } | { ok: false; error: string };
+	| { ok: true; data: PreviewResultType; remaining: number | null }
+	| { ok: false; error: string };
 
 export type RegenerateActionResultType =
-	| { ok: true; draft: PostDraftType; usage: TokenUsageType }
+	| {
+			ok: true;
+			draft: PostDraftType;
+			usage: TokenUsageType;
+			remaining: number | null;
+	  }
 	| { ok: false; error: string };
 
 type ErrorContextType = "preview" | "regenerate";
@@ -156,7 +162,7 @@ export async function previewPosts(params: {
 	} = params;
 	try {
 		validateInput(input);
-		await enforceQuota(QUOTA_CONFIG, googleApiKey);
+		const remaining = await enforceQuota(QUOTA_CONFIG, googleApiKey);
 
 		const directives = `Generate social media posts for this article — one per selected platform.\n\n${buildDirectives(
 			tone,
@@ -189,7 +195,7 @@ export async function previewPosts(params: {
 			url: input.kind === "url" ? input.url : "",
 		};
 
-		return { ok: true, data: { article, drafts, usage } };
+		return { ok: true, data: { article, drafts, usage }, remaining };
 	} catch (error) {
 		return {
 			ok: false,
@@ -220,7 +226,7 @@ export async function regenerateDraft(params: {
 
 	try {
 		validateInput(input);
-		await enforceQuota(QUOTA_CONFIG, googleApiKey);
+		const remaining = await enforceQuota(QUOTA_CONFIG, googleApiKey);
 
 		const directives = `Regenerate a single post for this article.\n\n${buildDirectives(
 			tone,
@@ -255,6 +261,7 @@ export async function regenerateDraft(params: {
 				match.thread,
 			),
 			usage,
+			remaining,
 		};
 	} catch (error) {
 		return {
