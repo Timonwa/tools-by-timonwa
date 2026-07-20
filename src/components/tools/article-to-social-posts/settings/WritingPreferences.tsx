@@ -81,7 +81,7 @@ export default function WritingPreferencesSection({
 				</div>
 				<fieldset
 					aria-labelledby={voiceLabelId}
-					className="grid grid-cols-3 gap-1.5 border-0 p-0 m-0 min-w-0"
+					className="flex flex-wrap gap-1.5 border-0 p-0 m-0 min-w-0"
 				>
 					{VOICES.map((v) => (
 						<Chip
@@ -163,7 +163,7 @@ export default function WritingPreferencesSection({
 				</div>
 				<fieldset
 					aria-labelledby={lengthLabelId}
-					className="grid grid-cols-3 gap-1.5 border-0 p-0 m-0 min-w-0"
+					className="flex flex-wrap gap-1.5 border-0 p-0 m-0 min-w-0"
 				>
 					{POST_LENGTHS.map((v) => (
 						<Chip
