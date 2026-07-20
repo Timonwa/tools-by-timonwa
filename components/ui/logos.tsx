@@ -1,11 +1,8 @@
 import type { SVGProps } from "react";
 
 /**
- * Shared brand marks, usable anywhere in the app (not scoped to one tool).
- * Platform paths are the canonical single-path glyphs from Simple Icons
- * (https://simpleicons.org, CC0); each logo is a trademark of its owner, used
- * here for identification. All inherit color via `currentColor` and size via
- * `className`, so callers style them like any icon.
+ * Shared brand marks — platform glyphs from Simple Icons (simpleicons.org, CC0);
+ * each is a trademark of its owner, used for identification.
  */
 
 type IconProps = SVGProps<SVGSVGElement>;

@@ -11,17 +11,12 @@ const CARD_INTERACTIVE =
 
 type LinkCardProps = {
 	href: Route;
-	/** Render as a non-interactive, dimmed card (e.g. a "coming soon" tool). */
 	disabled?: boolean;
 	className?: string;
 	children: ReactNode;
 };
 
-/**
- * Shared wrapper for the tool and guide cards so they share one border, shadow,
- * and hover-lift. Adds the `group` class, so children can animate on hover
- * (e.g. an arrow with `group-hover:translate-x-0.5`).
- */
+/** Shared card wrapper for tool and guide tiles — one border, shadow, hover-lift; adds `group` for child hover effects. */
 export default function LinkCard({
 	href,
 	disabled,

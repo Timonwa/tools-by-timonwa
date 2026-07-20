@@ -9,7 +9,6 @@ type BadgeSize = "sm" | "md";
 type BadgeProps = React.ComponentProps<"span"> & {
 	variant?: BadgeVariant;
 	size?: BadgeSize;
-	/** A decorative palette hue (1–5). Overrides `variant` coloring when set. */
 	tint?: TintType;
 };
 
@@ -28,11 +27,7 @@ const SIZE_CLASSES: Record<BadgeSize, string> = {
 	md: "px-3 py-1 text-sm",
 };
 
-/**
- * A small pill — category tags, status markers, "Soon" flags, hashtags. All
- * badges are `rounded-full` and share one padding scale; pass `tint` for the
- * decorative palette or `variant` for the semantic roles.
- */
+/** A small pill — category tags, status markers, "Soon" flags, hashtags; `rounded-full` with one padding scale. */
 export default function Badge({
 	className,
 	variant = "default",

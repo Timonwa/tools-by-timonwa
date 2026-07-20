@@ -12,6 +12,7 @@ type PageHeroProps = {
 	className?: string;
 };
 
+/** Centered page hero — optional shimmer eyebrow pill, a title, and a subtitle. */
 export default function PageHero({
 	eyebrow,
 	title,

@@ -6,11 +6,7 @@ import { SITE_URL } from "@/lib/config/site";
 
 export type BreadcrumbItemType = { label: string; href?: Route };
 
-/**
- * Breadcrumb trail with matching BreadcrumbList JSON-LD (eligible for the
- * breadcrumb rich result). The last item is the current page — rendered as
- * plain text with `aria-current`; earlier items link when given an `href`.
- */
+/** Breadcrumb trail with matching BreadcrumbList JSON-LD; the last item is the current page. */
 export default function Breadcrumbs({
 	items,
 }: {

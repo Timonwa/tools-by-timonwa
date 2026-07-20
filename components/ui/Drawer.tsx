@@ -16,6 +16,7 @@ type DrawerProps = {
 	className?: string;
 };
 
+/** A portaled slide-over drawer (overlay + focus-trapped panel) with title, description, body, and optional footer. */
 export default function Drawer({
 	open,
 	onOpenChange,

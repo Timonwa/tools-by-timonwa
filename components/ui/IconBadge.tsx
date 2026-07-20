@@ -7,9 +7,7 @@ type IconBadgeSize = "md" | "lg";
 
 type IconBadgeProps = {
 	icon: ComponentType<SVGProps<SVGSVGElement>>;
-	/** A decorative palette hue (1–5). */
 	tint?: TintType;
-	/** Raw color classes when the color comes from elsewhere (e.g. a category). */
 	colorClass?: string;
 	size?: IconBadgeSize;
 	className?: string;
@@ -20,11 +18,7 @@ const SIZE_CLASSES: Record<IconBadgeSize, string> = {
 	lg: "size-11 rounded-xl",
 };
 
-/**
- * A rounded, tinted tile holding a single icon — the marker beside a feature,
- * step, or tool. Colors come from either a `tint` index or a raw `colorClass`
- * (used where the hue is category-driven).
- */
+/** A rounded, tinted tile holding a single icon; color from a `tint` index or a raw `colorClass`. */
 export default function IconBadge({
 	icon: Icon,
 	tint,

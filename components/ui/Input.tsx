@@ -2,6 +2,7 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils/cn";
 
+/** The shared text input. */
 export default function Input({
 	className,
 	type = "text",

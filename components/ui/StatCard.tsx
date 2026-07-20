@@ -5,16 +5,11 @@ import { cn } from "@/lib/utils/cn";
 type StatCardProps = {
 	label: ReactNode;
 	value: ReactNode;
-	/** Draw the tile with the brand accent (border, tint, colored value). */
 	highlight?: boolean;
 	className?: string;
 };
 
-/**
- * A compact metric tile — a large value over a muted label — sharing one radius,
- * padding, and type scale across the counting tools. Renders a `<div>` wrapping
- * a `<dt>`/`<dd>` pair, so place it inside a `<dl>`.
- */
+/** A compact metric tile — large value over a muted label. Renders `<dt>`/`<dd>`, so place it inside a `<dl>`. */
 export default function StatCard({
 	label,
 	value,

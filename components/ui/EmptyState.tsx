@@ -2,10 +2,7 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils/cn";
 
-/**
- * A dashed, centered placeholder for "nothing here yet" states — empty category
- * pages, filtered lists with no matches. One consistent border and spacing.
- */
+/** A dashed, centered placeholder for "nothing here yet" states. */
 export default function EmptyState({
 	className,
 	...props

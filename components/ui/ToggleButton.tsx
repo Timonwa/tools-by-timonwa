@@ -8,7 +8,6 @@ type ToggleShape = "square" | "pill";
 type ToggleButtonProps = React.ComponentProps<"button"> & {
 	active?: boolean;
 	size?: ToggleSize;
-	/** `square` (rounded-md) for toggle groups; `pill` (rounded-full) for filters. */
 	shape?: ToggleShape;
 };
 
@@ -25,12 +24,7 @@ const SHAPE_CLASSES: Record<ToggleShape, string> = {
 	pill: "rounded-full",
 };
 
-/**
- * A bordered choice button that fills with the brand accent when `active` — the
- * shared shape for single/multi-select chips (tone, platform, case, filters).
- * The button element carries no ARIA state on its own; pass `aria-pressed`
- * (toggle) or `aria-selected` (tab) to match the surrounding widget.
- */
+/** A bordered choice button that fills with the brand accent when `active`; pass your own `aria-pressed`/`aria-selected`. */
 export default function ToggleButton({
 	className,
 	active = false,

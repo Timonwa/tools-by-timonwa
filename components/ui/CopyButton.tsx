@@ -16,11 +16,7 @@ type CopyButtonProps = {
 	disabled?: boolean;
 };
 
-/**
- * Copy `value` to the clipboard with a transient "Copied" confirmation. The
- * reset runs from a `setTimeout` in the click handler (not an effect), so it
- * stays clear of the set-state-in-effect rule.
- */
+/** Copies `value` to the clipboard with a transient "Copied" confirmation. */
 export default function CopyButton({
 	value,
 	label = "Copy",

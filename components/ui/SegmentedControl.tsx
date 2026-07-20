@@ -13,11 +13,7 @@ type SegmentedControlProps<T extends string | number> = {
 	className?: string;
 };
 
-/**
- * A joined segmented control (tab-switcher): a bordered row of buttons where the
- * active one is filled. Controlled — pass `value` and `onChange`. Used for small,
- * mutually-exclusive choices like the variation count or the lorem unit.
- */
+/** A joined segmented control (tab switcher): a bordered row where the active button is filled. Controlled. */
 export default function SegmentedControl<T extends string | number>({
 	value,
 	onChange,

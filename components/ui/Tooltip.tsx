@@ -3,28 +3,15 @@
 import { cn } from "@/lib/utils/cn";
 
 type TooltipProps = {
-	/** The tooltip text shown on hover/focus. */
 	label: string;
-	/** The trigger — usually an icon button. Keep its own `aria-label` for
-	 * screen readers; this tooltip is the visual affordance only. */
 	children: React.ReactNode;
-	/** Which side of the trigger the bubble appears on. */
 	side?: "top" | "bottom";
-	/** Horizontal alignment of the bubble relative to the trigger. */
 	align?: "center" | "start" | "end";
-	/** Classes for the wrapper (e.g. width), not the bubble. */
 	className?: string;
-	/** Only reveal the bubble from `xl` up — for navbar icons that already show
-	 * a text label in the collapsed (mobile) menu. */
 	desktopOnly?: boolean;
 };
 
-/**
- * Lightweight CSS-only tooltip: wraps a trigger and reveals `label` on hover or
- * keyboard focus. No portal or JS state, so it works anywhere. The bubble is
- * `aria-hidden` — the trigger's own `aria-label` is the accessible name, so the
- * label isn't announced twice.
- */
+/** CSS-only tooltip revealing `label` on hover/focus; the bubble is `aria-hidden` (the trigger's `aria-label` names it). */
 export default function Tooltip({
 	label,
 	children,

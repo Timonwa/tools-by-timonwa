@@ -33,6 +33,7 @@ const SIZE_CLASSES: Record<SizeType, string> = {
 const BASE =
 	"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:h-4 [&_svg:not([class*='size-'])]:w-4";
 
+/** Build the button className for a non-button element (e.g. a link styled as a button). */
 export function buttonClasses({
 	variant = "default",
 	size = "default",
@@ -45,6 +46,7 @@ export function buttonClasses({
 	return cn(BASE, VARIANT_CLASSES[variant], SIZE_CLASSES[size], className);
 }
 
+/** The app's button. Use `buttonClasses` to apply the same styling to a link or other element. */
 export default function Button({
 	className,
 	variant = "default",
