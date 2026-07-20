@@ -1,0 +1,149 @@
+:root {
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.145 0 0);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.145 0 0);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.145 0 0);
+	/* Hub default brand (indigo). */
+	--primary: oklch(0.58 0.18 265);
+	--primary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.97 0 0);
+	--secondary-foreground: oklch(0.205 0 0);
+	--muted: oklch(0.97 0 0);
+	--muted-foreground: oklch(0.556 0 0);
+	--accent: oklch(0.97 0 0);
+	--accent-foreground: oklch(0.205 0 0);
+	--destructive: oklch(0.577 0.245 27.325);
+	--destructive-foreground: oklch(0.985 0 0);
+	--border: oklch(0.922 0 0);
+	--input: oklch(0.922 0 0);
+	--ring: oklch(0.708 0 0);
+	--radius: 0.625rem;
+
+	/*
+	 * Decorative accent palette — the multi-color variety used on marketing
+	 * pages (audience labels, step markers, feature tiles). One dark-aware
+	 * token per hue; consumers apply opacity modifiers (`bg-tint-1/10`,
+	 * `text-tint-1`, `border-tint-1/20`). Named `tint-*` so it never collides
+	 * with the semantic `--accent` (muted hover surface) role.
+	 */
+	--tint-1: oklch(0.6 0.13 240); /* sky */
+	--tint-2: oklch(0.7 0.15 70); /* amber */
+	--tint-3: oklch(0.58 0.2 300); /* violet */
+	--tint-4: oklch(0.62 0.15 160); /* emerald */
+	--tint-5: oklch(0.63 0.2 15); /* rose */
+}
+
+.dark {
+	--background: oklch(0.145 0 0);
+	--foreground: oklch(0.985 0 0);
+	--card: oklch(0.205 0 0);
+	--card-foreground: oklch(0.985 0 0);
+	--popover: oklch(0.205 0 0);
+	--popover-foreground: oklch(0.985 0 0);
+	--primary: oklch(0.72 0.17 265);
+	--primary-foreground: oklch(0.145 0 0);
+	--secondary: oklch(0.269 0 0);
+	--secondary-foreground: oklch(0.985 0 0);
+	--muted: oklch(0.269 0 0);
+	--muted-foreground: oklch(0.708 0 0);
+	--accent: oklch(0.269 0 0);
+	--accent-foreground: oklch(0.985 0 0);
+	--destructive: oklch(0.704 0.191 22.216);
+	--destructive-foreground: oklch(0.985 0 0);
+	--border: oklch(1 0 0 / 10%);
+	--input: oklch(1 0 0 / 15%);
+	--ring: oklch(0.556 0 0);
+
+	--tint-1: oklch(0.72 0.12 240);
+	--tint-2: oklch(0.79 0.14 70);
+	--tint-3: oklch(0.72 0.17 300);
+	--tint-4: oklch(0.74 0.14 160);
+	--tint-5: oklch(0.74 0.17 15);
+}
+
+/*
+ * Per-tool brand overrides. Each tool's layout wraps its subtree in
+ * `<div class="tool-<slug>">` so shell primitives (`bg-primary`,
+ * `text-primary`, etc.) pick up the tool's accent automatically. Only
+ * `--primary` is scoped here — everything else stays hub-neutral.
+ */
+.tool-article-to-social-posts {
+	--primary: oklch(0.58 0.18 150);
+}
+.dark .tool-article-to-social-posts {
+	--primary: oklch(0.72 0.17 150);
+}
+.tool-article-to-seo-meta {
+	--primary: oklch(0.65 0.16 60);
+}
+.dark .tool-article-to-seo-meta {
+	--primary: oklch(0.76 0.15 60);
+}
+.tool-word-counter {
+	--primary: oklch(0.6 0.13 195);
+}
+.dark .tool-word-counter {
+	--primary: oklch(0.72 0.12 195);
+}
+.tool-case-converter {
+	--primary: oklch(0.62 0.19 20);
+}
+.dark .tool-case-converter {
+	--primary: oklch(0.73 0.17 20);
+}
+.tool-slug-generator {
+	--primary: oklch(0.58 0.19 300);
+}
+.dark .tool-slug-generator {
+	--primary: oklch(0.72 0.17 300);
+}
+.tool-reading-time {
+	--primary: oklch(0.58 0.15 235);
+}
+.dark .tool-reading-time {
+	--primary: oklch(0.72 0.14 235);
+}
+.tool-svg-to-jsx {
+	--primary: oklch(0.62 0.2 330);
+}
+.dark .tool-svg-to-jsx {
+	--primary: oklch(0.73 0.18 330);
+}
+.tool-lorem-ipsum {
+	--primary: oklch(0.62 0.14 160);
+}
+.dark .tool-lorem-ipsum {
+	--primary: oklch(0.73 0.13 160);
+}
+.tool-hash-generator {
+	--primary: oklch(0.62 0.19 350);
+}
+.dark .tool-hash-generator {
+	--primary: oklch(0.73 0.17 350);
+}
+
+/* sugar-high syntax-highlighting tokens for code snippets (e.g. SVG to JSX). */
+:root {
+	--sh-class: #6f42c1;
+	--sh-identifier: #24292e;
+	--sh-sign: #6a737d;
+	--sh-property: #005cc5;
+	--sh-entity: #6f42c1;
+	--sh-jsxliterals: #6f42c1;
+	--sh-string: #032f62;
+	--sh-keyword: #d73a49;
+	--sh-comment: #6a737d;
+}
+.dark {
+	--sh-class: #d2a8ff;
+	--sh-identifier: #e1e4e8;
+	--sh-sign: #8b949e;
+	--sh-property: #79c0ff;
+	--sh-entity: #d2a8ff;
+	--sh-jsxliterals: #d2a8ff;
+	--sh-string: #a5d6ff;
+	--sh-keyword: #ff7b72;
+	--sh-comment: #8b949e;
+}

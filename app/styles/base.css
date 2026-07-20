@@ -1,0 +1,24 @@
+@layer base {
+	body {
+		background: var(--background);
+		color: var(--foreground);
+		font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
+		line-height: 1.5;
+		-webkit-font-smoothing: antialiased;
+	}
+
+	/* Anchor jumps clear the fixed navbar; scoped to `:target` so full-page nav doesn't offset. */
+	[id]:target {
+		scroll-margin-top: 5rem;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		html {
+			scroll-behavior: smooth;
+		}
+	}
+
+	html {
+		scrollbar-color: var(--border) transparent;
+	}
+}

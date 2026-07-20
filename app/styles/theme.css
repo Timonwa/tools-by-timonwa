@@ -1,0 +1,40 @@
+/*
+ * Theme mapping — exposes the tokens.css custom properties as Tailwind utility
+ * keys. `inline` keeps them referencing the live vars so `.dark` and per-tool
+ * `--primary` overrides flow through `bg-primary`, `text-tint-1`, etc.
+ */
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-ring: var(--ring);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+
+	/* Decorative accent palette — `bg-tint-1`, `text-tint-3`, `border-tint-5/20`. */
+	--color-tint-1: var(--tint-1);
+	--color-tint-2: var(--tint-2);
+	--color-tint-3: var(--tint-3);
+	--color-tint-4: var(--tint-4);
+	--color-tint-5: var(--tint-5);
+
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--font-sans: var(--font-geist-sans);
+	--font-mono: var(--font-geist-mono);
+}
