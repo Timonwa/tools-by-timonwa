@@ -1,8 +1,9 @@
 "use client";
 
 import { PenLineIcon } from "lucide-react";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
+import { OPEN_SETTINGS_EVENT } from "../constants/events";
 import { THREADABLE_PLATFORMS } from "../constants/platforms";
 import { usePresets } from "../hooks/use-presets";
 import type { WritingPreferencesType } from "../types";
@@ -42,6 +43,15 @@ export default function SettingsDrawer({
 	);
 	const { tone, platforms, xThreadLength } = workflow;
 	const presets = usePresets();
+
+	// Open on request from elsewhere (e.g. the generate form's entry button).
+	// Only the always-mounted bar icon listens, so a dispatch never opens two drawers.
+	useEffect(() => {
+		if (presentation !== "icon") return;
+		const handler = () => setOpen(true);
+		window.addEventListener(OPEN_SETTINGS_EVENT, handler);
+		return () => window.removeEventListener(OPEN_SETTINGS_EVENT, handler);
+	}, [presentation]);
 
 	const updatePrefs = (patch: Partial<WritingPreferencesType>) => {
 		prefsStorage.set({ ...prefs, ...patch });
