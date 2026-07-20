@@ -16,6 +16,7 @@ type NavbarProps = {
 	};
 	centerSlot?: ReactNode;
 	actionsSlot?: ReactNode;
+	menuSlot?: ReactNode;
 	repoUrl?: string;
 	showByok?: boolean;
 };
@@ -25,6 +26,7 @@ export default function Navbar({
 	brand,
 	centerSlot,
 	actionsSlot,
+	menuSlot,
 	repoUrl,
 	showByok,
 }: NavbarProps) {
@@ -52,6 +54,7 @@ export default function Navbar({
 				{centerSlot}
 				<NavActions
 					actionsSlot={actionsSlot}
+					menuSlot={menuSlot}
 					repoUrl={repoUrl}
 					showByok={showByok}
 				/>

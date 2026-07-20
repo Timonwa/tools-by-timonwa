@@ -7,7 +7,6 @@ import {
 	ExternalLinkIcon,
 	EyeIcon,
 	EyeOffIcon,
-	KeyRoundIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useId, useState } from "react";
@@ -45,7 +44,6 @@ export default function ByokSection({
 	const [input, setInput] = useState(savedKey ?? "");
 	const [reveal, setReveal] = useState(false);
 	const [status, setStatus] = useState<StatusType>(null);
-	const headingId = useId();
 	const keyInputId = useId();
 	const modelLabelId = useId();
 
@@ -57,18 +55,7 @@ export default function ByokSection({
 	};
 
 	return (
-		<section aria-labelledby={headingId} className="flex flex-col gap-4">
-			<div className="flex items-center gap-2">
-				<KeyRoundIcon aria-hidden className="w-4 h-4 text-primary" />
-				<h3 id={headingId} className="text-sm font-semibold">
-					Bring your own Gemini key
-				</h3>
-			</div>
-			<p className="text-xs text-muted-foreground">
-				Use your own Google AI Studio quota for any AI tool in the hub. Useful
-				when the free daily limit runs out.
-			</p>
-
+		<section aria-label="Set API key" className="flex flex-col gap-4">
 			<div className="rounded-md border border-border bg-muted/40 p-3 text-xs text-muted-foreground flex flex-col gap-1.5">
 				<div className="flex items-center gap-1.5 font-medium text-foreground">
 					<CheckCircle2Icon aria-hidden className="w-3.5 h-3.5 text-primary" />
