@@ -9,6 +9,7 @@ import {
 	Button,
 	Card,
 	CardContent,
+	CardHeader,
 	CopyButton,
 	Input,
 	SegmentedControl,
@@ -187,13 +188,13 @@ export default function SvgToJsxTool() {
 	return (
 		<div className="grid items-stretch gap-4 lg:grid-cols-2">
 			<Card className="min-w-0">
-				<CardContent className="flex flex-1 flex-col gap-3">
-					<div className="flex flex-wrap items-center justify-between gap-2">
-						<span className="text-sm font-medium">SVG</span>
+				<CardHeader>
+					<div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/80 pb-2">
+						<span className="text-sm font-bold">SVG</span>
 						<div className="flex gap-1">
 							<Button
 								type="button"
-								variant="ghost"
+								variant="outline"
 								size="sm"
 								onClick={() => fileInputRef.current?.click()}
 							>
@@ -201,7 +202,7 @@ export default function SvgToJsxTool() {
 							</Button>
 							<Button
 								type="button"
-								variant="ghost"
+								variant="outline"
 								size="sm"
 								onClick={() => setSvg(formatSvgMarkup(svg, indent))}
 								disabled={!hasSvg}
@@ -210,7 +211,7 @@ export default function SvgToJsxTool() {
 							</Button>
 							<Button
 								type="button"
-								variant="ghost"
+								variant="outline"
 								size="sm"
 								onClick={() => setSvg("")}
 								disabled={svg === ""}
@@ -219,7 +220,8 @@ export default function SvgToJsxTool() {
 							</Button>
 						</div>
 					</div>
-
+				</CardHeader>
+				<CardContent className="flex flex-1 flex-col gap-3">
 					<input
 						ref={fileInputRef}
 						type="file"
@@ -252,8 +254,8 @@ export default function SvgToJsxTool() {
 			</Card>
 
 			<Card className="min-w-0">
-				<CardContent className="flex flex-1 flex-col gap-3">
-					<div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+				<CardHeader>
+					<div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-b border-border/80 pb-2">
 						<SegmentedControl
 							value={tab}
 							onChange={setTab}
@@ -295,7 +297,8 @@ export default function SvgToJsxTool() {
 							</div>
 						)}
 					</div>
-
+				</CardHeader>
+				<CardContent className="flex flex-1 flex-col gap-3">
 					{tab === "preview" ? (
 						hasSvg ? (
 							<div
