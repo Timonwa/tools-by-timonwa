@@ -8,7 +8,7 @@ import { z } from "zod";
 
 import type { GuideMeta } from "./guides";
 
-const GUIDES_DIR = path.join(process.cwd(), "content", "guides");
+const GUIDES_DIR = path.join(process.cwd(), "src", "content", "guides");
 
 // A guide slug is a filename minus `.mdx`; restrict it to a URL-safe allowlist
 // so a stray file can never flow into an href as anything but a clean segment.

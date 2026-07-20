@@ -52,7 +52,6 @@ export default function SlugGeneratorTool() {
 							value={title}
 							onChange={(e) => setTitle(e.target.value)}
 							placeholder="10 Ways to Improve Your Writing"
-							autoFocus
 						/>
 					</div>
 

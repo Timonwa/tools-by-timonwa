@@ -142,7 +142,6 @@ export default function TemplatesPicker({
 						<div className="flex items-start gap-1.5">
 							<div className="flex flex-col min-w-0 flex-1 gap-1">
 								<Input
-									autoFocus
 									value={nameDraft}
 									onChange={(e) => setNameDraft(e.target.value)}
 									onKeyDown={(e) => {
@@ -356,7 +355,6 @@ function TemplateEditor({
 			<div className="flex flex-col gap-1">
 				<div className="flex items-center gap-1.5">
 					<Input
-						autoFocus
 						value={name}
 						onChange={(e) => setName(e.target.value)}
 						onKeyDown={(e) => {
