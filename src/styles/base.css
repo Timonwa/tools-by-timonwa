@@ -20,5 +20,10 @@
 
 	html {
 		scrollbar-color: var(--border) transparent;
+		/* An off-screen decorative/hover element must never widen the page: on mobile a
+		   horizontal overflow inflates the layout viewport, which drags fixed drawers
+		   partly off-screen. `clip` contains it without creating a scroll container (so
+		   sticky headers and vertical scroll still work). */
+		overflow-x: clip;
 	}
 }
