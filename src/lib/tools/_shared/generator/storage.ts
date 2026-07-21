@@ -3,7 +3,7 @@
 import type {
 	LevelType,
 	PlatformType,
-	PresetTemplateType,
+	PresetType,
 	ToneType,
 	WritingPreferencesType,
 } from "@/lib/tools/_shared/generator/types";
@@ -22,7 +22,7 @@ type GeneratorStorageOptions = {
 	defaultWorkflow: WorkflowStateType;
 	toneValues: ReadonlySet<ToneType>;
 	platformValues: ReadonlySet<PlatformType>;
-	maxTemplates: number;
+	maxPresets: number;
 };
 
 /** Builds a tool's localStorage-backed stores under a `prefix`, so two tools that share the writer engine keep isolated preferences, workflow, and presets. */
@@ -33,7 +33,7 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 		defaultWorkflow,
 		toneValues,
 		platformValues,
-		maxTemplates,
+		maxPresets,
 	} = opts;
 
 	const PREFS_KEY = `${prefix}writing-preferences`;
@@ -140,28 +140,26 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 	const setXThreadLength = (xThreadLength: number) =>
 		workflowStorage.set({ ...workflowStorage.get(), xThreadLength });
 
-	const EMPTY_TEMPLATES: PresetTemplateType[] = [];
+	const EMPTY_TEMPLATES: PresetType[] = [];
 
-	const readTemplates = (): PresetTemplateType[] => {
+	const readTemplates = (): PresetType[] => {
 		try {
 			const raw = window.localStorage.getItem(TEMPLATES_KEY);
 			if (!raw) return EMPTY_TEMPLATES;
 			const parsed = JSON.parse(raw) as unknown;
-			return Array.isArray(parsed)
-				? (parsed as PresetTemplateType[])
-				: EMPTY_TEMPLATES;
+			return Array.isArray(parsed) ? (parsed as PresetType[]) : EMPTY_TEMPLATES;
 		} catch {
 			return EMPTY_TEMPLATES;
 		}
 	};
 
-	const templatesStorage = createLocalStore<PresetTemplateType[]>({
+	const presetsStorage = createLocalStore<PresetType[]>({
 		read: readTemplates,
 		write: (items) => {
 			try {
 				window.localStorage.setItem(
 					TEMPLATES_KEY,
-					JSON.stringify(items.slice(0, maxTemplates)),
+					JSON.stringify(items.slice(0, maxPresets)),
 				);
 			} catch {}
 		},
@@ -171,7 +169,7 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 	return {
 		prefsStorage,
 		workflowStorage,
-		templatesStorage,
+		presetsStorage,
 		setTone,
 		togglePlatform,
 		setXThreadLength,

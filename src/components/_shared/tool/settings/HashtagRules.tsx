@@ -2,10 +2,8 @@
 
 import { HashIcon, XIcon } from "lucide-react";
 import { useId, useState } from "react";
-import {
-	MAX_HASHTAG_RULES_PER_LIST,
-	normalizeHashtag,
-} from "@/lib/tools/_shared/generator/constants/preferences";
+import { MAX_HASHTAG_RULES_PER_LIST } from "@/lib/constants";
+import { normalizeHashtag } from "@/lib/utils/generator/hashtag";
 import type { WritingPreferencesType } from "@/lib/tools/_shared/generator/types";
 import { Badge, Input } from "@/components/ui";
 

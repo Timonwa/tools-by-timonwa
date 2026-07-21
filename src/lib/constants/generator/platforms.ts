@@ -18,6 +18,7 @@ export const THREADABLE_PLATFORMS: PlatformType[] = [
 	"mastodon",
 ];
 
+/** Human-readable display name for each platform. */
 export const PLATFORM_LABELS: Record<PlatformType, string> = {
 	linkedin: "LinkedIn",
 	x: "X (Twitter)",

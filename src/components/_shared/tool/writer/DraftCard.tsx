@@ -6,10 +6,7 @@ import {
 	Loader2Icon,
 	RefreshCwIcon,
 } from "lucide-react";
-import {
-	PLATFORM_COLORS,
-	PLATFORM_LABELS,
-} from "@/lib/tools/_shared/generator/constants/platforms";
+import { PLATFORM_COLORS, PLATFORM_LABELS } from "@/lib/constants";
 import type { PostDraftType } from "@/lib/tools/_shared/generator/types";
 import { PLATFORM_ICONS } from "@/components/ui/logos";
 import {

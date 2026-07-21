@@ -3,7 +3,7 @@ import type {
 	DraftInputType,
 	PlatformType,
 	PostDraftType,
-	PresetTemplateType,
+	PresetType,
 	PreviewResultType,
 	ToneType,
 	TokenUsageType,
@@ -59,10 +59,10 @@ export type RegenerateResult =
 	| { ok: false; error: string };
 
 export type PresetsApi = {
-	templates: PresetTemplateType[];
+	templates: PresetType[];
 	activeId: string | null;
 	save: (name: string) => void;
-	apply: (t: PresetTemplateType) => void;
+	apply: (t: PresetType) => void;
 	remove: (id: string) => void;
 	update: (id: string) => void;
 	rename: (id: string, name: string) => void;

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
 
 import type {
 	PlatformType,
-	PresetTemplateType,
+	PresetType,
 	ToneType,
 	WritingPreferencesType,
 } from "@/lib/tools/_shared/generator/types";
@@ -27,7 +27,7 @@ function sameTagList(a: string[], b: string[]): boolean {
 
 /** Deep equality check — tone, xThreadLength, platforms (order-insensitive), and every WritingPreferencesType field. */
 function templateMatchesState(
-	t: PresetTemplateType,
+	t: PresetType,
 	state: { tone: ToneType; platforms: PlatformType[]; xThreadLength: number },
 	prefs: WritingPreferencesType,
 ): boolean {
@@ -51,9 +51,9 @@ function templateMatchesState(
 type UsePresetsOptions = {
 	prefsStorage: Store<WritingPreferencesType>;
 	workflowStorage: Store<WorkflowStateType>;
-	templatesStorage: Store<PresetTemplateType[]>;
-	starterPresets: Omit<PresetTemplateType, "id" | "createdAt">[];
-	maxTemplates: number;
+	presetsStorage: Store<PresetType[]>;
+	starterPresets: Omit<PresetType, "id" | "createdAt">[];
+	maxPresets: number;
 };
 
 /** Builds a preset-CRUD hook bound to a tool's stores — save/apply/rename/update/delete named setting bundles, with an active-preset match derived from current state. */
@@ -61,9 +61,9 @@ export function createUsePresets(opts: UsePresetsOptions) {
 	const {
 		prefsStorage,
 		workflowStorage,
-		templatesStorage,
+		presetsStorage,
 		starterPresets,
-		maxTemplates,
+		maxPresets,
 	} = opts;
 
 	return function usePresets() {
@@ -78,9 +78,9 @@ export function createUsePresets(opts: UsePresetsOptions) {
 			prefsStorage.getServerSnapshot,
 		);
 		const templates = useSyncExternalStore(
-			templatesStorage.subscribe,
-			templatesStorage.getSnapshot,
-			templatesStorage.getServerSnapshot,
+			presetsStorage.subscribe,
+			presetsStorage.getSnapshot,
+			presetsStorage.getServerSnapshot,
 		);
 
 		// Derived — lights up when state exactly matches a saved preset, clears the moment the user diverges.
@@ -92,8 +92,8 @@ export function createUsePresets(opts: UsePresetsOptions) {
 		);
 
 		useEffect(() => {
-			if (templatesStorage.get().length > 0) return;
-			templatesStorage.set(
+			if (presetsStorage.get().length > 0) return;
+			presetsStorage.set(
 				starterPresets.map((p) => ({
 					...p,
 					id: crypto.randomUUID(),
@@ -106,7 +106,7 @@ export function createUsePresets(opts: UsePresetsOptions) {
 			const trimmed = name.trim();
 			if (!trimmed) return;
 			const wf = workflowStorage.get();
-			const entry: PresetTemplateType = {
+			const entry: PresetType = {
 				id: crypto.randomUUID(),
 				name: trimmed,
 				createdAt: Date.now(),
@@ -116,13 +116,13 @@ export function createUsePresets(opts: UsePresetsOptions) {
 				preferences: prefsStorage.get(),
 			};
 			// Replace any existing preset with the same name (case-insensitive).
-			const without = templatesStorage
+			const without = presetsStorage
 				.get()
 				.filter((t) => t.name.toLowerCase() !== trimmed.toLowerCase());
-			templatesStorage.set([entry, ...without].slice(0, maxTemplates));
+			presetsStorage.set([entry, ...without].slice(0, maxPresets));
 		}, []);
 
-		const apply = useCallback((t: PresetTemplateType) => {
+		const apply = useCallback((t: PresetType) => {
 			workflowStorage.set({
 				tone: t.tone,
 				platforms: t.platforms,
@@ -132,14 +132,14 @@ export function createUsePresets(opts: UsePresetsOptions) {
 		}, []);
 
 		const remove = useCallback((id: string) => {
-			templatesStorage.set(templatesStorage.get().filter((t) => t.id !== id));
+			presetsStorage.set(presetsStorage.get().filter((t) => t.id !== id));
 		}, []);
 
 		// Overwrites config in place — no delete + re-save, so order is preserved.
 		const update = useCallback((id: string) => {
 			const wf = workflowStorage.get();
-			templatesStorage.set(
-				templatesStorage.get().map((t) =>
+			presetsStorage.set(
+				presetsStorage.get().map((t) =>
 					t.id === id
 						? {
 								...t,
@@ -156,8 +156,8 @@ export function createUsePresets(opts: UsePresetsOptions) {
 		const rename = useCallback((id: string, name: string) => {
 			const trimmed = name.trim();
 			if (!trimmed) return;
-			templatesStorage.set(
-				templatesStorage
+			presetsStorage.set(
+				presetsStorage
 					.get()
 					.map((t) => (t.id === id ? { ...t, name: trimmed } : t)),
 			);

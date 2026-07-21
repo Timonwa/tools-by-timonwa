@@ -1,11 +1,11 @@
 "use client";
 
-import { ALL_PLATFORMS } from "@/lib/tools/_shared/generator/constants/platforms";
 import {
+	ALL_PLATFORMS,
 	DEFAULT_PREFERENCES,
-	MAX_TEMPLATES,
-} from "@/lib/tools/_shared/generator/constants/preferences";
-import { TONES } from "@/lib/tools/_shared/generator/constants/tones";
+	MAX_PRESETS,
+	TONES,
+} from "@/lib/constants";
 import {
 	createGeneratorStorage,
 	type WorkflowStateType,
@@ -25,13 +25,13 @@ const stores = createGeneratorStorage({
 	defaultWorkflow: DEFAULT_WORKFLOW,
 	toneValues: new Set(TONES.map((t) => t.value)),
 	platformValues: new Set(ALL_PLATFORMS),
-	maxTemplates: MAX_TEMPLATES,
+	maxPresets: MAX_PRESETS,
 });
 
 export const {
 	prefsStorage,
 	workflowStorage,
-	templatesStorage,
+	presetsStorage,
 	setTone,
 	togglePlatform,
 	setXThreadLength,

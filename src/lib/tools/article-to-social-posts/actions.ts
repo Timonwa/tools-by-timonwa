@@ -1,12 +1,14 @@
 "use server";
 
-import { MAX_ARTICLE_CHARS } from "@/lib/config/limits";
+import {
+	CHAR_LIMITS,
+	LONGFORM_POST_LENGTH_LIMITS,
+	MAX_ARTICLE_CHARS,
+} from "@/lib/constants";
 import {
 	HOSTED_DAILY_GENERATION_POOL,
 	HOSTED_PER_USER_DAILY,
 } from "@/components/tools/article-to-social-posts/constants/hosted-usage";
-import { CHAR_LIMITS } from "@/lib/tools/_shared/generator/constants/platforms";
-import { LENGTH_LIMITS } from "@/lib/tools/_shared/generator/constants/preferences";
 import type {
 	ArticlePreviewType,
 	DraftInputType,
@@ -84,7 +86,7 @@ function platformLimit(
 	postLength: PostLengthType,
 ): number {
 	if (platform === "linkedin" || platform === "substack") {
-		return LENGTH_LIMITS[postLength];
+		return LONGFORM_POST_LENGTH_LIMITS[postLength];
 	}
 	return CHAR_LIMITS[platform];
 }
@@ -132,9 +134,9 @@ function buildDirectives(
 		`Platforms: ${platforms.join(", ")}`,
 	];
 	if (platforms.includes("linkedin"))
-		lines.push(`LinkedIn limit: ${LENGTH_LIMITS[postLength]}`);
+		lines.push(`LinkedIn limit: ${LONGFORM_POST_LENGTH_LIMITS[postLength]}`);
 	if (platforms.includes("substack"))
-		lines.push(`Substack limit: ${LENGTH_LIMITS[postLength]}`);
+		lines.push(`Substack limit: ${LONGFORM_POST_LENGTH_LIMITS[postLength]}`);
 	lines.push(threadLine(platforms, xThreadLength));
 	if (preferences)
 		lines.push(`Writing preferences: ${JSON.stringify(preferences)}`);

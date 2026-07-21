@@ -9,10 +9,10 @@ import {
 import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/result/ErrorNotice";
 import type { InputKindType } from "@/lib/tools/_shared/draft-input";
-import { THREADABLE_PLATFORMS } from "@/lib/tools/_shared/generator/constants/platforms";
+import { MAX_ARTICLE_CHARS, THREADABLE_PLATFORMS } from "@/lib/constants";
 import type {
 	PlatformType,
-	PresetTemplateType,
+	PresetType,
 	ToneType,
 } from "@/lib/tools/_shared/generator/types";
 import {
@@ -23,7 +23,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui";
-import { MAX_ARTICLE_CHARS } from "@/lib/config/limits";
 
 import WritingPreferencesButton from "@/components/_shared/tool/settings/WritingPreferencesButton";
 import PlatformPicker from "./PlatformPicker";
@@ -56,9 +55,9 @@ type GenerateFormProps = {
 	onStartOver: () => void;
 	error: string | null;
 	onSubmit: (e: React.FormEvent) => void;
-	templates: PresetTemplateType[];
+	templates: PresetType[];
 	activeTemplateId: string | null;
-	onApplyTemplate: (t: PresetTemplateType) => void;
+	onApplyTemplate: (t: PresetType) => void;
 	onSaveTemplate: (name: string) => void;
 	onDeleteTemplate: (id: string) => void;
 	onUpdateTemplate: (id: string) => void;

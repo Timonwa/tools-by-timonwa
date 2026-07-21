@@ -1,4 +1,4 @@
-import { PLATFORM_LABELS } from "@/lib/tools/_shared/generator/constants/platforms";
+import { PLATFORM_LABELS } from "@/lib/constants";
 import type { PostDraftType } from "../types";
 
 const appendUrl = (body: string, articleUrl?: string): string => {

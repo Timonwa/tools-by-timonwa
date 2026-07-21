@@ -2,7 +2,7 @@
 
 import { ToggleButton } from "@/components/ui";
 
-import { TONES } from "@/lib/tools/_shared/generator/constants/tones";
+import { TONES } from "@/lib/constants";
 import type { ToneType } from "@/lib/tools/_shared/generator/types";
 
 type TonePickerProps = {

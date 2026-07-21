@@ -6,7 +6,7 @@ import {
 	ALL_PLATFORMS,
 	PLATFORM_COLORS,
 	PLATFORM_LABELS,
-} from "@/lib/tools/_shared/generator/constants/platforms";
+} from "@/lib/constants";
 import type { PlatformType } from "@/lib/tools/_shared/generator/types";
 import { PLATFORM_ICONS } from "@/components/ui/logos";
 

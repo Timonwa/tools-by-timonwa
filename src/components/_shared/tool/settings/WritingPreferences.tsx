@@ -8,9 +8,9 @@ import { ToggleButton } from "@/components/ui";
 import {
 	EMOJI_LEVEL_LABELS,
 	HASHTAG_LEVEL_LABELS,
-	POST_LENGTH_LABELS,
+	LONGFORM_POST_LENGTH_LABELS,
 	VOICE_LABELS,
-} from "@/lib/tools/_shared/generator/constants/preferences";
+} from "@/lib/constants";
 import type {
 	LevelType,
 	PostLengthType,
@@ -25,7 +25,9 @@ type WritingPreferencesProps = {
 
 const LEVELS: LevelType[] = [1, 2, 3, 4, 5];
 const VOICES = Object.keys(VOICE_LABELS) as VoiceType[];
-const POST_LENGTHS = Object.keys(POST_LENGTH_LABELS) as PostLengthType[];
+const POST_LENGTHS = Object.keys(
+	LONGFORM_POST_LENGTH_LABELS,
+) as PostLengthType[];
 
 /** Styled ToggleButton alias used across every preference fieldset. */
 function Chip({
@@ -169,10 +171,10 @@ export default function WritingPreferencesSection({
 						<Chip
 							key={v}
 							active={prefs.postLength === v}
-							label={`Post length: ${POST_LENGTH_LABELS[v]} characters`}
+							label={`Post length: ${LONGFORM_POST_LENGTH_LABELS[v]} characters`}
 							onClick={() => onChange({ postLength: v })}
 						>
-							{POST_LENGTH_LABELS[v]}
+							{LONGFORM_POST_LENGTH_LABELS[v]}
 						</Chip>
 					))}
 				</fieldset>

@@ -4,8 +4,7 @@ import { PenLineIcon } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 import type { WriterRuntime } from "@/lib/tools/_shared/generator/writer-runtime";
-import { OPEN_SETTINGS_EVENT } from "@/lib/tools/_shared/generator/constants/events";
-import { THREADABLE_PLATFORMS } from "@/lib/tools/_shared/generator/constants/platforms";
+import { OPEN_SETTINGS_EVENT, THREADABLE_PLATFORMS } from "@/lib/constants";
 import type { WritingPreferencesType } from "@/lib/tools/_shared/generator/types";
 import PlatformPicker from "@/components/_shared/tool/writer/PlatformPicker";
 import TemplatesPicker from "@/components/_shared/tool/writer/TemplatesPicker";

@@ -10,11 +10,8 @@ import {
 	OutputBlock,
 	Textarea,
 } from "@/components/ui";
-import {
-	HASH_ALGORITHMS,
-	type HashAlgorithm,
-	hashText,
-} from "@/lib/crypto/hash";
+import { HASH_ALGORITHMS, type HashAlgorithm } from "@/lib/constants";
+import { hashText } from "@/lib/utils/hash";
 
 type Hashes = Record<HashAlgorithm, string>;
 

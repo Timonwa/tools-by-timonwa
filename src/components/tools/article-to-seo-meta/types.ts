@@ -22,4 +22,4 @@ export const TITLE_MAX = 60;
 export const DESC_MIN = 150;
 export const DESC_MAX = 160;
 
-export { MAX_ARTICLE_CHARS } from "@/lib/config/limits";
+export { MAX_ARTICLE_CHARS } from "@/lib/constants";

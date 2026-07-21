@@ -47,7 +47,7 @@ export type WritingPreferencesType = {
 	postLength: PostLengthType;
 };
 
-export type PresetTemplateType = {
+export type PresetType = {
 	id: string;
 	name: string;
 	createdAt: number;

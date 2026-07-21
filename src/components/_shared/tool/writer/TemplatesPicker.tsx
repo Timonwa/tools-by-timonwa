@@ -10,27 +10,27 @@ import {
 	XIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { PLATFORM_LABELS } from "@/lib/tools/_shared/generator/constants/platforms";
 import {
 	EMOJI_LEVEL_LABELS,
 	HASHTAG_LEVEL_LABELS,
 	MAX_PRESET_NAME,
-	MAX_TEMPLATES,
+	MAX_PRESETS,
+	PLATFORM_LABELS,
+	TONES,
 	VOICE_LABELS,
-} from "@/lib/tools/_shared/generator/constants/preferences";
-import { TONES } from "@/lib/tools/_shared/generator/constants/tones";
-import type { PresetTemplateType } from "@/lib/tools/_shared/generator/types";
+} from "@/lib/constants";
+import type { PresetType } from "@/lib/tools/_shared/generator/types";
 import { Badge, Button, Input, Tooltip } from "@/components/ui";
 
 import { cn } from "@/lib/utils/cn";
 
-const toneLabel = (tone: PresetTemplateType["tone"]): string =>
+const toneLabel = (tone: PresetType["tone"]): string =>
 	TONES.find((t) => t.value === tone)?.label ?? tone;
 
 type TemplatesPickerProps = {
-	templates: PresetTemplateType[];
+	templates: PresetType[];
 	activeTemplateId: string | null;
-	onApply: (t: PresetTemplateType) => void;
+	onApply: (t: PresetType) => void;
 	onSave: (name: string) => void;
 	onDelete: (id: string) => void;
 	onUpdate: (id: string) => void;
@@ -56,7 +56,7 @@ export default function TemplatesPicker({
 	const [editingId, setEditingId] = useState<string | null>(null);
 	const [expanded, setExpanded] = useState(!collapsible);
 
-	const full = templates.length >= MAX_TEMPLATES;
+	const full = templates.length >= MAX_PRESETS;
 	const activePreset = templates.find((t) => t.id === activeTemplateId);
 
 	const commitSave = () => {
@@ -120,7 +120,7 @@ export default function TemplatesPicker({
 						disabled={disabled || full || Boolean(activePreset)}
 						title={
 							full
-								? `Max ${MAX_TEMPLATES} presets — delete one first`
+								? `Max ${MAX_PRESETS} presets — delete one first`
 								: activePreset
 									? `These settings are already saved as “${activePreset.name}”`
 									: "Save the current tone, platforms, and writing prefs as a reusable preset"
@@ -235,7 +235,7 @@ function TemplateChip({
 	onEdit,
 	onDelete,
 }: {
-	template: PresetTemplateType;
+	template: PresetType;
 	active: boolean;
 	disabled?: boolean;
 	onApply: () => void;
@@ -336,7 +336,7 @@ function TemplateEditor({
 	onUpdate,
 	onDone,
 }: {
-	template: PresetTemplateType;
+	template: PresetType;
 	disabled?: boolean;
 	onRename: (name: string) => void;
 	onUpdate: () => void;
@@ -423,7 +423,7 @@ function TemplateEditor({
 }
 
 /** Hover/focus tooltip showing a preset's full settings summary. */
-function TemplatePreview({ template }: { template: PresetTemplateType }) {
+function TemplatePreview({ template }: { template: PresetType }) {
 	const { tone, platforms, xThreadLength, preferences: p } = template;
 	return (
 		<div

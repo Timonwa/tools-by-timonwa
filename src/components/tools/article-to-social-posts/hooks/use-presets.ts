@@ -1,19 +1,16 @@
 "use client";
 
-import {
-	DEFAULT_PREFERENCES,
-	MAX_TEMPLATES,
-} from "@/lib/tools/_shared/generator/constants/preferences";
-import type { PresetTemplateType } from "@/lib/tools/_shared/generator/types";
+import { DEFAULT_PREFERENCES, MAX_PRESETS } from "@/lib/constants";
+import type { PresetType } from "@/lib/tools/_shared/generator/types";
 import {
 	prefsStorage,
-	templatesStorage,
+	presetsStorage,
 	workflowStorage,
 } from "../utils/storage";
 import { createUsePresets } from "@/lib/tools/_shared/generator/create-use-presets";
 
 /** Three deliberately varied starter presets seeded on first run so new users have examples spanning the full range of settings. */
-const STARTER_PRESETS: Omit<PresetTemplateType, "id" | "createdAt">[] = [
+const STARTER_PRESETS: Omit<PresetType, "id" | "createdAt">[] = [
 	{
 		name: "LinkedIn pro",
 		tone: "professional",
@@ -41,7 +38,7 @@ const STARTER_PRESETS: Omit<PresetTemplateType, "id" | "createdAt">[] = [
 export const usePresets = createUsePresets({
 	prefsStorage,
 	workflowStorage,
-	templatesStorage,
+	presetsStorage,
 	starterPresets: STARTER_PRESETS,
-	maxTemplates: MAX_TEMPLATES,
+	maxPresets: MAX_PRESETS,
 });
