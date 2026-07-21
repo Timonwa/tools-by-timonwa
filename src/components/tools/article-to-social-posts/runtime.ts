@@ -6,9 +6,9 @@ import {
 	regenerateDraft,
 } from "@/lib/tools/article-to-social-posts/actions";
 import { useHistory } from "./hooks/use-history";
-import { usePresets } from "./hooks/use-presets";
+import { useStyleTemplates } from "./hooks/use-style-templates";
 import {
-	prefsStorage,
+	styleStorage,
 	setTone,
 	setXThreadLength,
 	togglePlatform,
@@ -19,13 +19,13 @@ import {
 export const articleToSocialRuntime: WriterRuntime = {
 	features: { hashtagRules: true, promptEditor: false, repurpose: false },
 	stores: {
-		prefsStorage,
+		styleStorage,
 		workflowStorage,
 		setTone,
 		togglePlatform,
 		setXThreadLength,
 	},
-	usePresets,
+	useStyleTemplates,
 	useHistory,
 	onGenerate: previewPosts,
 	onRegenerate: regenerateDraft,

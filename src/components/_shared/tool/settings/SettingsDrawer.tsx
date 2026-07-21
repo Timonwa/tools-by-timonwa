@@ -8,7 +8,7 @@ import {
 	OPEN_POST_SETTINGS_EVENT,
 	THREADABLE_POST_PLATFORMS,
 } from "@/lib/constants";
-import type { PostPreferencesType } from "@/lib/types";
+import type { PostStyleType } from "@/lib/types";
 import PlatformPicker from "@/components/_shared/tool/writer/PlatformPicker";
 import TemplatesPicker from "@/components/_shared/tool/writer/TemplatesPicker";
 import ThreadFormat from "@/components/_shared/tool/writer/ThreadFormat";
@@ -36,17 +36,17 @@ export default function SettingsDrawer({
 	const { stores, features } = runtime;
 	const [open, setOpen] = useState(false);
 	const prefs = useSyncExternalStore(
-		stores.prefsStorage.subscribe,
-		stores.prefsStorage.getSnapshot,
-		stores.prefsStorage.getServerSnapshot,
+		stores.styleStorage.subscribe,
+		stores.styleStorage.getSnapshot,
+		stores.styleStorage.getServerSnapshot,
 	);
 	const workflow = useSyncExternalStore(
 		stores.workflowStorage.subscribe,
 		stores.workflowStorage.getSnapshot,
 		stores.workflowStorage.getServerSnapshot,
 	);
-	const { tone, platforms, xThreadLength } = workflow;
-	const presets = runtime.usePresets();
+	const { platforms, xThreadLength } = workflow;
+	const styleTemplates = runtime.useStyleTemplates();
 
 	// Open on request from elsewhere (e.g. the generate form's entry button).
 	// Only the always-mounted bar icon listens, so a dispatch never opens two drawers.
@@ -57,8 +57,8 @@ export default function SettingsDrawer({
 		return () => window.removeEventListener(OPEN_POST_SETTINGS_EVENT, handler);
 	}, [presentation]);
 
-	const updatePrefs = (patch: Partial<PostPreferencesType>) => {
-		stores.prefsStorage.set({ ...prefs, ...patch });
+	const updatePrefs = (patch: Partial<PostStyleType>) => {
+		stores.styleStorage.set({ ...prefs, ...patch });
 	};
 
 	return (
@@ -101,17 +101,17 @@ export default function SettingsDrawer({
 			>
 				<div className="px-4 sm:px-5 py-5 flex flex-col gap-6">
 					<TemplatesPicker
-						templates={presets.templates}
-						activeTemplateId={presets.activeId}
-						onApply={presets.apply}
-						onSave={presets.save}
-						onDelete={presets.remove}
-						onUpdate={presets.update}
-						onRename={presets.rename}
+						templates={styleTemplates.templates}
+						activeTemplateId={styleTemplates.activeId}
+						onApply={styleTemplates.apply}
+						onSave={styleTemplates.save}
+						onDelete={styleTemplates.remove}
+						onUpdate={styleTemplates.update}
+						onRename={styleTemplates.rename}
 						collapsible
 					/>
 
-					<TonePicker value={tone} onChange={stores.setTone} />
+					<TonePicker value={prefs.tone} onChange={stores.setTone} />
 
 					<PlatformPicker value={platforms} onToggle={stores.togglePlatform} />
 

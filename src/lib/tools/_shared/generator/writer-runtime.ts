@@ -3,10 +3,10 @@ import type {
 	ArticleInputType,
 	PostHistoryType,
 	PostDraftType,
-	PostPresetType,
+	PostStyleTemplateType,
 	PostDraftsResultType,
 	TokenUsageType,
-	PostPreferencesType,
+	PostStyleType,
 } from "@/lib/types";
 import type { WorkflowStateType } from "./storage";
 
@@ -26,10 +26,9 @@ export type GenerateExtras = {
 
 export type GenerateParams = {
 	input: ArticleInputType;
-	tone: PostToneType;
 	platforms: PostPlatformType[];
 	xThreadLength: number;
-	preferences: PostPreferencesType;
+	style: PostStyleType;
 	googleApiKey?: string;
 	googleModel?: string;
 } & GenerateExtras;
@@ -37,9 +36,8 @@ export type GenerateParams = {
 export type RegenerateParams = {
 	input: ArticleInputType;
 	platform: PostPlatformType;
-	tone: PostToneType;
 	xThreadLength: number;
-	preferences: PostPreferencesType;
+	style: PostStyleType;
 	googleApiKey?: string;
 	googleModel?: string;
 } & GenerateExtras;
@@ -57,11 +55,11 @@ export type RegenerateResult =
 	  }
 	| { ok: false; error: string };
 
-export type PresetsApi = {
-	templates: PostPresetType[];
+export type StyleTemplatesApi = {
+	templates: PostStyleTemplateType[];
 	activeId: string | null;
 	save: (name: string) => void;
-	apply: (t: PostPresetType) => void;
+	apply: (t: PostStyleTemplateType) => void;
 	remove: (id: string) => void;
 	update: (id: string) => void;
 	rename: (id: string, name: string) => void;
@@ -84,13 +82,13 @@ export type GeneratorFeatures = {
 export type WriterRuntime = {
 	features: GeneratorFeatures;
 	stores: {
-		prefsStorage: Store<PostPreferencesType>;
+		styleStorage: Store<PostStyleType>;
 		workflowStorage: Store<WorkflowStateType>;
 		setTone: (tone: PostToneType) => void;
 		togglePlatform: (platform: PostPlatformType) => void;
 		setXThreadLength: (n: number) => void;
 	};
-	usePresets: () => PresetsApi;
+	useStyleTemplates: () => StyleTemplatesApi;
 	useHistory: () => HistoryApi;
 	onGenerate: (params: GenerateParams) => Promise<GenerateResult>;
 	onRegenerate: (params: RegenerateParams) => Promise<RegenerateResult>;

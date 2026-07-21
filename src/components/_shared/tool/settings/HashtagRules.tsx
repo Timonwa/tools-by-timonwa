@@ -4,12 +4,12 @@ import { HashIcon, XIcon } from "lucide-react";
 import { useId, useState } from "react";
 import { MAX_POST_HASHTAG_RULES_PER_LIST } from "@/lib/constants";
 import { normalizeHashtag } from "@/lib/utils/generator/hashtag";
-import type { PostPreferencesType } from "@/lib/types";
+import type { PostStyleType } from "@/lib/types";
 import { Badge, Input } from "@/components/ui";
 
 type HashtagRulesProps = {
-	prefs: PostPreferencesType;
-	onChange: (patch: Partial<PostPreferencesType>) => void;
+	prefs: PostStyleType;
+	onChange: (patch: Partial<PostStyleType>) => void;
 };
 
 type FieldType = "alwaysIncludeHashtags" | "neverUseHashtags";

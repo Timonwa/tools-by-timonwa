@@ -1,8 +1,9 @@
-import type { PostPreferencesType } from "@/lib/types";
+import type { PostStyleType } from "@/lib/types";
 
-/** Factory-default post preferences applied on first use. */
-export const DEFAULT_POST_PREFERENCES: PostPreferencesType = {
+/** Factory-default writing style applied on first use. */
+export const DEFAULT_POST_STYLE: PostStyleType = {
 	voice: "i",
+	tone: "auto",
 	emojiLevel: 2,
 	hashtagLevel: 1,
 	alwaysIncludeHashtags: [],
@@ -22,10 +23,10 @@ export type PostToneType = (typeof POST_TONES)[number]["value"];
 
 /** Upper bound per list — keeps the prompt small and the UI readable. */
 export const MAX_POST_HASHTAG_RULES_PER_LIST = 10;
-/** Upper bound on saved presets — localStorage stays lean. */
-export const MAX_POST_PRESETS = 10;
-/** Max preset name length — keeps chips short and the collapsed label tidy. */
-export const MAX_POST_PRESET_NAME_CHARS = 30;
+/** Upper bound on saved style templates — localStorage stays lean. */
+export const MAX_POST_STYLE_TEMPLATES = 10;
+/** Max style-template name length — keeps chips short and the collapsed label tidy. */
+export const MAX_POST_STYLE_TEMPLATE_NAME_CHARS = 30;
 
 /** Display label for each grammatical-voice option. */
 export const POST_VOICE_LABELS = {

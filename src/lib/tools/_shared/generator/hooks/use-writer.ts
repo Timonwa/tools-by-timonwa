@@ -23,10 +23,10 @@ import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { emitHostedUsage } from "@/lib/utils/hosted-usage-signal";
 import type { PostHistoryType } from "@/lib/types";
 
-/** Central state and action hook for the writer engine — wires input, generation, editing, history, and presets. Stores, server actions, and the history/presets hooks are injected via `runtime`, so one engine powers several tools. */
+/** Central state and action hook for the writer engine — wires input, generation, editing, history, and style templates. Stores, server actions, and the history/template hooks are injected via `runtime`, so one engine powers several tools. */
 export function useWriter(runtime: WriterRuntime) {
 	const {
-		prefsStorage,
+		styleStorage,
 		workflowStorage,
 		setTone,
 		togglePlatform,
@@ -55,12 +55,14 @@ export function useWriter(runtime: WriterRuntime) {
 		workflowStorage.getSnapshot,
 		workflowStorage.getServerSnapshot,
 	);
-	const { tone, platforms, xThreadLength } = workflow;
-	const prefs = useSyncExternalStore(
-		prefsStorage.subscribe,
-		prefsStorage.getSnapshot,
-		prefsStorage.getServerSnapshot,
+	const { platforms, xThreadLength } = workflow;
+	const style = useSyncExternalStore(
+		styleStorage.subscribe,
+		styleStorage.getSnapshot,
+		styleStorage.getServerSnapshot,
 	);
+	// Tone is part of the style now — surfaced on the form via its own picker.
+	const { tone } = style;
 
 	// `regenerate` uses its own transition but tracks per-draft loading via `regenerating` — a single flag can't distinguish cards.
 	const [isGenerating, startGenerate] = useTransition();
@@ -85,7 +87,7 @@ export function useWriter(runtime: WriterRuntime) {
 		remove: deleteTemplate,
 		update: updateTemplate,
 		rename: renameTemplate,
-	} = runtime.usePresets();
+	} = runtime.useStyleTemplates();
 
 	const { history, upsert, remove: removeHistoryEntry } = runtime.useHistory();
 
@@ -95,11 +97,10 @@ export function useWriter(runtime: WriterRuntime) {
 			return;
 		upsert({
 			input: lastInput,
-			tone,
+			style,
 			platforms,
 			xThreadLength,
-			preferences: prefs,
-			presetName: templates.find((t) => t.id === activeTemplateId)?.name,
+			styleTemplateName: templates.find((t) => t.id === activeTemplateId)?.name,
 			preview: { ...preview, drafts: editableDrafts },
 			timestamp: Date.now(),
 		});
@@ -156,10 +157,9 @@ export function useWriter(runtime: WriterRuntime) {
 					const byokKey = byokStorage.get() ?? undefined;
 					const result = await onGenerate({
 						input,
-						tone,
 						platforms,
 						xThreadLength,
-						preferences: prefsStorage.get(),
+						style: styleStorage.get(),
 						googleApiKey: byokKey,
 						googleModel: byokKey ? byokModelStorage.get() : undefined,
 					});
@@ -182,11 +182,11 @@ export function useWriter(runtime: WriterRuntime) {
 							input.kind === "url"
 								? { kind: "url", url: preview.article.url || input.url }
 								: input,
-						tone,
+						style: styleStorage.get(),
 						platforms,
 						xThreadLength,
-						preferences: prefsStorage.get(),
-						presetName: templates.find((t) => t.id === activeTemplateId)?.name,
+						styleTemplateName: templates.find((t) => t.id === activeTemplateId)
+							?.name,
 						preview,
 						timestamp: Date.now(),
 					});
@@ -198,7 +198,6 @@ export function useWriter(runtime: WriterRuntime) {
 			});
 		},
 		[
-			tone,
 			platforms,
 			xThreadLength,
 			resetResults,
@@ -206,7 +205,7 @@ export function useWriter(runtime: WriterRuntime) {
 			templates,
 			activeTemplateId,
 			onGenerate,
-			prefsStorage,
+			styleStorage,
 		],
 	);
 
@@ -268,9 +267,8 @@ export function useWriter(runtime: WriterRuntime) {
 					const result = await onRegenerate({
 						input: lastInput,
 						platform: draft.platform,
-						tone,
 						xThreadLength,
-						preferences: prefsStorage.get(),
+						style: styleStorage.get(),
 						googleApiKey: byokKey,
 						googleModel: byokKey ? byokModelStorage.get() : undefined,
 					});
@@ -292,7 +290,7 @@ export function useWriter(runtime: WriterRuntime) {
 				}
 			});
 		},
-		[lastInput, tone, xThreadLength, onRegenerate, prefsStorage],
+		[lastInput, xThreadLength, onRegenerate, styleStorage],
 	);
 
 	const copy = useCallback(async (key: string, text: string) => {
@@ -319,18 +317,17 @@ export function useWriter(runtime: WriterRuntime) {
 				setUrl("");
 			}
 			workflowStorage.set({
-				tone: entry.tone,
 				platforms: entry.platforms,
 				xThreadLength: entry.xThreadLength,
 			});
-			prefsStorage.set(entry.preferences);
+			styleStorage.set(entry.style);
 			setPreview(entry.preview);
 			setEditableDrafts(entry.preview.drafts);
 			setLastUsage(entry.preview.usage ?? null);
 			setLastInput(entry.input);
 			setError(null);
 		},
-		[setText, setUrl, setInputKind, prefsStorage, workflowStorage],
+		[setText, setUrl, setInputKind, styleStorage, workflowStorage],
 	);
 
 	// Single busy gate — prevents a second in-flight request racing the first.

@@ -13,24 +13,24 @@ import { useState } from "react";
 import {
 	POST_EMOJI_DENSITY_LABELS,
 	POST_HASHTAG_DENSITY_LABELS,
-	MAX_POST_PRESET_NAME_CHARS,
-	MAX_POST_PRESETS,
-	POST_PLATFORM_LABELS,
+	MAX_POST_STYLE_TEMPLATE_NAME_CHARS,
+	MAX_POST_STYLE_TEMPLATES,
 	POST_TONES,
+	type PostToneType,
 	POST_VOICE_LABELS,
 } from "@/lib/constants";
-import type { PostPresetType } from "@/lib/types";
+import type { PostStyleTemplateType } from "@/lib/types";
 import { Badge, Button, Input, Tooltip } from "@/components/ui";
 
 import { cn } from "@/lib/utils/cn";
 
-const toneLabel = (tone: PostPresetType["tone"]): string =>
+const toneLabel = (tone: PostToneType): string =>
 	POST_TONES.find((t) => t.value === tone)?.label ?? tone;
 
 type TemplatesPickerProps = {
-	templates: PostPresetType[];
+	templates: PostStyleTemplateType[];
 	activeTemplateId: string | null;
-	onApply: (t: PostPresetType) => void;
+	onApply: (t: PostStyleTemplateType) => void;
 	onSave: (name: string) => void;
 	onDelete: (id: string) => void;
 	onUpdate: (id: string) => void;
@@ -56,8 +56,8 @@ export default function TemplatesPicker({
 	const [editingId, setEditingId] = useState<string | null>(null);
 	const [expanded, setExpanded] = useState(!collapsible);
 
-	const full = templates.length >= MAX_POST_PRESETS;
-	const activePreset = templates.find((t) => t.id === activeTemplateId);
+	const full = templates.length >= MAX_POST_STYLE_TEMPLATES;
+	const activeTemplate = templates.find((t) => t.id === activeTemplateId);
 
 	const commitSave = () => {
 		const name = nameDraft.trim();
@@ -86,7 +86,7 @@ export default function TemplatesPicker({
 							aria-hidden
 							className="w-3.5 h-3.5 shrink-0 text-primary"
 						/>
-						<span className="shrink-0">Presets</span>
+						<span className="shrink-0">Style templates</span>
 						<span className="shrink-0 text-muted-foreground">
 							({templates.length})
 						</span>
@@ -97,10 +97,10 @@ export default function TemplatesPicker({
 								expanded && "rotate-180",
 							)}
 						/>
-						{activePreset && (
+						{activeTemplate && (
 							<Badge variant="primary" className="min-w-0">
 								<CheckIcon aria-hidden className="w-3 h-3 shrink-0" />
-								<span className="max-w-32 truncate">{activePreset.name}</span>
+								<span className="max-w-32 truncate">{activeTemplate.name}</span>
 							</Badge>
 						)}
 					</button>
@@ -117,13 +117,13 @@ export default function TemplatesPicker({
 							setIsSaving(true);
 							setExpanded(true);
 						}}
-						disabled={disabled || full || Boolean(activePreset)}
+						disabled={disabled || full || Boolean(activeTemplate)}
 						title={
 							full
-								? `Max ${MAX_POST_PRESETS} presets — delete one first`
-								: activePreset
-									? `These settings are already saved as “${activePreset.name}”`
-									: "Save the current tone, platforms, and writing prefs as a reusable preset"
+								? `Max ${MAX_POST_STYLE_TEMPLATES} style templates — delete one first`
+								: activeTemplate
+									? `This writing style is already saved as “${activeTemplate.name}”`
+									: "Save the current writing style as a reusable template"
 						}
 						className="text-[11px] text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
 					>
@@ -135,9 +135,8 @@ export default function TemplatesPicker({
 			{expanded && (
 				<>
 					<p className="text-[11px] text-muted-foreground">
-						A saved bundle of tone, platforms, thread format, and writing prefs.
-						Apply one in a click, update it to your current settings, or rename
-						it.
+						A saved writing style — tone, voice, emoji, hashtags, and length.
+						Apply one in a click, update it to your current style, or rename it.
 					</p>
 
 					{isSaving && (
@@ -157,20 +156,20 @@ export default function TemplatesPicker({
 										}
 									}}
 									placeholder="Name it (e.g. My X voice)"
-									maxLength={MAX_POST_PRESET_NAME_CHARS}
+									maxLength={MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
 									className="h-8 w-full text-xs"
 								/>
 								<p className="text-right text-[11px] text-muted-foreground tabular-nums">
-									{nameDraft.length}/{MAX_POST_PRESET_NAME_CHARS}
+									{nameDraft.length}/{MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
 								</p>
 							</div>
-							<Tooltip label="Save preset">
+							<Tooltip label="Save style template">
 								<Button
 									size="sm"
 									type="button"
 									onClick={commitSave}
 									disabled={!nameDraft.trim()}
-									aria-label="Save preset"
+									aria-label="Save style template"
 								>
 									<CheckIcon aria-hidden className="w-3.5 h-3.5" />
 								</Button>
@@ -191,8 +190,8 @@ export default function TemplatesPicker({
 
 					{templates.length === 0 ? (
 						<p className="text-[11px] text-muted-foreground italic">
-							Nothing saved yet. Set a tone, platforms, and prefs, then “Save
-							current” to reuse them in one click.
+							Nothing saved yet. Set your writing style, then “Save current” to
+							reuse it in one click.
 						</p>
 					) : (
 						<div className="flex flex-wrap items-center gap-1.5">
@@ -235,7 +234,7 @@ function TemplateChip({
 	onEdit,
 	onDelete,
 }: {
-	template: PostPresetType;
+	template: PostStyleTemplateType;
 	active: boolean;
 	disabled?: boolean;
 	onApply: () => void;
@@ -336,7 +335,7 @@ function TemplateEditor({
 	onUpdate,
 	onDone,
 }: {
-	template: PostPresetType;
+	template: PostStyleTemplateType;
 	disabled?: boolean;
 	onRename: (name: string) => void;
 	onUpdate: () => void;
@@ -347,7 +346,7 @@ function TemplateEditor({
 		onRename(name);
 		onDone();
 	};
-	const updatePreferences = () => {
+	const updateStyle = () => {
 		onRename(name);
 		onUpdate();
 		onDone();
@@ -369,7 +368,7 @@ function TemplateEditor({
 								onDone();
 							}
 						}}
-						maxLength={MAX_POST_PRESET_NAME_CHARS}
+						maxLength={MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
 						disabled={disabled}
 						aria-label="Preset name"
 						className="h-8 min-w-0 flex-1 text-xs"
@@ -387,7 +386,7 @@ function TemplateEditor({
 					</Tooltip>
 				</div>
 				<p className="text-right text-[11px] text-muted-foreground tabular-nums">
-					{name.length}/{MAX_POST_PRESET_NAME_CHARS}
+					{name.length}/{MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
 				</p>
 			</div>
 			<div className="flex flex-wrap items-center gap-1.5">
@@ -405,44 +404,33 @@ function TemplateEditor({
 					size="sm"
 					type="button"
 					disabled={disabled}
-					onClick={updatePreferences}
+					onClick={updateStyle}
 				>
 					<RefreshCwIcon aria-hidden className="w-3.5 h-3.5" />
-					Update preferences
+					Update style
 				</Button>
 			</div>
 			<p className="text-[11px] text-muted-foreground">
 				<span className="font-medium text-foreground">Rename</span> changes only
 				the name.{" "}
-				<span className="font-medium text-foreground">Update preferences</span>{" "}
-				overwrites this preset&apos;s tone, platforms, thread format, and
-				writing style with your current settings.
+				<span className="font-medium text-foreground">Update style</span>{" "}
+				overwrites this template&apos;s saved writing style with your current
+				style.
 			</p>
 		</div>
 	);
 }
 
 /** Hover/focus tooltip showing a preset's full settings summary. */
-function TemplatePreview({ template }: { template: PostPresetType }) {
-	const { tone, platforms, xThreadLength, preferences: p } = template;
+function TemplatePreview({ template }: { template: PostStyleTemplateType }) {
+	const p = template.style;
 	return (
 		<div
 			role="tooltip"
 			className="pointer-events-none absolute left-0 top-full z-20 mt-2 w-64 max-w-[calc(100vw-2rem)] rounded-md border border-border/60 bg-popover/90 backdrop-blur-md px-3 py-2 text-[11px] leading-snug text-popover-foreground shadow-md opacity-0 translate-y-1 transition-all duration-150 ease-out group-hover/preview:opacity-100 group-hover/preview:translate-y-0 group-focus-within/preview:opacity-100 group-focus-within/preview:translate-y-0"
 		>
 			<div className="flex flex-col gap-1">
-				<Row label="Tone" value={toneLabel(tone)} />
-				<Row
-					label="Platforms"
-					value={
-						platforms.length
-							? platforms.map((p) => POST_PLATFORM_LABELS[p] ?? p).join(", ")
-							: "None"
-					}
-				/>
-				{platforms.includes("x") && xThreadLength > 1 && (
-					<Row label="Thread" value={`${xThreadLength} posts`} />
-				)}
+				<Row label="Tone" value={toneLabel(p.tone)} />
 				<Row label="Voice" value={POST_VOICE_LABELS[p.voice] ?? p.voice} />
 				<Row label="Emoji" value={POST_EMOJI_DENSITY_LABELS[p.emojiLevel]} />
 				<Row

@@ -15,7 +15,7 @@ import {
 	THREADABLE_POST_PLATFORMS,
 	type PostToneType,
 } from "@/lib/constants";
-import type { PostPresetType } from "@/lib/types";
+import type { PostStyleTemplateType } from "@/lib/types";
 import {
 	Button,
 	Card,
@@ -56,9 +56,9 @@ type GenerateFormProps = {
 	onStartOver: () => void;
 	error: string | null;
 	onSubmit: (e: React.FormEvent) => void;
-	templates: PostPresetType[];
+	templates: PostStyleTemplateType[];
 	activeTemplateId: string | null;
-	onApplyTemplate: (t: PostPresetType) => void;
+	onApplyTemplate: (t: PostStyleTemplateType) => void;
 	onSaveTemplate: (name: string) => void;
 	onDeleteTemplate: (id: string) => void;
 	onUpdateTemplate: (id: string) => void;

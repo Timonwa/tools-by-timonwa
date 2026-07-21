@@ -9,18 +9,14 @@ import {
 	HOSTED_DAILY_GENERATION_POOL,
 	HOSTED_PER_USER_DAILY,
 } from "@/components/tools/article-to-social-posts/constants/hosted-usage";
-import type {
-	PostPlatformType,
-	LongformPostLengthType,
-	PostToneType,
-} from "@/lib/constants";
+import type { PostPlatformType, LongformPostLengthType } from "@/lib/constants";
 import type {
 	ArticleMetaType,
 	ArticleInputType,
 	PostDraftType,
 	PostDraftsResultType,
 	TokenUsageType,
-	PostPreferencesType,
+	PostStyleType,
 } from "@/lib/types";
 import { generateDrafts } from "./agents/draft-generator/agent";
 import { assertSafeArticleUrl } from "@/lib/tools/_shared/draft-input";
@@ -129,14 +125,13 @@ function threadLine(
 }
 
 function buildDirectives(
-	tone: PostToneType,
+	style: PostStyleType,
 	platforms: PostPlatformType[],
 	xThreadLength: number,
-	preferences?: PostPreferencesType,
 ): string {
-	const postLength = preferences?.postLength ?? "medium";
+	const { postLength } = style;
 	const lines: string[] = [
-		`Tone: ${tone}`,
+		`Tone: ${style.tone}`,
 		`Platforms: ${platforms.join(", ")}`,
 	];
 	if (platforms.includes("linkedin"))
@@ -144,39 +139,29 @@ function buildDirectives(
 	if (platforms.includes("substack"))
 		lines.push(`Substack limit: ${LONGFORM_POST_LENGTH_LIMITS[postLength]}`);
 	lines.push(threadLine(platforms, xThreadLength));
-	if (preferences)
-		lines.push(`Writing preferences: ${JSON.stringify(preferences)}`);
+	lines.push(`Writing style: ${JSON.stringify(style)}`);
 	return lines.join("\n");
 }
 
 /** Server action — generate one platform-optimized post per selected platform from an article draft. */
 export async function previewPosts(params: {
 	input: ArticleInputType;
-	tone: PostToneType;
 	platforms: PostPlatformType[];
 	xThreadLength: number;
-	preferences?: PostPreferencesType;
+	style: PostStyleType;
 	googleApiKey?: string;
 	googleModel?: string;
 }): Promise<PreviewActionResultType> {
-	const {
-		input,
-		tone,
-		platforms,
-		xThreadLength,
-		preferences,
-		googleApiKey,
-		googleModel,
-	} = params;
+	const { input, platforms, xThreadLength, style, googleApiKey, googleModel } =
+		params;
 	try {
 		validateInput(input);
 		const remaining = await enforceQuota(QUOTA_CONFIG, googleApiKey);
 
 		const directives = `Generate social media posts for this article — one per selected platform.\n\n${buildDirectives(
-			tone,
+			style,
 			platforms,
 			xThreadLength,
-			preferences,
 		)}`;
 
 		const { object, usage } = await generateDrafts({
@@ -187,7 +172,7 @@ export async function previewPosts(params: {
 			googleModel,
 		});
 
-		const postLength = preferences?.postLength ?? "medium";
+		const postLength = style.postLength;
 		const drafts: PostDraftType[] = object.posts.map((p) =>
 			buildPost(
 				p.platform,
@@ -216,31 +201,22 @@ export async function previewPosts(params: {
 export async function regenerateDraft(params: {
 	input: ArticleInputType;
 	platform: PostPlatformType;
-	tone: PostToneType;
 	xThreadLength: number;
-	preferences?: PostPreferencesType;
+	style: PostStyleType;
 	googleApiKey?: string;
 	googleModel?: string;
 }): Promise<RegenerateActionResultType> {
-	const {
-		input,
-		platform,
-		tone,
-		xThreadLength,
-		preferences,
-		googleApiKey,
-		googleModel,
-	} = params;
+	const { input, platform, xThreadLength, style, googleApiKey, googleModel } =
+		params;
 
 	try {
 		validateInput(input);
 		const remaining = await enforceQuota(QUOTA_CONFIG, googleApiKey);
 
 		const directives = `Regenerate a single post for this article.\n\n${buildDirectives(
-			tone,
+			style,
 			[platform],
 			xThreadLength,
-			preferences,
 		)}\n\nReturn the article block AND exactly one post for ${platform}. Make this post noticeably different from a typical first attempt — try a fresh angle or hook.`;
 
 		const { object, usage } = await generateDrafts({
@@ -253,7 +229,7 @@ export async function regenerateDraft(params: {
 			temperature: 0.9,
 		});
 
-		const postLength = preferences?.postLength ?? "medium";
+		const postLength = style.postLength;
 		const match = object.posts.find((p) => p.platform === platform);
 		if (!match) {
 			throw new Error(`Agent did not return a post for platform: ${platform}`);

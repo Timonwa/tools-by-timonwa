@@ -2,8 +2,8 @@
 
 import {
 	POST_PLATFORMS,
-	DEFAULT_POST_PREFERENCES,
-	MAX_POST_PRESETS,
+	DEFAULT_POST_STYLE,
+	MAX_POST_STYLE_TEMPLATES,
 	POST_TONES,
 } from "@/lib/constants";
 import {
@@ -14,24 +14,23 @@ import {
 export type { WorkflowStateType };
 
 export const DEFAULT_WORKFLOW: WorkflowStateType = {
-	tone: "auto",
 	platforms: ["linkedin", "x"],
 	xThreadLength: 1,
 };
 
 const stores = createGeneratorStorage({
 	prefix: "article-to-social-posts:",
-	defaultPreferences: DEFAULT_POST_PREFERENCES,
+	defaultStyle: DEFAULT_POST_STYLE,
 	defaultWorkflow: DEFAULT_WORKFLOW,
 	toneValues: new Set(POST_TONES.map((t) => t.value)),
 	platformValues: new Set(POST_PLATFORMS),
-	maxPresets: MAX_POST_PRESETS,
+	maxStyleTemplates: MAX_POST_STYLE_TEMPLATES,
 });
 
 export const {
-	prefsStorage,
+	styleStorage,
 	workflowStorage,
-	presetsStorage,
+	styleTemplatesStorage,
 	setTone,
 	togglePlatform,
 	setXThreadLength,

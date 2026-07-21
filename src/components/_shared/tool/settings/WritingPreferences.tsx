@@ -14,11 +14,11 @@ import {
 	POST_VOICE_LABELS,
 	type PostVoiceType,
 } from "@/lib/constants";
-import type { PostPreferencesType } from "@/lib/types";
+import type { PostStyleType } from "@/lib/types";
 
 type WritingPreferencesProps = {
-	prefs: PostPreferencesType;
-	onChange: (patch: Partial<PostPreferencesType>) => void;
+	prefs: PostStyleType;
+	onChange: (patch: Partial<PostStyleType>) => void;
 };
 
 const LEVELS: PostDensityLevelType[] = [1, 2, 3, 4, 5];

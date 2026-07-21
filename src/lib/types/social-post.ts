@@ -23,8 +23,10 @@ export type PostDraftsResultType = {
 	usage: TokenUsageType;
 };
 
-export type PostPreferencesType = {
+/** How posts should sound — sticky, reusable voice. Saved and switched via style templates. */
+export type PostStyleType = {
 	voice: PostVoiceType;
+	tone: PostToneType;
 	emojiLevel: PostDensityLevelType;
 	hashtagLevel: PostDensityLevelType;
 	alwaysIncludeHashtags: string[];
@@ -32,25 +34,22 @@ export type PostPreferencesType = {
 	postLength: LongformPostLengthType;
 };
 
-export type PostPresetType = {
+/** A named, reusable writing style — e.g. one per blog or client. Stores style only; platforms and thread length are per-run workflow, never saved here. */
+export type PostStyleTemplateType = {
 	id: string;
 	name: string;
 	createdAt: number;
-	tone: PostToneType;
-	platforms: PostPlatformType[];
-	xThreadLength: number;
-	preferences: PostPreferencesType;
+	style: PostStyleType;
 };
 
 /** One saved run — shared by every social-post tool's history (each under its own storage key). */
 export type PostHistoryType = {
 	id: string;
 	input: ArticleInputType;
-	tone: PostToneType;
+	style: PostStyleType;
 	platforms: PostPlatformType[];
 	xThreadLength: number;
-	preferences: PostPreferencesType;
-	presetName?: string;
+	styleTemplateName?: string;
 	preview: PostDraftsResultType;
 	timestamp: number;
 };

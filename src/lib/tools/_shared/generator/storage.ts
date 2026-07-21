@@ -5,84 +5,88 @@ import type {
 	PostPlatformType,
 	PostToneType,
 } from "@/lib/constants";
-import type { PostPresetType, PostPreferencesType } from "@/lib/types";
+import type { PostStyleTemplateType, PostStyleType } from "@/lib/types";
 import { createLocalStore } from "@/lib/utils/local-store";
 
-/** Per-generation workflow state shared by article-generator tools (tone, platforms, thread length). */
+/** Per-run workflow shared by article-generator tools — targets and structure, remembered as last-used (never part of a style template). */
 export type WorkflowStateType = {
-	tone: PostToneType;
 	platforms: PostPlatformType[];
 	xThreadLength: number;
 };
 
 type GeneratorStorageOptions = {
 	prefix: string;
-	defaultPreferences: PostPreferencesType;
+	defaultStyle: PostStyleType;
 	defaultWorkflow: WorkflowStateType;
 	toneValues: ReadonlySet<PostToneType>;
 	platformValues: ReadonlySet<PostPlatformType>;
-	maxPresets: number;
+	maxStyleTemplates: number;
 };
 
-/** Builds a tool's localStorage-backed stores under a `prefix`, so two tools that share the writer engine keep isolated preferences, workflow, and presets. */
+/** Builds a tool's localStorage-backed stores under a `prefix`, so two tools that share the writer engine keep isolated style, workflow, and style templates. */
 export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 	const {
 		prefix,
-		defaultPreferences,
+		defaultStyle,
 		defaultWorkflow,
 		toneValues,
 		platformValues,
-		maxPresets,
+		maxStyleTemplates,
 	} = opts;
 
-	const PREFS_KEY = `${prefix}writing-preferences`;
+	const STYLE_KEY = `${prefix}writing-style`;
 	const WORKFLOW_KEY = `${prefix}workflow`;
-	const TEMPLATES_KEY = `${prefix}templates`;
+	const TEMPLATES_KEY = `${prefix}style-templates`;
 
-	// Style prefs persist across sessions — not secrets.
-	const readPrefs = (): PostPreferencesType => {
+	// Style persists across sessions — not secrets.
+	const readStyle = (): PostStyleType => {
 		try {
-			const raw = window.localStorage.getItem(PREFS_KEY);
-			if (!raw) return defaultPreferences;
-			const parsed = JSON.parse(raw) as Partial<PostPreferencesType>;
+			const raw = window.localStorage.getItem(STYLE_KEY);
+			if (!raw) return defaultStyle;
+			const parsed = JSON.parse(raw) as Partial<PostStyleType>;
 			return {
-				voice: parsed.voice ?? defaultPreferences.voice,
+				voice: parsed.voice ?? defaultStyle.voice,
+				tone:
+					typeof parsed.tone === "string" &&
+					toneValues.has(parsed.tone as PostToneType)
+						? (parsed.tone as PostToneType)
+						: defaultStyle.tone,
 				emojiLevel:
 					(parsed.emojiLevel as PostDensityLevelType) ??
-					defaultPreferences.emojiLevel,
+					defaultStyle.emojiLevel,
 				hashtagLevel:
 					(parsed.hashtagLevel as PostDensityLevelType) ??
-					defaultPreferences.hashtagLevel,
+					defaultStyle.hashtagLevel,
 				alwaysIncludeHashtags: Array.isArray(parsed.alwaysIncludeHashtags)
 					? parsed.alwaysIncludeHashtags.filter(
 							(s): s is string => typeof s === "string",
 						)
-					: defaultPreferences.alwaysIncludeHashtags,
+					: defaultStyle.alwaysIncludeHashtags,
 				neverUseHashtags: Array.isArray(parsed.neverUseHashtags)
 					? parsed.neverUseHashtags.filter(
 							(s): s is string => typeof s === "string",
 						)
-					: defaultPreferences.neverUseHashtags,
+					: defaultStyle.neverUseHashtags,
 				postLength:
 					parsed.postLength === "short" ||
 					parsed.postLength === "medium" ||
 					parsed.postLength === "long"
 						? parsed.postLength
-						: defaultPreferences.postLength,
+						: defaultStyle.postLength,
 			};
 		} catch {
-			return defaultPreferences;
+			return defaultStyle;
 		}
 	};
 
-	const prefsStorage = createLocalStore<PostPreferencesType>({
-		read: readPrefs,
-		write: (prefs) => {
+	const styleStorage = createLocalStore<PostStyleType>({
+		read: readStyle,
+		write: (style) => {
 			try {
-				window.localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+				window.localStorage.setItem(STYLE_KEY, JSON.stringify(style));
 			} catch {}
 		},
-		serverValue: defaultPreferences,
+		serverValue: defaultStyle,
 	});
 
 	const readWorkflow = (): WorkflowStateType => {
@@ -90,11 +94,6 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 			const raw = window.localStorage.getItem(WORKFLOW_KEY);
 			if (!raw) return defaultWorkflow;
 			const parsed = JSON.parse(raw) as Partial<WorkflowStateType>;
-			const tone =
-				typeof parsed.tone === "string" &&
-				toneValues.has(parsed.tone as PostToneType)
-					? (parsed.tone as PostToneType)
-					: defaultWorkflow.tone;
 			const platforms = Array.isArray(parsed.platforms)
 				? (parsed.platforms.filter(
 						(p): p is PostPlatformType =>
@@ -108,7 +107,6 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 					? Math.max(1, Math.floor(parsed.xThreadLength))
 					: defaultWorkflow.xThreadLength;
 			return {
-				tone,
 				platforms: platforms.length > 0 ? platforms : defaultWorkflow.platforms,
 				xThreadLength,
 			};
@@ -127,9 +125,9 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 		serverValue: defaultWorkflow,
 	});
 
-	// Workflow mutators — read the latest persisted state at call time, so there's no stale closure.
+	// Tone lives in the style store — read the latest at call time so there's no stale closure.
 	const setTone = (tone: PostToneType) =>
-		workflowStorage.set({ ...workflowStorage.get(), tone });
+		styleStorage.set({ ...styleStorage.get(), tone });
 
 	const togglePlatform = (platform: PostPlatformType) => {
 		const current = workflowStorage.get();
@@ -142,28 +140,35 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 	const setXThreadLength = (xThreadLength: number) =>
 		workflowStorage.set({ ...workflowStorage.get(), xThreadLength });
 
-	const EMPTY_TEMPLATES: PostPresetType[] = [];
+	const EMPTY_TEMPLATES: PostStyleTemplateType[] = [];
 
-	const readTemplates = (): PostPresetType[] => {
+	// Drop entries lacking a `style` object — old presets bundled workflow and no longer fit this shape.
+	const readTemplates = (): PostStyleTemplateType[] => {
 		try {
 			const raw = window.localStorage.getItem(TEMPLATES_KEY);
 			if (!raw) return EMPTY_TEMPLATES;
 			const parsed = JSON.parse(raw) as unknown;
-			return Array.isArray(parsed)
-				? (parsed as PostPresetType[])
-				: EMPTY_TEMPLATES;
+			if (!Array.isArray(parsed)) return EMPTY_TEMPLATES;
+			return parsed.filter(
+				(t): t is PostStyleTemplateType =>
+					!!t &&
+					typeof t === "object" &&
+					typeof (t as PostStyleTemplateType).id === "string" &&
+					!!(t as PostStyleTemplateType).style &&
+					typeof (t as PostStyleTemplateType).style === "object",
+			);
 		} catch {
 			return EMPTY_TEMPLATES;
 		}
 	};
 
-	const presetsStorage = createLocalStore<PostPresetType[]>({
+	const styleTemplatesStorage = createLocalStore<PostStyleTemplateType[]>({
 		read: readTemplates,
 		write: (items) => {
 			try {
 				window.localStorage.setItem(
 					TEMPLATES_KEY,
-					JSON.stringify(items.slice(0, maxPresets)),
+					JSON.stringify(items.slice(0, maxStyleTemplates)),
 				);
 			} catch {}
 		},
@@ -171,9 +176,9 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 	});
 
 	return {
-		prefsStorage,
+		styleStorage,
 		workflowStorage,
-		presetsStorage,
+		styleTemplatesStorage,
 		setTone,
 		togglePlatform,
 		setXThreadLength,
