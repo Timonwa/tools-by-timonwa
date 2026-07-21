@@ -4,8 +4,9 @@ import { FilePlus2Icon, Loader2Icon, RefreshCwIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import ArticleCard from "@/components/_shared/result/ArticleCard";
 import HistorySidebar from "@/components/_shared/result/HistorySidebar";
-import type { HistoryEntryType } from "../hooks/use-history";
-import { useWriter } from "../hooks/use-writer";
+import type { HistoryEntryType } from "@/lib/tools/_shared/generator/types";
+import type { WriterRuntime } from "@/lib/tools/_shared/generator/writer-runtime";
+import { useWriter } from "@/lib/tools/_shared/generator/hooks/use-writer";
 import { Button } from "@/components/ui";
 import DraftCard from "./DraftCard";
 import GenerateForm from "./GenerateForm";
@@ -18,8 +19,8 @@ const historyLabel = (h: HistoryEntryType): string => {
 	return firstLine.slice(0, 80) || "Untitled";
 };
 
-export default function Writer() {
-	const w = useWriter();
+export default function Writer({ runtime }: { runtime: WriterRuntime }) {
+	const w = useWriter(runtime);
 	const resultsRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {

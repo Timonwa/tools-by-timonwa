@@ -1,4 +1,6 @@
-import type { SVGProps } from "react";
+import type { ComponentType, SVGProps } from "react";
+
+import type { PlatformType } from "@/lib/tools/_shared/generator/types";
 
 /**
  * Shared brand marks — platform glyphs from Simple Icons (simpleicons.org, CC0);
@@ -6,6 +8,16 @@ import type { SVGProps } from "react";
  */
 
 type IconProps = SVGProps<SVGSVGElement>;
+
+/** Platform → brand mark; typed by `PlatformType`, so adding a platform without registering its icon here fails the build. Register new platform icons in this map. */
+export const PLATFORM_ICONS: Record<PlatformType, ComponentType<IconProps>> = {
+	linkedin: LinkedInLogo,
+	x: XLogo,
+	bluesky: BlueskyLogo,
+	threads: ThreadsLogo,
+	mastodon: MastodonLogo,
+	substack: SubstackLogo,
+};
 
 export function GithubMark(props: IconProps) {
 	return (

@@ -19,7 +19,7 @@ import ErrorNotice from "@/components/_shared/result/ErrorNotice";
 import HistorySidebar from "@/components/_shared/result/HistorySidebar";
 import SeoForm, { type SeoFormParamsType } from "./SeoForm";
 import SeoResults from "./SeoResults";
-import { useHistory, type HistoryEntryType } from "./hooks/use-history";
+import { useHistory, type SeoMetaHistoryEntryType } from "./hooks/use-history";
 import type { SeoMetaResultType, TokenUsageType } from "./types";
 import {
 	Button,
@@ -37,7 +37,7 @@ import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { emitHostedUsage } from "@/lib/utils/hosted-usage-signal";
 
 /** History row label — article title, then URL, then a text snippet. */
-const historyLabel = (h: HistoryEntryType): string => {
+const historyLabel = (h: SeoMetaHistoryEntryType): string => {
 	if (h.result.article?.title) return h.result.article.title;
 	if (h.source.kind === "url") return h.source.url;
 	return h.source.text.trim().slice(0, 120) || "Article";
@@ -94,7 +94,7 @@ export default function SeoTool() {
 		});
 	}
 
-	function handleLoadHistory(entry: HistoryEntryType) {
+	function handleLoadHistory(entry: SeoMetaHistoryEntryType) {
 		setInitial({
 			source: entry.source,
 			primaryKeyword: entry.primaryKeyword,

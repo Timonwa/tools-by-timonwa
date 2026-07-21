@@ -1,7 +1,9 @@
 export type PlatformType =
 	"linkedin" | "x" | "bluesky" | "threads" | "mastodon" | "substack";
 
-export type { DraftInputType } from "@/lib/tools/_shared/draft-input";
+import type { DraftInputType } from "@/lib/tools/_shared/draft-input";
+
+export type { DraftInputType };
 
 export type ToneType =
 	"auto" | "professional" | "casual" | "educational" | "punchy";
@@ -53,4 +55,17 @@ export type PresetTemplateType = {
 	platforms: PlatformType[];
 	xThreadLength: number;
 	preferences: WritingPreferencesType;
+};
+
+/** One saved run — shared by every generator tool's history (each under its own storage key). */
+export type HistoryEntryType = {
+	id: string;
+	input: DraftInputType;
+	tone: ToneType;
+	platforms: PlatformType[];
+	xThreadLength: number;
+	preferences: WritingPreferencesType;
+	templateName?: string;
+	preview: PreviewResultType;
+	timestamp: number;
 };

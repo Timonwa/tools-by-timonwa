@@ -8,10 +8,10 @@ import {
 } from "lucide-react";
 import {
 	PLATFORM_COLORS,
-	PLATFORM_ICONS,
 	PLATFORM_LABELS,
-} from "../constants/platforms";
-import type { PostDraftType } from "../types";
+} from "@/lib/tools/_shared/generator/constants/platforms";
+import type { PostDraftType } from "@/lib/tools/_shared/generator/types";
+import { PLATFORM_ICONS } from "@/components/ui/logos";
 import {
 	Badge,
 	Button,

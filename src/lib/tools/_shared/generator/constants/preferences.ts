@@ -3,7 +3,7 @@ import type {
 	PostLengthType,
 	VoiceType,
 	WritingPreferencesType,
-} from "../types";
+} from "@/lib/tools/_shared/generator/types";
 
 /** Factory-default writing preferences applied on first use. */
 export const DEFAULT_PREFERENCES: WritingPreferencesType = {
@@ -30,14 +30,12 @@ export const normalizeHashtag = (raw: string): string => {
 	return stripped.replace(/[^\p{L}\p{N}_-]/gu, "").slice(0, 40);
 };
 
-/** Display label for each grammatical-voice option. */
 export const VOICE_LABELS: Record<VoiceType, string> = {
 	i: "I",
 	we: "We",
 	they: "Third-person",
 };
 
-/** Display label for each emoji-density level. */
 export const EMOJI_LEVEL_LABELS: Record<LevelType, string> = {
 	1: "None",
 	2: "Light",
@@ -46,7 +44,6 @@ export const EMOJI_LEVEL_LABELS: Record<LevelType, string> = {
 	5: "Heavy",
 };
 
-/** Display label for each hashtag-density level. */
 export const HASHTAG_LEVEL_LABELS: Record<LevelType, string> = {
 	1: "None",
 	2: "Few",
@@ -62,7 +59,6 @@ export const LENGTH_LIMITS: Record<PostLengthType, number> = {
 	long: 3000,
 };
 
-/** Display label for each post-length option (includes approximate character count). */
 export const POST_LENGTH_LABELS: Record<PostLengthType, string> = {
 	short: "Short (~600)",
 	medium: "Medium (~1,500)",

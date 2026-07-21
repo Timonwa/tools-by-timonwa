@@ -1,4 +1,4 @@
-import type { ToneType } from "../types";
+import type { ToneType } from "@/lib/tools/_shared/generator/types";
 
 /** All selectable tones with their UI label and short description. */
 export const TONES: { value: ToneType; label: string; description: string }[] =

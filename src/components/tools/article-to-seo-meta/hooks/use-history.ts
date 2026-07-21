@@ -11,7 +11,7 @@ import { createLocalStorageJson } from "@/lib/utils/local-storage-json";
 const HISTORY_KEY = "article-to-seo-meta:history";
 const MAX_HISTORY = 10;
 
-export type HistoryEntryType = {
+export type SeoMetaHistoryEntryType = {
 	id: string;
 	source: DraftInputType;
 	primaryKeyword?: string;
@@ -32,21 +32,21 @@ const isSource = (v: unknown): v is DraftInputType =>
 		(v as DraftInputType).kind === "text");
 
 /** Basic guard against a corrupt/edited localStorage value (not migration). */
-const isEntry = (e: unknown): e is HistoryEntryType =>
+const isEntry = (e: unknown): e is SeoMetaHistoryEntryType =>
 	!!e &&
 	typeof e === "object" &&
-	typeof (e as HistoryEntryType).id === "string" &&
-	isSource((e as HistoryEntryType).source);
+	typeof (e as SeoMetaHistoryEntryType).id === "string" &&
+	isSource((e as SeoMetaHistoryEntryType).source);
 
-const { load, save } = createLocalStorageJson<HistoryEntryType>(
+const { load, save } = createLocalStorageJson<SeoMetaHistoryEntryType>(
 	HISTORY_KEY,
 	isEntry,
 );
 
 /** Article-to-SEO-Meta history hook — deduplicates by source, capped at 10 entries. */
 export const useHistory = createHistoryStore<
-	HistoryEntryType,
-	Omit<HistoryEntryType, "id"> & { id?: string }
+	SeoMetaHistoryEntryType,
+	Omit<SeoMetaHistoryEntryType, "id"> & { id?: string }
 >({
 	read: load,
 	write: save,
@@ -55,7 +55,7 @@ export const useHistory = createHistoryStore<
 	applyUpsert: (current, entry) => {
 		const key = sourceKey(entry.source);
 		const existing = current.find((h) => sourceKey(h.source) === key);
-		const full: HistoryEntryType = {
+		const full: SeoMetaHistoryEntryType = {
 			...entry,
 			id: existing?.id ?? entry.id ?? crypto.randomUUID(),
 		};

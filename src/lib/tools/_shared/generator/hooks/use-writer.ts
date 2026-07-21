@@ -10,6 +10,7 @@ import {
 	useTransition,
 } from "react";
 
+import type { WriterRuntime } from "@/lib/tools/_shared/generator/writer-runtime";
 import { useToolDraft } from "@/lib/hooks/use-tool-draft";
 import type {
 	DraftInputType,
@@ -18,24 +19,21 @@ import type {
 	TokenUsageType,
 } from "../types";
 import { buildCopyAll, buildCopyText } from "../utils/draft";
-import {
-	prefsStorage,
-	setTone,
-	setXThreadLength,
-	togglePlatform,
-	workflowStorage,
-} from "../utils/storage";
-import {
-	previewPosts,
-	regenerateDraft,
-} from "@/lib/tools/article-to-social-posts/actions";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { emitHostedUsage } from "@/lib/utils/hosted-usage-signal";
-import { type HistoryEntryType, useHistory } from "./use-history";
-import { usePresets } from "./use-presets";
+import type { HistoryEntryType } from "../types";
 
-/** Central state and action hook for the social-post writer — wires input, generation, editing, history, and presets. */
-export function useWriter() {
+/** Central state and action hook for the writer engine — wires input, generation, editing, history, and presets. Stores, server actions, and the history/presets hooks are injected via `runtime`, so one engine powers several tools. */
+export function useWriter(runtime: WriterRuntime) {
+	const {
+		prefsStorage,
+		workflowStorage,
+		setTone,
+		togglePlatform,
+		setXThreadLength,
+	} = runtime.stores;
+	const { onGenerate, onRegenerate } = runtime;
+
 	const {
 		text,
 		setText,
@@ -87,9 +85,9 @@ export function useWriter() {
 		remove: deleteTemplate,
 		update: updateTemplate,
 		rename: renameTemplate,
-	} = usePresets();
+	} = runtime.usePresets();
 
-	const { history, upsert, remove: removeHistoryEntry } = useHistory();
+	const { history, upsert, remove: removeHistoryEntry } = runtime.useHistory();
 
 	// useEffectEvent — reads latest values without them becoming effect dependencies (React 19.2).
 	const persistDraftEdits = useEffectEvent(() => {
@@ -156,7 +154,7 @@ export function useWriter() {
 			startGenerate(async () => {
 				try {
 					const byokKey = byokStorage.get() ?? undefined;
-					const result = await previewPosts({
+					const result = await onGenerate({
 						input,
 						tone,
 						platforms,
@@ -208,6 +206,8 @@ export function useWriter() {
 			upsert,
 			templates,
 			activeTemplateId,
+			onGenerate,
+			prefsStorage,
 		],
 	);
 
@@ -266,7 +266,7 @@ export function useWriter() {
 			startRegenerate(async () => {
 				try {
 					const byokKey = byokStorage.get() ?? undefined;
-					const result = await regenerateDraft({
+					const result = await onRegenerate({
 						input: lastInput,
 						platform: draft.platform,
 						tone,
@@ -293,7 +293,7 @@ export function useWriter() {
 				}
 			});
 		},
-		[lastInput, tone, xThreadLength],
+		[lastInput, tone, xThreadLength, onRegenerate, prefsStorage],
 	);
 
 	const copy = useCallback(async (key: string, text: string) => {
@@ -331,7 +331,7 @@ export function useWriter() {
 			setLastInput(entry.input);
 			setError(null);
 		},
-		[setText, setUrl, setInputKind],
+		[setText, setUrl, setInputKind, prefsStorage, workflowStorage],
 	);
 
 	// Single busy gate — prevents a second in-flight request racing the first.

@@ -5,8 +5,8 @@ import {
 	HOSTED_DAILY_GENERATION_POOL,
 	HOSTED_PER_USER_DAILY,
 } from "@/components/tools/article-to-social-posts/constants/hosted-usage";
-import { CHAR_LIMITS } from "@/components/tools/article-to-social-posts/constants/platforms";
-import { LENGTH_LIMITS } from "@/components/tools/article-to-social-posts/constants/preferences";
+import { CHAR_LIMITS } from "@/lib/tools/_shared/generator/constants/platforms";
+import { LENGTH_LIMITS } from "@/lib/tools/_shared/generator/constants/preferences";
 import type {
 	ArticlePreviewType,
 	DraftInputType,
@@ -17,7 +17,7 @@ import type {
 	TokenUsageType,
 	ToneType,
 	WritingPreferencesType,
-} from "@/components/tools/article-to-social-posts/types";
+} from "@/lib/tools/_shared/generator/types";
 import { generateDrafts } from "./agents/draft-generator/agent";
 import { assertSafeArticleUrl } from "@/lib/tools/_shared/draft-input";
 import { toUserMessage } from "@/lib/tools/_shared/errors";

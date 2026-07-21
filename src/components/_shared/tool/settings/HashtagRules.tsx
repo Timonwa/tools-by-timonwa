@@ -5,8 +5,8 @@ import { useId, useState } from "react";
 import {
 	MAX_HASHTAG_RULES_PER_LIST,
 	normalizeHashtag,
-} from "../constants/preferences";
-import type { WritingPreferencesType } from "../types";
+} from "@/lib/tools/_shared/generator/constants/preferences";
+import type { WritingPreferencesType } from "@/lib/tools/_shared/generator/types";
 import { Badge, Input } from "@/components/ui";
 
 type HashtagRulesProps = {

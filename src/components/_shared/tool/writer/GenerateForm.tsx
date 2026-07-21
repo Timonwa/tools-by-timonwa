@@ -9,8 +9,12 @@ import {
 import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/result/ErrorNotice";
 import type { InputKindType } from "@/lib/tools/_shared/draft-input";
-import { THREADABLE_PLATFORMS } from "../constants/platforms";
-import type { PlatformType, PresetTemplateType, ToneType } from "../types";
+import { THREADABLE_PLATFORMS } from "@/lib/tools/_shared/generator/constants/platforms";
+import type {
+	PlatformType,
+	PresetTemplateType,
+	ToneType,
+} from "@/lib/tools/_shared/generator/types";
 import {
 	Button,
 	Card,
@@ -21,7 +25,7 @@ import {
 } from "@/components/ui";
 import { MAX_ARTICLE_CHARS } from "@/lib/config/limits";
 
-import WritingPreferencesButton from "../settings/WritingPreferencesButton";
+import WritingPreferencesButton from "@/components/_shared/tool/settings/WritingPreferencesButton";
 import PlatformPicker from "./PlatformPicker";
 import TemplatesPicker from "./TemplatesPicker";
 import TonePicker from "./TonePicker";

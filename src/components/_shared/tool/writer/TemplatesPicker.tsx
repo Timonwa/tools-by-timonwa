@@ -10,16 +10,16 @@ import {
 	XIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { PLATFORM_LABELS } from "../constants/platforms";
+import { PLATFORM_LABELS } from "@/lib/tools/_shared/generator/constants/platforms";
 import {
 	EMOJI_LEVEL_LABELS,
 	HASHTAG_LEVEL_LABELS,
 	MAX_PRESET_NAME,
 	MAX_TEMPLATES,
 	VOICE_LABELS,
-} from "../constants/preferences";
-import { TONES } from "../constants/tones";
-import type { PresetTemplateType } from "../types";
+} from "@/lib/tools/_shared/generator/constants/preferences";
+import { TONES } from "@/lib/tools/_shared/generator/constants/tones";
+import type { PresetTemplateType } from "@/lib/tools/_shared/generator/types";
 import { Badge, Button, Input, Tooltip } from "@/components/ui";
 
 import { cn } from "@/lib/utils/cn";

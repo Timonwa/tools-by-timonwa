@@ -1,14 +1,4 @@
-import type { ComponentType, SVGProps } from "react";
-
-import {
-	BlueskyLogo,
-	LinkedInLogo,
-	MastodonLogo,
-	SubstackLogo,
-	ThreadsLogo,
-	XLogo,
-} from "@/components/ui/logos";
-import type { PlatformType } from "../types";
+import type { PlatformType } from "@/lib/tools/_shared/generator/types";
 
 /** Ordered list of every supported platform. */
 export const ALL_PLATFORMS: PlatformType[] = [
@@ -28,7 +18,6 @@ export const THREADABLE_PLATFORMS: PlatformType[] = [
 	"mastodon",
 ];
 
-/** Human-readable display name for each platform. */
 export const PLATFORM_LABELS: Record<PlatformType, string> = {
 	linkedin: "LinkedIn",
 	x: "X (Twitter)",
@@ -46,19 +35,6 @@ export const CHAR_LIMITS: Record<PlatformType, number> = {
 	threads: 500,
 	mastodon: 500,
 	substack: 500,
-};
-
-/** Real brand marks per platform (see `components/ui/logos`). */
-export const PLATFORM_ICONS: Record<
-	PlatformType,
-	ComponentType<SVGProps<SVGSVGElement>>
-> = {
-	linkedin: LinkedInLogo,
-	x: XLogo,
-	bluesky: BlueskyLogo,
-	threads: ThreadsLogo,
-	mastodon: MastodonLogo,
-	substack: SubstackLogo,
 };
 
 /** Tailwind text-color class for each platform's brand color. */

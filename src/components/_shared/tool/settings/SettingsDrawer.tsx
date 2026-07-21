@@ -3,46 +3,48 @@
 import { PenLineIcon } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
-import { OPEN_SETTINGS_EVENT } from "../constants/events";
-import { THREADABLE_PLATFORMS } from "../constants/platforms";
-import { usePresets } from "../hooks/use-presets";
-import type { WritingPreferencesType } from "../types";
-import {
-	prefsStorage,
-	setTone,
-	setXThreadLength,
-	togglePlatform,
-	workflowStorage,
-} from "../utils/storage";
-import PlatformPicker from "../writer/PlatformPicker";
-import TemplatesPicker from "../writer/TemplatesPicker";
-import ThreadFormat from "../writer/ThreadFormat";
-import TonePicker from "../writer/TonePicker";
+import type { WriterRuntime } from "@/lib/tools/_shared/generator/writer-runtime";
+import { OPEN_SETTINGS_EVENT } from "@/lib/tools/_shared/generator/constants/events";
+import { THREADABLE_PLATFORMS } from "@/lib/tools/_shared/generator/constants/platforms";
+import type { WritingPreferencesType } from "@/lib/tools/_shared/generator/types";
+import PlatformPicker from "@/components/_shared/tool/writer/PlatformPicker";
+import TemplatesPicker from "@/components/_shared/tool/writer/TemplatesPicker";
+import ThreadFormat from "@/components/_shared/tool/writer/ThreadFormat";
+import TonePicker from "@/components/_shared/tool/writer/TonePicker";
 import NavIconButton from "@/components/layout/NavIconButton";
 import { Button, Drawer } from "@/components/ui";
 
 import HashtagRulesSection from "./HashtagRules";
 import WritingPreferencesSection from "./WritingPreferences";
 
-/** Slide-out drawer for tool-scoped defaults — tone, platforms, thread format, writing style, and hashtag rules. `presentation` picks the trigger: a bar icon or a full-width menu row. */
+export type SettingsPresentationType = "icon" | "menuItem";
+
+type SettingsDrawerProps = {
+	runtime: WriterRuntime;
+	presentation?: SettingsPresentationType;
+	drawerClassName?: string;
+};
+
+/** Slide-out drawer for a tool's writing defaults, bound to a tool via runtime; presentation picks the trigger — bar icon or full-width menu row. */
 export default function SettingsDrawer({
+	runtime,
 	presentation = "icon",
-}: {
-	presentation?: "icon" | "menuItem";
-} = {}) {
+	drawerClassName,
+}: SettingsDrawerProps) {
+	const { stores, features } = runtime;
 	const [open, setOpen] = useState(false);
 	const prefs = useSyncExternalStore(
-		prefsStorage.subscribe,
-		prefsStorage.getSnapshot,
-		prefsStorage.getServerSnapshot,
+		stores.prefsStorage.subscribe,
+		stores.prefsStorage.getSnapshot,
+		stores.prefsStorage.getServerSnapshot,
 	);
 	const workflow = useSyncExternalStore(
-		workflowStorage.subscribe,
-		workflowStorage.getSnapshot,
-		workflowStorage.getServerSnapshot,
+		stores.workflowStorage.subscribe,
+		stores.workflowStorage.getSnapshot,
+		stores.workflowStorage.getServerSnapshot,
 	);
 	const { tone, platforms, xThreadLength } = workflow;
-	const presets = usePresets();
+	const presets = runtime.usePresets();
 
 	// Open on request from elsewhere (e.g. the generate form's entry button).
 	// Only the always-mounted bar icon listens, so a dispatch never opens two drawers.
@@ -54,7 +56,7 @@ export default function SettingsDrawer({
 	}, [presentation]);
 
 	const updatePrefs = (patch: Partial<WritingPreferencesType>) => {
-		prefsStorage.set({ ...prefs, ...patch });
+		stores.prefsStorage.set({ ...prefs, ...patch });
 	};
 
 	return (
@@ -86,7 +88,7 @@ export default function SettingsDrawer({
 				onOpenChange={setOpen}
 				// The drawer portals to <body>, outside the tool's `--primary`
 				// scope, so re-apply the tool class here to keep the accent on-brand.
-				className="tool-article-to-social-posts"
+				className={drawerClassName}
 				title={
 					<span className="flex items-center gap-2">
 						<PenLineIcon aria-hidden className="w-4 h-4 text-primary" />
@@ -107,21 +109,28 @@ export default function SettingsDrawer({
 						collapsible
 					/>
 
-					<TonePicker value={tone} onChange={setTone} />
+					<TonePicker value={tone} onChange={stores.setTone} />
 
-					<PlatformPicker value={platforms} onToggle={togglePlatform} />
+					<PlatformPicker value={platforms} onToggle={stores.togglePlatform} />
 
 					{platforms.some((p) => THREADABLE_PLATFORMS.includes(p)) && (
-						<ThreadFormat length={xThreadLength} onChange={setXThreadLength} />
+						<ThreadFormat
+							length={xThreadLength}
+							onChange={stores.setXThreadLength}
+						/>
 					)}
 
 					<div className="border-t border-border/50" />
 
 					<WritingPreferencesSection prefs={prefs} onChange={updatePrefs} />
 
-					<div className="border-t border-border/50" />
+					{features.hashtagRules && (
+						<>
+							<div className="border-t border-border/50" />
 
-					<HashtagRulesSection prefs={prefs} onChange={updatePrefs} />
+							<HashtagRulesSection prefs={prefs} onChange={updatePrefs} />
+						</>
+					)}
 				</div>
 			</Drawer>
 		</>

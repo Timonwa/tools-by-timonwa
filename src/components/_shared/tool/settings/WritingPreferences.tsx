@@ -10,13 +10,13 @@ import {
 	HASHTAG_LEVEL_LABELS,
 	POST_LENGTH_LABELS,
 	VOICE_LABELS,
-} from "../constants/preferences";
+} from "@/lib/tools/_shared/generator/constants/preferences";
 import type {
 	LevelType,
 	PostLengthType,
 	VoiceType,
 	WritingPreferencesType,
-} from "../types";
+} from "@/lib/tools/_shared/generator/types";
 
 type WritingPreferencesProps = {
 	prefs: WritingPreferencesType;

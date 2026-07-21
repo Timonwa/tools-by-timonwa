@@ -5,10 +5,10 @@ import { ToggleButton } from "@/components/ui";
 import {
 	ALL_PLATFORMS,
 	PLATFORM_COLORS,
-	PLATFORM_ICONS,
 	PLATFORM_LABELS,
-} from "../constants/platforms";
-import type { PlatformType } from "../types";
+} from "@/lib/tools/_shared/generator/constants/platforms";
+import type { PlatformType } from "@/lib/tools/_shared/generator/types";
+import { PLATFORM_ICONS } from "@/components/ui/logos";
 
 type PlatformPickerProps = {
 	value: PlatformType[];

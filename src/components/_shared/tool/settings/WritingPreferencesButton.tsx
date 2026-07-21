@@ -2,9 +2,9 @@
 
 import { ChevronRightIcon, PenLineIcon } from "lucide-react";
 
-import { OPEN_SETTINGS_EVENT } from "../constants/events";
+import { OPEN_SETTINGS_EVENT } from "@/lib/tools/_shared/generator/constants/events";
 
-/** Generate-form entry point that opens the Writing preferences drawer (voice, emoji, hashtags, post length). */
+/** Generate-form entry point that opens the Writing preferences drawer. */
 export default function WritingPreferencesButton({
 	disabled,
 }: {
