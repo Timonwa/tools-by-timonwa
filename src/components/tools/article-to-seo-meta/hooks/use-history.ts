@@ -1,10 +1,10 @@
 "use client";
 
 import type {
-	DraftInputType,
+	ArticleInputType,
 	SeoMetaResultType,
 	TokenUsageType,
-} from "../types";
+} from "@/lib/types";
 import { createHistoryStore } from "@/lib/utils/create-history-store";
 import { createLocalStorageJson } from "@/lib/utils/local-storage-json";
 
@@ -13,7 +13,7 @@ const MAX_HISTORY = 10;
 
 export type SeoMetaHistoryEntryType = {
 	id: string;
-	source: DraftInputType;
+	source: ArticleInputType;
 	primaryKeyword?: string;
 	variationCount: 1 | 2 | 3;
 	result: SeoMetaResultType;
@@ -22,14 +22,14 @@ export type SeoMetaHistoryEntryType = {
 };
 
 /** Dedup/identity key for a source: same URL or same pasted text = same entry. */
-const sourceKey = (s: DraftInputType) =>
+const sourceKey = (s: ArticleInputType) =>
 	s.kind === "url" ? `url:${s.url.trim()}` : `text:${s.text}`;
 
-const isSource = (v: unknown): v is DraftInputType =>
+const isSource = (v: unknown): v is ArticleInputType =>
 	!!v &&
 	typeof v === "object" &&
-	((v as DraftInputType).kind === "url" ||
-		(v as DraftInputType).kind === "text");
+	((v as ArticleInputType).kind === "url" ||
+		(v as ArticleInputType).kind === "text");
 
 /** Basic guard against a corrupt/edited localStorage value (not migration). */
 const isEntry = (e: unknown): e is SeoMetaHistoryEntryType =>

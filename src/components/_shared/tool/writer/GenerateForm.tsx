@@ -8,13 +8,14 @@ import {
 } from "lucide-react";
 import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/result/ErrorNotice";
-import type { InputKindType } from "@/lib/tools/_shared/draft-input";
-import { MAX_ARTICLE_CHARS, THREADABLE_PLATFORMS } from "@/lib/constants";
-import type {
-	PlatformType,
-	PresetType,
-	ToneType,
-} from "@/lib/tools/_shared/generator/types";
+import type { ArticleInputKindType } from "@/lib/types";
+import {
+	MAX_ARTICLE_INPUT_CHARS,
+	type PostPlatformType,
+	THREADABLE_POST_PLATFORMS,
+	type PostToneType,
+} from "@/lib/constants";
+import type { PostPresetType } from "@/lib/types";
 import {
 	Button,
 	Card,
@@ -31,8 +32,8 @@ import TonePicker from "./TonePicker";
 import ThreadFormat from "./ThreadFormat";
 
 type GenerateFormProps = {
-	inputKind: InputKindType;
-	onInputKindChange: (kind: InputKindType) => void;
+	inputKind: ArticleInputKindType;
+	onInputKindChange: (kind: ArticleInputKindType) => void;
 	url: string;
 	onUrlChange: (url: string) => void;
 	text: string;
@@ -42,10 +43,10 @@ type GenerateFormProps = {
 	urlReuse: boolean;
 	onToggleUrlReuse: (next: boolean) => void;
 	onClearDraft: () => void;
-	tone: ToneType;
-	onToneChange: (tone: ToneType) => void;
-	platforms: PlatformType[];
-	onTogglePlatform: (p: PlatformType) => void;
+	tone: PostToneType;
+	onToneChange: (tone: PostToneType) => void;
+	platforms: PostPlatformType[];
+	onTogglePlatform: (p: PostPlatformType) => void;
 	xThreadLength: number;
 	onXThreadLengthChange: (n: number) => void;
 	isGenerating: boolean;
@@ -55,9 +56,9 @@ type GenerateFormProps = {
 	onStartOver: () => void;
 	error: string | null;
 	onSubmit: (e: React.FormEvent) => void;
-	templates: PresetType[];
+	templates: PostPresetType[];
 	activeTemplateId: string | null;
-	onApplyTemplate: (t: PresetType) => void;
+	onApplyTemplate: (t: PostPresetType) => void;
 	onSaveTemplate: (name: string) => void;
 	onDeleteTemplate: (id: string) => void;
 	onUpdateTemplate: (id: string) => void;
@@ -99,7 +100,7 @@ export default function GenerateForm({
 }: GenerateFormProps) {
 	const hasInput =
 		inputKind === "url" ? url.trim().length > 0 : text.trim().length > 0;
-	const textOver = text.length > MAX_ARTICLE_CHARS;
+	const textOver = text.length > MAX_ARTICLE_INPUT_CHARS;
 	const disabled = isBusy || !hasInput || platforms.length === 0 || textOver;
 	// Only call it "Regenerate" when the current input is the article on screen.
 	// A changed source reads as "Generate" so it never looks like an overwrite.
@@ -144,7 +145,7 @@ export default function GenerateForm({
 						onToggleTextReuse={onToggleTextReuse}
 						onClearText={onClearDraft}
 						disabled={isGenerating}
-						maxChars={MAX_ARTICLE_CHARS}
+						maxChars={MAX_ARTICLE_INPUT_CHARS}
 					/>
 
 					<TonePicker
@@ -159,7 +160,7 @@ export default function GenerateForm({
 						disabled={isGenerating}
 					/>
 
-					{platforms.some((p) => THREADABLE_PLATFORMS.includes(p)) && (
+					{platforms.some((p) => THREADABLE_POST_PLATFORMS.includes(p)) && (
 						<ThreadFormat
 							length={xThreadLength}
 							onChange={onXThreadLengthChange}

@@ -6,28 +6,26 @@ import { useId } from "react";
 import { ToggleButton } from "@/components/ui";
 
 import {
-	EMOJI_LEVEL_LABELS,
-	HASHTAG_LEVEL_LABELS,
+	POST_EMOJI_DENSITY_LABELS,
+	POST_HASHTAG_DENSITY_LABELS,
+	type PostDensityLevelType,
 	LONGFORM_POST_LENGTH_LABELS,
-	VOICE_LABELS,
+	type LongformPostLengthType,
+	POST_VOICE_LABELS,
+	type PostVoiceType,
 } from "@/lib/constants";
-import type {
-	LevelType,
-	PostLengthType,
-	VoiceType,
-	WritingPreferencesType,
-} from "@/lib/tools/_shared/generator/types";
+import type { PostPreferencesType } from "@/lib/types";
 
 type WritingPreferencesProps = {
-	prefs: WritingPreferencesType;
-	onChange: (patch: Partial<WritingPreferencesType>) => void;
+	prefs: PostPreferencesType;
+	onChange: (patch: Partial<PostPreferencesType>) => void;
 };
 
-const LEVELS: LevelType[] = [1, 2, 3, 4, 5];
-const VOICES = Object.keys(VOICE_LABELS) as VoiceType[];
+const LEVELS: PostDensityLevelType[] = [1, 2, 3, 4, 5];
+const VOICES = Object.keys(POST_VOICE_LABELS) as PostVoiceType[];
 const POST_LENGTHS = Object.keys(
 	LONGFORM_POST_LENGTH_LABELS,
-) as PostLengthType[];
+) as LongformPostLengthType[];
 
 /** Styled ToggleButton alias used across every preference fieldset. */
 function Chip({
@@ -89,10 +87,10 @@ export default function WritingPreferencesSection({
 						<Chip
 							key={v}
 							active={prefs.voice === v}
-							label={`Voice: ${VOICE_LABELS[v]}`}
+							label={`Voice: ${POST_VOICE_LABELS[v]}`}
 							onClick={() => onChange({ voice: v })}
 						>
-							{VOICE_LABELS[v]}
+							{POST_VOICE_LABELS[v]}
 						</Chip>
 					))}
 				</fieldset>
@@ -107,7 +105,7 @@ export default function WritingPreferencesSection({
 						Emoji
 					</span>
 					<span className="text-[11px] text-muted-foreground">
-						{EMOJI_LEVEL_LABELS[prefs.emojiLevel]}
+						{POST_EMOJI_DENSITY_LABELS[prefs.emojiLevel]}
 					</span>
 				</div>
 				<fieldset
@@ -118,7 +116,7 @@ export default function WritingPreferencesSection({
 						<Chip
 							key={n}
 							active={prefs.emojiLevel === n}
-							label={`Emoji level ${n}: ${EMOJI_LEVEL_LABELS[n]}`}
+							label={`Emoji level ${n}: ${POST_EMOJI_DENSITY_LABELS[n]}`}
 							onClick={() => onChange({ emojiLevel: n })}
 						>
 							<span className="font-mono">{n}</span>
@@ -136,7 +134,7 @@ export default function WritingPreferencesSection({
 						Hashtags
 					</span>
 					<span className="text-[11px] text-muted-foreground">
-						{HASHTAG_LEVEL_LABELS[prefs.hashtagLevel]}
+						{POST_HASHTAG_DENSITY_LABELS[prefs.hashtagLevel]}
 					</span>
 				</div>
 				<fieldset
@@ -147,7 +145,7 @@ export default function WritingPreferencesSection({
 						<Chip
 							key={n}
 							active={prefs.hashtagLevel === n}
-							label={`Hashtag level ${n}: ${HASHTAG_LEVEL_LABELS[n]}`}
+							label={`Hashtag level ${n}: ${POST_HASHTAG_DENSITY_LABELS[n]}`}
 							onClick={() => onChange({ hashtagLevel: n })}
 						>
 							<span className="font-mono">{n}</span>

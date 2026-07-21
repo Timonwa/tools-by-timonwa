@@ -4,17 +4,15 @@ import {
 	HOSTED_DAILY_GENERATION_POOL,
 	HOSTED_PER_USER_DAILY,
 } from "@/components/tools/article-to-seo-meta/constants/hosted-usage";
-import {
-	MAX_ARTICLE_CHARS,
-	type SeoMetaResultType,
-	type SeoVariationType,
-	type TokenUsageType,
-} from "@/components/tools/article-to-seo-meta/types";
+import { MAX_ARTICLE_INPUT_CHARS } from "@/lib/constants";
+import type {
+	ArticleInputType,
+	SeoMetaResultType,
+	SeoVariationType,
+	TokenUsageType,
+} from "@/lib/types";
 import { generateSeoVariations } from "./agents/seo-meta-generator/agent";
-import {
-	assertSafeArticleUrl,
-	type DraftInputType,
-} from "@/lib/tools/_shared/draft-input";
+import { assertSafeArticleUrl } from "@/lib/tools/_shared/draft-input";
 import { toUserMessage } from "@/lib/tools/_shared/errors";
 import {
 	enforceQuota,
@@ -67,7 +65,7 @@ function toToolMessage(error: unknown, byok: boolean): string {
 			[/ARTICLE_EMPTY/, "Paste your article before generating."],
 			[
 				/ARTICLE_TOO_LONG/,
-				`Your article is too long. Keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} characters, then try again.`,
+				`Your article is too long. Keep it under ${MAX_ARTICLE_INPUT_CHARS.toLocaleString()} characters, then try again.`,
 			],
 		],
 		fallback:
@@ -75,7 +73,7 @@ function toToolMessage(error: unknown, byok: boolean): string {
 	});
 }
 
-function resolveSource(source: DraftInputType): {
+function resolveSource(source: ArticleInputType): {
 	url?: string;
 	text?: string;
 } {
@@ -84,7 +82,8 @@ function resolveSource(source: DraftInputType): {
 	}
 	const text = source.text?.trim();
 	if (!text) throw new Error("ARTICLE_EMPTY");
-	if (text.length > MAX_ARTICLE_CHARS) throw new Error("ARTICLE_TOO_LONG");
+	if (text.length > MAX_ARTICLE_INPUT_CHARS)
+		throw new Error("ARTICLE_TOO_LONG");
 	return { text };
 }
 
@@ -108,7 +107,7 @@ export type SeoVariationActionResultType =
 
 /** Server action — generate 1-3 SEO meta variations for an article draft. */
 export async function generateSeoMeta(input: {
-	source: DraftInputType;
+	source: ArticleInputType;
 	primaryKeyword?: string;
 	variationCount?: number;
 	googleApiKey?: string;
@@ -145,7 +144,7 @@ export async function generateSeoMeta(input: {
 
 /** Server action — regenerate one SEO variation; existing variations are passed so the model returns a fresh angle rather than a near-duplicate. */
 export async function regenerateSeoMetaVariation(input: {
-	source: DraftInputType;
+	source: ArticleInputType;
 	primaryKeyword?: string;
 	existing: SeoVariationType[];
 	googleApiKey?: string;

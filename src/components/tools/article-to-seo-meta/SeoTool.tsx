@@ -20,7 +20,7 @@ import HistorySidebar from "@/components/_shared/result/HistorySidebar";
 import SeoForm, { type SeoFormParamsType } from "./SeoForm";
 import SeoResults from "./SeoResults";
 import { useHistory, type SeoMetaHistoryEntryType } from "./hooks/use-history";
-import type { SeoMetaResultType, TokenUsageType } from "./types";
+import type { SeoMetaResultType, TokenUsageType } from "@/lib/types";
 import {
 	Button,
 	Card,

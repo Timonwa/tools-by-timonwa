@@ -13,12 +13,12 @@ import { useFormStatus } from "react-dom";
 import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/result/ErrorNotice";
 import { useToolDraft } from "@/lib/hooks/use-tool-draft";
-import {
-	type DraftInputType,
-	MAX_ARTICLE_CHARS,
-	type SeoMetaResultType,
-	type TokenUsageType,
-} from "./types";
+import type {
+	ArticleInputType,
+	SeoMetaResultType,
+	TokenUsageType,
+} from "@/lib/types";
+import { MAX_ARTICLE_INPUT_CHARS } from "@/lib/constants";
 import { Button, Input, SegmentedControl } from "@/components/ui";
 
 import { generateSeoMeta } from "@/lib/tools/article-to-seo-meta/actions";
@@ -26,7 +26,7 @@ import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { emitHostedUsage } from "@/lib/utils/hosted-usage-signal";
 
 export type SeoFormParamsType = {
-	source: DraftInputType;
+	source: ArticleInputType;
 	primaryKeyword?: string;
 	variationCount: 1 | 2 | 3;
 };
@@ -109,7 +109,7 @@ export default function SeoForm({
 	const keywordId = useId();
 
 	const articleLen = article.length;
-	const overLimit = articleLen > MAX_ARTICLE_CHARS;
+	const overLimit = articleLen > MAX_ARTICLE_INPUT_CHARS;
 	const hasInput =
 		inputKind === "url" ? url.trim().length > 0 : article.trim().length > 0;
 
@@ -145,7 +145,7 @@ export default function SeoForm({
 	// (React 19 useActionState). No effects needed.
 	const [state, formAction, isPending] = useActionState<SeoFormState>(
 		async (): Promise<SeoFormState> => {
-			const source: DraftInputType =
+			const source: ArticleInputType =
 				inputKind === "url"
 					? { kind: "url", url: url.trim() }
 					: { kind: "text", text: article };
@@ -157,7 +157,7 @@ export default function SeoForm({
 					return { error: "Paste your article before generating." };
 				if (overLimit)
 					return {
-						error: `Your article is too long. Keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} characters, then try again.`,
+						error: `Your article is too long. Keep it under ${MAX_ARTICLE_INPUT_CHARS.toLocaleString()} characters, then try again.`,
 					};
 			}
 
@@ -207,7 +207,7 @@ export default function SeoForm({
 				onToggleTextReuse={toggleTextReuse}
 				onClearText={clearArticle}
 				disabled={isPending}
-				maxChars={MAX_ARTICLE_CHARS}
+				maxChars={MAX_ARTICLE_INPUT_CHARS}
 			/>
 
 			<div>

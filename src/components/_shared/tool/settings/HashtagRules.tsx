@@ -2,14 +2,14 @@
 
 import { HashIcon, XIcon } from "lucide-react";
 import { useId, useState } from "react";
-import { MAX_HASHTAG_RULES_PER_LIST } from "@/lib/constants";
+import { MAX_POST_HASHTAG_RULES_PER_LIST } from "@/lib/constants";
 import { normalizeHashtag } from "@/lib/utils/generator/hashtag";
-import type { WritingPreferencesType } from "@/lib/tools/_shared/generator/types";
+import type { PostPreferencesType } from "@/lib/types";
 import { Badge, Input } from "@/components/ui";
 
 type HashtagRulesProps = {
-	prefs: WritingPreferencesType;
-	onChange: (patch: Partial<WritingPreferencesType>) => void;
+	prefs: PostPreferencesType;
+	onChange: (patch: Partial<PostPreferencesType>) => void;
 };
 
 type FieldType = "alwaysIncludeHashtags" | "neverUseHashtags";
@@ -26,7 +26,7 @@ export default function HashtagRulesSection({
 		if (!tag) return;
 		const current = prefs[field];
 		const dupe = current.some((t) => t.toLowerCase() === tag.toLowerCase());
-		if (dupe || current.length >= MAX_HASHTAG_RULES_PER_LIST) return;
+		if (dupe || current.length >= MAX_POST_HASHTAG_RULES_PER_LIST) return;
 		onChange({ [field]: [...current, tag] });
 	};
 
@@ -82,7 +82,7 @@ function TagList({
 }) {
 	const inputId = useId();
 	const [draft, setDraft] = useState("");
-	const full = tags.length >= MAX_HASHTAG_RULES_PER_LIST;
+	const full = tags.length >= MAX_POST_HASHTAG_RULES_PER_LIST;
 
 	const commit = () => {
 		if (!draft.trim()) return;

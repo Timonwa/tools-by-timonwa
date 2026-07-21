@@ -2,7 +2,7 @@ import z from "zod";
 
 import { TOOL_GEMINI_KEY } from "@/components/tools/article-to-seo-meta/constants/api-key";
 import { generateStructuredFromDraft } from "@/lib/tools/_shared/draft-source";
-import type { TokenUsageType } from "@/lib/types/token-usage";
+import type { TokenUsageType } from "@/lib/types";
 
 export const seoMetaSchema = z.object({
 	article: z.object({

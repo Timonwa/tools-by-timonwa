@@ -2,7 +2,7 @@
 
 import { FileTextIcon, LinkIcon } from "lucide-react";
 
-import type { InputKindType } from "@/lib/tools/_shared/draft-input";
+import type { ArticleInputKindType } from "@/lib/types";
 import { cn } from "@/lib/utils/cn";
 
 /** URL / paste-text tab switcher shared by the draft-based tools (social posts, SEO meta). */
@@ -12,12 +12,16 @@ export default function InputKindTabs({
 	disabled,
 	textLabel = "Paste draft",
 }: {
-	value: InputKindType;
-	onChange: (kind: InputKindType) => void;
+	value: ArticleInputKindType;
+	onChange: (kind: ArticleInputKindType) => void;
 	disabled?: boolean;
 	textLabel?: string;
 }) {
-	const tabs: { id: InputKindType; label: string; icon: typeof LinkIcon }[] = [
+	const tabs: {
+		id: ArticleInputKindType;
+		label: string;
+		icon: typeof LinkIcon;
+	}[] = [
 		{ id: "url", label: "URL", icon: LinkIcon },
 		{ id: "text", label: textLabel, icon: FileTextIcon },
 	];

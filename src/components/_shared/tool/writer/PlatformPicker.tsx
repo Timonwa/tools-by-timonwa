@@ -3,16 +3,16 @@
 import { ToggleButton } from "@/components/ui";
 
 import {
-	ALL_PLATFORMS,
-	PLATFORM_COLORS,
-	PLATFORM_LABELS,
+	POST_PLATFORMS,
+	POST_PLATFORM_COLORS,
+	POST_PLATFORM_LABELS,
 } from "@/lib/constants";
-import type { PlatformType } from "@/lib/tools/_shared/generator/types";
+import type { PostPlatformType } from "@/lib/constants";
 import { PLATFORM_ICONS } from "@/components/ui/logos";
 
 type PlatformPickerProps = {
-	value: PlatformType[];
-	onToggle: (platform: PlatformType) => void;
+	value: PostPlatformType[];
+	onToggle: (platform: PostPlatformType) => void;
 	disabled?: boolean;
 };
 
@@ -25,7 +25,7 @@ export default function PlatformPicker({
 		<fieldset className="min-w-0 border-0 p-0">
 			<legend className="text-sm font-medium mb-2">Platforms</legend>
 			<div className="flex gap-2 flex-wrap">
-				{ALL_PLATFORMS.map((p) => {
+				{POST_PLATFORMS.map((p) => {
 					const Icon = PLATFORM_ICONS[p];
 					const active = value.includes(p);
 					return (
@@ -36,8 +36,11 @@ export default function PlatformPicker({
 							onClick={() => onToggle(p)}
 							disabled={disabled}
 						>
-							<Icon aria-hidden className={`w-4 h-4 ${PLATFORM_COLORS[p]}`} />
-							{PLATFORM_LABELS[p]}
+							<Icon
+								aria-hidden
+								className={`w-4 h-4 ${POST_PLATFORM_COLORS[p]}`}
+							/>
+							{POST_PLATFORM_LABELS[p]}
 						</ToggleButton>
 					);
 				})}

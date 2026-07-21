@@ -6,8 +6,8 @@ import {
 	Loader2Icon,
 	RefreshCwIcon,
 } from "lucide-react";
-import { PLATFORM_COLORS, PLATFORM_LABELS } from "@/lib/constants";
-import type { PostDraftType } from "@/lib/tools/_shared/generator/types";
+import { POST_PLATFORM_COLORS, POST_PLATFORM_LABELS } from "@/lib/constants";
+import type { PostDraftType } from "@/lib/types";
 import { PLATFORM_ICONS } from "@/components/ui/logos";
 import {
 	Badge,
@@ -55,7 +55,7 @@ export default function DraftCard({
 		? "Regenerate this thread"
 		: "Regenerate this post";
 	const Icon = PLATFORM_ICONS[draft.platform];
-	const label = PLATFORM_LABELS[draft.platform];
+	const label = POST_PLATFORM_LABELS[draft.platform];
 	const limit = draft.charLimit;
 
 	return (
@@ -64,7 +64,7 @@ export default function DraftCard({
 				<CardTitle className="flex items-center gap-2 text-base flex-wrap">
 					<Icon
 						aria-hidden
-						className={`w-4 h-4 shrink-0 ${PLATFORM_COLORS[draft.platform]}`}
+						className={`w-4 h-4 shrink-0 ${POST_PLATFORM_COLORS[draft.platform]}`}
 					/>
 					<span className="leading-snug">
 						{label}

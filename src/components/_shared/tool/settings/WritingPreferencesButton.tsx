@@ -2,7 +2,7 @@
 
 import { ChevronRightIcon, PenLineIcon } from "lucide-react";
 
-import { OPEN_SETTINGS_EVENT } from "@/lib/constants";
+import { OPEN_POST_SETTINGS_EVENT } from "@/lib/constants";
 
 /** Generate-form entry point that opens the Writing preferences drawer. */
 export default function WritingPreferencesButton({
@@ -13,7 +13,7 @@ export default function WritingPreferencesButton({
 	return (
 		<button
 			type="button"
-			onClick={() => window.dispatchEvent(new Event(OPEN_SETTINGS_EVENT))}
+			onClick={() => window.dispatchEvent(new Event(OPEN_POST_SETTINGS_EVENT))}
 			disabled={disabled}
 			aria-haspopup="dialog"
 			className="group flex items-center gap-2.5 rounded-md border border-border bg-muted/30 p-2.5 text-left transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"

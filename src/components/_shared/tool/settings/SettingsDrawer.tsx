@@ -4,8 +4,11 @@ import { PenLineIcon } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 import type { WriterRuntime } from "@/lib/tools/_shared/generator/writer-runtime";
-import { OPEN_SETTINGS_EVENT, THREADABLE_PLATFORMS } from "@/lib/constants";
-import type { WritingPreferencesType } from "@/lib/tools/_shared/generator/types";
+import {
+	OPEN_POST_SETTINGS_EVENT,
+	THREADABLE_POST_PLATFORMS,
+} from "@/lib/constants";
+import type { PostPreferencesType } from "@/lib/types";
 import PlatformPicker from "@/components/_shared/tool/writer/PlatformPicker";
 import TemplatesPicker from "@/components/_shared/tool/writer/TemplatesPicker";
 import ThreadFormat from "@/components/_shared/tool/writer/ThreadFormat";
@@ -50,11 +53,11 @@ export default function SettingsDrawer({
 	useEffect(() => {
 		if (presentation !== "icon") return;
 		const handler = () => setOpen(true);
-		window.addEventListener(OPEN_SETTINGS_EVENT, handler);
-		return () => window.removeEventListener(OPEN_SETTINGS_EVENT, handler);
+		window.addEventListener(OPEN_POST_SETTINGS_EVENT, handler);
+		return () => window.removeEventListener(OPEN_POST_SETTINGS_EVENT, handler);
 	}, [presentation]);
 
-	const updatePrefs = (patch: Partial<WritingPreferencesType>) => {
+	const updatePrefs = (patch: Partial<PostPreferencesType>) => {
 		stores.prefsStorage.set({ ...prefs, ...patch });
 	};
 
@@ -112,7 +115,7 @@ export default function SettingsDrawer({
 
 					<PlatformPicker value={platforms} onToggle={stores.togglePlatform} />
 
-					{platforms.some((p) => THREADABLE_PLATFORMS.includes(p)) && (
+					{platforms.some((p) => THREADABLE_POST_PLATFORMS.includes(p)) && (
 						<ThreadFormat
 							length={xThreadLength}
 							onChange={stores.setXThreadLength}

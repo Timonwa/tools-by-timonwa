@@ -1,27 +1,26 @@
 "use client";
 
 import type {
-	LevelType,
-	PlatformType,
-	PresetType,
-	ToneType,
-	WritingPreferencesType,
-} from "@/lib/tools/_shared/generator/types";
+	PostDensityLevelType,
+	PostPlatformType,
+	PostToneType,
+} from "@/lib/constants";
+import type { PostPresetType, PostPreferencesType } from "@/lib/types";
 import { createLocalStore } from "@/lib/utils/local-store";
 
 /** Per-generation workflow state shared by article-generator tools (tone, platforms, thread length). */
 export type WorkflowStateType = {
-	tone: ToneType;
-	platforms: PlatformType[];
+	tone: PostToneType;
+	platforms: PostPlatformType[];
 	xThreadLength: number;
 };
 
 type GeneratorStorageOptions = {
 	prefix: string;
-	defaultPreferences: WritingPreferencesType;
+	defaultPreferences: PostPreferencesType;
 	defaultWorkflow: WorkflowStateType;
-	toneValues: ReadonlySet<ToneType>;
-	platformValues: ReadonlySet<PlatformType>;
+	toneValues: ReadonlySet<PostToneType>;
+	platformValues: ReadonlySet<PostPlatformType>;
 	maxPresets: number;
 };
 
@@ -41,17 +40,19 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 	const TEMPLATES_KEY = `${prefix}templates`;
 
 	// Style prefs persist across sessions — not secrets.
-	const readPrefs = (): WritingPreferencesType => {
+	const readPrefs = (): PostPreferencesType => {
 		try {
 			const raw = window.localStorage.getItem(PREFS_KEY);
 			if (!raw) return defaultPreferences;
-			const parsed = JSON.parse(raw) as Partial<WritingPreferencesType>;
+			const parsed = JSON.parse(raw) as Partial<PostPreferencesType>;
 			return {
 				voice: parsed.voice ?? defaultPreferences.voice,
 				emojiLevel:
-					(parsed.emojiLevel as LevelType) ?? defaultPreferences.emojiLevel,
+					(parsed.emojiLevel as PostDensityLevelType) ??
+					defaultPreferences.emojiLevel,
 				hashtagLevel:
-					(parsed.hashtagLevel as LevelType) ?? defaultPreferences.hashtagLevel,
+					(parsed.hashtagLevel as PostDensityLevelType) ??
+					defaultPreferences.hashtagLevel,
 				alwaysIncludeHashtags: Array.isArray(parsed.alwaysIncludeHashtags)
 					? parsed.alwaysIncludeHashtags.filter(
 							(s): s is string => typeof s === "string",
@@ -74,7 +75,7 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 		}
 	};
 
-	const prefsStorage = createLocalStore<WritingPreferencesType>({
+	const prefsStorage = createLocalStore<PostPreferencesType>({
 		read: readPrefs,
 		write: (prefs) => {
 			try {
@@ -91,14 +92,15 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 			const parsed = JSON.parse(raw) as Partial<WorkflowStateType>;
 			const tone =
 				typeof parsed.tone === "string" &&
-				toneValues.has(parsed.tone as ToneType)
-					? (parsed.tone as ToneType)
+				toneValues.has(parsed.tone as PostToneType)
+					? (parsed.tone as PostToneType)
 					: defaultWorkflow.tone;
 			const platforms = Array.isArray(parsed.platforms)
 				? (parsed.platforms.filter(
-						(p): p is PlatformType =>
-							typeof p === "string" && platformValues.has(p as PlatformType),
-					) as PlatformType[])
+						(p): p is PostPlatformType =>
+							typeof p === "string" &&
+							platformValues.has(p as PostPlatformType),
+					) as PostPlatformType[])
 				: defaultWorkflow.platforms;
 			const xThreadLength =
 				typeof parsed.xThreadLength === "number" &&
@@ -126,10 +128,10 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 	});
 
 	// Workflow mutators — read the latest persisted state at call time, so there's no stale closure.
-	const setTone = (tone: ToneType) =>
+	const setTone = (tone: PostToneType) =>
 		workflowStorage.set({ ...workflowStorage.get(), tone });
 
-	const togglePlatform = (platform: PlatformType) => {
+	const togglePlatform = (platform: PostPlatformType) => {
 		const current = workflowStorage.get();
 		const platforms = current.platforms.includes(platform)
 			? current.platforms.filter((p) => p !== platform)
@@ -140,20 +142,22 @@ export function createGeneratorStorage(opts: GeneratorStorageOptions) {
 	const setXThreadLength = (xThreadLength: number) =>
 		workflowStorage.set({ ...workflowStorage.get(), xThreadLength });
 
-	const EMPTY_TEMPLATES: PresetType[] = [];
+	const EMPTY_TEMPLATES: PostPresetType[] = [];
 
-	const readTemplates = (): PresetType[] => {
+	const readTemplates = (): PostPresetType[] => {
 		try {
 			const raw = window.localStorage.getItem(TEMPLATES_KEY);
 			if (!raw) return EMPTY_TEMPLATES;
 			const parsed = JSON.parse(raw) as unknown;
-			return Array.isArray(parsed) ? (parsed as PresetType[]) : EMPTY_TEMPLATES;
+			return Array.isArray(parsed)
+				? (parsed as PostPresetType[])
+				: EMPTY_TEMPLATES;
 		} catch {
 			return EMPTY_TEMPLATES;
 		}
 	};
 
-	const presetsStorage = createLocalStore<PresetType[]>({
+	const presetsStorage = createLocalStore<PostPresetType[]>({
 		read: readTemplates,
 		write: (items) => {
 			try {

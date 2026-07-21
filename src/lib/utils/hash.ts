@@ -1,9 +1,9 @@
-import type { HashAlgorithm } from "@/lib/constants";
+import type { HashAlgorithmType } from "@/lib/constants";
 
 /** Browser-side text hasher — uses `crypto.subtle` (secure context only) so input never leaves the device; returns a lowercase hex digest. */
 export async function hashText(
 	text: string,
-	algorithm: HashAlgorithm,
+	algorithm: HashAlgorithmType,
 ): Promise<string> {
 	const data = new TextEncoder().encode(text);
 	const digest = await crypto.subtle.digest(algorithm, data);

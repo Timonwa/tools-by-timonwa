@@ -1,25 +1,27 @@
 "use server";
 
 import {
-	CHAR_LIMITS,
+	POST_PLATFORM_CHAR_LIMITS,
 	LONGFORM_POST_LENGTH_LIMITS,
-	MAX_ARTICLE_CHARS,
+	MAX_ARTICLE_INPUT_CHARS,
 } from "@/lib/constants";
 import {
 	HOSTED_DAILY_GENERATION_POOL,
 	HOSTED_PER_USER_DAILY,
 } from "@/components/tools/article-to-social-posts/constants/hosted-usage";
 import type {
-	ArticlePreviewType,
-	DraftInputType,
-	PlatformType,
+	PostPlatformType,
+	LongformPostLengthType,
+	PostToneType,
+} from "@/lib/constants";
+import type {
+	ArticleMetaType,
+	ArticleInputType,
 	PostDraftType,
-	PostLengthType,
-	PreviewResultType,
+	PostDraftsResultType,
 	TokenUsageType,
-	ToneType,
-	WritingPreferencesType,
-} from "@/lib/tools/_shared/generator/types";
+	PostPreferencesType,
+} from "@/lib/types";
 import { generateDrafts } from "./agents/draft-generator/agent";
 import { assertSafeArticleUrl } from "@/lib/tools/_shared/draft-input";
 import { toUserMessage } from "@/lib/tools/_shared/errors";
@@ -36,7 +38,7 @@ const QUOTA_CONFIG: QuotaConfig = {
 };
 
 export type PreviewActionResultType =
-	| { ok: true; data: PreviewResultType; remaining: number | null }
+	| { ok: true; data: PostDraftsResultType; remaining: number | null }
 	| { ok: false; error: string };
 
 export type RegenerateActionResultType =
@@ -66,7 +68,7 @@ function toToolMessage(
 			],
 			[
 				/DRAFT_TOO_LONG/,
-				`Your text is too long. Keep it under ${MAX_ARTICLE_CHARS.toLocaleString()} characters (about 2,500 words), then try again.`,
+				`Your text is too long. Keep it under ${MAX_ARTICLE_INPUT_CHARS.toLocaleString()} characters (about 2,500 words), then try again.`,
 			],
 			[/DRAFT_EMPTY/, "Paste or type your article text before generating."],
 			[
@@ -82,17 +84,17 @@ function toToolMessage(
 }
 
 function platformLimit(
-	platform: PlatformType,
-	postLength: PostLengthType,
+	platform: PostPlatformType,
+	postLength: LongformPostLengthType,
 ): number {
 	if (platform === "linkedin" || platform === "substack") {
 		return LONGFORM_POST_LENGTH_LIMITS[postLength];
 	}
-	return CHAR_LIMITS[platform];
+	return POST_PLATFORM_CHAR_LIMITS[platform];
 }
 
 function buildPost(
-	platform: PlatformType,
+	platform: PostPlatformType,
 	content: string,
 	hashtags: string[],
 	charLimit: number,
@@ -104,18 +106,22 @@ function buildPost(
 	return { platform, content, hashtags, thread, charCount, charLimit };
 }
 
-function validateInput(input: DraftInputType): void {
+function validateInput(input: ArticleInputType): void {
 	if (input.kind === "url") {
 		assertSafeArticleUrl(input.url);
 		return;
 	}
 	if (!input.text.trim()) throw new Error("DRAFT_EMPTY");
-	if (input.text.length > MAX_ARTICLE_CHARS) throw new Error("DRAFT_TOO_LONG");
+	if (input.text.length > MAX_ARTICLE_INPUT_CHARS)
+		throw new Error("DRAFT_TOO_LONG");
 }
 
 const THREADABLE = ["x", "bluesky", "threads", "mastodon"];
 
-function threadLine(platforms: PlatformType[], xThreadLength: number): string {
+function threadLine(
+	platforms: PostPlatformType[],
+	xThreadLength: number,
+): string {
 	const threadable = platforms.some((p) => THREADABLE.includes(p));
 	return threadable && xThreadLength > 1
 		? `Thread mode: THREAD of ${xThreadLength} posts for thread-capable platforms (x, bluesky, threads, mastodon). LinkedIn and Substack are single posts only.`
@@ -123,10 +129,10 @@ function threadLine(platforms: PlatformType[], xThreadLength: number): string {
 }
 
 function buildDirectives(
-	tone: ToneType,
-	platforms: PlatformType[],
+	tone: PostToneType,
+	platforms: PostPlatformType[],
 	xThreadLength: number,
-	preferences?: WritingPreferencesType,
+	preferences?: PostPreferencesType,
 ): string {
 	const postLength = preferences?.postLength ?? "medium";
 	const lines: string[] = [
@@ -145,11 +151,11 @@ function buildDirectives(
 
 /** Server action — generate one platform-optimized post per selected platform from an article draft. */
 export async function previewPosts(params: {
-	input: DraftInputType;
-	tone: ToneType;
-	platforms: PlatformType[];
+	input: ArticleInputType;
+	tone: PostToneType;
+	platforms: PostPlatformType[];
 	xThreadLength: number;
-	preferences?: WritingPreferencesType;
+	preferences?: PostPreferencesType;
 	googleApiKey?: string;
 	googleModel?: string;
 }): Promise<PreviewActionResultType> {
@@ -192,7 +198,7 @@ export async function previewPosts(params: {
 			),
 		);
 		// The model leaves article.url empty; fill in the URL we actually have.
-		const article: ArticlePreviewType = {
+		const article: ArticleMetaType = {
 			...object.article,
 			url: input.kind === "url" ? input.url : "",
 		};
@@ -208,11 +214,11 @@ export async function previewPosts(params: {
 
 /** Server action — regenerate a single platform's post; uses a higher temperature to diverge from the first attempt. */
 export async function regenerateDraft(params: {
-	input: DraftInputType;
-	platform: PlatformType;
-	tone: ToneType;
+	input: ArticleInputType;
+	platform: PostPlatformType;
+	tone: PostToneType;
 	xThreadLength: number;
-	preferences?: WritingPreferencesType;
+	preferences?: PostPreferencesType;
 	googleApiKey?: string;
 	googleModel?: string;
 }): Promise<RegenerateActionResultType> {

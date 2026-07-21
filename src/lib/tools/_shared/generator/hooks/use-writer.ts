@@ -13,15 +13,15 @@ import {
 import type { WriterRuntime } from "@/lib/tools/_shared/generator/writer-runtime";
 import { useToolDraft } from "@/lib/hooks/use-tool-draft";
 import type {
-	DraftInputType,
+	ArticleInputType,
 	PostDraftType,
-	PreviewResultType,
+	PostDraftsResultType,
 	TokenUsageType,
-} from "../types";
+} from "@/lib/types";
 import { buildCopyAll, buildCopyText } from "../utils/draft";
 import { byokModelStorage, byokStorage } from "@/lib/utils/byok-storage";
 import { emitHostedUsage } from "@/lib/utils/hosted-usage-signal";
-import type { HistoryEntryType } from "../types";
+import type { PostHistoryType } from "@/lib/types";
 
 /** Central state and action hook for the writer engine — wires input, generation, editing, history, and presets. Stores, server actions, and the history/presets hooks are injected via `runtime`, so one engine powers several tools. */
 export function useWriter(runtime: WriterRuntime) {
@@ -65,12 +65,12 @@ export function useWriter(runtime: WriterRuntime) {
 	// `regenerate` uses its own transition but tracks per-draft loading via `regenerating` — a single flag can't distinguish cards.
 	const [isGenerating, startGenerate] = useTransition();
 	const [, startRegenerate] = useTransition();
-	const [preview, setPreview] = useState<PreviewResultType | null>(null);
+	const [preview, setPreview] = useState<PostDraftsResultType | null>(null);
 	const [editableDrafts, setEditableDrafts] = useState<PostDraftType[]>([]);
 	const [error, setError] = useState<string | null>(null);
 
 	// Captured at generate-time so form edits after generation don't silently change what regenerate sees.
-	const [lastInput, setLastInput] = useState<DraftInputType | null>(null);
+	const [lastInput, setLastInput] = useState<ArticleInputType | null>(null);
 
 	const [regenerating, setRegenerating] = useState<Record<string, boolean>>({});
 	const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -99,7 +99,7 @@ export function useWriter(runtime: WriterRuntime) {
 			platforms,
 			xThreadLength,
 			preferences: prefs,
-			templateName: templates.find((t) => t.id === activeTemplateId)?.name,
+			presetName: templates.find((t) => t.id === activeTemplateId)?.name,
 			preview: { ...preview, drafts: editableDrafts },
 			timestamp: Date.now(),
 		});
@@ -126,7 +126,7 @@ export function useWriter(runtime: WriterRuntime) {
 		resetResults();
 	}, [resetResults, setText, setUrl]);
 
-	const currentInput = useCallback((): DraftInputType | null => {
+	const currentInput = useCallback((): ArticleInputType | null => {
 		if (inputKind === "url") {
 			const trimmed = url.trim();
 			return trimmed ? { kind: "url", url: trimmed } : null;
@@ -139,14 +139,14 @@ export function useWriter(runtime: WriterRuntime) {
 		if (!preview || !lastInput) return true;
 		const cur = currentInput();
 		if (!cur) return true;
-		const key = (i: DraftInputType) =>
+		const key = (i: ArticleInputType) =>
 			i.kind === "url" ? `url:${i.url.trim()}` : `text:${i.text}`;
 		return key(cur) !== key(lastInput);
 	}, [preview, lastInput, currentInput]);
 
 	// `reset: false` keeps current posts visible until the new set lands — avoids blanking results mid-flight.
 	const runPreview = useCallback(
-		(input: DraftInputType, { reset }: { reset: boolean }) => {
+		(input: ArticleInputType, { reset }: { reset: boolean }) => {
 			if (platforms.length === 0) return;
 			if (reset) resetResults();
 			else setError(null);
@@ -186,8 +186,7 @@ export function useWriter(runtime: WriterRuntime) {
 						platforms,
 						xThreadLength,
 						preferences: prefsStorage.get(),
-						templateName: templates.find((t) => t.id === activeTemplateId)
-							?.name,
+						presetName: templates.find((t) => t.id === activeTemplateId)?.name,
 						preview,
 						timestamp: Date.now(),
 					});
@@ -309,7 +308,7 @@ export function useWriter(runtime: WriterRuntime) {
 	}, []);
 
 	const loadFromHistory = useCallback(
-		(entry: HistoryEntryType) => {
+		(entry: PostHistoryType) => {
 			if (entry.input.kind === "url") {
 				setInputKind("url");
 				setUrl(entry.input.url);

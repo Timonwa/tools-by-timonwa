@@ -1,6 +1,6 @@
 import type { ComponentType, SVGProps } from "react";
 
-import type { PlatformType } from "@/lib/tools/_shared/generator/types";
+import type { PostPlatformType } from "@/lib/constants";
 
 /**
  * Shared brand marks — platform glyphs from Simple Icons (simpleicons.org, CC0);
@@ -9,8 +9,11 @@ import type { PlatformType } from "@/lib/tools/_shared/generator/types";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
-/** Platform → brand mark; typed by `PlatformType`, so adding a platform without registering its icon here fails the build. Register new platform icons in this map. */
-export const PLATFORM_ICONS: Record<PlatformType, ComponentType<IconProps>> = {
+/** Platform → brand mark; typed by `PostPlatformType`, so adding a platform without registering its icon here fails the build. Register new platform icons in this map. */
+export const PLATFORM_ICONS: Record<
+	PostPlatformType,
+	ComponentType<IconProps>
+> = {
 	linkedin: LinkedInLogo,
 	x: XLogo,
 	bluesky: BlueskyLogo,

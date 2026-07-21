@@ -1,8 +1,3 @@
-export type DraftInputType =
-	{ kind: "url"; url: string } | { kind: "text"; text: string };
-
-export type InputKindType = DraftInputType["kind"];
-
 // Hostnames/IP literals that must never be fetched: loopback, link-local
 // (incl. the cloud metadata endpoint 169.254.169.254), and RFC 1918 ranges.
 function isBlockedHost(hostname: string): boolean {

@@ -2,7 +2,7 @@ import z from "zod";
 
 import { TOOL_GEMINI_KEY } from "@/components/tools/article-to-social-posts/constants/api-key";
 import { generateStructuredFromDraft } from "@/lib/tools/_shared/draft-source";
-import type { TokenUsageType } from "@/lib/types/token-usage";
+import type { TokenUsageType } from "@/lib/types";
 
 export const postDraftsSchema = z.object({
 	article: z.object({
@@ -64,7 +64,7 @@ Each post object:
 - \`thread\`: array of thread posts (only for thread-capable platforms when threading is requested)
 - \`hashtags\`: array of tags without \`#\` — empty by default (see HASHTAGS)
 
-# PLATFORMS — limits & culture
+# POST_PLATFORMS — limits & culture
 
 Free-tier character limits. Treat each number as a HARD CEILING, not a target — aim for roughly 80-95% of the limit so every post keeps headroom and never overflows. Everything counts toward the limit: letters, spaces, line breaks, emojis, CTA text, and hashtags. For a thread, each post must fit the per-post limit on its own.
 

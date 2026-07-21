@@ -2,12 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
 
-import type {
-	PlatformType,
-	PresetType,
-	ToneType,
-	WritingPreferencesType,
-} from "@/lib/tools/_shared/generator/types";
+import type { PostPlatformType, PostToneType } from "@/lib/constants";
+import type { PostPresetType, PostPreferencesType } from "@/lib/types";
 import type { WorkflowStateType } from "./storage";
 
 type Store<T> = {
@@ -25,11 +21,15 @@ function sameTagList(a: string[], b: string[]): boolean {
 	return true;
 }
 
-/** Deep equality check — tone, xThreadLength, platforms (order-insensitive), and every WritingPreferencesType field. */
+/** Deep equality check — tone, xThreadLength, platforms (order-insensitive), and every PostPreferencesType field. */
 function templateMatchesState(
-	t: PresetType,
-	state: { tone: ToneType; platforms: PlatformType[]; xThreadLength: number },
-	prefs: WritingPreferencesType,
+	t: PostPresetType,
+	state: {
+		tone: PostToneType;
+		platforms: PostPlatformType[];
+		xThreadLength: number;
+	},
+	prefs: PostPreferencesType,
 ): boolean {
 	if (t.tone !== state.tone) return false;
 	if (t.xThreadLength !== state.xThreadLength) return false;
@@ -49,10 +49,10 @@ function templateMatchesState(
 }
 
 type UsePresetsOptions = {
-	prefsStorage: Store<WritingPreferencesType>;
+	prefsStorage: Store<PostPreferencesType>;
 	workflowStorage: Store<WorkflowStateType>;
-	presetsStorage: Store<PresetType[]>;
-	starterPresets: Omit<PresetType, "id" | "createdAt">[];
+	presetsStorage: Store<PostPresetType[]>;
+	starterPresets: Omit<PostPresetType, "id" | "createdAt">[];
 	maxPresets: number;
 };
 
@@ -106,7 +106,7 @@ export function createUsePresets(opts: UsePresetsOptions) {
 			const trimmed = name.trim();
 			if (!trimmed) return;
 			const wf = workflowStorage.get();
-			const entry: PresetType = {
+			const entry: PostPresetType = {
 				id: crypto.randomUUID(),
 				name: trimmed,
 				createdAt: Date.now(),
@@ -122,7 +122,7 @@ export function createUsePresets(opts: UsePresetsOptions) {
 			presetsStorage.set([entry, ...without].slice(0, maxPresets));
 		}, []);
 
-		const apply = useCallback((t: PresetType) => {
+		const apply = useCallback((t: PostPresetType) => {
 			workflowStorage.set({
 				tone: t.tone,
 				platforms: t.platforms,

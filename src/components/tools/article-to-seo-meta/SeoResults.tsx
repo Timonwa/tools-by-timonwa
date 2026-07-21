@@ -3,12 +3,12 @@
 import { Loader2Icon, RefreshCwIcon, TagsIcon } from "lucide-react";
 
 import {
-	DESC_MAX,
-	DESC_MIN,
-	type SeoVariationType,
-	TITLE_MAX,
-	TITLE_MIN,
-} from "./types";
+	SEO_DESC_MAX,
+	SEO_DESC_MIN,
+	SEO_TITLE_MAX,
+	SEO_TITLE_MIN,
+} from "@/lib/constants";
+import type { SeoVariationType } from "@/lib/types";
 import {
 	Button,
 	Card,
@@ -84,8 +84,16 @@ function VariationCard({
 	onChange: (field: "title" | "description", value: string) => void;
 	onRegenerate: () => void;
 }) {
-	const titleStatus = status(variation.title.length, TITLE_MIN, TITLE_MAX);
-	const descStatus = status(variation.description.length, DESC_MIN, DESC_MAX);
+	const titleStatus = status(
+		variation.title.length,
+		SEO_TITLE_MIN,
+		SEO_TITLE_MAX,
+	);
+	const descStatus = status(
+		variation.description.length,
+		SEO_DESC_MIN,
+		SEO_DESC_MAX,
+	);
 
 	return (
 		<Card className="min-w-0">
@@ -99,8 +107,8 @@ function VariationCard({
 				<Field
 					label="Title"
 					value={variation.title}
-					min={TITLE_MIN}
-					max={TITLE_MAX}
+					min={SEO_TITLE_MIN}
+					max={SEO_TITLE_MAX}
 					status={titleStatus}
 					onChange={(v) => onChange("title", v)}
 				/>
@@ -108,8 +116,8 @@ function VariationCard({
 				<Field
 					label="Description"
 					value={variation.description}
-					min={DESC_MIN}
-					max={DESC_MAX}
+					min={SEO_DESC_MIN}
+					max={SEO_DESC_MAX}
 					status={descStatus}
 					onChange={(v) => onChange("description", v)}
 				/>

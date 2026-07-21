@@ -1,17 +1,16 @@
-import type { PlatformType } from "@/lib/tools/_shared/generator/types";
-
 /** Ordered list of every supported platform. */
-export const ALL_PLATFORMS: PlatformType[] = [
+export const POST_PLATFORMS = [
 	"linkedin",
 	"x",
 	"bluesky",
 	"threads",
 	"mastodon",
 	"substack",
-];
+] as const;
+export type PostPlatformType = (typeof POST_PLATFORMS)[number];
 
 /** Platforms that support multi-post threads (LinkedIn and Substack don't). */
-export const THREADABLE_PLATFORMS: PlatformType[] = [
+export const THREADABLE_POST_PLATFORMS: PostPlatformType[] = [
 	"x",
 	"bluesky",
 	"threads",
@@ -19,7 +18,7 @@ export const THREADABLE_PLATFORMS: PlatformType[] = [
 ];
 
 /** Human-readable display name for each platform. */
-export const PLATFORM_LABELS: Record<PlatformType, string> = {
+export const POST_PLATFORM_LABELS: Record<PostPlatformType, string> = {
 	linkedin: "LinkedIn",
 	x: "X (Twitter)",
 	bluesky: "Bluesky",
@@ -29,7 +28,7 @@ export const PLATFORM_LABELS: Record<PlatformType, string> = {
 };
 
 /** Max characters per post; Substack has no hard limit so 500 is enforced to keep drafts concise. */
-export const CHAR_LIMITS: Record<PlatformType, number> = {
+export const POST_PLATFORM_CHAR_LIMITS: Record<PostPlatformType, number> = {
 	linkedin: 3000,
 	x: 280,
 	bluesky: 300,
@@ -39,7 +38,7 @@ export const CHAR_LIMITS: Record<PlatformType, number> = {
 };
 
 /** Tailwind text-color class for each platform's brand color. */
-export const PLATFORM_COLORS: Record<PlatformType, string> = {
+export const POST_PLATFORM_COLORS: Record<PostPlatformType, string> = {
 	linkedin: "text-blue-600 dark:text-blue-400",
 	x: "text-foreground",
 	bluesky: "text-sky-500",

@@ -1,14 +1,13 @@
-import type { HistoryEntryType } from "@/lib/tools/_shared/generator/types";
+import type { PostPlatformType, PostToneType } from "@/lib/constants";
 import type {
-	DraftInputType,
-	PlatformType,
+	ArticleInputType,
+	PostHistoryType,
 	PostDraftType,
-	PresetType,
-	PreviewResultType,
-	ToneType,
+	PostPresetType,
+	PostDraftsResultType,
 	TokenUsageType,
-	WritingPreferencesType,
-} from "@/lib/tools/_shared/generator/types";
+	PostPreferencesType,
+} from "@/lib/types";
 import type { WorkflowStateType } from "./storage";
 
 type Store<T> = {
@@ -26,27 +25,27 @@ export type GenerateExtras = {
 };
 
 export type GenerateParams = {
-	input: DraftInputType;
-	tone: ToneType;
-	platforms: PlatformType[];
+	input: ArticleInputType;
+	tone: PostToneType;
+	platforms: PostPlatformType[];
 	xThreadLength: number;
-	preferences: WritingPreferencesType;
+	preferences: PostPreferencesType;
 	googleApiKey?: string;
 	googleModel?: string;
 } & GenerateExtras;
 
 export type RegenerateParams = {
-	input: DraftInputType;
-	platform: PlatformType;
-	tone: ToneType;
+	input: ArticleInputType;
+	platform: PostPlatformType;
+	tone: PostToneType;
 	xThreadLength: number;
-	preferences: WritingPreferencesType;
+	preferences: PostPreferencesType;
 	googleApiKey?: string;
 	googleModel?: string;
 } & GenerateExtras;
 
 export type GenerateResult =
-	| { ok: true; data: PreviewResultType; remaining: number | null }
+	| { ok: true; data: PostDraftsResultType; remaining: number | null }
 	| { ok: false; error: string };
 
 export type RegenerateResult =
@@ -59,18 +58,18 @@ export type RegenerateResult =
 	| { ok: false; error: string };
 
 export type PresetsApi = {
-	templates: PresetType[];
+	templates: PostPresetType[];
 	activeId: string | null;
 	save: (name: string) => void;
-	apply: (t: PresetType) => void;
+	apply: (t: PostPresetType) => void;
 	remove: (id: string) => void;
 	update: (id: string) => void;
 	rename: (id: string, name: string) => void;
 };
 
 export type HistoryApi = {
-	history: HistoryEntryType[];
-	upsert: (entry: Omit<HistoryEntryType, "id"> & { id?: string }) => void;
+	history: PostHistoryType[];
+	upsert: (entry: Omit<PostHistoryType, "id"> & { id?: string }) => void;
 	remove: (id: string) => void;
 };
 
@@ -85,10 +84,10 @@ export type GeneratorFeatures = {
 export type WriterRuntime = {
 	features: GeneratorFeatures;
 	stores: {
-		prefsStorage: Store<WritingPreferencesType>;
+		prefsStorage: Store<PostPreferencesType>;
 		workflowStorage: Store<WorkflowStateType>;
-		setTone: (tone: ToneType) => void;
-		togglePlatform: (platform: PlatformType) => void;
+		setTone: (tone: PostToneType) => void;
+		togglePlatform: (platform: PostPlatformType) => void;
 		setXThreadLength: (n: number) => void;
 	};
 	usePresets: () => PresetsApi;

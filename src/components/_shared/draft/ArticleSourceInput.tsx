@@ -5,14 +5,14 @@ import { useId } from "react";
 import DraftReuseControls from "./DraftReuseControls";
 import InputKindTabs from "./InputKindTabs";
 import { Input, Textarea } from "@/components/ui";
-import type { InputKindType } from "@/lib/tools/_shared/draft-input";
+import type { ArticleInputKindType } from "@/lib/types";
 import { cn } from "@/lib/utils/cn";
 
 const DEFAULT_MAX_CHARS = 15000;
 
 type Props = {
-	inputKind: InputKindType;
-	onInputKindChange: (kind: InputKindType) => void;
+	inputKind: ArticleInputKindType;
+	onInputKindChange: (kind: ArticleInputKindType) => void;
 	url: string;
 	onUrlChange: (value: string) => void;
 	urlReuse: boolean;

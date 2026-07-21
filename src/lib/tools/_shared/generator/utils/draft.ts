@@ -1,5 +1,5 @@
-import { PLATFORM_LABELS } from "@/lib/constants";
-import type { PostDraftType } from "../types";
+import { POST_PLATFORM_LABELS } from "@/lib/constants";
+import type { PostDraftType } from "@/lib/types";
 
 const appendUrl = (body: string, articleUrl?: string): string => {
 	const u = articleUrl?.trim();
@@ -33,6 +33,6 @@ export const buildCopyAll = (
 	drafts
 		.map(
 			(d) =>
-				`### ${PLATFORM_LABELS[d.platform]}\n\n${buildCopyText(d, articleUrl)}\n`,
+				`### ${POST_PLATFORM_LABELS[d.platform]}\n\n${buildCopyText(d, articleUrl)}\n`,
 		)
 		.join("\n---\n\n");

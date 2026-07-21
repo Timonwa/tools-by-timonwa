@@ -1,10 +1,10 @@
 "use client";
 
 import {
-	ALL_PLATFORMS,
-	DEFAULT_PREFERENCES,
-	MAX_PRESETS,
-	TONES,
+	POST_PLATFORMS,
+	DEFAULT_POST_PREFERENCES,
+	MAX_POST_PRESETS,
+	POST_TONES,
 } from "@/lib/constants";
 import {
 	createGeneratorStorage,
@@ -21,11 +21,11 @@ export const DEFAULT_WORKFLOW: WorkflowStateType = {
 
 const stores = createGeneratorStorage({
 	prefix: "article-to-social-posts:",
-	defaultPreferences: DEFAULT_PREFERENCES,
+	defaultPreferences: DEFAULT_POST_PREFERENCES,
 	defaultWorkflow: DEFAULT_WORKFLOW,
-	toneValues: new Set(TONES.map((t) => t.value)),
-	platformValues: new Set(ALL_PLATFORMS),
-	maxPresets: MAX_PRESETS,
+	toneValues: new Set(POST_TONES.map((t) => t.value)),
+	platformValues: new Set(POST_PLATFORMS),
+	maxPresets: MAX_POST_PRESETS,
 });
 
 export const {

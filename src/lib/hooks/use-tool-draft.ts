@@ -8,7 +8,7 @@ import {
 	useSyncExternalStore,
 } from "react";
 
-import type { InputKindType } from "@/lib/tools/_shared/draft-input";
+import type { ArticleInputKindType } from "@/lib/types";
 import { createLocalStore } from "@/lib/utils/local-store";
 
 const TEXT_KEY = "tools:shared-draft";
@@ -62,7 +62,7 @@ const urlEnabledStore = flagStore(URL_ENABLED_KEY);
 const kindStore = stringStore(KIND_KEY);
 
 type ToolDraftSeedType =
-	string | { text?: string; url?: string; kind?: InputKindType };
+	string | { text?: string; url?: string; kind?: ArticleInputKindType };
 
 type ToolDraftType = {
 	text: string;
@@ -73,8 +73,8 @@ type ToolDraftType = {
 	setUrl: (value: string) => void;
 	urlReuse: boolean;
 	toggleUrlReuse: (next: boolean) => void;
-	inputKind: InputKindType;
-	setInputKind: (kind: InputKindType) => void;
+	inputKind: ArticleInputKindType;
+	setInputKind: (kind: ArticleInputKindType) => void;
 	clear: () => void;
 };
 
@@ -83,7 +83,7 @@ export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
 	const seedObj = typeof seed === "string" ? { text: seed } : seed;
 	const seedText = seedObj.text ?? "";
 	const seedUrl = seedObj.url ?? "";
-	const seedKind: InputKindType = seedObj.kind ?? "url";
+	const seedKind: ArticleInputKindType = seedObj.kind ?? "url";
 
 	const textReuse = useSyncExternalStore(
 		textEnabledStore.subscribe,
@@ -113,7 +113,7 @@ export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
 
 	const [localText, setLocalText] = useState(seedText);
 	const [localUrl, setLocalUrl] = useState(seedUrl);
-	const [localKind, setLocalKind] = useState<InputKindType>(seedKind);
+	const [localKind, setLocalKind] = useState<ArticleInputKindType>(seedKind);
 
 	// A non-empty seed on mount (history restore) adopts into the matching shared
 	// channel when its reuse is on. Writes the external stores only — never React
@@ -132,10 +132,10 @@ export function useToolDraft(seed: ToolDraftSeedType = ""): ToolDraftType {
 	const url = urlReuse ? sharedUrl : localUrl;
 	// The active tab is shared across the AI tools, so you land on the tab you
 	// last used; before any choice, each tool falls back to its own default.
-	const inputKind: InputKindType =
+	const inputKind: ArticleInputKindType =
 		sharedKind === "url" || sharedKind === "text" ? sharedKind : localKind;
 
-	const setInputKind = useCallback((kind: InputKindType) => {
+	const setInputKind = useCallback((kind: ArticleInputKindType) => {
 		kindStore.set(kind);
 		setLocalKind(kind);
 	}, []);

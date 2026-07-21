@@ -1,11 +1,11 @@
 "use client";
 
-import type { DraftInputType } from "@/lib/tools/_shared/draft-input";
+import type { ArticleInputType } from "@/lib/types";
 import { createHistoryStore } from "@/lib/utils/create-history-store";
 import { createLocalStorageJson } from "@/lib/utils/local-storage-json";
 
 /** Identity of an entry's source — same URL or same pasted text = same entry. */
-const inputKey = (input: DraftInputType) =>
+const inputKey = (input: ArticleInputType) =>
 	input.kind === "url" ? `url:${input.url.trim()}` : `text:${input.text}`;
 
 /** Every tool keeps the same short run history. */
@@ -13,7 +13,7 @@ const MAX_HISTORY = 10;
 
 /** Builds a deduped, localStorage-backed history hook under `key`, so each tool keeps its own separate run history (default: last 10). */
 export function createToolHistory<
-	Entry extends { id: string; input: DraftInputType },
+	Entry extends { id: string; input: ArticleInputType },
 >(opts: {
 	key: string;
 	isEntry: (e: unknown) => e is Entry;

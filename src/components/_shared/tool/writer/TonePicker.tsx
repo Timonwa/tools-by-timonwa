@@ -2,12 +2,12 @@
 
 import { ToggleButton } from "@/components/ui";
 
-import { TONES } from "@/lib/constants";
-import type { ToneType } from "@/lib/tools/_shared/generator/types";
+import { POST_TONES } from "@/lib/constants";
+import type { PostToneType } from "@/lib/constants";
 
 type TonePickerProps = {
-	value: ToneType;
-	onChange: (tone: ToneType) => void;
+	value: PostToneType;
+	onChange: (tone: PostToneType) => void;
 	disabled?: boolean;
 };
 
@@ -20,7 +20,7 @@ export default function TonePicker({
 		<fieldset className="min-w-0 border-0 p-0">
 			<legend className="text-sm font-medium mb-2">Tone</legend>
 			<div className="flex flex-wrap gap-2">
-				{TONES.map((t) => (
+				{POST_TONES.map((t) => (
 					<ToggleButton
 						key={t.value}
 						size="sm"

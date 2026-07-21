@@ -4,7 +4,7 @@ import { FilePlus2Icon, Loader2Icon, RefreshCwIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import ArticleCard from "@/components/_shared/result/ArticleCard";
 import HistorySidebar from "@/components/_shared/result/HistorySidebar";
-import type { HistoryEntryType } from "@/lib/tools/_shared/generator/types";
+import type { PostHistoryType } from "@/lib/types";
 import type { WriterRuntime } from "@/lib/tools/_shared/generator/writer-runtime";
 import { useWriter } from "@/lib/tools/_shared/generator/hooks/use-writer";
 import { Button } from "@/components/ui";
@@ -12,7 +12,7 @@ import DraftCard from "./DraftCard";
 import GenerateForm from "./GenerateForm";
 
 /** History row headline: the article title, else the URL, else a text snippet. */
-const historyLabel = (h: HistoryEntryType): string => {
+const historyLabel = (h: PostHistoryType): string => {
 	if (h.preview.article.title) return h.preview.article.title;
 	if (h.input.kind === "url") return h.input.url;
 	const firstLine = h.input.text.trim().split("\n")[0] ?? "";

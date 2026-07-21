@@ -11,26 +11,26 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import {
-	EMOJI_LEVEL_LABELS,
-	HASHTAG_LEVEL_LABELS,
-	MAX_PRESET_NAME,
-	MAX_PRESETS,
-	PLATFORM_LABELS,
-	TONES,
-	VOICE_LABELS,
+	POST_EMOJI_DENSITY_LABELS,
+	POST_HASHTAG_DENSITY_LABELS,
+	MAX_POST_PRESET_NAME_CHARS,
+	MAX_POST_PRESETS,
+	POST_PLATFORM_LABELS,
+	POST_TONES,
+	POST_VOICE_LABELS,
 } from "@/lib/constants";
-import type { PresetType } from "@/lib/tools/_shared/generator/types";
+import type { PostPresetType } from "@/lib/types";
 import { Badge, Button, Input, Tooltip } from "@/components/ui";
 
 import { cn } from "@/lib/utils/cn";
 
-const toneLabel = (tone: PresetType["tone"]): string =>
-	TONES.find((t) => t.value === tone)?.label ?? tone;
+const toneLabel = (tone: PostPresetType["tone"]): string =>
+	POST_TONES.find((t) => t.value === tone)?.label ?? tone;
 
 type TemplatesPickerProps = {
-	templates: PresetType[];
+	templates: PostPresetType[];
 	activeTemplateId: string | null;
-	onApply: (t: PresetType) => void;
+	onApply: (t: PostPresetType) => void;
 	onSave: (name: string) => void;
 	onDelete: (id: string) => void;
 	onUpdate: (id: string) => void;
@@ -56,7 +56,7 @@ export default function TemplatesPicker({
 	const [editingId, setEditingId] = useState<string | null>(null);
 	const [expanded, setExpanded] = useState(!collapsible);
 
-	const full = templates.length >= MAX_PRESETS;
+	const full = templates.length >= MAX_POST_PRESETS;
 	const activePreset = templates.find((t) => t.id === activeTemplateId);
 
 	const commitSave = () => {
@@ -120,7 +120,7 @@ export default function TemplatesPicker({
 						disabled={disabled || full || Boolean(activePreset)}
 						title={
 							full
-								? `Max ${MAX_PRESETS} presets — delete one first`
+								? `Max ${MAX_POST_PRESETS} presets — delete one first`
 								: activePreset
 									? `These settings are already saved as “${activePreset.name}”`
 									: "Save the current tone, platforms, and writing prefs as a reusable preset"
@@ -157,11 +157,11 @@ export default function TemplatesPicker({
 										}
 									}}
 									placeholder="Name it (e.g. My X voice)"
-									maxLength={MAX_PRESET_NAME}
+									maxLength={MAX_POST_PRESET_NAME_CHARS}
 									className="h-8 w-full text-xs"
 								/>
 								<p className="text-right text-[11px] text-muted-foreground tabular-nums">
-									{nameDraft.length}/{MAX_PRESET_NAME}
+									{nameDraft.length}/{MAX_POST_PRESET_NAME_CHARS}
 								</p>
 							</div>
 							<Tooltip label="Save preset">
@@ -235,7 +235,7 @@ function TemplateChip({
 	onEdit,
 	onDelete,
 }: {
-	template: PresetType;
+	template: PostPresetType;
 	active: boolean;
 	disabled?: boolean;
 	onApply: () => void;
@@ -336,7 +336,7 @@ function TemplateEditor({
 	onUpdate,
 	onDone,
 }: {
-	template: PresetType;
+	template: PostPresetType;
 	disabled?: boolean;
 	onRename: (name: string) => void;
 	onUpdate: () => void;
@@ -369,7 +369,7 @@ function TemplateEditor({
 								onDone();
 							}
 						}}
-						maxLength={MAX_PRESET_NAME}
+						maxLength={MAX_POST_PRESET_NAME_CHARS}
 						disabled={disabled}
 						aria-label="Preset name"
 						className="h-8 min-w-0 flex-1 text-xs"
@@ -387,7 +387,7 @@ function TemplateEditor({
 					</Tooltip>
 				</div>
 				<p className="text-right text-[11px] text-muted-foreground tabular-nums">
-					{name.length}/{MAX_PRESET_NAME}
+					{name.length}/{MAX_POST_PRESET_NAME_CHARS}
 				</p>
 			</div>
 			<div className="flex flex-wrap items-center gap-1.5">
@@ -423,7 +423,7 @@ function TemplateEditor({
 }
 
 /** Hover/focus tooltip showing a preset's full settings summary. */
-function TemplatePreview({ template }: { template: PresetType }) {
+function TemplatePreview({ template }: { template: PostPresetType }) {
 	const { tone, platforms, xThreadLength, preferences: p } = template;
 	return (
 		<div
@@ -436,16 +436,19 @@ function TemplatePreview({ template }: { template: PresetType }) {
 					label="Platforms"
 					value={
 						platforms.length
-							? platforms.map((p) => PLATFORM_LABELS[p] ?? p).join(", ")
+							? platforms.map((p) => POST_PLATFORM_LABELS[p] ?? p).join(", ")
 							: "None"
 					}
 				/>
 				{platforms.includes("x") && xThreadLength > 1 && (
 					<Row label="Thread" value={`${xThreadLength} posts`} />
 				)}
-				<Row label="Voice" value={VOICE_LABELS[p.voice] ?? p.voice} />
-				<Row label="Emoji" value={EMOJI_LEVEL_LABELS[p.emojiLevel]} />
-				<Row label="Hashtags" value={HASHTAG_LEVEL_LABELS[p.hashtagLevel]} />
+				<Row label="Voice" value={POST_VOICE_LABELS[p.voice] ?? p.voice} />
+				<Row label="Emoji" value={POST_EMOJI_DENSITY_LABELS[p.emojiLevel]} />
+				<Row
+					label="Hashtags"
+					value={POST_HASHTAG_DENSITY_LABELS[p.hashtagLevel]}
+				/>
 				{p.alwaysIncludeHashtags.length > 0 && (
 					<Row
 						label="Always"

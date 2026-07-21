@@ -1,7 +1,7 @@
 "use client";
 
-import { DEFAULT_PREFERENCES, MAX_PRESETS } from "@/lib/constants";
-import type { PresetType } from "@/lib/tools/_shared/generator/types";
+import { DEFAULT_POST_PREFERENCES, MAX_POST_PRESETS } from "@/lib/constants";
+import type { PostPresetType } from "@/lib/types";
 import {
 	prefsStorage,
 	presetsStorage,
@@ -10,27 +10,35 @@ import {
 import { createUsePresets } from "@/lib/tools/_shared/generator/create-use-presets";
 
 /** Three deliberately varied starter presets seeded on first run so new users have examples spanning the full range of settings. */
-const STARTER_PRESETS: Omit<PresetType, "id" | "createdAt">[] = [
+const STARTER_PRESETS: Omit<PostPresetType, "id" | "createdAt">[] = [
 	{
 		name: "LinkedIn pro",
 		tone: "professional",
 		platforms: ["linkedin"],
 		xThreadLength: 1,
-		preferences: { ...DEFAULT_PREFERENCES, emojiLevel: 1, hashtagLevel: 2 },
+		preferences: {
+			...DEFAULT_POST_PREFERENCES,
+			emojiLevel: 1,
+			hashtagLevel: 2,
+		},
 	},
 	{
 		name: "X thread",
 		tone: "punchy",
 		platforms: ["x"],
 		xThreadLength: 5,
-		preferences: { ...DEFAULT_PREFERENCES, emojiLevel: 3, hashtagLevel: 2 },
+		preferences: {
+			...DEFAULT_POST_PREFERENCES,
+			emojiLevel: 3,
+			hashtagLevel: 2,
+		},
 	},
 	{
 		name: "Casual everywhere",
 		tone: "casual",
 		platforms: ["linkedin", "x", "threads", "bluesky"],
 		xThreadLength: 1,
-		preferences: { ...DEFAULT_PREFERENCES, emojiLevel: 4 },
+		preferences: { ...DEFAULT_POST_PREFERENCES, emojiLevel: 4 },
 	},
 ];
 
@@ -40,5 +48,5 @@ export const usePresets = createUsePresets({
 	workflowStorage,
 	presetsStorage,
 	starterPresets: STARTER_PRESETS,
-	maxPresets: MAX_PRESETS,
+	maxPresets: MAX_POST_PRESETS,
 });

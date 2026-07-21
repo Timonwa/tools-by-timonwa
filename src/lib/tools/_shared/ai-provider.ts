@@ -2,7 +2,7 @@ import { createGoogle } from "@ai-sdk/google";
 import { env } from "@env";
 
 import { BYOK_MODELS, DEFAULT_BYOK_MODEL } from "@/lib/config/byok";
-import type { TokenUsageType } from "@/lib/types/token-usage";
+import type { TokenUsageType } from "@/lib/types";
 
 const ALLOWED_BYOK_MODELS = new Set<string>(BYOK_MODELS.map((m) => m.value));
 
