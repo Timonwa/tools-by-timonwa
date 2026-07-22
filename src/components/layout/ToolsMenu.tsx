@@ -13,7 +13,7 @@ import { useId, useMemo, useState } from "react";
 import { Button, Input } from "@/components/ui";
 import { ROUTES } from "@/lib/config/routes";
 import { TOOLS } from "@/lib/config/tools";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type ToolsMenuProps = {
 	open: boolean;

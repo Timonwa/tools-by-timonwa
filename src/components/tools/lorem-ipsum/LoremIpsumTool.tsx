@@ -12,7 +12,7 @@ import {
 	Input,
 	SegmentedControl,
 } from "@/components/ui";
-import { generateLorem, type LoremUnit } from "@/lib/text/lorem";
+import { generateLorem, type LoremUnit } from "@/lib/utils";
 
 const UNITS: { value: LoremUnit; label: string }[] = [
 	{ value: "paragraphs", label: "Paragraphs" },

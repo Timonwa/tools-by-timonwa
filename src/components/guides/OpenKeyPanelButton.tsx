@@ -3,7 +3,7 @@
 import { KeyRoundIcon } from "lucide-react";
 
 import { Button } from "@/components/ui";
-import { OPEN_BYOK_EVENT } from "@/lib/config/byok";
+import { OPEN_BYOK_EVENT } from "@/lib/constants";
 
 /** A guide-page button that fires the BYOK drawer event — lets a reader go straight from "here's how" to pasting their key without leaving the guide. */
 export default function OpenKeyPanelButton() {

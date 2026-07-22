@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui";
-import "./globals.css";
+import "../src/styles/globals.css";
 
 export default function GlobalError({
 	error,

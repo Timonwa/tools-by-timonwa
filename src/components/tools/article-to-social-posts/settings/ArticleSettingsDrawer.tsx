@@ -1,6 +1,6 @@
 "use client";
 
-import { articleToSocialRuntime } from "../runtime";
+import { socialPostsRuntime } from "@/lib/utils";
 import SettingsDrawer, {
 	type SettingsPresentationType,
 } from "@/components/_shared/tool/settings/SettingsDrawer";
@@ -13,7 +13,7 @@ export default function ArticleSettingsDrawer({
 }) {
 	return (
 		<SettingsDrawer
-			runtime={articleToSocialRuntime}
+			runtime={socialPostsRuntime}
 			presentation={presentation}
 			drawerClassName="tool-article-to-social-posts"
 		/>

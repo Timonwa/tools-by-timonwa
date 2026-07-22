@@ -9,7 +9,7 @@ import {
 
 import { IconBadge, Section, SectionHeader } from "@/components/ui";
 import { TINT_BORDER, type TintType } from "@/lib/config/tints";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type FeatureType = {
 	icon: typeof ShieldCheckIcon;

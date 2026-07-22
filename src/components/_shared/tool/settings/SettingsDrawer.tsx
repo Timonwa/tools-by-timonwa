@@ -3,9 +3,9 @@
 import { PenLineIcon } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
-import type { WriterRuntime } from "@/lib/tools/_shared/generator/writer-runtime";
-import { OPEN_POST_SETTINGS_EVENT } from "@/lib/constants";
-import type { PostStyleType } from "@/lib/types";
+import type { WriterRuntimeType } from "@/lib/types";
+import { OPEN_SOCIAL_POST_SETTINGS_EVENT } from "@/lib/constants";
+import type { SocialPostStyleType } from "@/lib/types";
 import TemplatesPicker from "@/components/_shared/tool/writer/TemplatesPicker";
 import NavIconButton from "@/components/layout/NavIconButton";
 import { Button, Drawer } from "@/components/ui";
@@ -16,7 +16,7 @@ import WritingStyleControls from "./WritingStyleControls";
 export type SettingsPresentationType = "icon" | "menuItem";
 
 type SettingsDrawerProps = {
-	runtime: WriterRuntime;
+	runtime: WriterRuntimeType;
 	presentation?: SettingsPresentationType;
 	drawerClassName?: string;
 };
@@ -41,11 +41,12 @@ export default function SettingsDrawer({
 	useEffect(() => {
 		if (presentation !== "menuItem") return;
 		const handler = () => setOpen(true);
-		window.addEventListener(OPEN_POST_SETTINGS_EVENT, handler);
-		return () => window.removeEventListener(OPEN_POST_SETTINGS_EVENT, handler);
+		window.addEventListener(OPEN_SOCIAL_POST_SETTINGS_EVENT, handler);
+		return () =>
+			window.removeEventListener(OPEN_SOCIAL_POST_SETTINGS_EVENT, handler);
 	}, [presentation]);
 
-	const updateStyle = (patch: Partial<PostStyleType>) => {
+	const updateStyle = (patch: Partial<SocialPostStyleType>) => {
 		stores.styleStorage.set({ ...style, ...patch });
 	};
 

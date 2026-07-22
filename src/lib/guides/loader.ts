@@ -1,3 +1,5 @@
+// Loads guide content and metadata (MDX) for the Guides section.
+
 import "server-only";
 
 import fs from "node:fs";
@@ -6,6 +8,8 @@ import path from "node:path";
 import matter from "gray-matter";
 import { z } from "zod";
 
+import { countWords } from "@/lib/utils/text/counts";
+import { READING_WPM, readingMinutes } from "@/lib/utils/text/reading-time";
 import type { GuideMeta } from "./guides";
 
 const GUIDES_DIR = path.join(process.cwd(), "src", "content", "guides");
@@ -23,7 +27,6 @@ const FrontmatterSchema = z.object({
 	description: z.string(),
 	keywords: z.array(z.string()),
 	category: z.string(),
-	readingMinutes: z.number(),
 	publishedAt: z.string(),
 	updatedAt: z.string().optional(),
 	ogSubtitle: z.string(),
@@ -34,14 +37,16 @@ const FrontmatterSchema = z.object({
 
 function readGuide(slug: string): GuideMeta {
 	const raw = fs.readFileSync(path.join(GUIDES_DIR, `${slug}.mdx`), "utf8");
-	const { data } = matter(raw);
+	const { data, content } = matter(raw);
 	const parsed = FrontmatterSchema.safeParse(data);
 	if (!parsed.success) {
 		throw new Error(
 			`Invalid frontmatter in content/guides/${slug}.mdx:\n${parsed.error.message}`,
 		);
 	}
-	return { slug, ...parsed.data };
+	// Derived from the body at load time (approximate — counts raw MDX) so it never drifts from the content.
+	const minutes = readingMinutes(countWords(content), READING_WPM.average);
+	return { slug, ...parsed.data, readingMinutes: minutes };
 }
 
 /** Slugs of every guide in the content directory (filenames minus `.mdx`). */

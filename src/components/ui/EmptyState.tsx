@@ -1,6 +1,6 @@
 import type * as React from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 /** A dashed, centered placeholder for "nothing here yet" states. */
 export default function EmptyState({

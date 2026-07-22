@@ -1,6 +1,6 @@
 import type * as React from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 /** The shared text input. */
 export default function Input({

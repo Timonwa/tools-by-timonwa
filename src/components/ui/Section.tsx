@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 /** A marketing content section — shared vertical rhythm, max width, and column stack; pair with `SectionHeader`. */
 export function Section({

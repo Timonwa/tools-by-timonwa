@@ -2,17 +2,17 @@
 
 import { useId, useMemo } from "react";
 
-import DraftReuseControls from "@/components/_shared/draft/DraftReuseControls";
-import { useToolDraft } from "@/lib/hooks/use-tool-draft";
+import SourceReuseControls from "@/components/_shared/source/SourceReuseControls";
+import { useArticleSource } from "@/lib/hooks";
 import { Card, CardContent, StatCard, Textarea } from "@/components/ui";
-import { getTextCounts } from "@/lib/text/counts";
+import { getTextCounts } from "@/lib/utils";
 import {
 	durationSeconds,
 	formatDuration,
 	READING_WPM,
 	SPEAKING_WPM,
-} from "@/lib/text/reading-time";
-import { cn } from "@/lib/utils/cn";
+} from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const PLATFORM_LIMITS: { label: string; limit: number }[] = [
 	{ label: "SEO title", limit: 60 },
@@ -26,7 +26,8 @@ const numberFmt = new Intl.NumberFormat("en-US");
 
 /** Live word/character counter with reading-time estimates and per-platform character-limit bars. */
 export default function WordCounterTool() {
-	const { text, setText, textReuse, toggleTextReuse, clear } = useToolDraft();
+	const { text, setText, textReuse, toggleTextReuse, clear } =
+		useArticleSource();
 	const reuseId = useId();
 	const counts = useMemo(() => getTextCounts(text), [text]);
 
@@ -60,7 +61,7 @@ export default function WordCounterTool() {
 							className="min-h-64 max-h-96 overflow-y-auto no-scrollbar"
 						/>
 					</div>
-					<DraftReuseControls
+					<SourceReuseControls
 						id={reuseId}
 						reuse={textReuse}
 						onToggleReuse={toggleTextReuse}

@@ -11,7 +11,7 @@ import {
 	Textarea,
 } from "@/components/ui";
 import { HASH_ALGORITHMS, type HashAlgorithmType } from "@/lib/constants";
-import { hashText } from "@/lib/utils/hash";
+import { hashText } from "@/lib/utils";
 
 type Hashes = Record<HashAlgorithmType, string>;
 

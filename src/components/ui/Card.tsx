@@ -1,6 +1,6 @@
 import type * as React from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 /** A bordered, rounded surface card. Compose with CardHeader/CardTitle/CardDescription/CardContent/CardFooter. */
 export function Card({ className, ...props }: React.ComponentProps<"div">) {

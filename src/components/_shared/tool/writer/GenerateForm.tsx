@@ -6,16 +6,16 @@ import {
 	SparklesIcon,
 	Wand2Icon,
 } from "lucide-react";
-import ArticleSourceInput from "@/components/_shared/draft/ArticleSourceInput";
+import ArticleSourceInput from "@/components/_shared/source/ArticleSourceInput";
 import ErrorNotice from "@/components/_shared/result/ErrorNotice";
-import type { ArticleInputKindType } from "@/lib/types";
+import type { ArticleSourceKindType } from "@/lib/types";
 import {
 	MAX_ARTICLE_INPUT_CHARS,
-	OPEN_POST_SETTINGS_EVENT,
-	type PostPlatformType,
-	THREADABLE_POST_PLATFORMS,
+	OPEN_SOCIAL_POST_SETTINGS_EVENT,
+	type SocialPostPlatformType,
+	THREADABLE_SOCIAL_POST_PLATFORMS,
 } from "@/lib/constants";
-import type { PostStyleTemplateType } from "@/lib/types";
+import type { SocialPostStyleTemplateType } from "@/lib/types";
 import {
 	Button,
 	Card,
@@ -30,8 +30,8 @@ import TemplatesPicker from "./TemplatesPicker";
 import ThreadFormat from "./ThreadFormat";
 
 type GenerateFormProps = {
-	inputKind: ArticleInputKindType;
-	onInputKindChange: (kind: ArticleInputKindType) => void;
+	sourceKind: ArticleSourceKindType;
+	onSourceKindChange: (kind: ArticleSourceKindType) => void;
 	url: string;
 	onUrlChange: (url: string) => void;
 	text: string;
@@ -40,9 +40,9 @@ type GenerateFormProps = {
 	onToggleTextReuse: (next: boolean) => void;
 	urlReuse: boolean;
 	onToggleUrlReuse: (next: boolean) => void;
-	onClearDraft: () => void;
-	platforms: PostPlatformType[];
-	onTogglePlatform: (p: PostPlatformType) => void;
+	onClearSource: () => void;
+	platforms: SocialPostPlatformType[];
+	onTogglePlatform: (p: SocialPostPlatformType) => void;
 	xThreadLength: number;
 	onXThreadLengthChange: (n: number) => void;
 	isGenerating: boolean;
@@ -52,9 +52,9 @@ type GenerateFormProps = {
 	onStartOver: () => void;
 	error: string | null;
 	onSubmit: (e: React.FormEvent) => void;
-	templates: PostStyleTemplateType[];
+	templates: SocialPostStyleTemplateType[];
 	activeTemplateId: string | null;
-	onApplyTemplate: (t: PostStyleTemplateType) => void;
+	onApplyTemplate: (t: SocialPostStyleTemplateType) => void;
 	onSaveTemplate: (name: string) => void;
 	onDeleteTemplate: (id: string) => void;
 	onUpdateTemplate: (id: string) => void;
@@ -62,8 +62,8 @@ type GenerateFormProps = {
 };
 
 export default function GenerateForm({
-	inputKind,
-	onInputKindChange,
+	sourceKind,
+	onSourceKindChange,
 	url,
 	onUrlChange,
 	text,
@@ -72,7 +72,7 @@ export default function GenerateForm({
 	onToggleTextReuse,
 	urlReuse,
 	onToggleUrlReuse,
-	onClearDraft,
+	onClearSource,
 	platforms,
 	onTogglePlatform,
 	xThreadLength,
@@ -93,7 +93,7 @@ export default function GenerateForm({
 	onRenameTemplate,
 }: GenerateFormProps) {
 	const hasInput =
-		inputKind === "url" ? url.trim().length > 0 : text.trim().length > 0;
+		sourceKind === "url" ? url.trim().length > 0 : text.trim().length > 0;
 	const textOver = text.length > MAX_ARTICLE_INPUT_CHARS;
 	const disabled = isBusy || !hasInput || platforms.length === 0 || textOver;
 	// Only call it "Regenerate" when the current input is the article on screen.
@@ -123,7 +123,7 @@ export default function GenerateForm({
 						onUpdate={onUpdateTemplate}
 						onRename={onRenameTemplate}
 						onOpenSettings={() =>
-							window.dispatchEvent(new Event(OPEN_POST_SETTINGS_EVENT))
+							window.dispatchEvent(new Event(OPEN_SOCIAL_POST_SETTINGS_EVENT))
 						}
 						selectOnly
 						disabled={isGenerating}
@@ -131,8 +131,8 @@ export default function GenerateForm({
 					/>
 
 					<ArticleSourceInput
-						inputKind={inputKind}
-						onInputKindChange={onInputKindChange}
+						sourceKind={sourceKind}
+						onSourceKindChange={onSourceKindChange}
 						url={url}
 						onUrlChange={onUrlChange}
 						urlReuse={urlReuse}
@@ -141,7 +141,7 @@ export default function GenerateForm({
 						onTextChange={onTextChange}
 						textReuse={textReuse}
 						onToggleTextReuse={onToggleTextReuse}
-						onClearText={onClearDraft}
+						onClearText={onClearSource}
 						disabled={isGenerating}
 						maxChars={MAX_ARTICLE_INPUT_CHARS}
 					/>
@@ -152,7 +152,9 @@ export default function GenerateForm({
 						disabled={isGenerating}
 					/>
 
-					{platforms.some((p) => THREADABLE_POST_PLATFORMS.includes(p)) && (
+					{platforms.some((p) =>
+						THREADABLE_SOCIAL_POST_PLATFORMS.includes(p),
+					) && (
 						<ThreadFormat
 							length={xThreadLength}
 							onChange={onXThreadLengthChange}
@@ -170,7 +172,7 @@ export default function GenerateForm({
 							{isGenerating ? (
 								<>
 									<Loader2Icon className="w-4 h-4 animate-spin" />
-									{inputKind === "url"
+									{sourceKind === "url"
 										? `Reading article & ${isRegenerate ? "regenerating" : "generating"} posts...`
 										: `${isRegenerate ? "Regenerating" : "Generating"} posts...`}
 								</>

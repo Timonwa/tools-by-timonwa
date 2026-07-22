@@ -4,12 +4,12 @@ import { useId } from "react";
 
 import { ToggleButton } from "@/components/ui";
 
-import { POST_TONES } from "@/lib/constants";
-import type { PostToneType } from "@/lib/constants";
+import { SOCIAL_POST_TONES } from "@/lib/constants";
+import type { SocialPostToneType } from "@/lib/constants";
 
 type TonePickerProps = {
-	value: PostToneType;
-	onChange: (tone: PostToneType) => void;
+	value: SocialPostToneType;
+	onChange: (tone: SocialPostToneType) => void;
 	disabled?: boolean;
 };
 
@@ -28,7 +28,7 @@ export default function TonePicker({
 				aria-labelledby={labelId}
 				className="flex flex-wrap gap-1.5 border-0 p-0 m-0 min-w-0"
 			>
-				{POST_TONES.map((t) => (
+				{SOCIAL_POST_TONES.map((t) => (
 					<ToggleButton
 						key={t.value}
 						size="sm"

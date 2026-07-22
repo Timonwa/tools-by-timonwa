@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui";
 import { TOOL_CATEGORIES } from "@/lib/config/categories";
 import type { TintType } from "@/lib/config/tints";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 const AUDIENCES: { label: string; tint: TintType }[] = [
 	{ label: "Writers", tint: 1 },

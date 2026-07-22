@@ -2,7 +2,7 @@ import { WrenchIcon } from "lucide-react";
 
 import { PageHero } from "@/components/ui";
 import { TINT_TEXT } from "@/lib/config/tints";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 export default function Hero() {
 	return (

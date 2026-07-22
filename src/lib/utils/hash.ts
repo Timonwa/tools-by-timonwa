@@ -1,3 +1,5 @@
+// Browser-side text hashing via Web Crypto (the Hash Generator tool).
+
 import type { HashAlgorithmType } from "@/lib/constants";
 
 /** Browser-side text hasher — uses `crypto.subtle` (secure context only) so input never leaves the device; returns a lowercase hex digest. */

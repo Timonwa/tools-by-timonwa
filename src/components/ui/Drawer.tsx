@@ -4,7 +4,7 @@ import { XIcon } from "lucide-react";
 import { useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type DrawerProps = {
 	open: boolean;

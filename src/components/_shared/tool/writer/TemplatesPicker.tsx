@@ -12,26 +12,26 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import {
-	POST_EMOJI_DENSITY_LABELS,
-	POST_HASHTAG_DENSITY_LABELS,
-	MAX_POST_STYLE_TEMPLATE_NAME_CHARS,
-	MAX_POST_STYLE_TEMPLATES,
-	POST_TONES,
-	type PostToneType,
-	POST_VOICE_LABELS,
+	SOCIAL_POST_EMOJI_DENSITY_LABELS,
+	SOCIAL_POST_HASHTAG_DENSITY_LABELS,
+	MAX_SOCIAL_POST_STYLE_TEMPLATE_NAME_CHARS,
+	MAX_SOCIAL_POST_STYLE_TEMPLATES,
+	SOCIAL_POST_TONES,
+	type SocialPostToneType,
+	SOCIAL_POST_VOICE_LABELS,
 } from "@/lib/constants";
-import type { PostStyleTemplateType } from "@/lib/types";
+import type { SocialPostStyleTemplateType } from "@/lib/types";
 import { Badge, Button, Input, Tooltip } from "@/components/ui";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
-const toneLabel = (tone: PostToneType): string =>
-	POST_TONES.find((t) => t.value === tone)?.label ?? tone;
+const toneLabel = (tone: SocialPostToneType): string =>
+	SOCIAL_POST_TONES.find((t) => t.value === tone)?.label ?? tone;
 
 type TemplatesPickerProps = {
-	templates: PostStyleTemplateType[];
+	templates: SocialPostStyleTemplateType[];
 	activeTemplateId: string | null;
-	onApply: (t: PostStyleTemplateType) => void;
+	onApply: (t: SocialPostStyleTemplateType) => void;
 	onSave: (name: string) => void;
 	onDelete: (id: string) => void;
 	onUpdate: (id: string) => void;
@@ -63,7 +63,7 @@ export default function TemplatesPicker({
 	const [editingId, setEditingId] = useState<string | null>(null);
 	const [expanded, setExpanded] = useState(!collapsible);
 
-	const full = templates.length >= MAX_POST_STYLE_TEMPLATES;
+	const full = templates.length >= MAX_SOCIAL_POST_STYLE_TEMPLATES;
 	const activeTemplate = templates.find((t) => t.id === activeTemplateId);
 
 	const commitSave = () => {
@@ -141,7 +141,7 @@ export default function TemplatesPicker({
 							disabled={disabled || full || Boolean(activeTemplate)}
 							title={
 								full
-									? `Max ${MAX_POST_STYLE_TEMPLATES} style templates — delete one first`
+									? `Max ${MAX_SOCIAL_POST_STYLE_TEMPLATES} style templates — delete one first`
 									: activeTemplate
 										? `This writing style is already saved as “${activeTemplate.name}”`
 										: "Save the current writing style as a reusable template"
@@ -179,11 +179,11 @@ export default function TemplatesPicker({
 										}
 									}}
 									placeholder="Name it (e.g. Acme blog voice)"
-									maxLength={MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
+									maxLength={MAX_SOCIAL_POST_STYLE_TEMPLATE_NAME_CHARS}
 									className="h-8 w-full pr-12 text-xs"
 								/>
 								<span className="pointer-events-none absolute bottom-1 right-2 text-[10px] text-muted-foreground tabular-nums">
-									{nameDraft.length}/{MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
+									{nameDraft.length}/{MAX_SOCIAL_POST_STYLE_TEMPLATE_NAME_CHARS}
 								</span>
 							</div>
 							<Tooltip label="Save style template">
@@ -260,7 +260,7 @@ function TemplateChip({
 	onEdit,
 	onDelete,
 }: {
-	template: PostStyleTemplateType;
+	template: SocialPostStyleTemplateType;
 	active: boolean;
 	disabled?: boolean;
 	editable: boolean;
@@ -363,7 +363,7 @@ function TemplateEditor({
 	onUpdate,
 	onDone,
 }: {
-	template: PostStyleTemplateType;
+	template: SocialPostStyleTemplateType;
 	disabled?: boolean;
 	onRename: (name: string) => void;
 	onUpdate: () => void;
@@ -396,13 +396,13 @@ function TemplateEditor({
 								onDone();
 							}
 						}}
-						maxLength={MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
+						maxLength={MAX_SOCIAL_POST_STYLE_TEMPLATE_NAME_CHARS}
 						disabled={disabled}
 						aria-label="Style template name"
 						className="h-8 w-full pr-12 text-xs"
 					/>
 					<span className="pointer-events-none absolute bottom-1 right-2 text-[10px] text-muted-foreground tabular-nums">
-						{name.length}/{MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
+						{name.length}/{MAX_SOCIAL_POST_STYLE_TEMPLATE_NAME_CHARS}
 					</span>
 				</div>
 				<Tooltip label="Cancel">
@@ -450,7 +450,11 @@ function TemplateEditor({
 }
 
 /** Hover/focus tooltip showing a style template's summary. */
-function TemplatePreview({ template }: { template: PostStyleTemplateType }) {
+function TemplatePreview({
+	template,
+}: {
+	template: SocialPostStyleTemplateType;
+}) {
 	const p = template.style;
 	return (
 		<div
@@ -459,11 +463,17 @@ function TemplatePreview({ template }: { template: PostStyleTemplateType }) {
 		>
 			<div className="flex flex-col gap-1">
 				<Row label="Tone" value={toneLabel(p.tone)} />
-				<Row label="Voice" value={POST_VOICE_LABELS[p.voice] ?? p.voice} />
-				<Row label="Emoji" value={POST_EMOJI_DENSITY_LABELS[p.emojiLevel]} />
+				<Row
+					label="Voice"
+					value={SOCIAL_POST_VOICE_LABELS[p.voice] ?? p.voice}
+				/>
+				<Row
+					label="Emoji"
+					value={SOCIAL_POST_EMOJI_DENSITY_LABELS[p.emojiLevel]}
+				/>
 				<Row
 					label="Hashtags"
-					value={POST_HASHTAG_DENSITY_LABELS[p.hashtagLevel]}
+					value={SOCIAL_POST_HASHTAG_DENSITY_LABELS[p.hashtagLevel]}
 				/>
 				{p.alwaysIncludeHashtags.length > 0 && (
 					<Row

@@ -20,7 +20,7 @@ import ToolsMenu from "./ToolsMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import { ROUTES } from "@/lib/config/routes";
 import { REPO_URL, SUPPORT_URL } from "@/lib/config/site";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type NavActionsProps = {
 	actionsSlot?: ReactNode;

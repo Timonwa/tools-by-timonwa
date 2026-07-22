@@ -1,3 +1,5 @@
+// Hosted rate limiting — per-user and shared daily quota checks (Upstash Redis when configured).
+
 import { createHash, createHmac } from "node:crypto";
 import { Redis } from "@upstash/redis";
 import { headers } from "next/headers";
@@ -6,17 +8,17 @@ import { env, isProduction } from "@env";
 
 // Shared hosted-demo rate limiting: per-user (HMAC-SHA256 IP hash) + global pool, both resetting UTC midnight; BYOK users skip both; fails open so infra flakiness never blocks a real request.
 
-export type QuotaConfig = {
+export type QuotaConfigType = {
 	toolSlug: string;
 	perUserDaily: number;
 	dailyPool: number;
 };
 
-export type CheckResultType =
+export type QuotaCheckResultType =
 	| { allowed: true; remaining: number | null }
 	| { allowed: false; reason: "user" | "pool" };
 
-export type UsageSnapshotType = { configured: boolean };
+export type RateLimitStatusType = { configured: boolean };
 
 function getRedis(): Redis | null {
 	// Production only — never rate-limit locally or on preview, even if the
@@ -54,7 +56,7 @@ if (isProduction && !env.IP_HASH_SECRET) {
 	);
 }
 
-async function getClientHash(): Promise<string> {
+async function getClientIpHash(): Promise<string> {
 	const h = await headers();
 	const forwarded = h.get("x-forwarded-for");
 	const real = h.get("x-real-ip");
@@ -73,9 +75,9 @@ async function getClientHash(): Promise<string> {
 }
 
 /** Increment both quota counters and return whether the request is allowed, plus the caller's per-user generations left today (null when untracked) — call once per billable request, before the LLM call; skip for BYOK. */
-export async function checkAndIncrement(
-	config: QuotaConfig,
-): Promise<CheckResultType> {
+export async function checkAndIncrementQuota(
+	config: QuotaConfigType,
+): Promise<QuotaCheckResultType> {
 	const { toolSlug, perUserDaily, dailyPool } = config;
 	const redis = getRedis();
 	// Untracked (local/self-host/no Upstash) — allowed, but there's no counter to
@@ -84,7 +86,7 @@ export async function checkAndIncrement(
 
 	try {
 		const date = todayUtc();
-		const clientHash = await getClientHash();
+		const clientHash = await getClientIpHash();
 		const userKey = `ratelimit:${toolSlug}:user:${clientHash}:${date}`;
 		const poolKey = `ratelimit:${toolSlug}:pool:${date}`;
 		const ttl = secondsUntilUtcMidnight();
@@ -106,6 +108,6 @@ export async function checkAndIncrement(
 }
 
 /** Whether hosted rate-limiting is active — drives the navbar "free/day" pill. */
-export function peekUsage(): UsageSnapshotType {
+export function getRateLimitStatus(): RateLimitStatusType {
 	return { configured: getRedis() !== null };
 }

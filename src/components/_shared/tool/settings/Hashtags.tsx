@@ -3,17 +3,17 @@
 import { HashIcon, XIcon } from "lucide-react";
 import { useId, useState } from "react";
 import {
-	MAX_POST_HASHTAG_RULES_PER_LIST,
-	POST_DENSITY_LEVELS,
-	POST_HASHTAG_DENSITY_LABELS,
+	MAX_SOCIAL_POST_HASHTAG_RULES_PER_LIST,
+	SOCIAL_POST_DENSITY_LEVELS,
+	SOCIAL_POST_HASHTAG_DENSITY_LABELS,
 } from "@/lib/constants";
-import { normalizeHashtag } from "@/lib/utils/generator/hashtag";
-import type { PostStyleType } from "@/lib/types";
+import { normalizeHashtag } from "@/lib/utils";
+import type { SocialPostStyleType } from "@/lib/types";
 import { Badge, Input, ToggleButton } from "@/components/ui";
 
 type HashtagsProps = {
-	prefs: PostStyleType;
-	onChange: (patch: Partial<PostStyleType>) => void;
+	prefs: SocialPostStyleType;
+	onChange: (patch: Partial<SocialPostStyleType>) => void;
 	// Always-include / never-use lists — only for tools that enable hashtag rules.
 	showRules?: boolean;
 };
@@ -34,7 +34,8 @@ export default function HashtagsSection({
 		if (!tag) return;
 		const current = prefs[field];
 		const dupe = current.some((t) => t.toLowerCase() === tag.toLowerCase());
-		if (dupe || current.length >= MAX_POST_HASHTAG_RULES_PER_LIST) return;
+		if (dupe || current.length >= MAX_SOCIAL_POST_HASHTAG_RULES_PER_LIST)
+			return;
 		onChange({ [field]: [...current, tag] });
 	};
 
@@ -60,20 +61,20 @@ export default function HashtagsSection({
 						Amount
 					</span>
 					<span className="text-[11px] text-muted-foreground">
-						{POST_HASHTAG_DENSITY_LABELS[prefs.hashtagLevel]}
+						{SOCIAL_POST_HASHTAG_DENSITY_LABELS[prefs.hashtagLevel]}
 					</span>
 				</div>
 				<fieldset
 					aria-labelledby={amountLabelId}
 					className="grid grid-cols-5 gap-1 border-0 p-0 m-0 min-w-0"
 				>
-					{POST_DENSITY_LEVELS.map((n) => (
+					{SOCIAL_POST_DENSITY_LEVELS.map((n) => (
 						<ToggleButton
 							key={n}
 							size="sm"
 							active={prefs.hashtagLevel === n}
 							aria-pressed={prefs.hashtagLevel === n}
-							aria-label={`Hashtag amount ${n}: ${POST_HASHTAG_DENSITY_LABELS[n]}`}
+							aria-label={`Hashtag amount ${n}: ${SOCIAL_POST_HASHTAG_DENSITY_LABELS[n]}`}
 							onClick={() => onChange({ hashtagLevel: n })}
 						>
 							<span className="font-mono">{n}</span>
@@ -121,7 +122,7 @@ function TagList({
 }) {
 	const inputId = useId();
 	const [draft, setDraft] = useState("");
-	const full = tags.length >= MAX_POST_HASHTAG_RULES_PER_LIST;
+	const full = tags.length >= MAX_SOCIAL_POST_HASHTAG_RULES_PER_LIST;
 
 	const commit = () => {
 		if (!draft.trim()) return;

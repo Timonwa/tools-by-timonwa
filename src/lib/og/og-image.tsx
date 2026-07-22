@@ -1,3 +1,5 @@
+// Shared Open Graph image template rendered by the route og-image handlers.
+
 import { ImageResponse } from "next/og";
 
 import { SITE_DOMAIN } from "@/lib/config/site";

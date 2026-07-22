@@ -10,7 +10,7 @@ import {
 	Textarea,
 	ToggleButton,
 } from "@/components/ui";
-import { CASE_GROUPS, type CaseIdType, convertCase } from "@/lib/text/case";
+import { CASE_GROUPS, type CaseIdType, convertCase } from "@/lib/utils";
 
 const ALL_CASES = CASE_GROUPS.flatMap((g) => g.cases);
 

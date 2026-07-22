@@ -3,7 +3,7 @@ import { SearchIcon } from "lucide-react";
 import AiToolPage from "@/components/_shared/page/AiToolPage";
 import Hero from "./Hero";
 import HostedUsageNotice from "./HostedUsageNotice";
-import SeoTool from "./SeoTool";
+import SeoMetaTool from "./SeoMetaTool";
 
 export default function ArticleToSeoMetaPageContent() {
 	return (
@@ -14,7 +14,7 @@ export default function ArticleToSeoMetaPageContent() {
 			usageNotice={<HostedUsageNotice />}
 		>
 			<Hero />
-			<SeoTool />
+			<SeoMetaTool />
 		</AiToolPage>
 	);
 }

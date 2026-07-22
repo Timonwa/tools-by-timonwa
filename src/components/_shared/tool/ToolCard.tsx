@@ -2,7 +2,7 @@ import { ArrowRightIcon } from "lucide-react";
 
 import { Badge, IconBadge, LinkCard } from "@/components/ui";
 import { getCategory } from "@/lib/config/categories";
-import { getPrimaryCategory, type ToolType } from "@/lib/config/tools";
+import { getPrimaryCategoryId, type ToolType } from "@/lib/config/tools";
 
 import CategoryBadge from "./CategoryBadge";
 
@@ -10,7 +10,7 @@ import CategoryBadge from "./CategoryBadge";
 export default function ToolCard({ tool }: { tool: ToolType }) {
 	const Icon = tool.icon;
 	const isSoon = tool.status === "soon";
-	const color = getCategory(getPrimaryCategory(tool)).color;
+	const color = getCategory(getPrimaryCategoryId(tool)).color;
 
 	return (
 		<LinkCard

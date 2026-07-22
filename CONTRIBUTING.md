@@ -100,7 +100,7 @@ When building or extending a tool, reuse the shared layer rather than re-impleme
    - `generateStructuredFromDraft` — `lib/tools/_shared/draft-source` (runs the agent over a URL/text draft)
    - `getGemini` / `toTokenUsage` — `lib/tools/_shared/ai-provider`
    - `enforceQuota` / `readUsage` — `lib/tools/_shared/quota`
-   - `toUserMessage` — `lib/tools/_shared/errors` · `resolveToolKey` — `lib/tools/_shared/api-key`
+   - `toUserMessage` — `lib/tools/_shared/errors` · `resolveToolAPIKey` — `lib/tools/_shared/api-key`
    - `createHistoryStore` — `lib/utils/create-history-store` (local history)
 4. **Register** — add an entry to `TOOLS` in `lib/config/tools.ts`. It then appears in the home grid, navbar menu, and sitemap automatically.
 

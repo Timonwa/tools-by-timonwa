@@ -5,16 +5,9 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { Button, Drawer } from "@/components/ui";
 import ByokSection from "./ByokSection";
 
-import {
-	type ByokModelType,
-	DEFAULT_BYOK_MODEL,
-	OPEN_BYOK_EVENT,
-} from "@/lib/config/byok";
-import {
-	byokModelStorage,
-	byokStorage,
-	subscribeByok,
-} from "@/lib/utils/byok-storage";
+import { type ByokModelType, DEFAULT_BYOK_MODEL } from "@/lib/config/byok";
+import { OPEN_BYOK_EVENT } from "@/lib/constants";
+import { byokModelStorage, byokStorage, subscribeByok } from "@/lib/utils";
 
 /** Hub-level BYOK drawer (one instance in the Navbar); open it by dispatching `OPEN_BYOK_EVENT`. */
 export default function ByokDrawer() {

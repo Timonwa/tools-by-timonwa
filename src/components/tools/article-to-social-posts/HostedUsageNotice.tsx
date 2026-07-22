@@ -1,9 +1,12 @@
 import HostedUsagePill from "@/components/_shared/result/HostedUsagePill";
-import { HOSTED_PER_USER_DAILY } from "./constants/hosted-usage";
-import { getUsage } from "@/lib/tools/article-to-social-posts/actions";
+import { SOCIAL_POST_DAILY_USER_CAP } from "@/lib/constants";
+import { getSocialPostsUsage } from "@/lib/actions";
 
 export default function HostedUsageNotice() {
 	return (
-		<HostedUsagePill perUserDaily={HOSTED_PER_USER_DAILY} getUsage={getUsage} />
+		<HostedUsagePill
+			perUserDaily={SOCIAL_POST_DAILY_USER_CAP}
+			getUsage={getSocialPostsUsage}
+		/>
 	);
 }

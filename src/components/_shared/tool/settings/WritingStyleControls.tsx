@@ -6,25 +6,25 @@ import { ToggleButton } from "@/components/ui";
 import TonePicker from "@/components/_shared/tool/writer/TonePicker";
 
 import {
-	POST_EMOJI_DENSITY_LABELS,
-	type PostDensityLevelType,
-	LONGFORM_POST_LENGTH_LABELS,
-	type LongformPostLengthType,
-	POST_VOICE_LABELS,
-	type PostVoiceType,
+	SOCIAL_POST_EMOJI_DENSITY_LABELS,
+	type SocialPostDensityLevelType,
+	LONGFORM_SOCIAL_POST_LENGTH_LABELS,
+	type LongformSocialPostLengthType,
+	SOCIAL_POST_VOICE_LABELS,
+	type SocialPostVoiceType,
 } from "@/lib/constants";
-import type { PostStyleType } from "@/lib/types";
+import type { SocialPostStyleType } from "@/lib/types";
 
 type WritingStyleControlsProps = {
-	prefs: PostStyleType;
-	onChange: (patch: Partial<PostStyleType>) => void;
+	prefs: SocialPostStyleType;
+	onChange: (patch: Partial<SocialPostStyleType>) => void;
 };
 
-const LEVELS: PostDensityLevelType[] = [1, 2, 3, 4, 5];
-const VOICES = Object.keys(POST_VOICE_LABELS) as PostVoiceType[];
-const POST_LENGTHS = Object.keys(
-	LONGFORM_POST_LENGTH_LABELS,
-) as LongformPostLengthType[];
+const LEVELS: SocialPostDensityLevelType[] = [1, 2, 3, 4, 5];
+const VOICES = Object.keys(SOCIAL_POST_VOICE_LABELS) as SocialPostVoiceType[];
+const SOCIAL_POST_LENGTHS = Object.keys(
+	LONGFORM_SOCIAL_POST_LENGTH_LABELS,
+) as LongformSocialPostLengthType[];
 
 /** Styled ToggleButton alias used across the style fieldsets. */
 function Chip({
@@ -76,10 +76,10 @@ export default function WritingStyleControls({
 						<Chip
 							key={v}
 							active={prefs.voice === v}
-							label={`Voice: ${POST_VOICE_LABELS[v]}`}
+							label={`Voice: ${SOCIAL_POST_VOICE_LABELS[v]}`}
 							onClick={() => onChange({ voice: v })}
 						>
-							{POST_VOICE_LABELS[v]}
+							{SOCIAL_POST_VOICE_LABELS[v]}
 						</Chip>
 					))}
 				</fieldset>
@@ -94,7 +94,7 @@ export default function WritingStyleControls({
 						Emoji
 					</span>
 					<span className="text-[11px] text-muted-foreground">
-						{POST_EMOJI_DENSITY_LABELS[prefs.emojiLevel]}
+						{SOCIAL_POST_EMOJI_DENSITY_LABELS[prefs.emojiLevel]}
 					</span>
 				</div>
 				<fieldset
@@ -105,7 +105,7 @@ export default function WritingStyleControls({
 						<Chip
 							key={n}
 							active={prefs.emojiLevel === n}
-							label={`Emoji level ${n}: ${POST_EMOJI_DENSITY_LABELS[n]}`}
+							label={`Emoji level ${n}: ${SOCIAL_POST_EMOJI_DENSITY_LABELS[n]}`}
 							onClick={() => onChange({ emojiLevel: n })}
 						>
 							<span className="font-mono">{n}</span>
@@ -125,14 +125,14 @@ export default function WritingStyleControls({
 					aria-labelledby={lengthLabelId}
 					className="flex flex-wrap gap-1.5 border-0 p-0 m-0 min-w-0"
 				>
-					{POST_LENGTHS.map((v) => (
+					{SOCIAL_POST_LENGTHS.map((v) => (
 						<Chip
 							key={v}
 							active={prefs.postLength === v}
-							label={`Post length: ${LONGFORM_POST_LENGTH_LABELS[v]} characters`}
+							label={`Post length: ${LONGFORM_SOCIAL_POST_LENGTH_LABELS[v]} characters`}
 							onClick={() => onChange({ postLength: v })}
 						>
-							{LONGFORM_POST_LENGTH_LABELS[v]}
+							{LONGFORM_SOCIAL_POST_LENGTH_LABELS[v]}
 						</Chip>
 					))}
 				</fieldset>

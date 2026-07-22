@@ -1,7 +1,7 @@
 import type * as React from "react";
 
 import { type TintType, TINT_SURFACE } from "@/lib/config/tints";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type BadgeVariant = "default" | "primary" | "outline" | "soon";
 type BadgeSize = "sm" | "md";

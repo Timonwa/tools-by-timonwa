@@ -1,3 +1,5 @@
+// Tool category registry — ids, labels, and brand colors used to group tools.
+
 import {
 	CodeIcon,
 	ImageIcon,
