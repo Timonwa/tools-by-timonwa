@@ -67,27 +67,31 @@ Type-check with `pnpm exec tsc --noEmit`. A `pre-commit` hook runs **lint-staged
 
 ## Codebase layout
 
-Feature-grouped App Router. Routes stay thin; each tool's UI and server code live in parallel `tools/<slug>/` folders.
+App Router with thin routes. A tool's **UI** lives in `components/tools/<slug>/`; its **server code** is kind-first under `lib/` (no per-tool `lib/` folder).
 
 ```text
 app/
-  layout.tsx  page.tsx  globals.css          # hub shell + landing
-  manifest.ts  robots.ts  sitemap.ts          # SEO / PWA metadata routes
-  icon.png  apple-icon.png  favicon.ico        # icons (Next metadata conventions)
-  opengraph-image.tsx  twitter-image.tsx       # social share images
+  layout.tsx  page.tsx                         # hub shell + landing
+  manifest.ts  robots.ts  sitemap.ts           # SEO / PWA metadata routes
+  icon.png  apple-icon.png  favicon.ico         # icons (Next metadata conventions)
+  opengraph-image.tsx  twitter-image.tsx        # social share images
   error.tsx  not-found.tsx  global-error.tsx  loading.tsx
   (tools)/<slug>/                              # thin page.tsx + layout.tsx (metadata + JSON-LD)
+src/styles/                                    # globals.css + tokens/theme/base/... partials
 components/
   ui/          # app-agnostic primitives (barrel: @/components/ui)
-  _shared/     # cross-feature widgets (byok, source input, article card, history sidebar)
-  layout/  theme/  marketing/home/
-  tools/<slug>/  # sections, index.tsx (composer), hooks/, constants/
-lib/
-  config/      # site, tools, byok, limits, env
-  tools/
-    _shared/   # ai-provider, api-key, quota, draft-source, errors  (shared by AI tools)
-    <slug>/    # actions.ts + agents/  (AI tools only; client-only tools have no lib/ folder)
-  rate-limit/  utils/  types/
+  _shared/     # cross-feature: writer/ (the shared engine), category/, result/,
+               #   source/, page/, byok/, content/, tool/
+  layout/      # navbar, footer, page shell, ThemeToggle
+  home/  categories/                           # hub page compositions
+  tools/       # index.tsx = /tools directory; <slug>/ = each tool's UI
+  guides/
+lib/                                           # kind-first, domain-within (barrel per kind)
+  config/  constants/  types/  hooks/          # tools/site/byok/env; derived types; store hooks
+  utils/       # client-safe helpers; utils/ai/ is server-only (@env)
+  actions/     # <slug>.ts  "use server" actions (AI tools)
+  agents/      # <name>/agent.ts  (AI tools only)
+  og/  rate-limit/  guides/
 ```
 
 ## Anatomy of a tool
@@ -95,13 +99,13 @@ lib/
 When building or extending a tool, reuse the shared layer rather than re-implementing plumbing:
 
 1. **Route** — `app/(tools)/<slug>/page.tsx` (thin: import + render the content component) and `layout.tsx` (metadata + JSON-LD).
-2. **UI** — `components/tools/<slug>/`: section components + an `index.tsx` composer; co-locate `hooks/`, `constants/`, `types.ts`. Use primitives from `@/components/ui`.
-3. **Server** _(AI tools only — client-only tools like the counters and converters stop at step 2)_ — `lib/tools/<slug>/actions.ts` (a `"use server"` action) + `agents/`. Reuse:
-   - `generateStructuredFromDraft` — `lib/tools/_shared/draft-source` (runs the agent over a URL/text draft)
-   - `getGemini` / `toTokenUsage` — `lib/tools/_shared/ai-provider`
-   - `enforceQuota` / `readUsage` — `lib/tools/_shared/quota`
-   - `toUserMessage` — `lib/tools/_shared/errors` · `resolveToolAPIKey` — `lib/tools/_shared/api-key`
-   - `createHistoryStore` — `lib/utils/create-history-store` (local history)
+2. **UI** — `components/tools/<slug>/`: section components + an `index.tsx` composer, all **tool-prefixed** (`FooBarHero`, `FooBarTool`). Use primitives from `@/components/ui`. State hooks, constants, and types live in `lib/` (`hooks/`, `constants/`, `types/`), not the component folder.
+3. **Server** _(AI tools only — client-only tools like the counters and converters stop at step 2)_ — `lib/actions/<slug>.ts` (a `"use server"` action) + `lib/agents/<name>/agent.ts`. Reuse from `@/lib/utils/ai` (server-only) and `@/lib/utils` (client-safe):
+   - `generateSchemaOutputFromArticle` — runs the agent over a URL/text article source
+   - `createGeminiClient` / `toTokenUsage` — Gemini provider + usage mapping
+   - `enforceDailyQuota` / `readUsage` — hosted daily quota · `resolvePlatformApiKey` — server key
+   - `resolveArticleSource` / `articleSourceErrorRules` / `toUserMessage` — validate the source, map errors
+   - `createHistoryStore` (`@/lib/utils`) — local run history
 4. **Register** — add an entry to `TOOLS` in `lib/config/tools.ts`. It then appears in the home grid, navbar menu, and sitemap automatically.
 
 ## Code style
@@ -114,7 +118,7 @@ When building or extending a tool, reuse the shared layer rather than re-impleme
 
 ## Agent prompt changes
 
-Each tool's agent lives under `lib/tools/<slug>/agents/`. Prompt tweaks are welcome, but please:
+Each tool's agent lives under `lib/agents/<name>/agent.ts`. Prompt tweaks are welcome, but please:
 
 - Include a **before/after example** in the PR — same input, old prompt vs. yours.
 - Note any token-count impact (longer inputs = more cost per run).
