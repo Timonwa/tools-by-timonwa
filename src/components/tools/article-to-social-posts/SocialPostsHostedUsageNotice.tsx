@@ -2,7 +2,7 @@ import HostedUsagePill from "@/components/_shared/result/HostedUsagePill";
 import { SOCIAL_POST_DAILY_USER_CAP } from "@/lib/constants";
 import { getSocialPostsUsage } from "@/lib/actions";
 
-export default function HostedUsageNotice() {
+export default function SocialPostsHostedUsageNotice() {
 	return (
 		<HostedUsagePill
 			perUserDaily={SOCIAL_POST_DAILY_USER_CAP}

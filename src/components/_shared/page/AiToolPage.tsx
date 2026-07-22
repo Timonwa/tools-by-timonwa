@@ -3,7 +3,7 @@ import type { ComponentType, ReactNode, SVGProps } from "react";
 import ToolContent from "../content/ToolContent";
 import ToolBreadcrumbs from "../tool/ToolBreadcrumbs";
 import Navbar from "@/components/layout/Navbar";
-import ToolMain from "@/components/layout/ToolMain";
+import PageMain from "@/components/layout/PageMain";
 import { ROUTES } from "@/lib/config/routes";
 
 type IconComponentType = ComponentType<SVGProps<SVGSVGElement>>;
@@ -44,11 +44,11 @@ export default function AiToolPage({
 				actionsSlot={settings}
 				menuSlot={menuSlot}
 			/>
-			<ToolMain>
+			<PageMain>
 				<ToolBreadcrumbs slug={slug} name={name} />
 				{children}
 				{showToolContent && <ToolContent currentSlug={slug} />}
-			</ToolMain>
+			</PageMain>
 		</>
 	);
 }

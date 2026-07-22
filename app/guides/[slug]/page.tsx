@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import HubNavbar from "@/components/layout/HubNavbar";
-import ToolMain from "@/components/layout/ToolMain";
+import PageMain from "@/components/layout/PageMain";
 import Newsletter from "@/components/_shared/content/Newsletter";
 import { PageHero } from "@/components/ui";
 import {
@@ -89,7 +89,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
 	return (
 		<>
 			<HubNavbar />
-			<ToolMain>
+			<PageMain>
 				<div className="mx-auto max-w-3xl">
 					<PageHero
 						className="mb-10"
@@ -130,7 +130,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
 						__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
 					}}
 				/>
-			</ToolMain>
+			</PageMain>
 		</>
 	);
 }

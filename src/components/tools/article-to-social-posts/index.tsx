@@ -1,10 +1,10 @@
 import { Share2Icon } from "lucide-react";
 
 import AiToolPage from "@/components/_shared/page/AiToolPage";
-import Hero from "./Hero";
-import HostedUsageNotice from "./HostedUsageNotice";
-import ArticleSettingsDrawer from "./settings/ArticleSettingsDrawer";
-import ArticleWriter from "./writer/ArticleWriter";
+import SocialPostsHero from "./SocialPostsHero";
+import SocialPostsHostedUsageNotice from "./SocialPostsHostedUsageNotice";
+import SocialPostsSettingsDrawer from "./SocialPostsSettingsDrawer";
+import SocialPostsWriter from "./SocialPostsWriter";
 
 export default function ArticleToSocialPostsPageContent() {
 	return (
@@ -12,11 +12,11 @@ export default function ArticleToSocialPostsPageContent() {
 			slug="article-to-social-posts"
 			name="Article to Social Posts"
 			icon={Share2Icon}
-			usageNotice={<HostedUsageNotice />}
-			menuSlot={<ArticleSettingsDrawer presentation="menuItem" />}
+			usageNotice={<SocialPostsHostedUsageNotice />}
+			menuSlot={<SocialPostsSettingsDrawer presentation="menuItem" />}
 		>
-			<Hero />
-			<ArticleWriter />
+			<SocialPostsHero />
+			<SocialPostsWriter />
 		</AiToolPage>
 	);
 }

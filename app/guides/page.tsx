@@ -2,7 +2,7 @@ import { ArrowRightIcon, BookOpenTextIcon, ClockIcon } from "lucide-react";
 import type { Metadata } from "next";
 
 import HubNavbar from "@/components/layout/HubNavbar";
-import ToolMain from "@/components/layout/ToolMain";
+import PageMain from "@/components/layout/PageMain";
 import Newsletter from "@/components/_shared/content/Newsletter";
 import { LinkCard, PageHero } from "@/components/ui";
 import { SITE_NAME, SITE_URL } from "@/lib/config/site";
@@ -50,7 +50,7 @@ export default function GuidesIndexPage() {
 	return (
 		<>
 			<HubNavbar />
-			<ToolMain>
+			<PageMain>
 				<PageHero
 					className="mb-10"
 					eyebrow={{ icon: BookOpenTextIcon, label: "Guides" }}
@@ -97,7 +97,7 @@ export default function GuidesIndexPage() {
 						__html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
 					}}
 				/>
-			</ToolMain>
+			</PageMain>
 		</>
 	);
 }

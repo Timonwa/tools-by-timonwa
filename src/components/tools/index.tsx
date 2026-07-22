@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import Newsletter from "@/components/_shared/content/Newsletter";
 import ToolGrid from "@/components/_shared/tool/ToolGrid";
 import HubNavbar from "@/components/layout/HubNavbar";
-import ToolMain from "@/components/layout/ToolMain";
+import PageMain from "@/components/layout/PageMain";
 import { Breadcrumbs, PageHero } from "@/components/ui";
 import { ROUTES } from "@/lib/config/routes";
 import { LIVE_TOOLS } from "@/lib/config/tools";
@@ -15,7 +15,7 @@ export default function ToolsDirectoryPageContent() {
 	return (
 		<>
 			<HubNavbar />
-			<ToolMain>
+			<PageMain>
 				<Breadcrumbs
 					items={[{ label: "Home", href: ROUTES.home }, { label: "Tools" }]}
 				/>
@@ -38,7 +38,7 @@ export default function ToolsDirectoryPageContent() {
 				</Suspense>
 
 				<Newsletter className="mt-16" />
-			</ToolMain>
+			</PageMain>
 		</>
 	);
 }

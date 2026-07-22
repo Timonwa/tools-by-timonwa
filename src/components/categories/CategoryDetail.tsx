@@ -4,7 +4,7 @@ import Link from "next/link";
 import Newsletter from "@/components/_shared/content/Newsletter";
 import ToolGrid from "@/components/_shared/tool/ToolGrid";
 import HubNavbar from "@/components/layout/HubNavbar";
-import ToolMain from "@/components/layout/ToolMain";
+import PageMain from "@/components/layout/PageMain";
 import {
 	Breadcrumbs,
 	buttonClasses,
@@ -26,7 +26,7 @@ export default function CategoryDetail({
 	return (
 		<>
 			<HubNavbar />
-			<ToolMain>
+			<PageMain>
 				<Breadcrumbs
 					items={[
 						{ label: "Home", href: ROUTES.home },
@@ -65,7 +65,7 @@ export default function CategoryDetail({
 				</div>
 
 				<Newsletter className="mt-16" />
-			</ToolMain>
+			</PageMain>
 		</>
 	);
 }

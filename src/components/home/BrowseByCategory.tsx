@@ -1,4 +1,4 @@
-import CategoryGrid from "@/components/_shared/tool/CategoryGrid";
+import CategoryGrid from "@/components/_shared/category/CategoryGrid";
 import { Section, SectionHeader } from "@/components/ui";
 
 export default function BrowseByCategory() {
