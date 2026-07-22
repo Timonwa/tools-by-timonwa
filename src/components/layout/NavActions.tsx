@@ -2,7 +2,7 @@
 
 import {
 	BookOpenTextIcon,
-	HandCoinsIcon,
+	HeartIcon,
 	HomeIcon,
 	LayoutGridIcon,
 	MenuIcon,
@@ -20,7 +20,7 @@ import ToolsMenu from "./ToolsMenu";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import { ROUTES } from "@/lib/config/routes";
 import { REPO_URL, SUPPORT_URL } from "@/lib/config/site";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type NavActionsProps = {
 	actionsSlot?: ReactNode;
@@ -83,6 +83,19 @@ export default function NavActions({
 
 			{/* Theme toggle — kept on the bar, between the tool action and GitHub. */}
 			<ThemeToggle />
+
+			{/* Support — quiet icon on the bar; the fuller row stays in the menu. */}
+			<Tooltip label="Support these free tools" side="bottom" align="end">
+				<a
+					href={SUPPORT_URL}
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label="Support these free tools"
+					className={buttonClasses({ variant: "ghost", size: "icon-sm" })}
+				>
+					<HeartIcon aria-hidden className="h-4 w-4" />
+				</a>
+			</Tooltip>
 
 			{/* GitHub — kept on the bar at every width. */}
 			<Tooltip label="Star on GitHub" side="bottom" align="end">
@@ -156,7 +169,7 @@ export default function NavActions({
 					rel="noopener noreferrer"
 					className={cta}
 				>
-					<HandCoinsIcon aria-hidden className="w-4 h-4" />
+					<HeartIcon aria-hidden className="w-4 h-4" />
 					<span>Support</span>
 				</a>
 				<a

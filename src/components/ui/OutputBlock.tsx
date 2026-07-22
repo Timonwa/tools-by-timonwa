@@ -1,6 +1,6 @@
 import type { ElementType, HTMLAttributes } from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type OutputBlockProps = HTMLAttributes<HTMLElement> & {
 	as?: ElementType;

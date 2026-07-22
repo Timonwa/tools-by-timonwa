@@ -12,8 +12,8 @@ import {
 	SegmentedControl,
 } from "@/components/ui";
 import { TINT_TEXT } from "@/lib/config/tints";
-import { slugify, type SlugSeparatorType } from "@/lib/text/slugify";
-import { cn } from "@/lib/utils/cn";
+import { slugify, type SlugSeparatorType } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const SEPARATORS: { value: SlugSeparatorType; label: string }[] = [
 	{ value: "-", label: "hyphen ( - )" },

@@ -15,9 +15,9 @@ import {
 	SegmentedControl,
 	Select,
 } from "@/components/ui";
-import { formatSvgMarkup, type IndentUnit } from "@/lib/svg/format-svg";
-import { svgToJsx } from "@/lib/svg/svg-to-jsx";
-import { cn } from "@/lib/utils/cn";
+import { formatSvgMarkup, type IndentUnitType } from "@/lib/utils";
+import { svgToJsx } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const SAMPLE = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
   <path d="M12 2 2 7l10 5 10-5-10-5Z" />
@@ -29,7 +29,7 @@ type OutputTab = "preview" | "jsx";
 type BackgroundId = "light" | "dark" | "checkered";
 type QuoteStyle = "double" | "single";
 
-const INDENTS: { label: string; value: IndentUnit }[] = [
+const INDENTS: { label: string; value: IndentUnitType }[] = [
 	{ label: "2 spaces", value: "  " },
 	{ label: "4 spaces", value: "    " },
 	{ label: "Tab", value: "\t" },
@@ -104,7 +104,7 @@ export default function SvgToJsxTool() {
 	const [svg, setSvg] = useState(SAMPLE);
 	const [componentName, setComponentName] = useState("Icon");
 	const [typescript, setTypescript] = useState(false);
-	const [indent, setIndent] = useState<IndentUnit>("  ");
+	const [indent, setIndent] = useState<IndentUnitType>("  ");
 	const [quotes, setQuotes] = useState<QuoteStyle>("double");
 	const [tab, setTab] = useState<OutputTab>("jsx");
 	const [background, setBackground] = useState<BackgroundId>("light");
@@ -374,7 +374,7 @@ export default function SvgToJsxTool() {
 													id="indent"
 													value={indent}
 													onChange={(e) =>
-														setIndent(e.target.value as IndentUnit)
+														setIndent(e.target.value as IndentUnitType)
 													}
 												>
 													{INDENTS.map((o) => (

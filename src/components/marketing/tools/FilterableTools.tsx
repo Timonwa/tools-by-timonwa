@@ -7,7 +7,7 @@ import ToolGrid from "@/components/_shared/tool/ToolGrid";
 import { ToggleButton } from "@/components/ui";
 import { type CategoryIdType, TOOL_CATEGORIES } from "@/lib/config/categories";
 import { LIVE_TOOLS } from "@/lib/config/tools";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 /** Categories that actually have a live tool — empty ones never show a chip. */
 const PRESENT = TOOL_CATEGORIES.filter((c) =>

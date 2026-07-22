@@ -16,9 +16,11 @@ type AiToolPageProps = {
 	settings?: ReactNode;
 	menuSlot?: ReactNode;
 	children: ReactNode;
+	// SEO content block below the tool (per-slug MDX). Off for unlisted tools with no MDX.
+	showToolContent?: boolean;
 };
 
-/** Page shell for the AI tools: navbar with usage notice, BYOK, optional settings drawer, then the tool + SEO content. */
+/** Page shell for the AI tools: navbar with usage notice, BYOK, optional settings drawer, then the tool + (optional) SEO content. */
 export default function AiToolPage({
 	slug,
 	name,
@@ -27,6 +29,7 @@ export default function AiToolPage({
 	settings,
 	menuSlot,
 	children,
+	showToolContent = true,
 }: AiToolPageProps) {
 	return (
 		<>
@@ -44,7 +47,7 @@ export default function AiToolPage({
 			<ToolMain>
 				<ToolBreadcrumbs slug={slug} name={name} />
 				{children}
-				<ToolContent currentSlug={slug} />
+				{showToolContent && <ToolContent currentSlug={slug} />}
 			</ToolMain>
 		</>
 	);

@@ -1,3 +1,5 @@
+// Typed route path builders for every page in the app.
+
 import type { Route } from "next";
 
 /**

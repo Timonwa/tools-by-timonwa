@@ -1,7 +1,7 @@
 import { ChevronDownIcon } from "lucide-react";
 import type * as React from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 /** A styled native select with a chevron affordance. */
 export default function Select({

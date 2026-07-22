@@ -3,9 +3,9 @@
 import { InfoIcon, TriangleAlertIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { OPEN_BYOK_EVENT } from "@/lib/config/byok";
-import { cn } from "@/lib/utils/cn";
-import { subscribeHostedUsage } from "@/lib/utils/hosted-usage-signal";
+import { OPEN_BYOK_EVENT } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+import { subscribeHostedUsage } from "@/lib/utils";
 
 type Props = {
 	perUserDaily: number;

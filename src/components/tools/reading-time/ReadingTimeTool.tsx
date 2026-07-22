@@ -2,8 +2,8 @@
 
 import { useId, useMemo, useState } from "react";
 
-import DraftReuseControls from "@/components/_shared/draft/DraftReuseControls";
-import { useToolDraft } from "@/lib/hooks/use-tool-draft";
+import SourceReuseControls from "@/components/_shared/source/SourceReuseControls";
+import { useArticleSource } from "@/lib/hooks";
 import {
 	Card,
 	CardContent,
@@ -12,7 +12,7 @@ import {
 	Textarea,
 	ToggleButton,
 } from "@/components/ui";
-import { countWords } from "@/lib/text/counts";
+import { countWords } from "@/lib/utils";
 import {
 	durationSeconds,
 	formatDuration,
@@ -20,7 +20,7 @@ import {
 	readingMinutes,
 	type ReadingSpeedType,
 	SPEAKING_WPM,
-} from "@/lib/text/reading-time";
+} from "@/lib/utils";
 
 const SPEEDS: { id: ReadingSpeedType; label: string }[] = [
 	{ id: "slow", label: "Slow" },
@@ -31,7 +31,8 @@ const SPEEDS: { id: ReadingSpeedType; label: string }[] = [
 const numberFmt = new Intl.NumberFormat("en-US");
 
 export default function ReadingTimeTool() {
-	const { text, setText, textReuse, toggleTextReuse, clear } = useToolDraft();
+	const { text, setText, textReuse, toggleTextReuse, clear } =
+		useArticleSource();
 	const [speed, setSpeed] = useState<ReadingSpeedType>("average");
 	const reuseId = useId();
 
@@ -55,7 +56,7 @@ export default function ReadingTimeTool() {
 							className="min-h-64 max-h-96 overflow-y-auto no-scrollbar"
 						/>
 					</div>
-					<DraftReuseControls
+					<SourceReuseControls
 						id={reuseId}
 						reuse={textReuse}
 						onToggleReuse={toggleTextReuse}

@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type CheckboxProps = Omit<ComponentProps<"input">, "type"> & {
 	label: ReactNode;

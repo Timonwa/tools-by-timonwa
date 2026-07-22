@@ -4,7 +4,7 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 
 import Button from "./Button";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type CopyButtonProps = {
 	value: string;

@@ -8,7 +8,7 @@ import {
 
 import { IconBadge, Section, SectionHeader } from "@/components/ui";
 import { TINT_TEXT, type TintType } from "@/lib/config/tints";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 const STEPS: {
 	icon: typeof MousePointerClickIcon;

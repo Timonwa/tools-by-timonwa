@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode, SVGProps } from "react";
 import { useId } from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type IconComponentType = ComponentType<SVGProps<SVGSVGElement>>;
 

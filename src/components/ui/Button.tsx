@@ -1,6 +1,6 @@
 import type * as React from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type VariantType =
 	"default" | "destructive" | "outline" | "secondary" | "ghost" | "link";

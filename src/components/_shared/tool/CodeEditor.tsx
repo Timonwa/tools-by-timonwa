@@ -3,7 +3,7 @@
 import Editor from "react-simple-code-editor";
 import { highlight } from "sugar-high";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type CodeEditorProps = {
 	value: string;

@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@/components/ui";
 import type { BreadcrumbItemType } from "@/components/ui/Breadcrumbs";
 import { getCategory } from "@/lib/config/categories";
 import { ROUTES } from "@/lib/config/routes";
-import { getPrimaryCategory, getToolBySlug } from "@/lib/config/tools";
+import { getPrimaryCategoryId, getToolBySlug } from "@/lib/config/tools";
 
 /** Tool breadcrumb (Home › Tools › category › tool) with the share control on the opposite edge of the same row; the category deep-links the filtered /tools. */
 export default function ToolBreadcrumbs({
@@ -14,7 +14,7 @@ export default function ToolBreadcrumbs({
 	name: string;
 }) {
 	const tool = getToolBySlug(slug);
-	const category = tool ? getCategory(getPrimaryCategory(tool)) : undefined;
+	const category = tool ? getCategory(getPrimaryCategoryId(tool)) : undefined;
 
 	const items: BreadcrumbItemType[] = [
 		{ label: "Home", href: ROUTES.home },

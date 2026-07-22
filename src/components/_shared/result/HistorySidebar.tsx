@@ -16,7 +16,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui";
-import { timeAgo } from "@/lib/utils/time";
+import { timeAgo } from "@/lib/utils";
 
 type HistoryItemType = {
 	id: string;

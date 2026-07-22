@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 const CARD_BASE =
 	"group relative flex h-full flex-col rounded-xl border border-border bg-card p-5 shadow-sm transition-all";

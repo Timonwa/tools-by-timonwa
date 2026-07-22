@@ -1,3 +1,5 @@
+// Validated environment variables (server + public) with typed access.
+
 import "server-only";
 
 import { z } from "zod";

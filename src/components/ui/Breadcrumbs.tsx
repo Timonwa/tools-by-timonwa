@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Fragment, useState } from "react";
 
 import { SITE_URL } from "@/lib/config/site";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 export type BreadcrumbItemType = { label: string; href?: Route };
 

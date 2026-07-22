@@ -1,7 +1,7 @@
 import type { ComponentType, SVGProps } from "react";
 
 import { type TintType, TINT_ICON } from "@/lib/config/tints";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 type IconBadgeSize = "md" | "lg";
 

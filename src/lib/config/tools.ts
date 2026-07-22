@@ -1,3 +1,5 @@
+// The tool registry — one entry per tool wiring it into the home grid, navbar, and sitemap.
+
 import type { Route } from "next";
 import {
 	CaseSensitiveIcon,
@@ -125,8 +127,8 @@ export const LIVE_TOOLS: ToolType[] = TOOLS.filter((t) => t.status !== "soon");
 /** The curated set shown on the home page (falls back to nothing if unset). */
 export const FEATURED_TOOLS: ToolType[] = LIVE_TOOLS.filter((t) => t.featured);
 
-/** A tool's primary category — the first one, shown in its breadcrumb. */
-export const getPrimaryCategory = (tool: ToolType): CategoryIdType =>
+/** A tool's primary category id — the first one, shown in its breadcrumb. Resolve to the full category via `getCategory`. */
+export const getPrimaryCategoryId = (tool: ToolType): CategoryIdType =>
 	tool.categories[0];
 
 /** Live tools that belong to a category (alphabetical, following TOOLS). */

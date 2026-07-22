@@ -10,13 +10,10 @@ import {
 	OutputBlock,
 	Textarea,
 } from "@/components/ui";
-import {
-	HASH_ALGORITHMS,
-	type HashAlgorithm,
-	hashText,
-} from "@/lib/crypto/hash";
+import { HASH_ALGORITHMS, type HashAlgorithmType } from "@/lib/constants";
+import { hashText } from "@/lib/utils";
 
-type Hashes = Record<HashAlgorithm, string>;
+type Hashes = Record<HashAlgorithmType, string>;
 
 const EMPTY_HASHES = Object.fromEntries(
 	HASH_ALGORITHMS.map((algorithm) => [algorithm, ""]),

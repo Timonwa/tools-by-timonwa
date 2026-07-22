@@ -9,10 +9,10 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui";
-import type { TokenUsageType } from "@/lib/types/token-usage";
+import type { ArticleMetaType, TokenUsageType } from "@/lib/types";
 
 type Props = {
-	article: { title?: string; author?: string; url?: string };
+	article: ArticleMetaType;
 	usage: TokenUsageType | null;
 	copied: boolean;
 	onCopyAll: () => void;

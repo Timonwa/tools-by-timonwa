@@ -28,6 +28,3 @@ export const BYOK_MODELS: {
 		description: "Highest quality. Lowest free tier.",
 	},
 ];
-
-/** Custom event fired to open the BYOK drawer — listened for by `<ByokDrawer />` in the Navbar. */
-export const OPEN_BYOK_EVENT = "hub:open-byok";

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 /** The shared page container for every tool — owns max-width and padding so all tools align; pass `className` to override for narrower layouts. */
 export default function ToolMain({

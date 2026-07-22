@@ -1,6 +1,6 @@
 import { AlertCircleIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 
 /** The shared error banner. `message` must already be a user-facing string (see `toUserMessage`). */
 export default function ErrorNotice({
