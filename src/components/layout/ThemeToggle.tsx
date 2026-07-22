@@ -44,6 +44,7 @@ export default function ThemeToggle({
 			label={label}
 			tooltipAlign="end"
 			onClick={() => setTheme(NEXT[theme])}
+			className="hidden md:block"
 		>
 			<Icon aria-hidden className="w-4 h-4" />
 		</NavIconButton>
