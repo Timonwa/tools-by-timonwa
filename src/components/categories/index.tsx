@@ -1,9 +1,9 @@
 import { TagsIcon } from "lucide-react";
 
 import Newsletter from "@/components/_shared/content/Newsletter";
-import CategoryGrid from "@/components/_shared/tool/CategoryGrid";
+import CategoryGrid from "@/components/_shared/category/CategoryGrid";
 import HubNavbar from "@/components/layout/HubNavbar";
-import ToolMain from "@/components/layout/ToolMain";
+import PageMain from "@/components/layout/PageMain";
 import { Breadcrumbs, PageHero } from "@/components/ui";
 import { ROUTES } from "@/lib/config/routes";
 
@@ -11,7 +11,7 @@ export default function CategoriesPageContent() {
 	return (
 		<>
 			<HubNavbar />
-			<ToolMain>
+			<PageMain>
 				<Breadcrumbs
 					items={[
 						{ label: "Home", href: ROUTES.home },
@@ -32,7 +32,7 @@ export default function CategoriesPageContent() {
 				<h2 className="sr-only">All categories</h2>
 				<CategoryGrid />
 				<Newsletter className="mt-16" />
-			</ToolMain>
+			</PageMain>
 		</>
 	);
 }

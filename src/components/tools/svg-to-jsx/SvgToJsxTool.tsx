@@ -4,12 +4,12 @@ import DOMPurify from "dompurify";
 import { DownloadIcon, SettingsIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import CodeEditor from "@/components/_shared/tool/CodeEditor";
 import {
 	Button,
 	Card,
 	CardContent,
 	CardHeader,
+	CodeEditor,
 	CopyButton,
 	Input,
 	SegmentedControl,

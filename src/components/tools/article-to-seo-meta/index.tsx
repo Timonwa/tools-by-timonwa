@@ -1,8 +1,8 @@
 import { SearchIcon } from "lucide-react";
 
 import AiToolPage from "@/components/_shared/page/AiToolPage";
-import Hero from "./Hero";
-import HostedUsageNotice from "./HostedUsageNotice";
+import SeoMetaHero from "./SeoMetaHero";
+import SeoMetaHostedUsageNotice from "./SeoMetaHostedUsageNotice";
 import SeoMetaTool from "./SeoMetaTool";
 
 export default function ArticleToSeoMetaPageContent() {
@@ -11,9 +11,9 @@ export default function ArticleToSeoMetaPageContent() {
 			slug="article-to-seo-meta"
 			name="Article to SEO Meta"
 			icon={SearchIcon}
-			usageNotice={<HostedUsageNotice />}
+			usageNotice={<SeoMetaHostedUsageNotice />}
 		>
-			<Hero />
+			<SeoMetaHero />
 			<SeoMetaTool />
 		</AiToolPage>
 	);

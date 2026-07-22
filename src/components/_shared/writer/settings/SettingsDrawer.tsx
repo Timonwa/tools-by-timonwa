@@ -6,7 +6,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import type { WriterRuntimeType } from "@/lib/types";
 import { OPEN_SOCIAL_POST_SETTINGS_EVENT } from "@/lib/constants";
 import type { SocialPostStyleType } from "@/lib/types";
-import TemplatesPicker from "@/components/_shared/tool/writer/TemplatesPicker";
+import TemplatesPicker from "@/components/_shared/writer/TemplatesPicker";
 import NavIconButton from "@/components/layout/NavIconButton";
 import { Button, Drawer } from "@/components/ui";
 

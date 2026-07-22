@@ -3,7 +3,7 @@ import type { ComponentType, ReactNode, SVGProps } from "react";
 import ToolContent from "../content/ToolContent";
 import ToolBreadcrumbs from "../tool/ToolBreadcrumbs";
 import Navbar from "@/components/layout/Navbar";
-import ToolMain from "@/components/layout/ToolMain";
+import PageMain from "@/components/layout/PageMain";
 import { PageHero } from "@/components/ui";
 import { ROUTES } from "@/lib/config/routes";
 
@@ -55,10 +55,10 @@ export default function ClientToolPage({
 				}}
 				showByok={false}
 			/>
-			<ToolMain>
+			<PageMain>
 				{constrained ? <div className="mx-auto max-w-3xl">{hero}</div> : hero}
 				<ToolContent currentSlug={slug} />
-			</ToolMain>
+			</PageMain>
 		</>
 	);
 }

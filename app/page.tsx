@@ -1,4 +1,4 @@
-import HubHomePageContent from "@/components/marketing/home";
+import HubHomePageContent from "@/components/home";
 
 export default function HubHome() {
 	return <HubHomePageContent />;

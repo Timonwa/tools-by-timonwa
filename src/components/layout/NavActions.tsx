@@ -17,7 +17,7 @@ import { GithubMark } from "@/components/ui/logos";
 import ByokDrawer from "@/components/_shared/byok/ByokDrawer";
 import NavIconButton from "./NavIconButton";
 import ToolsMenu from "./ToolsMenu";
-import ThemeToggle from "@/components/theme/ThemeToggle";
+import ThemeToggle from "@/components/layout/ThemeToggle";
 import { ROUTES } from "@/lib/config/routes";
 import { REPO_URL, SUPPORT_URL } from "@/lib/config/site";
 import { cn } from "@/lib/utils";

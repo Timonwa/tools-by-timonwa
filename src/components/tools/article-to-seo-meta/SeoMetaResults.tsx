@@ -125,7 +125,7 @@ function VariationCard({
 				<div className="flex gap-2">
 					<CopyButton
 						label="Copy both"
-						value={`${variation.title}\n\n${variation.description}`}
+						value={`Title: ${variation.title}\n\nDescription: ${variation.description}`}
 						className="flex-1"
 					/>
 					<Tooltip label="Regenerate this variation">

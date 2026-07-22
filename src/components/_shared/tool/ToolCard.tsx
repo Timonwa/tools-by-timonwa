@@ -4,7 +4,7 @@ import { Badge, IconBadge, LinkCard } from "@/components/ui";
 import { getCategory } from "@/lib/config/categories";
 import { getPrimaryCategoryId, type ToolType } from "@/lib/config/tools";
 
-import CategoryBadge from "./CategoryBadge";
+import CategoryBadge from "@/components/_shared/category/CategoryBadge";
 
 /** A tool tile — icon, name, tagline, category badges; colored by primary category. "Soon" renders dimmed. */
 export default function ToolCard({ tool }: { tool: ToolType }) {
