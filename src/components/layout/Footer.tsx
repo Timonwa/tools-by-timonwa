@@ -1,4 +1,4 @@
-import { HandCoinsIcon, WrenchIcon } from "lucide-react";
+import { HeartIcon, WrenchIcon } from "lucide-react";
 import Link from "next/link";
 
 import { GithubMark, LinkedInLogo, XLogo } from "@/components/ui/logos";
@@ -128,7 +128,7 @@ export default function Footer() {
 									<LinkedInLogo aria-hidden className="h-4 w-4" />
 								</a>
 							</Tooltip>
-							<Tooltip label="Support the project" align="start">
+							<Tooltip label="Support these free tools" align="start">
 								<a
 									href={SUPPORT_URL}
 									target="_blank"
@@ -136,7 +136,7 @@ export default function Footer() {
 									aria-label="Support the project"
 									className={iconLinkClass}
 								>
-									<HandCoinsIcon aria-hidden className="h-4 w-4" />
+									<HeartIcon aria-hidden className="h-4 w-4" />
 								</a>
 							</Tooltip>
 						</div>
