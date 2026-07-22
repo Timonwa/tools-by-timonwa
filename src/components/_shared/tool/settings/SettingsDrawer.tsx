@@ -4,20 +4,14 @@ import { PenLineIcon } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 import type { WriterRuntime } from "@/lib/tools/_shared/generator/writer-runtime";
-import {
-	OPEN_POST_SETTINGS_EVENT,
-	THREADABLE_POST_PLATFORMS,
-} from "@/lib/constants";
+import { OPEN_POST_SETTINGS_EVENT } from "@/lib/constants";
 import type { PostStyleType } from "@/lib/types";
-import PlatformPicker from "@/components/_shared/tool/writer/PlatformPicker";
 import TemplatesPicker from "@/components/_shared/tool/writer/TemplatesPicker";
-import ThreadFormat from "@/components/_shared/tool/writer/ThreadFormat";
-import TonePicker from "@/components/_shared/tool/writer/TonePicker";
 import NavIconButton from "@/components/layout/NavIconButton";
 import { Button, Drawer } from "@/components/ui";
 
-import HashtagRulesSection from "./HashtagRules";
-import WritingPreferencesSection from "./WritingPreferences";
+import HashtagsSection from "./Hashtags";
+import WritingStyleControls from "./WritingStyleControls";
 
 export type SettingsPresentationType = "icon" | "menuItem";
 
@@ -27,7 +21,7 @@ type SettingsDrawerProps = {
 	drawerClassName?: string;
 };
 
-/** Slide-out drawer for a tool's writing defaults, bound to a tool via runtime; presentation picks the trigger — bar icon or full-width menu row. */
+/** Slide-out drawer for a tool's writing style, bound to a tool via runtime; presentation picks the trigger — bar icon or full-width menu row. */
 export default function SettingsDrawer({
 	runtime,
 	presentation = "icon",
@@ -35,30 +29,24 @@ export default function SettingsDrawer({
 }: SettingsDrawerProps) {
 	const { stores, features } = runtime;
 	const [open, setOpen] = useState(false);
-	const prefs = useSyncExternalStore(
+	const style = useSyncExternalStore(
 		stores.styleStorage.subscribe,
 		stores.styleStorage.getSnapshot,
 		stores.styleStorage.getServerSnapshot,
 	);
-	const workflow = useSyncExternalStore(
-		stores.workflowStorage.subscribe,
-		stores.workflowStorage.getSnapshot,
-		stores.workflowStorage.getServerSnapshot,
-	);
-	const { platforms, xThreadLength } = workflow;
 	const styleTemplates = runtime.useStyleTemplates();
 
-	// Open on request from elsewhere (e.g. the generate form's entry button).
-	// Only the always-mounted bar icon listens, so a dispatch never opens two drawers.
+	// Open on request from the generate form's "Writing style" button. The menu-item
+	// instance is the always-mounted listener, so one dispatch opens exactly one drawer.
 	useEffect(() => {
-		if (presentation !== "icon") return;
+		if (presentation !== "menuItem") return;
 		const handler = () => setOpen(true);
 		window.addEventListener(OPEN_POST_SETTINGS_EVENT, handler);
 		return () => window.removeEventListener(OPEN_POST_SETTINGS_EVENT, handler);
 	}, [presentation]);
 
-	const updatePrefs = (patch: Partial<PostStyleType>) => {
-		stores.styleStorage.set({ ...prefs, ...patch });
+	const updateStyle = (patch: Partial<PostStyleType>) => {
+		stores.styleStorage.set({ ...style, ...patch });
 	};
 
 	return (
@@ -72,11 +60,11 @@ export default function SettingsDrawer({
 					className="w-full justify-start"
 				>
 					<PenLineIcon aria-hidden className="w-4 h-4" />
-					<span>Writing preferences</span>
+					<span>Writing style</span>
 				</Button>
 			) : (
 				<NavIconButton
-					label="Writing preferences"
+					label="Writing style"
 					tooltipAlign="end"
 					onClick={() => setOpen(true)}
 					aria-expanded={open}
@@ -94,10 +82,10 @@ export default function SettingsDrawer({
 				title={
 					<span className="flex items-center gap-2">
 						<PenLineIcon aria-hidden className="w-4 h-4 text-primary" />
-						Writing preferences
+						Writing style
 					</span>
 				}
-				description="Your defaults for every generation, saved on this device."
+				description="How your posts sound — saved on this device and reusable as style templates."
 			>
 				<div className="px-4 sm:px-5 py-5 flex flex-col gap-6">
 					<TemplatesPicker
@@ -111,28 +99,17 @@ export default function SettingsDrawer({
 						collapsible
 					/>
 
-					<TonePicker value={prefs.tone} onChange={stores.setTone} />
+					<div className="border-t border-border/50" />
 
-					<PlatformPicker value={platforms} onToggle={stores.togglePlatform} />
-
-					{platforms.some((p) => THREADABLE_POST_PLATFORMS.includes(p)) && (
-						<ThreadFormat
-							length={xThreadLength}
-							onChange={stores.setXThreadLength}
-						/>
-					)}
+					<WritingStyleControls prefs={style} onChange={updateStyle} />
 
 					<div className="border-t border-border/50" />
 
-					<WritingPreferencesSection prefs={prefs} onChange={updatePrefs} />
-
-					{features.hashtagRules && (
-						<>
-							<div className="border-t border-border/50" />
-
-							<HashtagRulesSection prefs={prefs} onChange={updatePrefs} />
-						</>
-					)}
+					<HashtagsSection
+						prefs={style}
+						onChange={updateStyle}
+						showRules={features.hashtagRules}
+					/>
 				</div>
 			</Drawer>
 		</>

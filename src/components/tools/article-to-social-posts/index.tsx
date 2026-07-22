@@ -13,7 +13,6 @@ export default function ArticleToSocialPostsPageContent() {
 			name="Article to Social Posts"
 			icon={Share2Icon}
 			usageNotice={<HostedUsageNotice />}
-			settings={<ArticleSettingsDrawer />}
 			menuSlot={<ArticleSettingsDrawer presentation="menuItem" />}
 		>
 			<Hero />

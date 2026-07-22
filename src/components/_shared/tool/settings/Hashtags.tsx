@@ -2,24 +2,32 @@
 
 import { HashIcon, XIcon } from "lucide-react";
 import { useId, useState } from "react";
-import { MAX_POST_HASHTAG_RULES_PER_LIST } from "@/lib/constants";
+import {
+	MAX_POST_HASHTAG_RULES_PER_LIST,
+	POST_DENSITY_LEVELS,
+	POST_HASHTAG_DENSITY_LABELS,
+} from "@/lib/constants";
 import { normalizeHashtag } from "@/lib/utils/generator/hashtag";
 import type { PostStyleType } from "@/lib/types";
-import { Badge, Input } from "@/components/ui";
+import { Badge, Input, ToggleButton } from "@/components/ui";
 
-type HashtagRulesProps = {
+type HashtagsProps = {
 	prefs: PostStyleType;
 	onChange: (patch: Partial<PostStyleType>) => void;
+	// Always-include / never-use lists — only for tools that enable hashtag rules.
+	showRules?: boolean;
 };
 
 type FieldType = "alwaysIncludeHashtags" | "neverUseHashtags";
 
-/** Hashtag allow/block rule editor — always-include and never-use lists. */
-export default function HashtagRulesSection({
+/** All hashtag settings in one place: how many the agent adds (amount), plus optional always-include / never-use rules. */
+export default function HashtagsSection({
 	prefs,
 	onChange,
-}: HashtagRulesProps) {
+	showRules,
+}: HashtagsProps) {
 	const headingId = useId();
+	const amountLabelId = useId();
 
 	const add = (field: FieldType, raw: string) => {
 		const tag = normalizeHashtag(raw);
@@ -39,29 +47,60 @@ export default function HashtagRulesSection({
 			<div className="flex items-center gap-2">
 				<HashIcon aria-hidden className="w-4 h-4 text-primary" />
 				<h3 id={headingId} className="text-sm font-semibold">
-					Hashtag rules
+					Hashtags
 				</h3>
 			</div>
-			<p className="text-xs text-muted-foreground">
-				Fixed rules the agent applies to every post. Tag suggestions from the
-				agent still follow your hashtag-level setting above.
-			</p>
 
-			<TagList
-				label="Always include"
-				helper="Added to every generated post (counts toward the hashtag budget)."
-				tags={prefs.alwaysIncludeHashtags}
-				onAdd={(raw) => add("alwaysIncludeHashtags", raw)}
-				onRemove={(tag) => remove("alwaysIncludeHashtags", tag)}
-			/>
+			<div className="flex flex-col gap-2">
+				<div className="flex items-center justify-between">
+					<span
+						id={amountLabelId}
+						className="text-xs font-medium text-foreground"
+					>
+						Amount
+					</span>
+					<span className="text-[11px] text-muted-foreground">
+						{POST_HASHTAG_DENSITY_LABELS[prefs.hashtagLevel]}
+					</span>
+				</div>
+				<fieldset
+					aria-labelledby={amountLabelId}
+					className="grid grid-cols-5 gap-1 border-0 p-0 m-0 min-w-0"
+				>
+					{POST_DENSITY_LEVELS.map((n) => (
+						<ToggleButton
+							key={n}
+							size="sm"
+							active={prefs.hashtagLevel === n}
+							aria-pressed={prefs.hashtagLevel === n}
+							aria-label={`Hashtag amount ${n}: ${POST_HASHTAG_DENSITY_LABELS[n]}`}
+							onClick={() => onChange({ hashtagLevel: n })}
+						>
+							<span className="font-mono">{n}</span>
+						</ToggleButton>
+					))}
+				</fieldset>
+			</div>
 
-			<TagList
-				label="Never use"
-				helper="Filtered out of every post (case-insensitive)."
-				tags={prefs.neverUseHashtags}
-				onAdd={(raw) => add("neverUseHashtags", raw)}
-				onRemove={(tag) => remove("neverUseHashtags", tag)}
-			/>
+			{showRules && (
+				<>
+					<TagList
+						label="Always include"
+						helper="Added to every generated post (counts toward the amount)."
+						tags={prefs.alwaysIncludeHashtags}
+						onAdd={(raw) => add("alwaysIncludeHashtags", raw)}
+						onRemove={(tag) => remove("alwaysIncludeHashtags", tag)}
+					/>
+
+					<TagList
+						label="Never use"
+						helper="Filtered out of every generated post (case-insensitive)."
+						tags={prefs.neverUseHashtags}
+						onAdd={(raw) => add("neverUseHashtags", raw)}
+						onRemove={(tag) => remove("neverUseHashtags", tag)}
+					/>
+				</>
+			)}
 		</section>
 	);
 }

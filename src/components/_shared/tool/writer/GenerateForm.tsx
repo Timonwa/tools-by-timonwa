@@ -11,9 +11,9 @@ import ErrorNotice from "@/components/_shared/result/ErrorNotice";
 import type { ArticleInputKindType } from "@/lib/types";
 import {
 	MAX_ARTICLE_INPUT_CHARS,
+	OPEN_POST_SETTINGS_EVENT,
 	type PostPlatformType,
 	THREADABLE_POST_PLATFORMS,
-	type PostToneType,
 } from "@/lib/constants";
 import type { PostStyleTemplateType } from "@/lib/types";
 import {
@@ -25,10 +25,8 @@ import {
 	CardTitle,
 } from "@/components/ui";
 
-import WritingPreferencesButton from "@/components/_shared/tool/settings/WritingPreferencesButton";
 import PlatformPicker from "./PlatformPicker";
 import TemplatesPicker from "./TemplatesPicker";
-import TonePicker from "./TonePicker";
 import ThreadFormat from "./ThreadFormat";
 
 type GenerateFormProps = {
@@ -43,8 +41,6 @@ type GenerateFormProps = {
 	urlReuse: boolean;
 	onToggleUrlReuse: (next: boolean) => void;
 	onClearDraft: () => void;
-	tone: PostToneType;
-	onToneChange: (tone: PostToneType) => void;
 	platforms: PostPlatformType[];
 	onTogglePlatform: (p: PostPlatformType) => void;
 	xThreadLength: number;
@@ -77,8 +73,6 @@ export default function GenerateForm({
 	urlReuse,
 	onToggleUrlReuse,
 	onClearDraft,
-	tone,
-	onToneChange,
 	platforms,
 	onTogglePlatform,
 	xThreadLength,
@@ -128,6 +122,10 @@ export default function GenerateForm({
 						onDelete={onDeleteTemplate}
 						onUpdate={onUpdateTemplate}
 						onRename={onRenameTemplate}
+						onOpenSettings={() =>
+							window.dispatchEvent(new Event(OPEN_POST_SETTINGS_EVENT))
+						}
+						selectOnly
 						disabled={isGenerating}
 						collapsible
 					/>
@@ -148,12 +146,6 @@ export default function GenerateForm({
 						maxChars={MAX_ARTICLE_INPUT_CHARS}
 					/>
 
-					<TonePicker
-						value={tone}
-						onChange={onToneChange}
-						disabled={isGenerating}
-					/>
-
 					<PlatformPicker
 						value={platforms}
 						onToggle={onTogglePlatform}
@@ -167,8 +159,6 @@ export default function GenerateForm({
 							disabled={isGenerating}
 						/>
 					)}
-
-					<WritingPreferencesButton disabled={isGenerating} />
 
 					<div className="flex flex-col gap-2 sm:flex-row">
 						<Button

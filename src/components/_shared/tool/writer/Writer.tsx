@@ -47,8 +47,6 @@ export default function Writer({ runtime }: { runtime: WriterRuntime }) {
 					urlReuse={w.urlReuse}
 					onToggleUrlReuse={w.toggleUrlReuse}
 					onClearDraft={w.clearDraft}
-					tone={w.tone}
-					onToneChange={w.setTone}
 					platforms={w.platforms}
 					onTogglePlatform={w.togglePlatform}
 					xThreadLength={w.xThreadLength}

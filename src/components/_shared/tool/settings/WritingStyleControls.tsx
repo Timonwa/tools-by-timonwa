@@ -1,13 +1,12 @@
 "use client";
 
-import { PaletteIcon } from "lucide-react";
 import { useId } from "react";
 
 import { ToggleButton } from "@/components/ui";
+import TonePicker from "@/components/_shared/tool/writer/TonePicker";
 
 import {
 	POST_EMOJI_DENSITY_LABELS,
-	POST_HASHTAG_DENSITY_LABELS,
 	type PostDensityLevelType,
 	LONGFORM_POST_LENGTH_LABELS,
 	type LongformPostLengthType,
@@ -16,7 +15,7 @@ import {
 } from "@/lib/constants";
 import type { PostStyleType } from "@/lib/types";
 
-type WritingPreferencesProps = {
+type WritingStyleControlsProps = {
 	prefs: PostStyleType;
 	onChange: (patch: Partial<PostStyleType>) => void;
 };
@@ -27,7 +26,7 @@ const POST_LENGTHS = Object.keys(
 	LONGFORM_POST_LENGTH_LABELS,
 ) as LongformPostLengthType[];
 
-/** Styled ToggleButton alias used across every preference fieldset. */
+/** Styled ToggleButton alias used across the style fieldsets. */
 function Chip({
 	active,
 	label,
@@ -52,28 +51,18 @@ function Chip({
 	);
 }
 
-/** Voice, emoji density, hashtag density, and post-length preference controls. */
-export default function WritingPreferencesSection({
+/** Voice, emoji density, and post-length controls — the core of a writing style. Tone and hashtags are their own controls in the same panel. */
+export default function WritingStyleControls({
 	prefs,
 	onChange,
-}: WritingPreferencesProps) {
-	const headingId = useId();
+}: WritingStyleControlsProps) {
 	const voiceLabelId = useId();
 	const emojiLabelId = useId();
-	const hashtagLabelId = useId();
 	const lengthLabelId = useId();
 
 	return (
-		<section aria-labelledby={headingId} className="flex flex-col gap-4">
-			<div className="flex items-center gap-2">
-				<PaletteIcon aria-hidden className="w-4 h-4 text-primary" />
-				<h3 id={headingId} className="text-sm font-semibold">
-					Writing style
-				</h3>
-			</div>
-			<p className="text-xs text-muted-foreground">
-				Applied to every post. Stored on this device.
-			</p>
+		<div className="flex flex-col gap-4">
+			<TonePicker value={prefs.tone} onChange={(tone) => onChange({ tone })} />
 
 			<div className="flex flex-col gap-2">
 				<div id={voiceLabelId} className="text-xs font-medium text-foreground">
@@ -126,35 +115,6 @@ export default function WritingPreferencesSection({
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<div className="flex items-center justify-between">
-					<span
-						id={hashtagLabelId}
-						className="text-xs font-medium text-foreground"
-					>
-						Hashtags
-					</span>
-					<span className="text-[11px] text-muted-foreground">
-						{POST_HASHTAG_DENSITY_LABELS[prefs.hashtagLevel]}
-					</span>
-				</div>
-				<fieldset
-					aria-labelledby={hashtagLabelId}
-					className="grid grid-cols-5 gap-1 border-0 p-0 m-0 min-w-0"
-				>
-					{LEVELS.map((n) => (
-						<Chip
-							key={n}
-							active={prefs.hashtagLevel === n}
-							label={`Hashtag level ${n}: ${POST_HASHTAG_DENSITY_LABELS[n]}`}
-							onClick={() => onChange({ hashtagLevel: n })}
-						>
-							<span className="font-mono">{n}</span>
-						</Chip>
-					))}
-				</fieldset>
-			</div>
-
-			<div className="flex flex-col gap-2">
 				<div id={lengthLabelId} className="text-xs font-medium text-foreground">
 					Post length{" "}
 					<span className="text-muted-foreground font-normal">
@@ -180,6 +140,6 @@ export default function WritingPreferencesSection({
 					Approximate characters per post.
 				</p>
 			</div>
-		</section>
+		</div>
 	);
 }

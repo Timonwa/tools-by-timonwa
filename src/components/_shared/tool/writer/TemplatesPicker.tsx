@@ -5,6 +5,7 @@ import {
 	CheckIcon,
 	ChevronDownIcon,
 	PencilIcon,
+	PenLineIcon,
 	RefreshCwIcon,
 	Trash2Icon,
 	XIcon,
@@ -37,9 +38,13 @@ type TemplatesPickerProps = {
 	onRename: (id: string, name: string) => void;
 	disabled?: boolean;
 	collapsible?: boolean;
+	// When set, shows a button that opens the full Writing style panel.
+	onOpenSettings?: () => void;
+	// Apply-only: hides save/rename/update/delete (used on the generate form).
+	selectOnly?: boolean;
 };
 
-/** Preset manager — save, apply, rename, update, and delete named setting bundles. */
+/** Style-template picker — apply a saved writing style on click. Unless `selectOnly`, also save the current style and rename/update/delete existing ones. */
 export default function TemplatesPicker({
 	templates,
 	activeTemplateId,
@@ -50,6 +55,8 @@ export default function TemplatesPicker({
 	onRename,
 	disabled,
 	collapsible,
+	onOpenSettings,
+	selectOnly,
 }: TemplatesPickerProps) {
 	const [nameDraft, setNameDraft] = useState("");
 	const [isSaving, setIsSaving] = useState(false);
@@ -74,7 +81,7 @@ export default function TemplatesPicker({
 
 	return (
 		<div className="flex flex-col rounded-md border border-border bg-muted/30 p-2.5 gap-2">
-			<div className="flex items-center justify-between">
+			<div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
 				{collapsible ? (
 					<button
 						type="button"
@@ -97,51 +104,67 @@ export default function TemplatesPicker({
 								expanded && "rotate-180",
 							)}
 						/>
-						{activeTemplate && (
-							<Badge variant="primary" className="min-w-0">
-								<CheckIcon aria-hidden className="w-3 h-3 shrink-0" />
-								<span className="max-w-32 truncate">{activeTemplate.name}</span>
-							</Badge>
-						)}
 					</button>
 				) : (
 					<div className="flex items-center gap-1.5 text-xs font-medium">
 						<BookmarkIcon aria-hidden className="w-3.5 h-3.5 text-primary" />
-						Presets
+						Style templates
 					</div>
 				)}
-				{!isSaving && (
-					<button
-						type="button"
-						onClick={() => {
-							setIsSaving(true);
-							setExpanded(true);
-						}}
-						disabled={disabled || full || Boolean(activeTemplate)}
-						title={
-							full
-								? `Max ${MAX_POST_STYLE_TEMPLATES} style templates — delete one first`
-								: activeTemplate
-									? `This writing style is already saved as “${activeTemplate.name}”`
-									: "Save the current writing style as a reusable template"
-						}
-						className="text-[11px] text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
-					>
-						+ Save current
-					</button>
+
+				{activeTemplate && (
+					<Badge variant="primary" className="min-w-0 max-w-full">
+						<CheckIcon aria-hidden className="w-3 h-3 shrink-0" />
+						<span className="truncate">{activeTemplate.name}</span>
+					</Badge>
 				)}
+
+				<div className="ml-auto flex shrink-0 items-center gap-2">
+					{onOpenSettings && (
+						<button
+							type="button"
+							onClick={onOpenSettings}
+							disabled={disabled}
+							className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline disabled:cursor-not-allowed disabled:opacity-50 disabled:no-underline"
+						>
+							<PenLineIcon aria-hidden className="w-3.5 h-3.5" />
+							Writing style
+						</button>
+					)}
+					{!selectOnly && !isSaving && (
+						<button
+							type="button"
+							onClick={() => {
+								setIsSaving(true);
+								setExpanded(true);
+							}}
+							disabled={disabled || full || Boolean(activeTemplate)}
+							title={
+								full
+									? `Max ${MAX_POST_STYLE_TEMPLATES} style templates — delete one first`
+									: activeTemplate
+										? `This writing style is already saved as “${activeTemplate.name}”`
+										: "Save the current writing style as a reusable template"
+							}
+							className="text-[11px] text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
+						>
+							+ Save current
+						</button>
+					)}
+				</div>
 			</div>
 
 			{expanded && (
 				<>
 					<p className="text-[11px] text-muted-foreground">
-						A saved writing style — tone, voice, emoji, hashtags, and length.
-						Apply one in a click, update it to your current style, or rename it.
+						{selectOnly
+							? "Apply a saved writing style in a click. Create and edit styles under Writing style."
+							: "A saved writing style — tone, voice, emoji, hashtags, and length. Apply one in a click, update it to your current style, or rename it."}
 					</p>
 
 					{isSaving && (
 						<div className="flex items-start gap-1.5">
-							<div className="flex flex-col min-w-0 flex-1 gap-1">
+							<div className="relative min-w-0 flex-1">
 								<Input
 									value={nameDraft}
 									onChange={(e) => setNameDraft(e.target.value)}
@@ -155,13 +178,13 @@ export default function TemplatesPicker({
 											cancelSave();
 										}
 									}}
-									placeholder="Name it (e.g. My X voice)"
+									placeholder="Name it (e.g. Acme blog voice)"
 									maxLength={MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
-									className="h-8 w-full text-xs"
+									className="h-8 w-full pr-12 text-xs"
 								/>
-								<p className="text-right text-[11px] text-muted-foreground tabular-nums">
+								<span className="pointer-events-none absolute bottom-1 right-2 text-[10px] text-muted-foreground tabular-nums">
 									{nameDraft.length}/{MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
-								</p>
+								</span>
 							</div>
 							<Tooltip label="Save style template">
 								<Button
@@ -190,13 +213,14 @@ export default function TemplatesPicker({
 
 					{templates.length === 0 ? (
 						<p className="text-[11px] text-muted-foreground italic">
-							Nothing saved yet. Set your writing style, then “Save current” to
-							reuse it in one click.
+							{selectOnly
+								? "No saved styles yet — create one under Writing style."
+								: "Nothing saved yet. Set your writing style, then “Save current” to reuse it in one click."}
 						</p>
 					) : (
 						<div className="flex flex-wrap items-center gap-1.5">
 							{templates.map((t) =>
-								editingId === t.id ? (
+								!selectOnly && editingId === t.id ? (
 									<TemplateEditor
 										key={t.id}
 										template={t}
@@ -211,6 +235,7 @@ export default function TemplatesPicker({
 										template={t}
 										active={activeTemplateId === t.id}
 										disabled={disabled}
+										editable={!selectOnly}
 										onApply={() => onApply(t)}
 										onEdit={() => setEditingId(t.id)}
 										onDelete={() => onDelete(t.id)}
@@ -225,11 +250,12 @@ export default function TemplatesPicker({
 	);
 }
 
-/** Preset pill — apply on click, edit or delete via inline icon buttons. */
+/** Style-template pill — apply on click; when editable, rename/update or delete via inline icon buttons. */
 function TemplateChip({
 	template,
 	active,
 	disabled,
+	editable,
 	onApply,
 	onEdit,
 	onDelete,
@@ -237,6 +263,7 @@ function TemplateChip({
 	template: PostStyleTemplateType;
 	active: boolean;
 	disabled?: boolean;
+	editable: boolean;
 	onApply: () => void;
 	onEdit: () => void;
 	onDelete: () => void;
@@ -270,64 +297,65 @@ function TemplateChip({
 				</button>
 				<TemplatePreview template={template} />
 			</span>
-			{confirmingDelete ? (
-				<>
-					<Tooltip label="Confirm delete">
-						<button
-							type="button"
-							onClick={() => {
-								onDelete();
-								setConfirmingDelete(false);
-							}}
-							aria-label={`Confirm delete preset ${template.name}`}
-							disabled={disabled}
-							className="rounded-md p-1 text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
-						>
-							<Trash2Icon aria-hidden className="w-3.5 h-3.5" />
-						</button>
-					</Tooltip>
-					<Tooltip label="Cancel">
-						<button
-							type="button"
-							onClick={() => setConfirmingDelete(false)}
-							aria-label="Cancel delete"
-							className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-						>
-							<XIcon aria-hidden className="w-3.5 h-3.5" />
-						</button>
-					</Tooltip>
-				</>
-			) : (
-				<>
-					<Tooltip label="Rename or update to current settings">
-						<button
-							type="button"
-							onClick={onEdit}
-							aria-label={`Edit preset ${template.name}`}
-							disabled={disabled}
-							className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:cursor-not-allowed"
-						>
-							<PencilIcon aria-hidden className="w-3.5 h-3.5" />
-						</button>
-					</Tooltip>
-					<Tooltip label="Delete preset">
-						<button
-							type="button"
-							onClick={() => setConfirmingDelete(true)}
-							aria-label={`Delete preset ${template.name}`}
-							disabled={disabled}
-							className="rounded-md p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
-						>
-							<Trash2Icon aria-hidden className="w-3.5 h-3.5" />
-						</button>
-					</Tooltip>
-				</>
-			)}
+			{editable &&
+				(confirmingDelete ? (
+					<>
+						<Tooltip label="Confirm delete">
+							<button
+								type="button"
+								onClick={() => {
+									onDelete();
+									setConfirmingDelete(false);
+								}}
+								aria-label={`Confirm delete style template ${template.name}`}
+								disabled={disabled}
+								className="rounded-md p-1 text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
+							>
+								<Trash2Icon aria-hidden className="w-3.5 h-3.5" />
+							</button>
+						</Tooltip>
+						<Tooltip label="Cancel">
+							<button
+								type="button"
+								onClick={() => setConfirmingDelete(false)}
+								aria-label="Cancel delete"
+								className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+							>
+								<XIcon aria-hidden className="w-3.5 h-3.5" />
+							</button>
+						</Tooltip>
+					</>
+				) : (
+					<>
+						<Tooltip label="Rename or update to current style">
+							<button
+								type="button"
+								onClick={onEdit}
+								aria-label={`Edit style template ${template.name}`}
+								disabled={disabled}
+								className="rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors disabled:cursor-not-allowed"
+							>
+								<PencilIcon aria-hidden className="w-3.5 h-3.5" />
+							</button>
+						</Tooltip>
+						<Tooltip label="Delete style template">
+							<button
+								type="button"
+								onClick={() => setConfirmingDelete(true)}
+								aria-label={`Delete style template ${template.name}`}
+								disabled={disabled}
+								className="rounded-md p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:cursor-not-allowed"
+							>
+								<Trash2Icon aria-hidden className="w-3.5 h-3.5" />
+							</button>
+						</Tooltip>
+					</>
+				))}
 		</div>
 	);
 }
 
-/** Inline editor for a preset — rename only, or rename-and-overwrite preferences. */
+/** Inline editor for a style template — rename only, or rename and overwrite its saved style. */
 function TemplateEditor({
 	template,
 	disabled,
@@ -353,8 +381,8 @@ function TemplateEditor({
 	};
 	return (
 		<div className="flex flex-col w-full rounded-md border border-primary/40 bg-primary/5 p-2 gap-2">
-			<div className="flex flex-col gap-1">
-				<div className="flex items-center gap-1.5">
+			<div className="flex items-center gap-1.5">
+				<div className="relative min-w-0 flex-1">
 					<Input
 						value={name}
 						onChange={(e) => setName(e.target.value)}
@@ -370,30 +398,30 @@ function TemplateEditor({
 						}}
 						maxLength={MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
 						disabled={disabled}
-						aria-label="Preset name"
-						className="h-8 min-w-0 flex-1 text-xs"
+						aria-label="Style template name"
+						className="h-8 w-full pr-12 text-xs"
 					/>
-					<Tooltip label="Cancel">
-						<Button
-							size="sm"
-							type="button"
-							variant="ghost"
-							aria-label="Cancel"
-							onClick={onDone}
-						>
-							<XIcon aria-hidden className="w-3.5 h-3.5" />
-						</Button>
-					</Tooltip>
+					<span className="pointer-events-none absolute bottom-1 right-2 text-[10px] text-muted-foreground tabular-nums">
+						{name.length}/{MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
+					</span>
 				</div>
-				<p className="text-right text-[11px] text-muted-foreground tabular-nums">
-					{name.length}/{MAX_POST_STYLE_TEMPLATE_NAME_CHARS}
-				</p>
+				<Tooltip label="Cancel">
+					<Button
+						size="sm"
+						type="button"
+						variant="outline"
+						aria-label="Cancel"
+						onClick={onDone}
+					>
+						<XIcon aria-hidden className="w-3.5 h-3.5" />
+					</Button>
+				</Tooltip>
 			</div>
 			<div className="flex flex-wrap items-center gap-1.5">
 				<Button
 					size="sm"
 					type="button"
-					variant="ghost"
+					variant="outline"
 					disabled={disabled || !name.trim()}
 					onClick={rename}
 				>
@@ -421,7 +449,7 @@ function TemplateEditor({
 	);
 }
 
-/** Hover/focus tooltip showing a preset's full settings summary. */
+/** Hover/focus tooltip showing a style template's summary. */
 function TemplatePreview({ template }: { template: PostStyleTemplateType }) {
 	const p = template.style;
 	return (
@@ -454,11 +482,11 @@ function TemplatePreview({ template }: { template: PostStyleTemplateType }) {
 	);
 }
 
-/** Label-value row inside the preset tooltip. */
+/** Label-value row inside the style-template tooltip. */
 function Row({ label, value }: { label: string; value: string }) {
 	return (
 		<div className="flex gap-2">
-			<span className="text-muted-foreground min-w-[64px]">{label}</span>
+			<span className="text-muted-foreground min-w-16">{label}</span>
 			<span className="font-medium text-foreground wrap-break-word">
 				{value}
 			</span>
