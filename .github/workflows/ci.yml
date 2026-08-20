@@ -25,7 +25,7 @@ jobs:
       should-skip: ${{ steps.filter.outputs.docs-only == 'true' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           # `every` is essential: the default `some` marks a PR docs-only when
